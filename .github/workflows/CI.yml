@@ -22,7 +22,5 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      -name: Debug config
-        run: ls -la
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots package
+        run: cd is23am10/ && mvn --batch-mode --update-snapshots package
