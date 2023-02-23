@@ -1,0 +1,15 @@
+{
+	"java.checkstyle.configuration": "/google_checks.xml",
+	"java.configuration.updateBuildConfiguration": "automatic",
+	"java.project.sourcePaths": [
+        "is23am10/src"
+    ],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar"
+    ],
+    "java.test.config": {
+        
+    },
+    "redhat.telemetry.enabled": false
+}
