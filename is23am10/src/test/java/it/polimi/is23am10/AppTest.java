@@ -17,7 +17,9 @@ class AppTest {
     assertTrue(true);
 
     final String expected = "I am alive";
-    App app = new App();
-    assertEquals(app.test(), expected);
+    App app = new App("New App");
+    assertEquals(expected, app.test());
+
+    assertEquals("New App", app.getAppName());
   }
 }
