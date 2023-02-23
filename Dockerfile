@@ -1,27 +1,27 @@
-FROM debian:buster-slim
+FROM amazonlinux:2022
 
-ARG version=19.0.2.7-1
-# In addition to installing the Amazon corretto, we also install
-# fontconfig. The folks who manage the docker hub's
-# official image library have found that font management
-# is a common usecase, and painpoint, and have
-# recommended that Java images include font support.
-#
-# See:
-#  https://github.com/docker-library/official-images/blob/master/test/tests/java-uimanager-font/container.java
+ARG version=17.0.6.10-1
+ARG package_version=1
 
 RUN set -eux \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        curl ca-certificates gnupg software-properties-common fontconfig java-common \
-    && curl -fL https://apt.corretto.aws/corretto.key | apt-key add - \
-    && add-apt-repository 'deb https://apt.corretto.aws stable main' \
-    && mkdir -p /usr/share/man/man1 || true \
-    && apt-get update \
-    && apt  install git -y \
-    && apt-get install -y java-19-amazon-corretto-jdk=1:$version \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-        curl gnupg software-properties-common
+    && rpm --import file:///etc/pki/rpm-gpg/RPM-GPG-KEY-amazon-linux-2022 \
+    && echo "localpkg_gpgcheck=1" >> /etc/dnf/dnf.conf \
+    && CORRETO_TEMP=$(mktemp -d) \
+    && pushd ${CORRETO_TEMP} \
+    && RPM_LIST=("java-17-amazon-corretto-headless-$version.amzn2022.${package_version}.$(uname -m).rpm" "java-17-amazon-corretto-$version.amzn2022.${package_version}.$(uname -m).rpm" "java-17-amazon-corretto-devel-$version.amzn2022.${package_version}.$(uname -m).rpm") \
+    && for rpm in ${RPM_LIST[@]}; do \
+    curl --fail -O https://corretto.aws/downloads/resources/$(echo $version | tr '-' '.')/${rpm} \
+    && rpm -K "${CORRETO_TEMP}/${rpm}" | grep -F "${CORRETO_TEMP}/${rpm}: digests signatures OK" || exit 1; \
+    done \
+    && dnf install -y ${CORRETO_TEMP}/*.rpm \
+    && popd \
+    && rm -rf /usr/lib/jvm/java-17-amazon-corretto.$(uname -m)/lib/src.zip \
+    && rm -rf ${CORRETO_TEMP} \
+    && dnf clean all \
+    && sed -i '/localpkg_gpgcheck=1/d' /etc/dnf/dnf.conf \
+    && yum update \
+    && yum install git -y \
+    && yum install maven -y
 
 ENV LANG C.UTF-8
-ENV JAVA_HOME=/usr/lib/jvm/java-19-amazon-corretto
+ENV JAVA_HOME=/usr/lib/jvm/java-17-amazon-corretto
