@@ -1,4 +1,4 @@
-package com.is23am10;
+package it.polimi.is23am10;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
