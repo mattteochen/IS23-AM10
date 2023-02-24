@@ -7,7 +7,9 @@ Progetto Ingegneria del Software 2023
 *Note, development outside the docker container is not guaranteed to be working!*
 
 - Open the project with VSCode Developer Docker [Container](https://code.visualstudio.com/docs/devcontainers/containers), hence build the container (for MacOS users `cmd+shift+p` and type "Build Container").
-- Enable Junit testing with Test runner extension that you will find in the tool bar, it will ask you to choose the verion to download, select `JUnit Jupiter`.
+- There are two options to run tests:
+  - Use `Java Test Runner` extension: Enable Junit testing with `Java Test Runner` extension that you will find in the tool bar, it will ask you to choose the verion to download, select `JUnit Jupiter`.
+  - Use Maven test runner embedded in the available plugin.
 
 ## Code format
 Red Hat auto code formatter is available. Plese run `cmd+shift+p` + `Format document with` and select `Red Hat` option before committing.
