@@ -21,6 +21,7 @@ RUN set -eux \
     && sed -i '/localpkg_gpgcheck=1/d' /etc/dnf/dnf.conf \
     && yum update \
     && yum install git -y \
+    && yum install -y tar.x86_64 \
     && yum install maven -y
 
 ENV LANG C.UTF-8
