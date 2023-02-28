@@ -1,27 +1,15 @@
 # IS23-AM10
 Progetto Ingegneria del Software 2023
 
+[![Actions Status](https://github.com/mattteochen/IS23-AM10/actions/workflows/CI.yml/badge.svg)](https://github.com/mattteochen/IS23-AM10/actions)
+
 ## Setup
 *Note, development outside the docker container is not guaranteed to be working!*
 
 - Open the project with VSCode Developer Docker [Container](https://code.visualstudio.com/docs/devcontainers/containers), hence build the container (for MacOS users `cmd+shift+p` and type "Build Container").
-- Enable Junit testing with Test runner extension that you will find in the tool bar, it will ask you to choose the verion to download, select `JUnit Jupiter`.
-	- Configure the `settings.json` adding the folloing in `.vscode/setting.json` (this local setting will overwrite your global setting.json)
-	```
-	"java.checkstyle.configuration": "/google_checks.xml",
-	"java.configuration.updateBuildConfiguration": "interactive",
-	"java.project.sourcePaths": [
-        "project/src"
-    ],
-    "java.project.outputPath": "bin",
-    "java.project.referencedLibraries": [
-        "lib/**/*.jar"
-    ],
-    "java.test.config": {
-        
-    },
-    "redhat.telemetry.enabled": false
-	```
+- There are two options to run tests:
+  - Use `Java Test Runner` extension: Enable Junit testing with `Java Test Runner` extension that you will find in the tool bar, it will ask you to choose the verion to download, select `JUnit Jupiter`.
+  - Use Maven test runner embedded in the available plugin.
 
 ## Code format
 Red Hat auto code formatter is available. Plese run `cmd+shift+p` + `Format document with` and select `Red Hat` option before committing.
