@@ -13,7 +13,7 @@ import it.polimi.is23am10.items.pattern.AbstractPattern;
  * @param T The type of the assigned
  *          {@link AbstractPattern}.
  */
-public class AbstractCard<T extends AbstractPattern> {
+public abstract class AbstractCard<T extends AbstractPattern> {
 
   /**
    * The pattern instance.
