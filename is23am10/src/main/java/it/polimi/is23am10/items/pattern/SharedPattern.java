@@ -30,6 +30,6 @@ public class SharedPattern<T extends Library> extends AbstractPattern {
    * A string describing the pattern.
    * 
    */
-  private String patterDescription;
+  private String patternDescription;
 
 }
