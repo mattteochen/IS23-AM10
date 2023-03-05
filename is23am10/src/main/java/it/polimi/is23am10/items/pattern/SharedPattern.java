@@ -21,13 +21,13 @@ public class SharedPattern<T extends Library> extends AbstractPattern {
   private Function<T, Integer> rule;
 
   /**
-   * A referecens on the rule's number of occurences.
+   * A reference on the rule's number of occurences.
    * 
    */
   private Integer numOfOccurences;
 
   /**
-   * A string describeing the pattern.
+   * A string describing the pattern.
    * 
    */
   private String patterDescription;
