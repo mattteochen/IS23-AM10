@@ -49,14 +49,14 @@ public class Game {
     private Board gameBoard;
 
     /**
-     * List of {@SharedCard} type.
-     * 
+     * List of {@SharedCard} type containing two randomly selected
+     * shared cards for this game.     * 
      */
     private List<SharedCard> sharedCards;
 
     /**
-     * The instance {@Staples} type.
-     * 
+     * The instance {@Staples} type containing all the needed cards and tiles
+     * for this game.     * 
      */
     private Staples staples;
 

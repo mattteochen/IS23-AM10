@@ -7,7 +7,8 @@ import it.polimi.is23am10.items.tile.Tile;
 import java.util.List;
 
 /**
- * The staples object.
+ * The staples object containing the list of common and personal goal
+ * cards and the list of tiles required for this game.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
