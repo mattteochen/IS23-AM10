@@ -26,4 +26,10 @@ public class SharedPattern<T extends Library> extends AbstractPattern {
    */
   private Integer numOfOccurences;
 
+  /**
+   * A string describeing the pattern.
+   * 
+   */
+  private String patterDescription;
+
 }
