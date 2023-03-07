@@ -18,13 +18,7 @@ public class SharedPattern<T extends Library> extends AbstractPattern {
    * A {@link Function} instance applying the given rule.
    * 
    */
-  private Function<T, Integer> rule;
-
-  /**
-   * A reference on the rule's number of occurences.
-   * 
-   */
-  private Integer numOfOccurences;
+  private Predicate<T> rule;
 
   /**
    * A string describing the pattern.

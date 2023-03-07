@@ -19,7 +19,7 @@ public static final class SharedPatternFactory {
   * Rule that checks if there are at least six couples of the same tile type in adjacent positions (row or column)
   *
   */
-  private final  Predicate<Library> checkTwoAdjacents = (l) -> {
+  private final Predicate<Library> checkTwoAdjacents = (l) -> {
     int count = 0;
     for (int i = 0; i < l.length; i++) {
       for (int j = 0; j < l[i].length; j++) {
@@ -195,6 +195,6 @@ public static final class SharedPatternFactory {
   *
   */
   public static final List<SharedPattern> patterns = new LinkedList<SharedPattern>(
-  )
 
+  )
 }
