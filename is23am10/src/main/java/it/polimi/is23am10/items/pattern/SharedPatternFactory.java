@@ -57,9 +57,9 @@ public final class SharedPatternFactory {
    */
   public static final Predicate<Library> checkCornersMatch = l -> {
     Tile[][] grid = l.getLibraryGrid();
-    return (grid[0][0].equals(grid[0][grid[0].length - 1]) &&
-        grid[0][0].equals(grid[grid.length - 1][0]) &&
-        grid[0][0].equals(grid[grid.length - 1][grid[0].length - 1]));
+    return (grid[0][0].equals(grid[0][4]) &&
+        grid[0][0].equals(grid[5][0]) &&
+        grid[0][0].equals(grid[5][4]));
   };
 
   /*
@@ -103,7 +103,7 @@ public final class SharedPatternFactory {
     Tile[][] grid = l.getLibraryGrid();
     for (int i = 0; i < grid.length - 1; i++) {
       for (int j = 0; j < grid[i].length - 1; j++) {
-        if (grid[i][j].equals(grid[i + 1][j]) && grid[i][j].equals(grid[i + 1][j])
+        if (grid[i][j].equals(grid[i + 1][j]) && grid[i][j].equals(grid[i][j + 1])
             && grid[i][j].equals(grid[i + 1][j + 1])) {
           count++;
           if (count >= 2) {
@@ -165,6 +165,63 @@ public final class SharedPatternFactory {
       }
     }
     return false;
+  };
+
+  /*
+   * #7
+   * Rule that checks if the diagonals are filled with tiles of the same type
+   *
+   */
+  public static final Predicate<Library> checkDiagonalsSameType = l ->{
+    Tile[][] grid = l.getLibraryGrid();
+    for(int i = 0; i < grid.length; i++){
+      
+    }
+  };
+  
+  /*
+   * #8
+   * Rule that checks if
+   *
+   */
+  public static final Predicate<Library> = l ->{
+
+  };
+
+  /*
+   * #9
+   * Rule that checks if
+   *
+   */
+  public static final Predicate<Library> = l ->{
+
+  };
+
+  /*
+   * #10
+   * Rule that checks if
+   *
+   */
+  public static final Predicate<Library> = l ->{
+
+  };
+
+  /*
+   * #11
+   * Rule that checks if
+   *
+   */
+  public static final Predicate<Library> = l ->{
+
+  };
+
+  /*
+   * #12
+   * Rule that checks if
+   *
+   */
+  public static final Predicate<Library> = l ->{
+
   };
 
   /*

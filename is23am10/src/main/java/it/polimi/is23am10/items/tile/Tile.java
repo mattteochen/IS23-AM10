@@ -29,7 +29,7 @@ public class Tile {
    */
   private TileType type;
 
-  public Tile(TileType tt){
+  public Tile(TileType tt) {
     type = tt;
   }
 
@@ -39,5 +39,9 @@ public class Tile {
 
   public void setTile(TileType tt) {
     type = tt;
+  }
+
+  public boolean equals(Tile t) {
+    return (getType() == t.getType());
   }
 }

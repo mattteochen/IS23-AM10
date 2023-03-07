@@ -18,6 +18,10 @@ public class Library {
    */
   private Tile[][] libraryGrid;
 
+  public Library() {
+    libraryGrid = new Tile[6][5];
+  }
+
   public Tile[][] getLibraryGrid() {
     return libraryGrid;
   }
