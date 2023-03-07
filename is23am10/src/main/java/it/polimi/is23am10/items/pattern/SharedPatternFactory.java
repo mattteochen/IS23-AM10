@@ -18,7 +18,9 @@ import it.polimi.is23am10.items.tile.Tile.TileType;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public static final class SharedPatternFactory {
+public final class SharedPatternFactory {
+  private SharedPatternFactory() {
+  }
 
   /*
    * #1
