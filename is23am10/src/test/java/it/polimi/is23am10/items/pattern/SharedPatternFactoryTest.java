@@ -14,12 +14,21 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void FOUR_CORNERS_RULE_satisfied() {
-    Library fourCornersMatching = new Library();
-    fourCornersMatching.setTile(0, 0, new Tile(TileType.CAT));
-    fourCornersMatching.setTile(5, 0, new Tile(TileType.CAT));
-    fourCornersMatching.setTile(0, 4, new Tile(TileType.CAT));
-    fourCornersMatching.setTile(5, 4, new Tile(TileType.CAT));
+    Library fourCornersMatching = new Library("CBBBCBBBBBBBBBBBBBBBBBBBBCBBBC");
+    Library fourCornersNotMatching = new Library("CBBBBBBBBBBBBBBBBBBBBBBBBCBBBC");
 
     assertTrue(SharedPatternFactory.checkCornersMatch.test(fourCornersMatching));
+    assertFalse(SharedPatternFactory.checkCornersMatch.test(fourCornersNotMatching));
+  };
+
+  @Test
+  public void TWO_ADJACENTS_RULE_satisfied() {
+    Library twoAdjacentMatching = new Library("CCBGFFTBFCFCCGFCBGFTPPCBCBCBPC");
+    Library twoAdjacentAllEqualsMatching = new Library("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
+    Library twoAdjacentNotMatching = new Library("CBGFTBGFTCGFTCBFTCBGTCBGFCBGFT");
+
+    assertTrue(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentMatching));
+    assertTrue(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentAllEqualsMatching));
+    assertFalse(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentNotMatching));
   };
 }

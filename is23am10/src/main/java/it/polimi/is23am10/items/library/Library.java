@@ -33,8 +33,8 @@ public class Library {
    * @param libraryString
    */
   public Library(String libraryString) {
-    libraryGrid = new Tile[6][5];
     String[] tileChars = libraryString.split("");
+    libraryGrid = new Tile[6][5];
     Map<String, TileType> tileMap = Map.of(
         "C", TileType.CAT,
         "B", TileType.BOOK,
