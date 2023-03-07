@@ -42,6 +42,9 @@ public class Tile {
   }
 
   public boolean equals(Tile t) {
+    if (getType() == null || t.getType() == null) {
+      return false;
+    }
     return (getType() == t.getType());
   }
 }
