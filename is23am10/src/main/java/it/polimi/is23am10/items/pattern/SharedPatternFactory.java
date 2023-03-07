@@ -135,7 +135,7 @@ public final class SharedPatternFactory {
       }
       if (countTypes <= 3) {
         countColumns++;
-        if (countColumns > 3) {
+        if (countColumns >= 3) {
           return true;
         }
       }
@@ -172,55 +172,186 @@ public final class SharedPatternFactory {
    * Rule that checks if the diagonals are filled with tiles of the same type
    *
    */
-  public static final Predicate<Library> checkDiagonalsSameType = l ->{
+  public static final Predicate<Library> checkDiagonalsSameType = l -> {
     Tile[][] grid = l.getLibraryGrid();
-    for(int i = 0; i < grid.length; i++){
-      
+
+    for (int i = 0; i < grid[0].length - 1; i++) {
+      if (!grid[i][i].equals(grid[i + 1][i + 1])) {
+        break;
+      } else if (i == grid[0].length - 1) {
+        return true;
+      }
     }
+
+    for (int i = 0; i < grid[0].length - 1; i++) {
+      if (!grid[i + 1][i].equals(grid[i + 2][i + 1])) {
+        break;
+      } else if (i == grid[0].length - 1) {
+        return true;
+      }
+    }
+
+    for (int i = 0; i < grid[0].length - 1; i++) {
+      if (!grid[grid.length - 1 - i][i].equals(grid[grid.length - 2 - i][i + 1])) {
+        break;
+      } else if (i == grid[0].length - 1) {
+        return true;
+      }
+    }
+
+    for (int i = 0; i < grid[0].length - 1; i++) {
+      if (!grid[grid.length - 2 - i][i].equals(grid[grid.length - 3 - i][i + 1])) {
+        break;
+      } else if (i == grid[0].length - 1) {
+        return true;
+      }
+    }
+
+    return false;
   };
-  
+
   /*
    * #8
-   * Rule that checks if
+   * Rule that checks if there are maximum three different types in at least 4
+   * rows
    *
    */
-  public static final Predicate<Library> = l ->{
-
+  public static final Predicate<Library> checkMaxThreeTypesInRow = l -> {
+    int countRows = 0;
+    Tile[][] grid = l.getLibraryGrid();
+    for (int i = 0; i < grid.length; i++) {
+      int countTypes = 0;
+      Set<TileType> seenTypes = new HashSet<TileType>();
+      for (int j = 0; j < grid[0].length; j++) {
+        if (!seenTypes.contains(grid[j][i].getType())) {
+          seenTypes.add(grid[j][i].getType());
+          countTypes++;
+        }
+      }
+      if (countTypes <= 4) {
+        countRows++;
+        if (countRows >= 4) {
+          return true;
+        }
+      }
+    }
+    return false;
   };
 
   /*
    * #9
-   * Rule that checks if
+   * Rule that checks if there are at least two columns with all the elements of
+   * different type
    *
    */
-  public static final Predicate<Library> = l ->{
+  public static final Predicate<Library> checkTwoColumnAllDiff = l -> {
+    int countColumns = 0;
+    Tile[][] grid = l.getLibraryGrid();
+    for (int i = 0; i < grid[i].length; i++) {
+      int countTypes = 0;
+      Set<TileType> seenTypes = new HashSet<TileType>();
+      for (int j = 0; j < grid.length; j++) {
+        if (!seenTypes.contains(grid[i][j].getType())) {
+          seenTypes.add(grid[i][j].getType());
+          countTypes++;
+        } else {
+          break;
+        }
+      }
+      if (countTypes == 6) {
+        countColumns++;
+        if (countColumns >= 2) {
+          return true;
+        }
+      }
+    }
+    return false;
 
   };
 
   /*
    * #10
-   * Rule that checks if
+   * Rule that checks if there are at least two rows full of different types of
+   * tiles
    *
    */
-  public static final Predicate<Library> = l ->{
+  public static final Predicate<Library> checkTwoRowsAllDiff = l -> {
+    int countRows = 0;
+    Tile[][] grid = l.getLibraryGrid();
+    for (int i = 0; i < grid.length; i++) {
+      int countTypes = 0;
+      Set<TileType> seenTypes = new HashSet<TileType>();
+      for (int j = 0; j < grid[j].length; j++) {
+        if (!seenTypes.contains(grid[j][i].getType())) {
+          seenTypes.add(grid[j][i].getType());
+          countTypes++;
+        } else {
+          break;
+        }
+      }
+      if (countTypes == 5) {
+        countRows++;
+        if (countRows >= 2) {
+          return true;
+        }
+      }
+    }
+    return false;
 
   };
 
   /*
    * #11
-   * Rule that checks if
+   * Rule that checks if there are 5 tiles of the same type on a 'X' shape
    *
    */
-  public static final Predicate<Library> = l ->{
-
+  public static final Predicate<Library> checkTilesXShape = l -> {
+    Tile[][] grid = l.getLibraryGrid();
+    for (int i = 0; i < grid[0].length - 2; i++) {
+      for (int j = 0; j < grid.length - 2; j++) {
+        if (grid[i][j].equals(grid[i + 2][j]) &&
+            grid[i][j].equals(grid[i + 1][j + 1]) &&
+            grid[i][j].equals(grid[i + 2][j + 2]) &&
+            grid[i][j].equals(grid[i][j + 2])) {
+          return true;
+        }
+      }
+    }
+    return false;
   };
 
   /*
    * #12
-   * Rule that checks if
+   * Rule that checks if the columns in the library are ordered (asc o desc) and
+   * the rest of the library is filled with null
    *
    */
-  public static final Predicate<Library> = l ->{
+  public static final Predicate<Library> checkOrderedLibraryColumns = l -> {
+    Tile[][] grid = l.getLibraryGrid();
+
+    Predicate<Tile[][]> checkDescOrder = g -> {
+      for (int i = 1; i < grid[0].length; i++) {
+        for (int j = i; j < grid.length; j++) {
+          if (grid[i][j] != null) {
+            return false;
+          }
+        }
+      }
+      return true;
+    };
+
+    Predicate<Tile[][]> checkAscOrder = g -> {
+      for (int i = 0; i < grid.length; i++) {
+        for (int j = 0; j < grid[0].length - i; j++) {
+          if (grid[j][i] != null) {
+            return false;
+          }
+        }
+      }
+      return true;
+    };
+
+    return (checkAscOrder.test(grid) && checkDescOrder.test(grid));
 
   };
 
