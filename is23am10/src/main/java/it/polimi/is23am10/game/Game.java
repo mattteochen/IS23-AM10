@@ -1,7 +1,6 @@
 package it.polimi.is23am10.game;
 
 import it.polimi.is23am10.player.Player;
-import it.polimi.is23am10.items.staples.Staples;
 import it.polimi.is23am10.items.board.Board;
 import it.polimi.is23am10.items.card.SharedCard;
 
@@ -53,12 +52,6 @@ public class Game {
      * shared cards for this game.     * 
      */
     private List<SharedCard> sharedCards;
-
-    /**
-     * The instance {@Staples} type containing all the needed cards and tiles
-     * for this game.     * 
-     */
-    private Staples staples;
 
     /**
      * A boolean signaling the game is ended.

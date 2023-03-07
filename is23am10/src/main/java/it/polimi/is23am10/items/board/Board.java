@@ -1,5 +1,7 @@
 package it.polimi.is23am10.items.board;
 
+import java.util.List;
+
 import it.polimi.is23am10.items.tile.Tile;
 
 /**
@@ -29,4 +31,10 @@ public class Board {
    */
   // TODO: set final and add init values
   private Integer[][] blackMap;
+
+  /**
+   * A list containing the available tiles.
+   * 
+   */
+  private List<Tile> tileStack;
 }

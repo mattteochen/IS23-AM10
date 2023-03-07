@@ -10,10 +10,11 @@ package it.polimi.is23am10.score;
  */
 public class Score {
   /**
-   * A boolean signaling the extrapoint given to the first player finishing their library.
+   * Integer referencing the extrapoint given to the first player 
+   * to complete their library.
    * 
    */
-  private boolean extraPoints;
+  private Integer extraPoints;
 
   /**
    * Integer referencing the points the player receives from 
@@ -35,4 +36,16 @@ public class Score {
    * 
    */
   private Integer privatePoints;
+
+  /**
+   * Constructor.
+   * Set all the default values.
+   * 
+   */
+  public Score() {
+    extraPoints = 0;
+    libraryPoints = 0;
+    scoreBlockPoints = 0;
+    privatePoints = 0;
+  }
 }
