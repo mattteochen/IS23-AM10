@@ -17,4 +17,8 @@ public class Library {
    * 
    */
   private Tile[][] libraryGrid;
+
+  public Tile[][] getLibraryGrid() {
+    return libraryGrid;
+  }
 }

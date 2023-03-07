@@ -23,4 +23,8 @@ public class Tile {
    * 
    */
   private TileType type;
+
+  public TileType getType() {
+    return type;
+  }
 }

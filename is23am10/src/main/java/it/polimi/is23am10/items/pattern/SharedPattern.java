@@ -2,7 +2,7 @@ package it.polimi.is23am10.items.pattern;
 
 import it.polimi.is23am10.items.library.Library;
 import java.util.function.Function;
-
+import java.util.function.Predicate;
 
 /**
  * Shared pattern object.
