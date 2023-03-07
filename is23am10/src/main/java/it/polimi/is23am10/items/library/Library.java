@@ -21,4 +21,8 @@ public class Library {
   public Tile[][] getLibraryGrid() {
     return libraryGrid;
   }
+
+  public void setTile(int i, int j, Tile t) {
+    libraryGrid[i][j] = t;
+  }
 }

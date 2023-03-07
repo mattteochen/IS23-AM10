@@ -15,7 +15,12 @@ public class Tile {
    * 
    */
   public enum TileType {
-
+    CAT,
+    BOOK,
+    GAME,
+    FRAME,
+    TROPHY,
+    PLANT
   }
 
   /**
@@ -24,7 +29,15 @@ public class Tile {
    */
   private TileType type;
 
+  public Tile(TileType tt){
+    type = tt;
+  }
+
   public TileType getType() {
     return type;
+  }
+
+  public void setTile(TileType tt) {
+    type = tt;
   }
 }
