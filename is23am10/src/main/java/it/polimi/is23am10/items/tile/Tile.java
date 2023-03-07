@@ -14,7 +14,7 @@ public class Tile {
    * An enumeration about the available tyle types.
    * 
    */
-  public enum TileTyple {
+  public enum TileType {
 
   }
 
@@ -22,5 +22,5 @@ public class Tile {
    * The instance Tile type.
    * 
    */
-  private TileTyple type;
+  private TileType type;
 }
