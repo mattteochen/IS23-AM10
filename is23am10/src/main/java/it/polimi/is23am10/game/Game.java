@@ -115,7 +115,7 @@ public class Game {
     if (maxPlayers == null) {
       throw new NullMaxPlayerException();
     }
-    return maxPlayers >= MIN_PLAYER_NUM && maxPlayers < MAX_PLAYER_NUM;
+    return maxPlayers >= MIN_PLAYER_NUM && maxPlayers <= MAX_PLAYER_NUM;
   }
 
   /**
