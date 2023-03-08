@@ -6,8 +6,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import it.polimi.is23am10.factory.Exceptions.DuplicatePlayerNameException;
+import it.polimi.is23am10.factory.Exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.items.card.PrivateCard;
-import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatterException;
+import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.library.Library;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.Exceptions.NullPlayerIdException;
@@ -57,7 +58,7 @@ public class PlayerFactory {
    * 
    * @param playerName  The chosen player name.
    * @param playerNames Current game instance already available players names.
-   * @throws AlreadyInitiatedPatterException
+   * @throws AlreadyInitiatedPatternException
    * @throws DuplicatePlayerNameException
    * @throws NullPlayerIdException
    * @throws NullPlayerLibraryException
@@ -65,17 +66,27 @@ public class PlayerFactory {
    * @throws NullPlayerPrivateCardException
    * @throws NullPlayerScoreBlocksException
    * @throws NullPlayerScoreException
+   * @throws NullPlayerNamesException
    * 
    */
   public static Player getNewPlayer(String playerName, List<String> playerNames)
       throws NullPlayerNameException, NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatterException {
+      AlreadyInitiatedPatternException, NullPlayerNamesException {
 
     /**
      * Consumer must handle this {@link DuplicatePlayerNameException}.
      * 
      */
+
+    if(playerName == null) throw new NullPlayerNameException(
+      "[Class PlayerFactory, method getNewPlayer]: attribute playerName must not be null"
+    );
+
+    if(playerNames == null) throw new NullPlayerNamesException(
+      "[Class PlayerFactory, method getNewPlayer]: attribute playerNames must not be null"
+    );
+
     if (isPlayerNameDuplicate(playerName, playerNames)) {
       throw new DuplicatePlayerNameException(
           "[Class PlayerFactory, method getNewPlayer]: The name " + playerName + " already exists");
@@ -83,7 +94,7 @@ public class PlayerFactory {
 
     Player instance = new Player();
 
-    instance.setPlayerID(UUID.fromString(playerName));
+    instance.setPlayerID(UUID.nameUUIDFromBytes(playerName.getBytes()));
     instance.setPlayerName(playerName);
     instance.setScore(new Score());
     instance.setLibrary(new Library());

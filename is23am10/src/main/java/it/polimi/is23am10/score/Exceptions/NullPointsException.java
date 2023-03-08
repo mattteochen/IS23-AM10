@@ -1,4 +1,4 @@
-package it.polimi.is23am10.score.expcetions;
+package it.polimi.is23am10.score.Exceptions;
 
 /**
  * Custom exception to handle null points values.

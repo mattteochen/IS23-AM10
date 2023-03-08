@@ -9,8 +9,8 @@ package it.polimi.is23am10.items.card.exceptions;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class AlreadyInitiatedPatterException extends Exception {
-	public AlreadyInitiatedPatterException(String msg) {
+public class AlreadyInitiatedPatternException extends Exception {
+	public AlreadyInitiatedPatternException(String msg) {
 		super(msg);
 	}
 }
