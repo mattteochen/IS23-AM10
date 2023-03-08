@@ -1,7 +1,6 @@
 package it.polimi.is23am10.score;
 
-import it.polimi.is23am10.score.expcetions.InvalidExtraPointsException;
-import it.polimi.is23am10.score.expcetions.NullPointsException;
+import it.polimi.is23am10.score.Exceptions.NullPointsException;
 
 /**
  * The Score class definition.
@@ -17,7 +16,7 @@ public final class Score {
    * to complete their library.
    * 
    */
-  private Integer extraPoints;
+  private Integer extraPoint;
 
   /**
    * Integer referencing the points the player receives from
@@ -46,46 +45,26 @@ public final class Score {
    * 
    */
   public Score() {
-    extraPoints = 0;
+    extraPoint = 0;
     libraryPoints = 0;
     scoreBlockPoints = 0;
     privatePoints = 0;
   }
 
+
   /**
-   * Check the assigned extra points validity.
-   * 
-   * @param value The extra points value to be checked.
-   * 
-   * @return The check responce.
+   * extraPoint setter. Value can be only set to 1.
    * 
    */
-  private boolean validExtraPointValue(Integer value) {
-    return value == 1 || value == 0;
+  // TODO: Check that extra points is given to only one player
+  public void setExtraPoint() {
+    this.extraPoint = 1;
   }
 
   /**
-   * extraPoints setter.
+   * libraryPoints setter.
    * 
-   * @param extraPoints The extra points value be assigned.
-   * @throws InvalidExtraPointsException.
-   * @throws NullPointsException.
-   * 
-   */
-  public void setExtraPoints(Integer extraPoints) throws InvalidExtraPointsException, NullPointsException {
-    if (extraPoints == null) {
-      throw new NullPointsException("[class " + this.getClass() + ", method setExtraPoints]: Null extra points value");
-    }
-    if (!validExtraPointValue(extraPoints)) {
-      throw new InvalidExtraPointsException();
-    }
-    this.extraPoints = extraPoints;
-  }
-
-  /**
-   * extraPoints setter.
-   * 
-   * @param libraryPoints The extra points value be assigned.
+   * @param libraryPoints The library points value to be assigned.
    * @throws NullPointsException.
    * 
    */
@@ -100,7 +79,7 @@ public final class Score {
   /**
    * scoreBlockPoints setter.
    * 
-   * @param scoreBlockPoints The extra points value be assigned.
+   * @param scoreBlockPoints The scoreBlock points value to be assigned.
    * @throws NullPointsException.
    * 
    */
@@ -115,7 +94,7 @@ public final class Score {
   /**
    * privatePoints setter.
    * 
-   * @param privatePoints The extra points value be assigned.
+   * @param privatePoints The private card points value to be assigned.
    * @throws NullPointsException.
    * 
    */
@@ -133,8 +112,8 @@ public final class Score {
    * @return The extra points value.
    * 
    */
-  public Integer getExtraPoints() {
-    return extraPoints;
+  public Integer getExtraPoint() {
+    return extraPoint;
   }
 
   /**
