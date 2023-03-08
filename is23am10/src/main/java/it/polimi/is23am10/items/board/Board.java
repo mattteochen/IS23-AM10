@@ -1,12 +1,9 @@
 package it.polimi.is23am10.items.board;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
 import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
@@ -57,22 +54,6 @@ public class Board {
    * 
    */
   private Integer numOfPlayers;
-
-  /**
-   * Helper instance of private inner class defining the library grid filling
-   * rules based on the players number.
-   * 
-   */
-  private final FillingRules fillingRules = new FillingRules();
-
-  /**
-   * The board grid filling rules based on the number of players.
-   * 
-   */
-  private final Map<Integer, BiFunction<Integer[][], Tile[][], Void>> fillingRulesMap = Map.of(
-      2, fillingRules.twoPlayerFillRule,
-      3, fillingRules.threePlayerFillRule,
-      4, fillingRules.fourPlayerFillRule);
 
   /**
    * A fixed 2d array referencing the physical grid instance.
@@ -127,67 +108,6 @@ public class Board {
   private List<Tile> tileSack;
 
   /**
-   * Board filling rules class definition.
-   *
-   * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
-   * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
-   * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
-   * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
-   */
-  private class FillingRules {
-    /**
-     * Two players fill rule.
-     *
-     */
-    public final BiFunction<Integer[][], Tile[][], Void> twoPlayerFillRule = (blackMapIn, boardGridIn) -> {
-      for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
-        for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
-          if (blackMapIn[i][j] == 2) {
-            boardGridIn[i][j] = Board.this.getTileFromSack();
-          } else {
-            boardGridIn[i][j] = new Tile(TileType.EMPTY);
-          }
-        }
-      }
-      return null;
-    };
-
-    /**
-     * Three players fill rule.
-     *
-     */
-    public final BiFunction<Integer[][], Tile[][], Void> threePlayerFillRule = (blackMapIn, boardGridIn) -> {
-      for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
-        for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
-          if (blackMapIn[i][j] == 2 || blackMapIn[i][j] == 3) {
-            boardGridIn[i][j] = Board.this.getTileFromSack();
-          } else {
-            boardGridIn[i][j] = new Tile(TileType.EMPTY);
-          }
-        }
-      }
-      return null;
-    };
-
-    /**
-     * Four players fill rule.
-     *
-     */
-    public final BiFunction<Integer[][], Tile[][], Void> fourPlayerFillRule = (blackMapIn, boardGridIn) -> {
-      for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
-        for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
-          if (blackMapIn[i][j] == 2 || blackMapIn[i][j] == 3 || blackMapIn[i][j] == 4) {
-            boardGridIn[i][j] = Board.this.getTileFromSack();
-          } else {
-            boardGridIn[i][j] = new Tile(TileType.EMPTY);
-          }
-        }
-      }
-      return null;
-    };
-  }
-
-  /**
    * Constructor.
    * 
    * @param numOfPlayers The current game instance number of players.
@@ -206,15 +126,9 @@ public class Board {
      */
     this.numOfPlayers = numOfPlayers;
     this.boardGrid = new Tile[BOARD_GRID_ROWS][BOARD_GRID_COLS];
-    /**
-     * initiate the tiles sack.
-     * 
-     */
+
     createInitialTileSack();
-    /**
-     * fill the board grid based on the number of players.
-     * 
-     */
+
     fillBoardGrid();
   }
 
@@ -249,25 +163,35 @@ public class Board {
    * 
    * @throws NullTileTypeException.
    */
-  private void createInitialTileSack() {
-    tileSack = Stream.of(
-        Collections.nCopies(TILE_TYPE_NUM, new Tile(Tile.TileType.BOOK)),
-        Collections.nCopies(TILE_TYPE_NUM, new Tile(Tile.TileType.CAT)),
-        Collections.nCopies(TILE_TYPE_NUM, new Tile(Tile.TileType.FRAME)),
-        Collections.nCopies(TILE_TYPE_NUM, new Tile(Tile.TileType.GAME)),
-        Collections.nCopies(TILE_TYPE_NUM, new Tile(Tile.TileType.PLANT)),
-        Collections.nCopies(TILE_TYPE_NUM, new Tile(Tile.TileType.TROPHY)))
-        .flatMap(Collection::stream)
-        .collect(Collectors.toList());
+  private void createInitialTileSack() {        
+    tileSack = Stream.of(TileType.values())
+      .filter(t -> !t.equals(TileType.EMPTY))
+      .map(t -> Stream.generate(() -> new Tile(t)).limit(22))
+      .flatMap(stream -> stream)
+      .collect(Collectors.toList()
+      );
+    
     Collections.shuffle(tileSack);
   }
 
   /**
    * Fill the board grid based on the current player number.
+   * Note that this method works both when first filling the
+   * board AND when re-filling it partially mid-game
    * 
    */
   public void fillBoardGrid() {
-    fillingRulesMap.get(numOfPlayers).apply(blackMap, boardGrid);
+      for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
+        for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
+          if (blackMap[i][j] <= numOfPlayers) {
+            if ((boardGrid[i][j].getType().equals(TileType.EMPTY) || boardGrid[i][j] == null)) {
+              boardGrid[i][j] = Board.this.getTileFromSack();
+            }
+          } else {
+            boardGrid[i][j] = new Tile(TileType.EMPTY);
+          }
+        }
+      }
   }
 
   /**
@@ -333,7 +257,7 @@ public class Board {
       throw new BoardGridRowIndexOutOfBoundsException(row);
     }
     Tile tile = boardGrid[row][col];
-    boardGrid[row][col] = null;
+    boardGrid[row][col] = new Tile(TileType.EMPTY);
     return tile;
   }
 }
