@@ -83,7 +83,7 @@ public class PlayerFactory {
 
     Player instance = new Player();
 
-    instance.setPlayerID(UUID.fromString(playerName));
+    instance.setPlayerID(UUID.nameUUIDFromBytes(playerName.getBytes()));
     instance.setPlayerName(playerName);
     instance.setScore(new Score());
     instance.setLibrary(new Library());
