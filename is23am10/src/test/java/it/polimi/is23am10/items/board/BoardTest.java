@@ -48,7 +48,7 @@ public class BoardTest {
 
     @Test
     public void constructor_should_throw_NullNumOfPlayersException(){
-        assertThrows(InvalidNumOfPlayersException.class, () -> new Board(null));
+        assertThrows(NullNumOfPlayersException.class, () -> new Board(null));
     }
     
 }
