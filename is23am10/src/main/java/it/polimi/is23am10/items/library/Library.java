@@ -6,7 +6,7 @@ import it.polimi.is23am10.items.library.exceptions.NullIndexValueException;
 import it.polimi.is23am10.items.tile.Tile;
 
 /**
- * Players' library object.
+ * Players' library class definition.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -44,7 +44,7 @@ public class Library {
   /**
    * Validate the row index for the current library grid.
    * 
-   * @param row The value to be evaluated.
+   * @param row The index value to be evaluated.
    * @return The validation result.
    * @throws NullIndexValueException
    * 
@@ -59,7 +59,7 @@ public class Library {
   /**
    * Validate the column index for the current library grid.
    * 
-   * @param col The value to be evaluated.
+   * @param col The index value to be evaluated.
    * @return The validation result.
    * @throws NullIndexValueException
    * 
@@ -74,8 +74,8 @@ public class Library {
   /**
    * Set a {@link Tile} inside the library grid.
    * 
-   * @param row  The library grid row value.
-   * @param col  The library grid col value.
+   * @param row  The library grid row's value.
+   * @param col  The library grid col's value.
    * @param tile The tile to be set.
    * @throws NullIndexValueException
    * @throws LibraryGridColIndexOutOfBoundsException.
@@ -101,5 +101,27 @@ public class Library {
    */
   public Tile[][] getLibraryGrid() {
     return libraryGrid;
+  }
+
+  /**
+   * libraryGrid index getter.
+   * 
+   * @param row  The library grid's row value.
+   * @param col  The library grid's col value.
+   * @return The tile at the given indexes.
+   * @throws NullIndexValueException
+   * @throws LibraryGridColIndexOutOfBoundsException.
+   * @throws LibraryGridRowIndexOutOfBoundsException.
+   * 
+   */
+  public Tile getLibraryGridAt(Integer row, Integer col)
+      throws LibraryGridColIndexOutOfBoundsException, LibraryGridRowIndexOutOfBoundsException, NullIndexValueException {
+    if (!validRowIndex(row)) {
+      throw new LibraryGridRowIndexOutOfBoundsException(row);
+    }
+    if (!validColIndex(col)) {
+      throw new LibraryGridColIndexOutOfBoundsException(col);
+    }
+    return libraryGrid[row][col];
   }
 }
