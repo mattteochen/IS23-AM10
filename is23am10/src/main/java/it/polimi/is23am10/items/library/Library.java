@@ -41,7 +41,8 @@ public class Library {
         "G", TileType.GAME,
         "F", TileType.FRAME,
         "T", TileType.TROPHY,
-        "P", TileType.PLANT);
+        "P", TileType.PLANT,
+        "X", TileType.EMPTY);
 
     for (int i = 0; i < libraryGrid.length; i++) {
       for (int j = 0; j < libraryGrid[0].length; j++) {

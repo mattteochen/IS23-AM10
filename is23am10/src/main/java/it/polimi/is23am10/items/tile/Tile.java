@@ -20,7 +20,8 @@ public class Tile {
     GAME,
     FRAME,
     TROPHY,
-    PLANT
+    PLANT,
+    EMPTY
   }
 
   /**
@@ -42,7 +43,7 @@ public class Tile {
   }
 
   public boolean equals(Tile t) {
-    if (getType() == null || t.getType() == null) {
+    if (getType() == TileType.EMPTY || t.getType() == TileType.EMPTY) {
       return false;
     }
     return (getType() == t.getType());
