@@ -1,4 +1,4 @@
-package it.polimi.is23am10.items.library.exceptions;
+package it.polimi.is23am10.utils.exceptions;
 
 public class NullIndexValueException extends Exception {
 	public NullIndexValueException() {

@@ -2,8 +2,9 @@ package it.polimi.is23am10.items.library;
 
 import it.polimi.is23am10.items.library.exceptions.LibraryGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.library.exceptions.LibraryGridRowIndexOutOfBoundsException;
-import it.polimi.is23am10.items.library.exceptions.NullIndexValueException;
 import it.polimi.is23am10.items.tile.Tile;
+import it.polimi.is23am10.utils.IndexValidator;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 /**
  * Players' library class definition.
@@ -42,36 +43,6 @@ public class Library {
   }
 
   /**
-   * Validate the row index for the current library grid.
-   * 
-   * @param row The index value to be evaluated.
-   * @return The validation result.
-   * @throws NullIndexValueException
-   * 
-   */
-  private boolean validRowIndex(Integer row) throws NullIndexValueException {
-    if (row == null) {
-      throw new NullIndexValueException();
-    }
-    return row >= 0 && row < BOOK_SHELF_ROWS;
-  }
-
-  /**
-   * Validate the column index for the current library grid.
-   * 
-   * @param col The index value to be evaluated.
-   * @return The validation result.
-   * @throws NullIndexValueException
-   * 
-   */
-  private boolean validColIndex(Integer col) throws NullIndexValueException {
-    if (col == null) {
-      throw new NullIndexValueException();
-    }
-    return col >= 0 && col < BOOK_SHELF_COLS;
-  }
-
-  /**
    * Set a {@link Tile} inside the library grid.
    * 
    * @param row  The library grid row's value.
@@ -84,10 +55,10 @@ public class Library {
    */
   public void setLibraryGridIndex(Integer row, Integer col, Tile tile)
       throws LibraryGridColIndexOutOfBoundsException, LibraryGridRowIndexOutOfBoundsException, NullIndexValueException {
-    if (!validRowIndex(row)) {
+    if (!IndexValidator.validRowIndex(row, Library.BOOK_SHELF_ROWS)) {
       throw new LibraryGridRowIndexOutOfBoundsException(row);
     }
-    if (!validColIndex(col)) {
+    if (!IndexValidator.validColIndex(row, Library.BOOK_SHELF_COLS)) {
       throw new LibraryGridColIndexOutOfBoundsException(col);
     }
     libraryGrid[row][col] = tile;
@@ -96,7 +67,7 @@ public class Library {
   /**
    * libraryGrid getter.
    * 
-   * @return The library's 6x5 playgound grid.
+   * @return The library's 6x5 playground grid.
    * 
    */
   public Tile[][] getLibraryGrid() {
@@ -106,8 +77,8 @@ public class Library {
   /**
    * libraryGrid index getter.
    * 
-   * @param row  The library grid's row value.
-   * @param col  The library grid's col value.
+   * @param row The library grid's row value.
+   * @param col The library grid's col value.
    * @return The tile at the given indexes.
    * @throws NullIndexValueException
    * @throws LibraryGridColIndexOutOfBoundsException.
@@ -116,10 +87,10 @@ public class Library {
    */
   public Tile getLibraryGridAt(Integer row, Integer col)
       throws LibraryGridColIndexOutOfBoundsException, LibraryGridRowIndexOutOfBoundsException, NullIndexValueException {
-    if (!validRowIndex(row)) {
+    if (!IndexValidator.validRowIndex(row, BOOK_SHELF_ROWS)) {
       throw new LibraryGridRowIndexOutOfBoundsException(row);
     }
-    if (!validColIndex(col)) {
+    if (!IndexValidator.validColIndex(row, Library.BOOK_SHELF_COLS)) {
       throw new LibraryGridColIndexOutOfBoundsException(col);
     }
     return libraryGrid[row][col];

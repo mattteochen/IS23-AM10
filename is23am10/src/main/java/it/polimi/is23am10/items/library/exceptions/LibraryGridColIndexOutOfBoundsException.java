@@ -1,6 +1,7 @@
 package it.polimi.is23am10.items.library.exceptions;
 
 import it.polimi.is23am10.items.library.Library;
+import it.polimi.is23am10.sharedexceptions.ColIndexOutOfBoundsException;
 
 /**
  * Custom exception to handle library grid out of bounds column values.
@@ -10,9 +11,8 @@ import it.polimi.is23am10.items.library.Library;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class LibraryGridColIndexOutOfBoundsException extends Exception {
+public class LibraryGridColIndexOutOfBoundsException extends ColIndexOutOfBoundsException {
 	public LibraryGridColIndexOutOfBoundsException(Integer col) {
-		super(col < 0 ? "Library grid column index can not be negative"
-				: "Library grid column index can not be greater than " + Library.BOOK_SHELF_COLS);
+		super("Library", col, Library.BOOK_SHELF_COLS);
 	}
 }
