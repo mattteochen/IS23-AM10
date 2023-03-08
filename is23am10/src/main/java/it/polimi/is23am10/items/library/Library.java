@@ -2,6 +2,7 @@ package it.polimi.is23am10.items.library;
 
 import it.polimi.is23am10.items.library.exceptions.LibraryGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.library.exceptions.LibraryGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.items.library.exceptions.NullIndexValueException;
 import it.polimi.is23am10.items.tile.Tile;
 
 /**
@@ -45,9 +46,13 @@ public class Library {
    * 
    * @param row The value to be evaluated.
    * @return The validation result.
+   * @throws NullIndexValueException
    * 
    */
-  private boolean validRowIndex(Integer row) {
+  private boolean validRowIndex(Integer row) throws NullIndexValueException {
+    if (row == null) {
+      throw new NullIndexValueException();
+    }
     return row >= 0 && row < BOOK_SHELF_ROWS;
   }
 
@@ -56,9 +61,13 @@ public class Library {
    * 
    * @param col The value to be evaluated.
    * @return The validation result.
+   * @throws NullIndexValueException
    * 
    */
-  private boolean validColIndex(Integer col) {
+  private boolean validColIndex(Integer col) throws NullIndexValueException {
+    if (col == null) {
+      throw new NullIndexValueException();
+    }
     return col >= 0 && col < BOOK_SHELF_COLS;
   }
 
@@ -68,12 +77,13 @@ public class Library {
    * @param row  The library grid row value.
    * @param col  The library grid col value.
    * @param tile The tile to be set.
+   * @throws NullIndexValueException
    * @throws LibraryGridColIndexOutOfBoundsException.
    * @throws LibraryGridRowIndexOutOfBoundsException.
    * 
    */
   public void setLibraryGridIndex(Integer row, Integer col, Tile tile)
-      throws LibraryGridColIndexOutOfBoundsException, LibraryGridRowIndexOutOfBoundsException {
+      throws LibraryGridColIndexOutOfBoundsException, LibraryGridRowIndexOutOfBoundsException, NullIndexValueException {
     if (!validRowIndex(row)) {
       throw new LibraryGridRowIndexOutOfBoundsException(row);
     }
