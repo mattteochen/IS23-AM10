@@ -101,12 +101,18 @@ public final class SharedPatternFactory {
   public static final Predicate<Library> checkSquares = (l) -> {
     int count = 0;
     Tile[][] grid = l.getLibraryGrid();
+    Map<TileType, Integer> checkCount = new HashMap<TileType, Integer>();
     for (int i = 0; i < grid.length - 1; i++) {
       for (int j = 0; j < grid[i].length - 1; j++) {
         if (grid[i][j].equals(grid[i + 1][j]) && grid[i][j].equals(grid[i][j + 1])
             && grid[i][j].equals(grid[i + 1][j + 1])) {
-          count++;
-          if (count >= 2) {
+          if (!checkCount.containsKey(grid[i][j].getType())) {
+            checkCount.put(grid[i][j].getType(), 1);
+          } else {
+            int oldCount = checkCount.get(grid[i][j].getType());
+            checkCount.put(grid[i][j].getType(), oldCount + 1);
+          }
+          if (checkCount.get(grid[i][j].getType()) >= 2) {
             return true;
           }
         }
