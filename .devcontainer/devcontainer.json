@@ -15,7 +15,8 @@
 			"vscjava.vscode-java-pack",
 			"shengchen.vscode-checkstyle",
 			"SonarSource.sonarlint-vscode",
-			"github.vscode-pull-request-github"
+			"github.vscode-pull-request-github",
+			"streetsidesoftware.code-spell-checker"
 		]
 	  }
 	}
