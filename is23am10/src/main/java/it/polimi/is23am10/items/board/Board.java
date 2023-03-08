@@ -111,7 +111,6 @@ public class Board {
    * Constructor.
    * 
    * @param numOfPlayers The current game instance number of players.
-   * @throws NullTileTypeException
    * @throws InvalidNumOfPlayersException.
    * @throws NullNumOfPlayersException.
    */
@@ -184,8 +183,8 @@ public class Board {
       for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
         for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
           if (blackMap[i][j] <= numOfPlayers) {
-            if ((boardGrid[i][j].getType().equals(TileType.EMPTY) || boardGrid[i][j] == null)) {
-              boardGrid[i][j] = Board.this.getTileFromSack();
+            if (boardGrid[i][j] == null || (boardGrid[i][j].getType().equals(TileType.EMPTY))) {
+              boardGrid[i][j] = getTileFromSack();
             }
           } else {
             boardGrid[i][j] = new Tile(TileType.EMPTY);
@@ -234,6 +233,17 @@ public class Board {
       throw new BoardGridRowIndexOutOfBoundsException(row);
     }
     return boardGrid[row][col];
+  }
+  
+  public Integer blackMapAt(Integer row, Integer col)
+      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+    if (!IndexValidator.validColIndex(col, Board.BOARD_GRID_COLS)) {
+      throw new BoardGridColIndexOutOfBoundsException(col);
+    }
+    if (!IndexValidator.validRowIndex(row, Board.BOARD_GRID_ROWS)) {
+      throw new BoardGridRowIndexOutOfBoundsException(row);
+    }
+    return blackMap[row][col];
   }
 
   /**
