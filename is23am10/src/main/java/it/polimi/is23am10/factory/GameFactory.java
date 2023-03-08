@@ -41,20 +41,20 @@ public final class GameFactory {
 	 *
 	 * @param firstPlayerName The first player name, who has requested the game.
 	 * @param maxPlayerNum The desired maximum player number, specified by the first player.
-	 * @throws NullGameIdException. 
-	 * @throws NullMaxPlayerException. 
-	 * @throws InvalidMaxPlayerException. 
-	 * @throws NullPlayerNameException. 
-	 * @throws NullPlayerIdException. 
-	 * @throws NullPlayerLibraryException. 
-	 * @throws NullPlayerScoreException. 
-	 * @throws NullPlayerPrivateCardException. 
-	 * @throws NullPlayerScoreBlocksException. 
-	 * @throws DuplicatePlayerNameException. 
-	 * @throws AlreadyInitiatedPatternException. 
-	 * @throws NullPlayerNamesException. 
-	 * @throws InvalidNumOfPlayersException. 
-	 * @throws NullNumOfPlayersException. 
+	 * @throws NullGameIdException
+	 * @throws NullMaxPlayerException 
+	 * @throws InvalidMaxPlayerException 
+	 * @throws NullPlayerNameException
+	 * @throws NullPlayerIdException
+	 * @throws NullPlayerLibraryException
+	 * @throws NullPlayerScoreException
+	 * @throws NullPlayerPrivateCardException
+	 * @throws NullPlayerScoreBlocksException 
+	 * @throws DuplicatePlayerNameException
+	 * @throws AlreadyInitiatedPatternException
+	 * @throws NullPlayerNamesException
+	 * @throws InvalidNumOfPlayersException 
+	 * @throws NullNumOfPlayersException
 	 * 
 	 */
 	public static Game getNewGame(String firstPlayerName, Integer maxPlayerNum)
