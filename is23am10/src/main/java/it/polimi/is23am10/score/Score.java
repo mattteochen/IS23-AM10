@@ -10,6 +10,8 @@ import it.polimi.is23am10.score.Exceptions.NullPointsException;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
+
+ // TODO: Change setter methods to accept Objects and compute scores directly in setter
 public final class Score {
   /**
    * Integer referencing the extra point given to the first player
