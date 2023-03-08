@@ -11,7 +11,6 @@ import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.Exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.Exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
-import it.polimi.is23am10.game.exceptions.NullGameIdException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.items.board.Board;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
@@ -91,17 +90,11 @@ public class Game {
   private boolean ended;
 
   /**
-   * gameId setter.
-   * 
-   * @param gameId The assigned game id.
-   * @throws NullGameIdException.
-   *
+   * Constructor that assigns the only value that is
+   * generated, immutable and not set by factory
    */
-  public void setGameId(UUID gameId) throws NullGameIdException {
-    if (gameId == null) {
-      throw new NullGameIdException();
-    }
-    this.gameId = gameId;
+  public Game() {
+    gameId = UUID.randomUUID();
   }
 
   /**
