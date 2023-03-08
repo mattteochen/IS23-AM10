@@ -1,6 +1,6 @@
 package it.polimi.is23am10.items.card;
 
-import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatterException;
+import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.pattern.AbstractPattern;
 
 /**
@@ -35,11 +35,11 @@ public abstract class AbstractCard<T extends AbstractPattern> {
    * Only the derived class can set the pattern.
    *
    * @param pattern The pattern to assign.
-   * @throws AlreadyInitiatedPatterException.
+   * @throws AlreadyInitiatedPatternException.
    */
-  protected void setPattern(T pattern) throws AlreadyInitiatedPatterException {
+  protected void setPattern(T pattern) throws AlreadyInitiatedPatternException {
     if (this.pattern != null) {
-      throw new AlreadyInitiatedPatterException(
+      throw new AlreadyInitiatedPatternException(
           "[Class " + this.getClass() + ", method setPattern]: The pattern has already been intantiated");
     }
     this.pattern = pattern;

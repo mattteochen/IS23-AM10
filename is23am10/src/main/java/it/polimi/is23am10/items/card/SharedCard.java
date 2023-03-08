@@ -1,6 +1,6 @@
 package it.polimi.is23am10.items.card;
 
-import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatterException;
+import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.library.Library;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
@@ -30,10 +30,10 @@ public class SharedCard extends AbstractCard<SharedPattern<Library>> {
   /**
    * Constructor.
    * 
-   * @throws AlreadyInitiatedPatterException
+   * @throws AlreadyInitiatedPatternException
    * 
    */
-  public SharedCard() throws AlreadyInitiatedPatterException {
+  public SharedCard() throws AlreadyInitiatedPatternException {
     scoreBlocks = new ArrayList<>();
     // TODO: assign pattern with private pattern factory
     setPattern(new SharedPattern<>());

@@ -8,7 +8,7 @@ import java.util.UUID;
 import it.polimi.is23am10.factory.Exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.Exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.items.card.PrivateCard;
-import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatterException;
+import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.library.Library;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.Exceptions.NullPlayerIdException;
@@ -58,7 +58,7 @@ public class PlayerFactory {
    * 
    * @param playerName  The chosen player name.
    * @param playerNames Current game instance already available players names.
-   * @throws AlreadyInitiatedPatterException
+   * @throws AlreadyInitiatedPatternException
    * @throws DuplicatePlayerNameException
    * @throws NullPlayerIdException
    * @throws NullPlayerLibraryException
@@ -72,7 +72,7 @@ public class PlayerFactory {
   public static Player getNewPlayer(String playerName, List<String> playerNames)
       throws NullPlayerNameException, NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatterException, NullPlayerNamesException {
+      AlreadyInitiatedPatternException, NullPlayerNamesException {
 
     /**
      * Consumer must handle this {@link DuplicatePlayerNameException}.

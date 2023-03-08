@@ -1,6 +1,6 @@
 package it.polimi.is23am10.items.card;
 
-import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatterException;
+import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.card.exceptions.NegativeMatchedBlockCountException;
 import it.polimi.is23am10.items.card.exceptions.NullMatchedBlockCountException;
 import it.polimi.is23am10.pattern.PrivatePattern;
@@ -24,10 +24,10 @@ public class PrivateCard extends AbstractCard<PrivatePattern> {
   /**
    * Constructor.
    * 
-   * @throws AlreadyInitiatedPatterException
+   * @throws AlreadyInitiatedPatternException
    * 
    */
-  public PrivateCard() throws AlreadyInitiatedPatterException {
+  public PrivateCard() throws AlreadyInitiatedPatternException {
     matchedBlocksCount = 0;
     // TODO: assign pattern with private pattern factory
     setPattern(new PrivatePattern());
