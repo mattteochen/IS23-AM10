@@ -11,9 +11,9 @@ import it.polimi.is23am10.score.expcetions.NullPointsException;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class Score {
+public final class Score {
   /**
-   * Integer referencing the extrapoint given to the first player
+   * Integer referencing the extra point given to the first player
    * to complete their library.
    * 
    */
@@ -60,7 +60,7 @@ public class Score {
    * @return The check responce.
    * 
    */
-  private boolean validExtraPointValoue(Integer value) {
+  private boolean validExtraPointValue(Integer value) {
     return value == 1 || value == 0;
   }
 
@@ -76,7 +76,7 @@ public class Score {
     if (extraPoints == null) {
       throw new NullPointsException("[class " + this.getClass() + ", method setExtraPoints]: Null extra points value");
     }
-    if (!validExtraPointValoue(extraPoints)) {
+    if (!validExtraPointValue(extraPoints)) {
       throw new InvalidExtraPointsException();
     }
     this.extraPoints = extraPoints;
