@@ -13,6 +13,6 @@ import it.polimi.is23am10.items.library.Library;
 public class LibraryGridRowIndexOutOfBoundsException extends Exception {
 	public LibraryGridRowIndexOutOfBoundsException(Integer row) {
 		super(row < 0 ? "Library grid column index can not be negative"
-				: "Library grid column index can not be greater than " + Library.LIBRARY_COLS);
+				: "Library grid column index can not be greater than " + Library.BOOK_SHELF_ROWS);
 	}
 }

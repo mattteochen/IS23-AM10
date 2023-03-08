@@ -18,13 +18,13 @@ public class Library {
    * The library's grid rows number.
    * 
    */
-  public static final Integer LIBRARY_ROWS = 6;
+  public static final Integer BOOK_SHELF_ROWS = 6;
 
   /**
    * The library's grid cols number.
    * 
    */
-  public static final Integer LIBRARY_COLS = 5;
+  public static final Integer BOOK_SHELF_COLS = 5;
 
   /**
    * A fixed 2d array referencing the physical library instance.
@@ -37,7 +37,7 @@ public class Library {
    * 
    */
   public Library() {
-    libraryGrid = new Tile[LIBRARY_ROWS][LIBRARY_COLS];
+    libraryGrid = new Tile[BOOK_SHELF_ROWS][BOOK_SHELF_COLS];
   }
 
   /**
@@ -48,7 +48,7 @@ public class Library {
    * 
    */
   private boolean validRowIndex(Integer row) {
-    return row >= 0 && row < LIBRARY_ROWS;
+    return row >= 0 && row < BOOK_SHELF_ROWS;
   }
 
   /**
@@ -59,7 +59,7 @@ public class Library {
    * 
    */
   private boolean validColIndex(Integer col) {
-    return col >= 0 && col < LIBRARY_COLS;
+    return col >= 0 && col < BOOK_SHELF_COLS;
   }
 
   /**
