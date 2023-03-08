@@ -10,6 +10,6 @@ package it.polimi.is23am10.game.exceptions;
  */
 public class InvalidMaxPlayerException extends Exception {
 	public InvalidMaxPlayerException() {
-		super("Null game id");
+		super("Invalid max players");
 	}
 }
