@@ -165,7 +165,7 @@ public class Board {
   private void createInitialTileSack() {        
     tileSack = Stream.of(TileType.values())
       .filter(t -> !t.equals(TileType.EMPTY))
-      .map(t -> Stream.generate(() -> new Tile(t)).limit(22))
+      .map(t -> Stream.generate(() -> new Tile(t)).limit(TILE_TYPE_NUM))
       .flatMap(stream -> stream)
       .collect(Collectors.toList()
       );
