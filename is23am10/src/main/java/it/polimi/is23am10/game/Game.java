@@ -129,24 +129,38 @@ public class Game {
   /**
    * firstPlayer setter.
    * 
-   * @param playerName The name chosen from the first player.
-   * @throws NullPlayerNameException.
-   * @throws NullPlayerIdException.
-   * @throws NullPlayerLibraryException.
-   * @throws NullPlayerScoreException.
-   * @throws NullPlayerPrivateCardException.
-   * @throws NullPlayerScoreBlocksException.
-   * @throws DuplicatePlayerNameException.
-   * @throws AlreadyInitiatedPatternException.
-   * @throws NullPlayerNamesException.
+   * @param playerName The first player's name.
    *
    */
-  public void setFirstPlayer(String playerName)
+  public void setFirstPlayer(String playerName) {
+    players.stream()
+        .filter(player -> player.getPlayerName().equals(playerName))
+        .findFirst()
+        .ifPresent(player -> {
+          this.firstPlayer = player;
+        });
+  }
+
+  /**
+   * Add a new player to the game.
+   * 
+   * @param playerName The player's name.
+   * @throws NullPlayerNamesException
+   * @throws AlreadyInitiatedPatternException
+   * @throws DuplicatePlayerNameException
+   * @throws NullPlayerScoreBlocksException
+   * @throws NullPlayerPrivateCardException
+   * @throws NullPlayerScoreException
+   * @throws NullPlayerLibraryException
+   * @throws NullPlayerIdException
+   * @throws NullPlayerNameException
+   *
+   */
+  public void addPlayer(String playerName)
       throws NullPlayerNameException, NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException {
-    firstPlayer = PlayerFactory.getNewPlayer(playerName, getPlayerNames());
-    players.add(firstPlayer);
+    players.add(PlayerFactory.getNewPlayer(playerName, getPlayerNames()));
   }
 
   /**
@@ -260,7 +274,7 @@ public class Game {
    * @return A {@link List} containing all the current players' names.
    *
    */
-  private List<String> getPlayerNames() {
+  public List<String> getPlayerNames() {
     return players.stream()
         .map(Player::getPlayerName)
         .collect(Collectors.toList());

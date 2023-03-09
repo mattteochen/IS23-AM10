@@ -36,7 +36,7 @@ public final class GameFactory {
 	/**
 	 * Create a new {@link Game} instance.
 	 *
-	 * @param firstPlayerName The first player name, who has requested the game.
+	 * @param startingPlayerName The starting player name, who has requested the game.
 	 * @param maxPlayerNum The desired maximum player number, specified by the first player.
 	 * @throws NullMaxPlayerException 
 	 * @throws InvalidMaxPlayerException 
@@ -53,7 +53,7 @@ public final class GameFactory {
 	 * @throws NullNumOfPlayersException
 	 * 
 	 */
-	public static Game getNewGame(String firstPlayerName, Integer maxPlayerNum)
+	public static Game getNewGame(String startingPlayerName, Integer maxPlayerNum)
 			throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
 			NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException, NullPlayerPrivateCardException,
 			NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
@@ -61,7 +61,7 @@ public final class GameFactory {
 		Game game = new Game();
 
 		game.setMaxPlayers(maxPlayerNum);
-		game.setFirstPlayer(firstPlayerName);
+		game.addPlayer(startingPlayerName);
 		game.setGameBoard();
 		game.setSharedCards();
 		game.setEnded(false);
