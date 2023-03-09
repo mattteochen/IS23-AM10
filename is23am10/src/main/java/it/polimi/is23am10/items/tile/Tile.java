@@ -36,8 +36,7 @@ public class Tile {
    * 
    */
   public Tile(TileType type) {
-    TileType assignedType = type == null ? TileType.EMPTY : type;
-    this.type = assignedType;
+    this.type = type == null ? TileType.EMPTY : type;
   }
 
   /**
