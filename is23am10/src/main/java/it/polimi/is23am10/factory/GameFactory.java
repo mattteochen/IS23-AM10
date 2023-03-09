@@ -1,7 +1,5 @@
 package it.polimi.is23am10.factory;
 
-import java.util.UUID;
-
 import it.polimi.is23am10.factory.Exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.Exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
