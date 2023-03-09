@@ -235,6 +235,17 @@ public class Board {
     return boardGrid[row][col];
   }
   
+  /**
+   * View the tile in a specific black map position.
+   * 
+   * @param row The row index.
+   * @param col The column index.
+   * @return The black map value.
+   * @throws BoardGridRowIndexOutOfBoundsException.
+   * @throws BoardGridColIndexOutOfBoundsException.
+   * @throws NullIndexValueException.
+   * 
+   */
   public Integer blackMapAt(Integer row, Integer col)
       throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
     if (!IndexValidator.validColIndex(col, Board.BOARD_GRID_COLS)) {

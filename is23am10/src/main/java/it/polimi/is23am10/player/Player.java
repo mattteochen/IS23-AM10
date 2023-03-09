@@ -47,7 +47,7 @@ public class Player {
   private Score score;
 
   /**
-   * The player's librayr playground.
+   * The player's library playground.
    * 
    */
   private Library library;
