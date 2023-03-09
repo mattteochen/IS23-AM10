@@ -1,7 +1,6 @@
 package it.polimi.is23am10.items.pattern;
 
 import it.polimi.is23am10.items.library.Library;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -15,7 +14,7 @@ import java.util.function.Predicate;
 public class SharedPattern<T extends Library> extends AbstractPattern {
 
   /**
-   * A {@link Function} instance applying the given rule.
+   * A {@link Predicate} instance applying the given rule.
    * 
    */
   private Predicate<T> rule;

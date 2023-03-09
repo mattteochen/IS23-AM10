@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import it.polimi.is23am10.items.library.Library;
 
 public class SharedPatternFactoryTest {
-
   @Test
   public void TWO_ADJACENTS_RULE_satisfied() {
     Library twoAdjacentMatching = new Library(
