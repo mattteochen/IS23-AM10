@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * The player class definition.
+ * The Player class definition.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -78,8 +78,8 @@ public class Player {
   }
 
   /**
-   * platerName setter.
-   * The {@link PlayerFactory} has the ownership to guarantee the unicity of this
+   * playerName setter.
+   * The {@link PlayerFactory} has the ownership to guarantee the uniqueness of this
    * name in a game instance.
    * 
    * @param playerName The player name.
@@ -106,7 +106,7 @@ public class Player {
   }
 
   /**
-   * Library setter.
+   * library setter.
    * 
    * @param library The library.
    * 
@@ -119,7 +119,7 @@ public class Player {
   }
 
   /**
-   * PrivateCard setter.
+   * privateCard setter.
    * 
    * @param privateCard The private card.
    * 
@@ -132,7 +132,7 @@ public class Player {
   }
 
   /**
-   * ScoreBlocks setter.
+   * scoreBlocks setter.
    * 
    * @param scoreBlocks The score blocks list.
    * 
@@ -145,7 +145,7 @@ public class Player {
   }
 
   /**
-   * PlayerId getter.
+   * playerId getter.
    *
    * @return The player's id.
    * 
@@ -155,7 +155,7 @@ public class Player {
   }
 
   /**
-   * PlaterName getter.
+   * playerName getter.
    * 
    * @return The player's name.
    * 
@@ -165,7 +165,7 @@ public class Player {
   }
 
   /**
-   * Score getter.
+   * score getter.
    * 
    * @return The player's score.
    * 
@@ -175,7 +175,7 @@ public class Player {
   }
 
   /**
-   * Library getter.
+   * library getter.
    * 
    * @return The player's library.
    * 
@@ -185,7 +185,7 @@ public class Player {
   }
 
   /**
-   * PrivateCard getter.
+   * privateCard getter.
    * 
    * @return The player's private card.
    * 
@@ -195,7 +195,7 @@ public class Player {
   }
 
   /**
-   * ScoreBlocks getter.
+   * scoreBlocks getter.
    * 
    * @return The player's score blocks list.
    * 
