@@ -165,7 +165,7 @@ public class Board {
   private void createInitialTileSack() {        
     tileSack = Stream.of(TileType.values())
       .filter(t -> !t.equals(TileType.EMPTY))
-      .map(t -> Stream.generate(() -> new Tile(t)).limit(22))
+      .map(t -> Stream.generate(() -> new Tile(t)).limit(TILE_TYPE_NUM))
       .flatMap(stream -> stream)
       .collect(Collectors.toList()
       );
@@ -176,7 +176,7 @@ public class Board {
   /**
    * Fill the board grid based on the current player number.
    * Note that this method works both when first filling the
-   * board AND when re-filling it partially mid-game
+   * board AND when re-filling it partially mid-game.
    * 
    */
   public void fillBoardGrid() {
@@ -248,7 +248,7 @@ public class Board {
 
   /**
    * Retrieve the tile in a specific board position.
-   * This method removes the returned tile.
+   * This method removes the returned tile from the sack.
    * 
    * @param row The row index.
    * @param col The column index.

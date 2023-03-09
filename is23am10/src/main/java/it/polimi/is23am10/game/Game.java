@@ -152,7 +152,6 @@ public class Game {
   /**
    * gameBoard setter.
    * 
-   * @param playerName The name chosen from the first player.
    * @throws InvalidNumOfPlayersException.
    * @throws NullNumOfPlayersException.
    *
@@ -247,7 +246,7 @@ public class Game {
   /**
    * ended getter.
    * 
-   * @return The a boolean values stating if the current game is still running or
+   * @return A boolean values stating if the current game is still running or
    *         not.
    *
    */
@@ -258,7 +257,7 @@ public class Game {
   /**
    * Retrieve the current players' names.
    * 
-   * @return A list containing all the current players' names.
+   * @return A {@link List} containing all the current players' names.
    *
    */
   private List<String> getPlayerNames() {

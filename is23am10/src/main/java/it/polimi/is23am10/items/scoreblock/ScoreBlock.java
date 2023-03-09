@@ -32,7 +32,7 @@ public final class ScoreBlock {
   public ScoreBlock(Integer score) throws NotValidScoreBlockValueException {
     if (!allowedScoreValues.contains(score)) {
       throw new NotValidScoreBlockValueException(
-          "[Class " + this.getClass() + ", constructor]: Asssigned score value is not compliant with the rules");
+          "[Class " + this.getClass() + ", constructor]: Assigned score value is not compliant with the rules");
     }
     this.score = score;
   }
