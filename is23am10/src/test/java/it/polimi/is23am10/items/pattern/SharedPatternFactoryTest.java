@@ -6,10 +6,16 @@ import static org.junit.Assert.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import it.polimi.is23am10.items.library.Library;
+import it.polimi.is23am10.items.library.Exceptions.WrongCharLibraryStringException;
+import it.polimi.is23am10.items.library.Exceptions.WrongLengthLibraryStringException;
+import it.polimi.is23am10.items.tile.Exceptions.WrongTileTypeException;
 
 public class SharedPatternFactoryTest {
+
   @Test
-  public void TWO_ADJACENTS_RULE_satisfied() {
+  public void TWO_ADJACENTS_RULE_satisfied()
+      throws WrongLengthLibraryStringException, WrongCharLibraryStringException,
+      NullPointerException, WrongTileTypeException {
     Library twoAdjacentMatching = new Library(
         "CCBGF" +
             "FTBFC" +
@@ -46,7 +52,8 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void FOUR_CORNERS_RULE_satisfied() {
+  public void FOUR_CORNERS_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
+      WrongCharLibraryStringException, WrongTileTypeException {
     Library fourCornersMatching = new Library(
         "CBBBC" +
             "BBBBB" +
@@ -75,7 +82,8 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void FOUR_ADJACENTS_RULE_satisfied() {
+  public void FOUR_ADJACENTS_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
+      WrongCharLibraryStringException, WrongTileTypeException {
     Library fourAdjacentsMatching = new Library(
         "CCCCB" +
             "FTTTT" +
@@ -104,7 +112,8 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void SQUARES_RULE_satisfied() {
+  public void SQUARES_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
+      WrongCharLibraryStringException, WrongTileTypeException {
     Library twoSquaresSameTypeMatching = new Library(
         "BCCTG" +
             "BCCGG" +
@@ -141,7 +150,8 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void MAX_THREE_TYPES_COLUMN_RULE_satisfied() {
+  public void MAX_THREE_TYPES_COLUMN_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
+      WrongCharLibraryStringException, WrongTileTypeException {
     Library threeColumnMaxThreeTypesMatching = new Library(
         "CBTFG" +
             "CBTCB" +
@@ -178,7 +188,8 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void EIGHT_SAME_TYPE_RULE_satisfied() {
+  public void EIGHT_SAME_TYPE_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
+      WrongCharLibraryStringException, WrongTileTypeException {
     Library eightSameTypeMatching = new Library(
         "PPPPP" +
             "PPPGG" +
@@ -215,7 +226,8 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void DIAGONALS_RULE_satisfied() {
+  public void DIAGONALS_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
+      WrongCharLibraryStringException, WrongTileTypeException {
     Library diagonalTlbrMatching = new Library(
         "PXXXX" +
             "XPXXX" +
@@ -268,7 +280,8 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void MAX_THREE_TYPES_ROW_RULE_satisfied() {
+  public void MAX_THREE_TYPES_ROW_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
+      WrongCharLibraryStringException, WrongTileTypeException {
     Library fourRowsMaxThreeTypesMatching = new Library(
         "CCCBB" +
             "PBCTG" +
@@ -313,7 +326,8 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void TWO_COLUMNS_DIFF_RULE_satisfied() {
+  public void TWO_COLUMNS_DIFF_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
+      WrongCharLibraryStringException, WrongTileTypeException {
     Library twoColumnAllDiffMatching = new Library(
         "PXPXT" +
             "CXCXT" +
@@ -350,7 +364,8 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void X_SHAPE_RULE_satisfied() {
+  public void X_SHAPE_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
+      WrongCharLibraryStringException, WrongTileTypeException {
     Library oneXShapeMatching = new Library(
         "XXXXX" +
             "XPXPX" +
@@ -387,7 +402,8 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void ORDERED_LIBRARY_RULE_satisfied() {
+  public void ORDERED_LIBRARY_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
+      WrongCharLibraryStringException, WrongTileTypeException {
     Library ascOrderedLibraryMatching = new Library(
         "XXXXX" +
             "XXXXG" +

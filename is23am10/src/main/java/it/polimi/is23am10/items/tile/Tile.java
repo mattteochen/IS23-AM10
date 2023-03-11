@@ -40,8 +40,8 @@ public class Tile {
     if (tt == null) {
       throw new NullPointerException("[Class Tile, method constructor]: Null pointer exception");
     }
-    if (tt != TileType.CAT || tt != TileType.BOOK || tt != TileType.GAME || tt != TileType.FRAME
-        || tt != TileType.TROPHY || tt != TileType.PLANT || tt != TileType.EMPTY) {
+    if (tt != TileType.CAT && tt != TileType.BOOK && tt != TileType.GAME && tt != TileType.FRAME
+        && tt != TileType.TROPHY && tt != TileType.PLANT && tt != TileType.EMPTY) {
       throw new WrongTileTypeException("[Class Tile, method constructor]: Wrong TileType exception");
     }
     type = tt;
@@ -82,5 +82,16 @@ public class Tile {
       return false;
     }
     return (getType() == t.getType());
+  }
+
+  /*
+   * Method that checks if the Tile's {@link TileType} is EMPTY or not
+   * 
+   */
+  public boolean isEmpty() {
+    if (this.getType() == TileType.EMPTY) {
+      return true;
+    }
+    return false;
   }
 }

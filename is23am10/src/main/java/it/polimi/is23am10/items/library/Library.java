@@ -5,7 +5,10 @@ import java.util.Map;
 import it.polimi.is23am10.items.library.Exceptions.ColsIndexOutOfBoundsException;
 import it.polimi.is23am10.items.library.Exceptions.NullTileException;
 import it.polimi.is23am10.items.library.Exceptions.RowsIndexOutOfBoundsException;
+import it.polimi.is23am10.items.library.Exceptions.WrongCharLibraryStringException;
+import it.polimi.is23am10.items.library.Exceptions.WrongLengthLibraryStringException;
 import it.polimi.is23am10.items.tile.Tile;
+import it.polimi.is23am10.items.tile.Exceptions.WrongTileTypeException;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 
 /**
@@ -30,6 +33,7 @@ public class Library {
       "T", TileType.TROPHY,
       "P", TileType.PLANT,
       "X", TileType.EMPTY);
+  private static final int LIB_SIZE = 30;
 
   /**
    * A fixed 2d array referencing the physical library instance.
@@ -50,10 +54,23 @@ public class Library {
    *                      correspondance between each char and the position in the
    *                      grid, there's a map to help us matching the char with
    *                      the {@link TileType}
+   * @throws WrongTileTypeException
+   * @throws NullPointerException
    */
-  public Library(String libraryString) {
+  public Library(String libraryString) throws WrongLengthLibraryStringException, WrongCharLibraryStringException,
+      NullPointerException, WrongTileTypeException {
 
+    if (libraryString.length() != LIB_SIZE) {
+      throw new WrongLengthLibraryStringException(
+          "[Class Library, method constructor]: Library string has incorrect length exception");
+    }
     String[] tileChars = libraryString.split("");
+    for (String c : tileChars) {
+      if (!tileMap.containsKey(c)) {
+        throw new WrongCharLibraryStringException(
+            "[Class Library, method constructor]: Library string contains invalid char exception");
+      }
+    }
     libraryGrid = new Tile[LIB_ROWS][LIB_COLS];
 
     /*
