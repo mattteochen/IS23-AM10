@@ -2,13 +2,11 @@ package it.polimi.is23am10.items.pattern;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
-
-import javax.swing.text.StyledEditorKit.BoldAction;
 
 import it.polimi.is23am10.items.library.Library;
 import it.polimi.is23am10.items.tile.Tile;
@@ -16,6 +14,9 @@ import it.polimi.is23am10.items.tile.Tile.TileType;
 
 /**
  * Shared pattern factory object.
+ * 
+ *  NOTE: if not specified, each iteration of the player's library inside the
+ * functions is gonna be first over rows,then columns
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -23,14 +24,7 @@ import it.polimi.is23am10.items.tile.Tile.TileType;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 
-public final class SharedPatternFactory {
-
-  /**
-   * The private constructor for the {@link SharedPatternFactory}.
-   * 
-   */
-  private SharedPatternFactory() {
-  }
+public final class SharedPatternFactory{
 
   /**
    * All the number of occurrencies that each rule has to meet.
@@ -45,12 +39,7 @@ public final class SharedPatternFactory {
   private static final int COL_ALL_DIFF_OCC = 2;
   private static final int ROW_ALL_DIFF_OCC = 2;
 
-  /*
-   * NOTE: if not specified, each iteration of the player's library inside the
-   * functions is gonna be first over rows,then columns
-   */
-
-  /*
+  /**
    * #1
    * Rule that checks if there are at least six couples of the same tile type in
    * adjacent positions (row or column).
@@ -59,47 +48,30 @@ public final class SharedPatternFactory {
   public static final Predicate<Library> checkTwoAdjacents = lib -> {
     int count = 0;
     Tile[][] grid = lib.getLibraryGrid();
-    Map<Integer,Map<Integer,Boolean>> coordsAdjAlreadyCounted = new <Integer,Map<Integer,Boolean>> HashMap();
+    Set<String> coordsAdjAlreadyCounted = new HashSet<String>();
 
     for (int i = 0; i < grid.length; i++) {
       for (int j = 0; j < grid[i].length; j++) {
-        if(!coordsAdjAlreadyCounted.get(i).get(j)){
           if (i < grid.length - 1 && grid[i][j].equals(grid[i + 1][j])) {
-            if(coordsAdjAlreadyCounted.containsKey(i)){
-              coordsAdjAlreadyCounted.get(i).put(j,true);
-            }else{
-              coordsAdjAlreadyCounted.put(i, Map.of(j,true));  
-            }
-
-            if(coordsAdjAlreadyCounted.containsKey(i+1)){
-              coordsAdjAlreadyCounted.get(i+1).put(j,true);
-            }else{
-              coordsAdjAlreadyCounted.put(i+1, Map.of(j,true));
-            }
-
-            count++;
-            if (count >= TWO_ADJACENTS_OCC) {
-              return true;
+            if(!coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j)) && !coordsAdjAlreadyCounted.contains(String.valueOf(i+1)+String.valueOf(j))){
+              coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j));
+              coordsAdjAlreadyCounted.add(String.valueOf(i+1)+String.valueOf(j));
+              count++;
+              if (count >= TWO_ADJACENTS_OCC) {
+                return true;
+              }
             }
           }
+
           if (j < grid[i].length - 1 && grid[i][j].equals(grid[i][j + 1])) {
-            if(coordsAdjAlreadyCounted.containsKey(i)){
-              coordsAdjAlreadyCounted.get(i).put(j,true);
-            }else{
-              coordsAdjAlreadyCounted.put(i, Map.of(j,true));  
-              coordsAdjAlreadyCounted.put(i, Map.of(j+1,true));  
+            if(!coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j)) && !coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j+1))){
+              coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j));
+              coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j+1));
+              count++;
+              if (count >= TWO_ADJACENTS_OCC) {
+                return true;
+              }
             }
-
-            if(coordsAdjAlreadyCounted.containsKey(i+1)){
-              coordsAdjAlreadyCounted.get(i+1).put(j,true);
-            }else{
-              coordsAdjAlreadyCounted.put(i+1, Map.of(j,true));
-            }
-            count++;
-            if (count >= TWO_ADJACENTS_OCC) {
-              return true;
-            }
-          }
         }
       }
     }
@@ -118,7 +90,7 @@ public final class SharedPatternFactory {
         grid[0][0].equals(grid[grid.length - 1][grid[0].length - 1]));
   };
 
-  /*
+  /**
    * #3
    * Rule that checks if there are at least 4 separate groups of 4 elements of
    * the same type in adjacent positions(row or column)
@@ -127,22 +99,38 @@ public final class SharedPatternFactory {
   public static final Predicate<Library> checkFourAdjacents = lib -> {
     int count = 0;
     Tile[][] grid = lib.getLibraryGrid();
+    Set<String> coordsAdjAlreadyCounted = new HashSet<String>();
+
     for (int i = 0; i < grid.length; i++) {
       for (int j = 0; j < grid[i].length; j++) {
         if (i < grid.length - 3 && grid[i][j].equals(grid[i + 1][j]) && grid[i][j].equals(grid[i + 2][j])
             && grid[i][j].equals(grid[i + 3][j])) {
-          count++;
-          if (count >= FOUR_ADJACENTS_OCC) {
-            return true;
-          }
+              if(!coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j)) && !coordsAdjAlreadyCounted.contains(String.valueOf(i+1)+String.valueOf(j)) 
+              && !coordsAdjAlreadyCounted.contains(String.valueOf(i+2)+String.valueOf(j)) && !coordsAdjAlreadyCounted.contains(String.valueOf(i+3)+String.valueOf(j))){
+                coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j));
+                coordsAdjAlreadyCounted.add(String.valueOf(i+1)+String.valueOf(j));
+                coordsAdjAlreadyCounted.add(String.valueOf(i+2)+String.valueOf(j));
+                coordsAdjAlreadyCounted.add(String.valueOf(i+3)+String.valueOf(j));
+                count++;
+                if (count >= FOUR_ADJACENTS_OCC) {
+                  return true;
+                }
+              }
         }
 
         if (j < grid[i].length - 3 && grid[i][j].equals(grid[i][j + 1]) && grid[i][j].equals(grid[i][j + 2])
             && grid[i][j].equals(grid[i][j + 3])) {
-          count++;
-          if (count >= FOUR_ADJACENTS_OCC) {
-            return true;
-          }
+              if(!coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j)) && !coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j+1)) 
+              && !coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j+2)) && !coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j+3))){
+                coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j));
+                coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j+1));
+                coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j+2));
+                coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j+3));
+                count++;
+                if (count >= FOUR_ADJACENTS_OCC) {
+                  return true;
+                }
+              }
         }
       }
     }
@@ -194,7 +182,7 @@ public final class SharedPatternFactory {
     return false;
   };
 
-  /*
+  /**
    * #5
    * Rule that checks if there are at least three columns containing maximum 3
    * different types of tiles
@@ -251,7 +239,7 @@ public final class SharedPatternFactory {
     return false;
   };
 
-  /*
+  /**
    * Supporting methods for the rule #7 that checks the diagonals of the same type
    * in the library
    * 
@@ -281,7 +269,7 @@ public final class SharedPatternFactory {
     return false;
   }
 
-  /*
+  /**
    * #7
    * Rule that checks if the diagonals are filled with tiles of the same type
    *
@@ -308,7 +296,7 @@ public final class SharedPatternFactory {
     return false;
   };
 
-  /*
+  /**
    * #8
    * Rule that checks if there are maximum three different types in at least 4
    * rows
@@ -340,7 +328,7 @@ public final class SharedPatternFactory {
     return false;
   };
 
-  /*
+  /**
    * #9
    * Rule that checks if there are at least two columns with all the elements of
    * different type
@@ -372,7 +360,7 @@ public final class SharedPatternFactory {
 
   };
 
-  /*
+  /**
    * #10
    * Rule that checks if there are at least two rows full of different types of
    * tiles
@@ -398,7 +386,7 @@ public final class SharedPatternFactory {
 
   };
 
-  /*
+  /**
    * Support function that checks, starting from a tile in the grid, if it's part
    * of an X shape of tiles with the same type.
    * 
@@ -416,7 +404,7 @@ public final class SharedPatternFactory {
     }
   }
 
-  /*
+  /**
    * #11
    * Rule that checks if there are 5 tiles of the same type on a 'X' shape
    *
@@ -461,7 +449,7 @@ public final class SharedPatternFactory {
     return false;
   }
 
-  /*
+  /**
    * #12
    * Rule that checks if the columns in the library are ordered (asc o desc) and
    * the rest of the library is filled with {@link TileType} EMPTY
@@ -531,12 +519,34 @@ public final class SharedPatternFactory {
 
   };
 
-  /*
-   * * The list of {@link SharedPattern} containin all the 12 different
+  /**
+   * The list of {@link SharedPattern} containin all the 12 different
    * pattern
    * rules with their lambda functions
    *
    */
-  public static final List<SharedPattern> patterns = new LinkedList<SharedPattern>();
+  private static final List<SharedPattern> patternsArray = List.of(
+    (new SharedPattern<>(checkTwoAdjacents, "Six separated groups made of two adjacent tiles of the same type. The tile type of different groups can be different.")),
+    (new SharedPattern<>(checkCornersMatch, "The four tiles at the corners of the bookshelf are of the same type.")),
+    (new SharedPattern<>(checkFourAdjacents, "Four separated groups made of four adjacent tiles of the same type. The tile's type of different groups can be different.")),
+    (new SharedPattern<>(checkSquares, "Two groups of four tiles of the same type forming a 2x2 square shape. The tile type of the two squares has to be the same.")),
+    (new SharedPattern<>(checkMaxThreeTypesInColumn, "At least three full columns (filled with six tiles), having maximum three different tile types per column. ")),
+    (new SharedPattern<>(checkEightOfSameType, "At least eight tiles of the same type. There are no restrictions concerning their positions.")),
+    (new SharedPattern<>(checkDiagonalsSameType, "Five tiles of the same type forming a diagonal.")),
+    (new SharedPattern<>(checkMaxThreeTypesInRow, "At least four full rows (filled with five tiles), having maximum three different tile types per row.")),
+    (new SharedPattern<>(checkTwoColumnAllDiff, "At least two full columns (filled with six tiles), having tiles of all different types.")),
+    (new SharedPattern<>(checkTwoRowsAllDiff, "At least two full rows (filled with five tiles), having tiles of all different types.")),
+    (new SharedPattern<>(checkTilesXShape, "Five tiles of the same type, forming an X shape.")),
+    (new SharedPattern<>(checkOrderedLibraryColumns, "Five columns with ascending or descending height. Starting from the first or the last column, the next column has to have one tile more. The tile types are not considered."))
+  );
+
+  /**
+   * Method used to get a random SharedPattern between the 12 possible
+   * 
+   */
+  public static final SharedPattern getRandomRule(){
+    Random random = new Random();
+    return patternsArray.get(random.nextInt(patternsArray.size()));
+  };
 
 }

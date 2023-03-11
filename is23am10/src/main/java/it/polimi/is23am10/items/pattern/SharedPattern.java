@@ -1,6 +1,7 @@
 package it.polimi.is23am10.items.pattern;
 
 import it.polimi.is23am10.items.library.Library;
+
 import java.util.function.Predicate;
 
 /**
@@ -24,5 +25,16 @@ public class SharedPattern<T extends Library> extends AbstractPattern {
    * 
    */
   private String patternDescription;
+
+  /**
+   * The constructor of the class SharedPattern
+   * @throws NullRuleException
+   * @throws InvalidDescriptionException
+   *
+   */
+  public SharedPattern(Predicate rule, String description){
+    this.rule = rule;
+    this.patternDescription = description;
+  };
 
 }
