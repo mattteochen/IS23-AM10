@@ -9,9 +9,9 @@ package it.polimi.is23am10.sharedexceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class RowIndexOutOfBoundsException extends Exception {
-	public RowIndexOutOfBoundsException(String item, Integer row, Integer maxValue) {
-		super(row < 0 ? item + " grid row index can not be negative"
-				: item + " grid row index can not be greater than " + maxValue);
-	}
-	
+  public RowIndexOutOfBoundsException(String item, Integer row, Integer maxValue) {
+    super(row < 0 ? item + " grid row index can not be negative"
+        : item + " grid row index can not be greater than " + maxValue);
+  }
+
 }

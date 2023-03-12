@@ -10,7 +10,7 @@ package it.polimi.is23am10.items.scoreblock.exceptions;
  * 
  */
 public class NotValidScoreBlockValueException extends Exception {
-	public NotValidScoreBlockValueException(String msg) {
-		super(msg);
-	}
+  public NotValidScoreBlockValueException(String msg) {
+    super(msg);
+  }
 }

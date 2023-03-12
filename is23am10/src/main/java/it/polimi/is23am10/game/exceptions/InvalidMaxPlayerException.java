@@ -9,7 +9,7 @@ package it.polimi.is23am10.game.exceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class InvalidMaxPlayerException extends Exception {
-	public InvalidMaxPlayerException() {
-		super("Invalid max players");
-	}
+  public InvalidMaxPlayerException() {
+    super("Invalid max players");
+  }
 }

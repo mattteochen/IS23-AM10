@@ -1,6 +1,6 @@
 package it.polimi.is23am10.score;
 
-import it.polimi.is23am10.score.Exceptions.NullPointsException;
+import it.polimi.is23am10.score.exceptions.NullPointsException;
 
 /**
  * The Score class definition.
@@ -11,7 +11,8 @@ import it.polimi.is23am10.score.Exceptions.NullPointsException;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 
- // TODO: Change setter methods to accept Objects and compute scores directly in setter
+// TODO: Change setter methods to accept Objects and compute scores directly in
+// setter
 public final class Score {
   /**
    * Integer referencing the extra point given to the first player
@@ -52,7 +53,6 @@ public final class Score {
     scoreBlockPoints = 0;
     privatePoints = 0;
   }
-
 
   /**
    * extraPoint setter. Value can be only set to 1.

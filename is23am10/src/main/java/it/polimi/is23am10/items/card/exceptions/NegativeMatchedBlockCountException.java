@@ -9,7 +9,7 @@ package it.polimi.is23am10.items.card.exceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class NegativeMatchedBlockCountException extends Exception {
-	public NegativeMatchedBlockCountException(String msg) {
-		super(msg);
-	}
+  public NegativeMatchedBlockCountException(String msg) {
+    super(msg);
+  }
 }

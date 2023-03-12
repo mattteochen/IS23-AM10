@@ -9,7 +9,7 @@ package it.polimi.is23am10.items.board.exceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class NullNumOfPlayersException extends Exception {
-	public NullNumOfPlayersException() {
-		super("Null number of players value");
-	}
+  public NullNumOfPlayersException() {
+    super("Null number of players value");
+  }
 }

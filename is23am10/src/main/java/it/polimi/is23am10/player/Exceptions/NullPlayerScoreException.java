@@ -1,4 +1,4 @@
-package it.polimi.is23am10.player.Exceptions;
+package it.polimi.is23am10.player.exceptions;
 
 /**
  * Null player score exception.
@@ -10,7 +10,7 @@ package it.polimi.is23am10.player.Exceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class NullPlayerScoreException extends Exception {
-	public NullPlayerScoreException(String msg) {
-		super(msg);
-	}
+  public NullPlayerScoreException(String msg) {
+    super(msg);
+  }
 }

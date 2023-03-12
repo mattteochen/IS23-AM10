@@ -10,7 +10,7 @@ package it.polimi.is23am10.items.card.exceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class AlreadyInitiatedPatternException extends Exception {
-	public AlreadyInitiatedPatternException(String msg) {
-		super(msg);
-	}
+  public AlreadyInitiatedPatternException(String msg) {
+    super(msg);
+  }
 }

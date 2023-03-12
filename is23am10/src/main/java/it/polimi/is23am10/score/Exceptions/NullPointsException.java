@@ -1,4 +1,4 @@
-package it.polimi.is23am10.score.Exceptions;
+package it.polimi.is23am10.score.exceptions;
 
 /**
  * Custom exception to handle null points values.
@@ -9,7 +9,7 @@ package it.polimi.is23am10.score.Exceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class NullPointsException extends Exception {
-	public NullPointsException(String msg) {
-		super(msg);
-	}
+  public NullPointsException(String msg) {
+    super(msg);
+  }
 }

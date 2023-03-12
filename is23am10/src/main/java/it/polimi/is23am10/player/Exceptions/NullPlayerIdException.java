@@ -1,4 +1,4 @@
-package it.polimi.is23am10.player.Exceptions;
+package it.polimi.is23am10.player.exceptions;
 
 /**
  * Null player id exception.
@@ -10,7 +10,7 @@ package it.polimi.is23am10.player.Exceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class NullPlayerIdException extends Exception {
-	public NullPlayerIdException(String msg) {
-		super(msg);
-	}
+  public NullPlayerIdException(String msg) {
+    super(msg);
+  }
 }

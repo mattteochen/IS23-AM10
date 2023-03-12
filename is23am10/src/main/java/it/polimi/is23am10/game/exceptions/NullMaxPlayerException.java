@@ -9,7 +9,7 @@ package it.polimi.is23am10.game.exceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class NullMaxPlayerException extends Exception {
-	public NullMaxPlayerException() {
-		super("Null max players");
-	}
+  public NullMaxPlayerException() {
+    super("Null max players");
+  }
 }

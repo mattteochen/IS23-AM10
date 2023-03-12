@@ -12,7 +12,7 @@ import it.polimi.is23am10.sharedexceptions.RowIndexOutOfBoundsException;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class BoardGridRowIndexOutOfBoundsException extends RowIndexOutOfBoundsException {
-	public BoardGridRowIndexOutOfBoundsException(Integer row) {
-		super("Board", row, Board.BOARD_GRID_ROWS);
-	}	
+  public BoardGridRowIndexOutOfBoundsException(Integer row) {
+    super("Board", row, Board.BOARD_GRID_ROWS);
+  }
 }

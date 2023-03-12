@@ -1,4 +1,4 @@
-package it.polimi.is23am10.factory.Exceptions;
+package it.polimi.is23am10.factory.exceptions;
 
 /**
  * Custom exception to handle duplicate player names inside a game instance.
@@ -9,7 +9,7 @@ package it.polimi.is23am10.factory.Exceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class DuplicatePlayerNameException extends Exception {
-	public DuplicatePlayerNameException(String msg) {
-		super(msg);
-	}
+  public DuplicatePlayerNameException(String msg) {
+    super(msg);
+  }
 }

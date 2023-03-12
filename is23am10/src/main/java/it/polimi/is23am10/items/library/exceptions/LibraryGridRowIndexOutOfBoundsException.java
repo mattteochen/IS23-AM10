@@ -12,7 +12,7 @@ import it.polimi.is23am10.sharedexceptions.RowIndexOutOfBoundsException;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class LibraryGridRowIndexOutOfBoundsException extends RowIndexOutOfBoundsException {
-	public LibraryGridRowIndexOutOfBoundsException(Integer row) {
-		super("Library", row, Library.BOOK_SHELF_ROWS);
-	}
+  public LibraryGridRowIndexOutOfBoundsException(Integer row) {
+    super("Library", row, Library.BOOK_SHELF_ROWS);
+  }
 }

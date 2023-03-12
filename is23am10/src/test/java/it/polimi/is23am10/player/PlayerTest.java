@@ -14,21 +14,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
 
-import it.polimi.is23am10.factory.Exceptions.DuplicatePlayerNameException;
-import it.polimi.is23am10.factory.Exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.items.card.PrivateCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.library.Library;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
-import it.polimi.is23am10.player.Exceptions.NullPlayerIdException;
-import it.polimi.is23am10.player.Exceptions.NullPlayerLibraryException;
-import it.polimi.is23am10.player.Exceptions.NullPlayerNameException;
-import it.polimi.is23am10.player.Exceptions.NullPlayerPrivateCardException;
-import it.polimi.is23am10.player.Exceptions.NullPlayerScoreBlocksException;
-import it.polimi.is23am10.player.Exceptions.NullPlayerScoreException;
+import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
+import it.polimi.is23am10.player.exceptions.NullPlayerLibraryException;
+import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
+import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
+import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
+import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.score.Score;
 import it.polimi.is23am10.factory.PlayerFactory;
+import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
+import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 
 /**
  * Test class to check getters and setters from

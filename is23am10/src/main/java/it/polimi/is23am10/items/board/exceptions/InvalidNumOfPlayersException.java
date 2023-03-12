@@ -12,7 +12,7 @@ import it.polimi.is23am10.items.board.Board;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class InvalidNumOfPlayersException extends Exception {
-	public InvalidNumOfPlayersException(Integer num) {
-		super("The number of players must be a value in: " + Board.allowedNumOfPlayers.toString() + ". Received: " + num);
-	}
+  public InvalidNumOfPlayersException(Integer num) {
+    super("The number of players must be a value in: " + Board.allowedNumOfPlayers.toString() + ". Received: " + num);
+  }
 }
