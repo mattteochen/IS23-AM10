@@ -1,23 +1,22 @@
 package it.polimi.is23am10.factory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import it.polimi.is23am10.factory.Exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.Exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.items.card.PrivateCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.library.Library;
-import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.Exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.Exceptions.NullPlayerLibraryException;
 import it.polimi.is23am10.player.Exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.Exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.Exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.Exceptions.NullPlayerScoreException;
+import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.score.Score;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * The PlayerFactory class definition.
@@ -45,10 +44,12 @@ public class PlayerFactory {
    * 
    */
   private static boolean isPlayerNameDuplicate(String playerName, List<String> playerNames) {
-    Optional<String> duplicate = playerNames.stream()
-        .filter(name -> name.equals(playerName))
-        .findFirst();
-    return duplicate.isPresent();
+    for (String name : playerNames) {
+      if (name.equals(playerName)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
@@ -79,13 +80,15 @@ public class PlayerFactory {
      * 
      */
 
-    if(playerName == null) throw new NullPlayerNameException(
-      "[Class PlayerFactory, method getNewPlayer]: attribute playerName must not be null"
-    );
+    if (playerName == null) {
+      throw new NullPlayerNameException(
+          "[Class PlayerFactory, method getNewPlayer]: attribute playerName must not be null");
+    }
 
-    if(playerNames == null) throw new NullPlayerNamesException(
-      "[Class PlayerFactory, method getNewPlayer]: attribute playerNames must not be null"
-    );
+    if (playerNames == null) {
+      throw new NullPlayerNamesException(
+          "[Class PlayerFactory, method getNewPlayer]: attribute playerNames must not be null");
+    }
 
     if (isPlayerNameDuplicate(playerName, playerNames)) {
       throw new DuplicatePlayerNameException(
