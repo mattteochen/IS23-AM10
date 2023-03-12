@@ -28,8 +28,6 @@ public class SharedPattern<T extends Library> extends AbstractPattern {
 
   /**
    * The constructor of the class SharedPattern
-   * @throws NullRuleException
-   * @throws InvalidDescriptionException
    *
    */
   public SharedPattern(Predicate rule, String description){

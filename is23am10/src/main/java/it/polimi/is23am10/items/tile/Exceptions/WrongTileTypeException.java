@@ -1,8 +1,8 @@
 package it.polimi.is23am10.items.tile.Exceptions;
 
 /**
- * The TileType given is not inside the enum of possible TileTypr
- * Can be used public methods of {@link Tile}.
+ * The TileType given is not inside the enum of possible TileType.
+ * Can be used in public methods of {@link Tile}.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)

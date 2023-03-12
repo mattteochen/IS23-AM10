@@ -2,7 +2,6 @@ package it.polimi.is23am10.items.pattern;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -45,10 +44,27 @@ public class SharedPatternFactoryTest {
             "XXXXX" +
             "XXXXX" +
             "XXXXX");
+    Library withHorizontalOverlappingLibrary = new Library(
+        "XCCCX" +
+            "XXXXX" +
+            "XCCCX" +
+            "XXXXX" +
+            "XCCCX" +
+            "XXXXX");
+    Library withVerticalOverlappingLibrary = new Library(
+        "XCXCX" +
+            "XCXCX" +
+            "XCXCX" +
+            "XXCXX" +
+            "XXCXX" +
+            "XXCXX");
+
 
     assertTrue(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentMatching));
     assertTrue(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentAllEqualsMatching));
     assertFalse(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentNotMatching));
+    assertFalse(SharedPatternFactory.checkTwoAdjacents.test(withHorizontalOverlappingLibrary));
+    assertFalse(SharedPatternFactory.checkTwoAdjacents.test(withVerticalOverlappingLibrary));
     assertFalse(SharedPatternFactory.checkTwoAdjacents.test(allNull));
   };
 
@@ -106,9 +122,25 @@ public class SharedPatternFactoryTest {
             "XXXXX" +
             "XXXXX" +
             "XXXXX");
+    Library withHorizontalOverlappingLibrary = new Library(
+        "CCCCC" +
+            "XXXXX" +
+            "CCCCC" +
+            "XXXXX" +
+            "CCCCC" +
+            "XXXXX");
+    Library withVerticalOverlappingLibrary = new Library(
+        "XCXCX" +
+            "XCCCX" +
+            "XCCCX" +
+            "XCCCX" +
+            "XCCCX" +
+            "XXCXX");
 
     assertTrue(SharedPatternFactory.checkFourAdjacents.test(fourAdjacentsMatching));
     assertFalse(SharedPatternFactory.checkFourAdjacents.test(fourAdjacentsNotMatching));
+    assertFalse(SharedPatternFactory.checkFourAdjacents.test(withHorizontalOverlappingLibrary));
+    assertFalse(SharedPatternFactory.checkFourAdjacents.test(withVerticalOverlappingLibrary));
     assertFalse(SharedPatternFactory.checkFourAdjacents.test(allNull));
   };
 
@@ -362,6 +394,44 @@ public class SharedPatternFactoryTest {
     assertFalse(SharedPatternFactory.checkTwoColumnAllDiff.test(oneColumnAllDiffMatching));
     assertFalse(SharedPatternFactory.checkTwoColumnAllDiff.test(noColumnAllDiffMatching));
     assertFalse(SharedPatternFactory.checkTwoColumnAllDiff.test(allNull));
+  };
+
+  @Test
+  public void TWO_ROWS_DIFF_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
+      WrongCharLibraryStringException, WrongTileTypeException {
+    Library twoRowsAllDiffMatching = new Library(
+        "PCTFG"+
+        "XXXXX"+
+        "GPTFC"+
+        "CCCCC"+
+        "PTCGT"+
+        "PTCGT");
+    Library oneRowAllDiffMatching = new Library(
+        "PCTFG"+
+        "XXXXX"+
+        "GTTFC"+
+        "CCCCC"+
+        "PTCGT"+
+        "PTCGT");
+    Library noRowAllDiffMatching = new Library(
+        "CCCCC" +
+            "CCCCC" +
+            "TTTTT" +
+            "PPPPP" +
+            "GGGGG" +
+            "BBBBB");
+    Library allNull = new Library(
+        "XXXXX" +
+            "XXXXX" +
+            "XXXXX" +
+            "XXXXX" +
+            "XXXXX" +
+            "XXXXX");
+
+    assertTrue(SharedPatternFactory.checkTwoRowsAllDiff.test(twoRowsAllDiffMatching));
+    assertFalse(SharedPatternFactory.checkTwoRowsAllDiff.test(oneRowAllDiffMatching));
+    assertFalse(SharedPatternFactory.checkTwoRowsAllDiff.test(noRowAllDiffMatching));
+    assertFalse(SharedPatternFactory.checkTwoRowsAllDiff.test(allNull));
   };
 
   @Test

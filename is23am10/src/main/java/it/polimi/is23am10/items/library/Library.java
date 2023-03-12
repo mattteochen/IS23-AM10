@@ -20,11 +20,26 @@ import it.polimi.is23am10.items.tile.Tile.TileType;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class Library {
-  /*
+  /**
    * These are the constants used inside the class library
    */
+
+   /**
+    * The library max rows value.
+    */
   private static final int LIB_ROWS = 6;
+
+  /**
+   * The library max columns value.
+   */
   private static final int LIB_COLS = 5;
+
+  /**
+   * 
+   * The support map to reference each {@link TileType} with a char.
+   * Used for the constructor of Library made for tests.
+   * 
+   */
   Map<String, TileType> tileMap = Map.of(
       "C", TileType.CAT,
       "B", TileType.BOOK,
@@ -33,7 +48,11 @@ public class Library {
       "T", TileType.TROPHY,
       "P", TileType.PLANT,
       "X", TileType.EMPTY);
-  private static final int LIB_SIZE = 30;
+
+  /**
+   * Max library grid size. 
+   */
+  private static final int LIB_SIZE = LIB_COLS * LIB_ROWS;
 
   /**
    * A fixed 2d array referencing the physical library instance.
@@ -41,6 +60,9 @@ public class Library {
    */
   private Tile[][] libraryGrid;
 
+  /**
+   * Constructor for the Library instance.
+   */
   public Library() {
     libraryGrid = new Tile[LIB_ROWS][LIB_COLS];
   }
@@ -48,13 +70,15 @@ public class Library {
   /**
    * This constructor takes a 30 char long string containing the content
    * of a library, with each tile associated to a letter, as shown below
-   * and builds and returns the matching library object
+   * and builds and returns the matching library object.
    * 
    * @param libraryString A string that allows us to fill the libraryGrid with the
    *                      correspondance between each char and the position in the
    *                      grid, there's a map to help us matching the char with
    *                      the {@link TileType}
    * @throws WrongTileTypeException
+   * @throws WrongLengthLibraryStringException
+   * @throws WrongCharLibraryStringException
    * @throws NullPointerException
    */
   public Library(String libraryString) throws WrongLengthLibraryStringException, WrongCharLibraryStringException,
@@ -86,31 +110,35 @@ public class Library {
     }
   }
 
-  /*
+  /**
    * A method that allows us to get the libraryGrid element
    * 
+   * @return Library grid.
    */
   public Tile[][] getLibraryGrid() {
     return libraryGrid;
   }
 
-  /*
+  /**
    * A method that allows us to set a {@link Tile} in a specific position inside
    * the libraryGrid
    * 
+   * @param row The library row we want to put the Tile in.
+   * @param col The library col we want to put the Tile in.
+   * @param t The tile we want to put in the library grid.
    */
-  public void setTile(int i, int j, Tile t)
+  public void setTile(int row, int col, Tile t)
       throws NullTileException, RowsIndexOutOfBoundsException, ColsIndexOutOfBoundsException {
     if (t == null) {
       throw new NullTileException("[Class Library, method setTile]: Null tile");
     }
-    if (i < 0 || i >= LIB_ROWS) {
+    if (row < 0 || row >= LIB_ROWS) {
       throw new RowsIndexOutOfBoundsException("[Class Library, method setTile]: Rows index out of bounds");
     }
-    if (j < 0 || j >= LIB_COLS) {
+    if (col < 0 || col >= LIB_COLS) {
       throw new ColsIndexOutOfBoundsException("[Class Library, method setTile]: Cols index out of bounds");
     }
 
-    libraryGrid[i][j] = t;
+    libraryGrid[row][col] = t;
   }
 }
