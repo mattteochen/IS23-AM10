@@ -1,7 +1,7 @@
 package it.polimi.is23am10.player.Exceptions;
 
 /**
- * Null player name exception.
+ * Null player score exception.
  * Can be used public methods of {@link Player}.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
