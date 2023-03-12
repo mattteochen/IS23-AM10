@@ -573,7 +573,7 @@ public final class SharedPatternFactory{
    * @return a random {@link SharedPattern}.
    * 
    */
-  public static final SharedPattern getRandomRule(){
+  public static final SharedPattern getRandomPattern(){
     Random random = new Random();
     return patternsArray.get(random.nextInt(patternsArray.size()));
   };
