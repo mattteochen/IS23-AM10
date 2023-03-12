@@ -1,8 +1,8 @@
 package it.polimi.is23am10.pattern;
 
 import it.polimi.is23am10.items.library.Library;
-import java.util.function.Function;
 
+import java.util.function.Predicate;
 
 /**
  * Shared pattern object.
@@ -15,21 +15,24 @@ import java.util.function.Function;
 public class SharedPattern<T extends Library> extends AbstractPattern {
 
   /**
-   * A {@link Function} instance applying the given rule.
+   * A {@link Predicate} instance applying the given rule.
    * 
    */
-  private Function<T, Integer> rule;
-
-  /**
-   * A reference on the rule's number of occurences.
-   * 
-   */
-  private Integer numOfOccurences;
+  private Predicate<T> rule;
 
   /**
    * A string describing the pattern.
    * 
    */
   private String patternDescription;
+
+  /**
+   * The constructor of the class SharedPattern
+   *
+   */
+  public SharedPattern(Predicate rule, String description){
+    this.rule = rule;
+    this.patternDescription = description;
+  };
 
 }

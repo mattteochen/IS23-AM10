@@ -13,6 +13,6 @@ import it.polimi.is23am10.sharedexceptions.RowIndexOutOfBoundsException;
  */
 public class LibraryGridRowIndexOutOfBoundsException extends RowIndexOutOfBoundsException {
   public LibraryGridRowIndexOutOfBoundsException(Integer row) {
-    super("Library", row, Library.BOOK_SHELF_ROWS);
+    super("Library", row, Library.LIB_ROWS);
   }
 }
