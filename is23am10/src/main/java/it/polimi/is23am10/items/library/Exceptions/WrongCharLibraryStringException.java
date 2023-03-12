@@ -1,4 +1,4 @@
-package it.polimi.is23am10.items.library.Exceptions;
+package it.polimi.is23am10.items.library.exceptions;
 
 /**
  * One char in the libraryString is not among the possibles {@link TileType}

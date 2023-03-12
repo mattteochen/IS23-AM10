@@ -1,4 +1,4 @@
-package it.polimi.is23am10.items.library.Exceptions;
+package it.polimi.is23am10.items.library.exceptions;
 
 /**
  * libraryString given to the constructor has wrong length

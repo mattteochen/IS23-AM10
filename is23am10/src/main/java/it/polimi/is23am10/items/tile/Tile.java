@@ -3,7 +3,7 @@ package it.polimi.is23am10.items.tile;
 import it.polimi.is23am10.items.tile.Exceptions.WrongTileTypeException;
 
 /**
- * The tile object.
+ * The tile class definition.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -13,7 +13,7 @@ import it.polimi.is23am10.items.tile.Exceptions.WrongTileTypeException;
 public class Tile {
 
   /**
-   * An enumeration about the available tyle types.
+   * An enumeration about the available tile types.
    * 
    */
   public enum TileType {
@@ -32,29 +32,22 @@ public class Tile {
    */
   private TileType type;
 
-  /**
-   * The constructor given the {@link TileType} we want to set.
+  
+/**
+  * Constructor.
+   * If the desired type has null value, an empty tile will be set.
    * 
-   * @throws NullPointerException
-   * @throws WrongTileTypeException
-   * 
-   * @param tt The tile type we want to set for the tile.
    */
-  public Tile(TileType tt) throws NullPointerException, WrongTileTypeException {
-    if (tt == null) {
-      throw new NullPointerException("[Class Tile, method constructor]: Null pointer exception");
-    }
-    if (tt != TileType.CAT && tt != TileType.BOOK && tt != TileType.GAME && tt != TileType.FRAME
-        && tt != TileType.TROPHY && tt != TileType.PLANT && tt != TileType.EMPTY) {
-      throw new WrongTileTypeException("[Class Tile, method constructor]: Wrong TileType exception");
-    }
-    this.type = tt;
+  public Tile(TileType type) {
+    this.type = type == null ? TileType.EMPTY : type;
   }
 
-  /**
-   * The method that returns us the type of the Tile
+  
+   /**
+   * type getter.
    * 
-   * @return tile type.
+   * @return The type of the current Tile instance.
+   * 
    */
   public TileType getType() {
     return type;

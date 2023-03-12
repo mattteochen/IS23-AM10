@@ -2,17 +2,19 @@ package it.polimi.is23am10.items.library;
 
 import java.util.Map;
 
-import it.polimi.is23am10.items.library.Exceptions.ColsIndexOutOfBoundsException;
-import it.polimi.is23am10.items.library.Exceptions.NullTileException;
-import it.polimi.is23am10.items.library.Exceptions.RowsIndexOutOfBoundsException;
-import it.polimi.is23am10.items.library.Exceptions.WrongCharLibraryStringException;
-import it.polimi.is23am10.items.library.Exceptions.WrongLengthLibraryStringException;
+import it.polimi.is23am10.items.library.exceptions.NullTileException;
+import it.polimi.is23am10.items.library.exceptions.WrongCharLibraryStringException;
+import it.polimi.is23am10.items.library.exceptions.WrongLengthLibraryStringException;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Exceptions.WrongTileTypeException;
 import it.polimi.is23am10.items.tile.Tile.TileType;
+import it.polimi.is23am10.items.library.exceptions.LibraryGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.items.library.exceptions.LibraryGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.utils.IndexValidator;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 /**
- * Players' library object.
+ * Players' library class definition.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -27,12 +29,12 @@ public class Library {
    /**
     * The library max rows value.
     */
-  private static final int LIB_ROWS = 6;
+  public static final int LIB_ROWS = 6;
 
   /**
    * The library max columns value.
    */
-  private static final int LIB_COLS = 5;
+  public static final int LIB_COLS = 5;
 
   /**
    * 
@@ -53,6 +55,7 @@ public class Library {
    * Max library grid size. 
    */
   private static final int LIB_SIZE = LIB_COLS * LIB_ROWS;
+
 
   /**
    * A fixed 2d array referencing the physical library instance.
@@ -110,35 +113,63 @@ public class Library {
     }
   }
 
+
+
   /**
-   * A method that allows us to get the libraryGrid element
+   * Set a {@link Tile} inside the library grid.
    * 
-   * @return Library grid.
+   * @param row  The library grid row's value.
+   * @param col  The library grid col's value.
+   * @param tile The tile to be set.
+   * @throws NullIndexValueException
+   * @throws LibraryGridColIndexOutOfBoundsException.
+   * @throws LibraryGridRowIndexOutOfBoundsException.
+   * 
    */
+  public void setLibraryGridIndex(Integer row, Integer col, Tile tile)
+      throws LibraryGridColIndexOutOfBoundsException, LibraryGridRowIndexOutOfBoundsException, NullIndexValueException, NullTileException {
+    if (!IndexValidator.validRowIndex(row, Library.LIB_ROWS)) {
+      throw new LibraryGridRowIndexOutOfBoundsException(row);
+    }
+    if (!IndexValidator.validColIndex(row, Library.LIB_COLS)) {
+      throw new LibraryGridColIndexOutOfBoundsException(col);
+    }
+    if(tile == null){
+      throw new NullTileException("[Class Library, method SetLibraryGridIndex]: Null tile exception ");
+    }
+    libraryGrid[row][col] = tile;
+  }
+
+
+ /**
+   * libraryGrid getter.
+   * 
+   * @return The library's 6x5 playground grid.
+   *    
+*/
   public Tile[][] getLibraryGrid() {
     return libraryGrid;
   }
 
-  /**
-   * A method that allows us to set a {@link Tile} in a specific position inside
-   * the libraryGrid
-   * 
-   * @param row The library row we want to put the Tile in.
-   * @param col The library col we want to put the Tile in.
-   * @param t The tile we want to put in the library grid.
-   */
-  public void setTile(int row, int col, Tile t)
-      throws NullTileException, RowsIndexOutOfBoundsException, ColsIndexOutOfBoundsException {
-    if (t == null) {
-      throw new NullTileException("[Class Library, method setTile]: Null tile");
-    }
-    if (row < 0 || row >= LIB_ROWS) {
-      throw new RowsIndexOutOfBoundsException("[Class Library, method setTile]: Rows index out of bounds");
-    }
-    if (col < 0 || col >= LIB_COLS) {
-      throw new ColsIndexOutOfBoundsException("[Class Library, method setTile]: Cols index out of bounds");
-    }
 
-    libraryGrid[row][col] = t;
-  }
+  /**
+   * libraryGrid index getter.
+   * 
+   * @param row The library grid's row value.
+   * @param col The library grid's col value.
+   * @return The tile at the given indexes.
+   * @throws NullIndexValueException
+   * @throws LibraryGridColIndexOutOfBoundsException.
+   * @throws LibraryGridRowIndexOutOfBoundsException.
+   * 
+   */
+  public Tile getLibraryGridAt(Integer row, Integer col)
+      throws LibraryGridColIndexOutOfBoundsException, LibraryGridRowIndexOutOfBoundsException, NullIndexValueException {
+    if (!IndexValidator.validRowIndex(row, Library.LIB_ROWS)) {
+      throw new LibraryGridRowIndexOutOfBoundsException(row);
+    }
+    if (!IndexValidator.validColIndex(row, Library.LIB_COLS)) {
+      throw new LibraryGridColIndexOutOfBoundsException(col);
+    }
+    return libraryGrid[row][col];}
 }
