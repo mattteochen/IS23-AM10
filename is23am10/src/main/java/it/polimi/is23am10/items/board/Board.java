@@ -1,19 +1,19 @@
 package it.polimi.is23am10.items.board;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.Arrays;
-import java.util.Collections;
-
-import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.utils.IndexValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Game's board class definition.
@@ -162,14 +162,13 @@ public class Board {
    * 
    * @throws NullTileTypeException.
    */
-  private void createInitialTileSack() {        
+  private void createInitialTileSack() {
     tileSack = Stream.of(TileType.values())
-      .filter(t -> !t.equals(TileType.EMPTY))
-      .map(t -> Stream.generate(() -> new Tile(t)).limit(TILE_TYPE_NUM))
-      .flatMap(stream -> stream)
-      .collect(Collectors.toList()
-      );
-    
+        .filter(t -> !t.equals(TileType.EMPTY))
+        .map(t -> Stream.generate(() -> new Tile(t)).limit(TILE_TYPE_NUM))
+        .flatMap(stream -> stream)
+        .collect(Collectors.toList());
+
     Collections.shuffle(tileSack);
   }
 
@@ -180,17 +179,17 @@ public class Board {
    * 
    */
   public void fillBoardGrid() {
-      for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
-        for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
-          if (blackMap[i][j] <= numOfPlayers) {
-            if (boardGrid[i][j] == null || (boardGrid[i][j].getType().equals(TileType.EMPTY))) {
-              boardGrid[i][j] = getTileFromSack();
-            }
-          } else {
-            boardGrid[i][j] = new Tile(TileType.EMPTY);
+    for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
+      for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
+        if (blackMap[i][j] <= numOfPlayers) {
+          if (boardGrid[i][j] == null || (boardGrid[i][j].getType().equals(TileType.EMPTY))) {
+            boardGrid[i][j] = getTileFromSack();
           }
+        } else {
+          boardGrid[i][j] = new Tile(TileType.EMPTY);
         }
       }
+    }
   }
 
   /**
@@ -224,7 +223,7 @@ public class Board {
    * @throws NullIndexValueException.
    * 
    */
-  public Tile viewTileAt(Integer row, Integer col)
+  public Tile getTileAt(Integer row, Integer col)
       throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
     if (!IndexValidator.validColIndex(col, Board.BOARD_GRID_COLS)) {
       throw new BoardGridColIndexOutOfBoundsException(col);
@@ -234,7 +233,7 @@ public class Board {
     }
     return boardGrid[row][col];
   }
-  
+
   /**
    * View the tile in a specific black map position.
    * 
@@ -246,7 +245,7 @@ public class Board {
    * @throws NullIndexValueException.
    * 
    */
-  public Integer blackMapAt(Integer row, Integer col)
+  public Integer getBlackMapAt(Integer row, Integer col)
       throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
     if (!IndexValidator.validColIndex(col, Board.BOARD_GRID_COLS)) {
       throw new BoardGridColIndexOutOfBoundsException(col);
@@ -269,7 +268,7 @@ public class Board {
    * @throws NullIndexValueException.
    * 
    */
-  public Tile getTileAt(Integer row, Integer col)
+  public Tile takeTileAt(Integer row, Integer col)
       throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
     if (!IndexValidator.validColIndex(col, Board.BOARD_GRID_COLS)) {
       throw new BoardGridColIndexOutOfBoundsException(col);

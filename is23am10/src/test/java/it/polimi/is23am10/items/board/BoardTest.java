@@ -33,8 +33,8 @@ public class BoardTest {
 
         for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
             for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
-                if (b.blackMapAt(i,j) <= NUM_PLAYERS) {
-                    assertNotEquals(TileType.EMPTY, b.getTileAt(i,j).getType());
+                if (b.getBlackMapAt(i,j) <= NUM_PLAYERS) {
+                    assertNotEquals(TileType.EMPTY, b.takeTileAt(i,j).getType());
                 }
             }
         }
