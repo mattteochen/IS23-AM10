@@ -1,6 +1,6 @@
 package it.polimi.is23am10.items.tile;
 
-import it.polimi.is23am10.items.tile.Exceptions.WrongTileTypeException;
+import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 
 /**
  * The tile class definition.

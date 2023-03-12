@@ -6,9 +6,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import it.polimi.is23am10.items.library.Library;
-import it.polimi.is23am10.items.library.Exceptions.WrongCharLibraryStringException;
-import it.polimi.is23am10.items.library.Exceptions.WrongLengthLibraryStringException;
-import it.polimi.is23am10.items.tile.Exceptions.WrongTileTypeException;
+import it.polimi.is23am10.items.library.exceptions.WrongCharLibraryStringException;
+import it.polimi.is23am10.items.library.exceptions.WrongLengthLibraryStringException;
+import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
+import it.polimi.is23am10.pattern.SharedPatternFactory;
 
 public class SharedPatternFactoryTest {
 

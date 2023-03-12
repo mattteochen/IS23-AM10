@@ -5,6 +5,7 @@ import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.library.Library;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.pattern.SharedPattern;
+import it.polimi.is23am10.pattern.SharedPatternFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class SharedCard extends AbstractCard<SharedPattern<Library>> {
   public SharedCard() throws AlreadyInitiatedPatternException {
     scoreBlocks = new ArrayList<>();
     // TODO: assign pattern with private pattern factory
-    setPattern(new SharedPattern<>());
+    setPattern(SharedPatternFactory.getRandomRule());
   }
 
   /**

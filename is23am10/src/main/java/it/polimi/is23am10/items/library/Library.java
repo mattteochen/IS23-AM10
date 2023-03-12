@@ -6,7 +6,7 @@ import it.polimi.is23am10.items.library.exceptions.NullTileException;
 import it.polimi.is23am10.items.library.exceptions.WrongCharLibraryStringException;
 import it.polimi.is23am10.items.library.exceptions.WrongLengthLibraryStringException;
 import it.polimi.is23am10.items.tile.Tile;
-import it.polimi.is23am10.items.tile.Exceptions.WrongTileTypeException;
+import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.items.library.exceptions.LibraryGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.library.exceptions.LibraryGridRowIndexOutOfBoundsException;

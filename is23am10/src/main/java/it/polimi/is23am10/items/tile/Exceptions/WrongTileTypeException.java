@@ -1,4 +1,4 @@
-package it.polimi.is23am10.items.tile.Exceptions;
+package it.polimi.is23am10.items.tile.exceptions;
 
 /**
  * The TileType given is not inside the enum of possible TileType.

@@ -1,4 +1,4 @@
-package it.polimi.is23am10.items.pattern;
+package it.polimi.is23am10.pattern;
 
 import java.util.HashMap;
 import java.util.HashSet;
