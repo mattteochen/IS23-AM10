@@ -175,10 +175,10 @@ public final class SharedPatternFactory{
    * @param startCol Starting col from where I want to check if it's a valid square
    * @param grid library grid
    * 
-   * @return 
+   * @return True if the square is present.
    */
   private static final boolean isValidSquare(int startRow, int startCol, Tile[][] grid) {
-    if(startRow>= grid.length || startCol >=grid[0].length){
+    if(startRow>= grid.length || startCol >=grid[0].length || startRow <0 || startCol <0){
       return false;
     }
     TileType currType = grid[startRow][startCol].getType();
@@ -280,11 +280,11 @@ public final class SharedPatternFactory{
  * Supporting method checking ascendent diagonal in Library.
  * 
  * @param startingRowOffset tells us if the diagonal is shifted vertically.
- * @param grid
+ * @param grid library grid
  * @return True if diagonal is present.
  */
   private static final boolean checkAscDiagonal(int startingRowOffset, Tile[][] grid) {
-    if(startingRowOffset >= grid.length){
+    if(startingRowOffset >= grid.length || startingRowOffset <0){
       return false;
     }
     for (int i = 0; i < grid[0].length - 1; i++) {
@@ -302,7 +302,7 @@ public final class SharedPatternFactory{
    * Supporting method checking descendent diagonal in Library.
    * 
    * @param startingRowOffset tells us if the diagonal is shifted vertically.
-   * @param grid
+   * @param grid library grid.
    * @return True if diagonal is present.
    */
   private static final boolean checkDescDiagonal(int startingRowOffset, Tile[][] grid) {
