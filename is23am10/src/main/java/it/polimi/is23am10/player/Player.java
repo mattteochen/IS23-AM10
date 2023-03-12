@@ -1,12 +1,12 @@
 package it.polimi.is23am10.player;
 
 import it.polimi.is23am10.factory.PlayerFactory;
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.card.PrivateCard;
-import it.polimi.is23am10.items.library.Library;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.pattern.PrivatePattern;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
-import it.polimi.is23am10.player.exceptions.NullPlayerLibraryException;
+import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
@@ -47,10 +47,10 @@ public class Player {
   private Score score;
 
   /**
-   * The player's library playground.
+   * The player's bookshelf playground.
    * 
    */
-  private Library library;
+  private Bookshelf bookshelf;
 
   /**
    * The player's {@link PrivateCard} with a specific {@link PrivatePattern}.
@@ -106,16 +106,16 @@ public class Player {
   }
 
   /**
-   * library setter.
+   * bookshelf setter.
    * 
-   * @param library The library.
+   * @param bookshelf The bookshelf.
    * 
    */
-  public void setLibrary(Library library) throws NullPlayerLibraryException {
-    if (library == null) {
-      throw new NullPlayerLibraryException("[Class Player, method setLibrary]: Null library");
+  public void setBookshelf(Bookshelf bookshelf) throws NullPlayerBookshelfException {
+    if (bookshelf == null) {
+      throw new NullPlayerBookshelfException("[Class Player, method setBookshelf]: Null bookshelf");
     }
-    this.library = library;
+    this.bookshelf = bookshelf;
   }
 
   /**
@@ -175,13 +175,13 @@ public class Player {
   }
 
   /**
-   * library getter.
+   * bookshelf getter.
    * 
-   * @return The player's library.
+   * @return The player's bookshelf.
    * 
    */
-  public Library getLibrary() {
-    return library;
+  public Bookshelf getBookshelf() {
+    return bookshelf;
   }
 
   /**

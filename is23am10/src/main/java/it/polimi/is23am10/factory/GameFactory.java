@@ -9,7 +9,7 @@ import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
-import it.polimi.is23am10.player.exceptions.NullPlayerLibraryException;
+import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
@@ -44,7 +44,7 @@ public final class GameFactory {
    * @throws InvalidMaxPlayerException
    * @throws NullPlayerNameException
    * @throws NullPlayerIdException
-   * @throws NullPlayerLibraryException
+   * @throws NullPlayerBookshelfException
    * @throws NullPlayerScoreException
    * @throws NullPlayerPrivateCardException
    * @throws NullPlayerScoreBlocksException
@@ -57,7 +57,7 @@ public final class GameFactory {
    */
   public static Game getNewGame(String startingPlayerName, Integer maxPlayerNum)
       throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
-      NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
     Game game = new Game();

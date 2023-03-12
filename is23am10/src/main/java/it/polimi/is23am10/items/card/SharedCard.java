@@ -1,8 +1,8 @@
 package it.polimi.is23am10.items.card;
 
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
-import it.polimi.is23am10.items.library.Library;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.pattern.SharedPattern;
 import it.polimi.is23am10.pattern.SharedPatternFactory;
@@ -18,7 +18,7 @@ import java.util.List;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class SharedCard extends AbstractCard<SharedPattern<Library>> {
+public class SharedCard extends AbstractCard<SharedPattern<Bookshelf>> {
 
   /**
    * A list of {@link ScoreBlock} instances.

@@ -5,9 +5,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import it.polimi.is23am10.items.library.Library;
-import it.polimi.is23am10.items.library.exceptions.WrongCharLibraryStringException;
-import it.polimi.is23am10.items.library.exceptions.WrongLengthLibraryStringException;
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
+import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
 import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.pattern.SharedPatternFactory;
 
@@ -15,44 +15,44 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void TWO_ADJACENTS_RULE_satisfied()
-      throws WrongLengthLibraryStringException, WrongCharLibraryStringException,
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
       NullPointerException, WrongTileTypeException {
-    Library twoAdjacentMatching = new Library(
+    Bookshelf twoAdjacentMatching = new Bookshelf(
         "CCBGF" +
             "FTBFC" +
             "FCCGF" +
             "CBGFT" +
             "PPCBC" +
             "BCBPC");
-    Library twoAdjacentAllEqualsMatching = new Library(
+    Bookshelf twoAdjacentAllEqualsMatching = new Bookshelf(
         "CCCCC" +
             "CCCCC" +
             "CCCCC" +
             "CCCCC" +
             "CCCCC" +
             "CCCCC");
-    Library twoAdjacentNotMatching = new Library(
+    Bookshelf twoAdjacentNotMatching = new Bookshelf(
         "CBGFT" +
             "BGFTC" +
             "GFTCB" +
             "FTCBG" +
             "TCBGF" +
             "CBGFT");
-    Library allNull = new Library(
+    Bookshelf allNull = new Bookshelf(
         "XXXXX" +
             "XXXXX" +
             "XXXXX" +
             "XXXXX" +
             "XXXXX" +
             "XXXXX");
-    Library withHorizontalOverlappingLibrary = new Library(
+    Bookshelf withHorizontalOverlappingBookshelf = new Bookshelf(
         "XCCCX" +
             "XXXXX" +
             "XCCCX" +
             "XXXXX" +
             "XCCCX" +
             "XXXXX");
-    Library withVerticalOverlappingLibrary = new Library(
+    Bookshelf withVerticalOverlappingBookshelf = new Bookshelf(
         "XCXCX" +
             "XCXCX" +
             "XCXCX" +
@@ -64,29 +64,29 @@ public class SharedPatternFactoryTest {
     assertTrue(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentMatching));
     assertTrue(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentAllEqualsMatching));
     assertFalse(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentNotMatching));
-    assertFalse(SharedPatternFactory.checkTwoAdjacents.test(withHorizontalOverlappingLibrary));
-    assertFalse(SharedPatternFactory.checkTwoAdjacents.test(withVerticalOverlappingLibrary));
+    assertFalse(SharedPatternFactory.checkTwoAdjacents.test(withHorizontalOverlappingBookshelf));
+    assertFalse(SharedPatternFactory.checkTwoAdjacents.test(withVerticalOverlappingBookshelf));
     assertFalse(SharedPatternFactory.checkTwoAdjacents.test(allNull));
   };
 
   @Test
-  public void FOUR_CORNERS_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
-      WrongCharLibraryStringException, WrongTileTypeException {
-    Library fourCornersMatching = new Library(
+  public void FOUR_CORNERS_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
+      WrongCharBookshelfStringException, WrongTileTypeException {
+    Bookshelf fourCornersMatching = new Bookshelf(
         "CBBBC" +
             "BBBBB" +
             "BBBBB" +
             "BBBBB" +
             "BBBBB" +
             "CBBBC");
-    Library fourCornersNotMatching = new Library(
+    Bookshelf fourCornersNotMatching = new Bookshelf(
         "CBBBB" +
             "BBBBB" +
             "BBBBB" +
             "BBBBB" +
             "BBBBB" +
             "CBBBC");
-    Library allNull = new Library(
+    Bookshelf allNull = new Bookshelf(
         "XXXXX" +
             "XXXXX" +
             "XXXXX" +
@@ -100,37 +100,37 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void FOUR_ADJACENTS_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
-      WrongCharLibraryStringException, WrongTileTypeException {
-    Library fourAdjacentsMatching = new Library(
+  public void FOUR_ADJACENTS_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
+      WrongCharBookshelfStringException, WrongTileTypeException {
+    Bookshelf fourAdjacentsMatching = new Bookshelf(
         "CCCCB" +
             "FTTTT" +
             "BFGCG" +
             "FFFFG" +
             "TTBCG" +
             "GGGTG");
-    Library fourAdjacentsNotMatching = new Library(
+    Bookshelf fourAdjacentsNotMatching = new Bookshelf(
         "CBGFT" +
             "BGFTC" +
             "GFTCB" +
             "FTCBG" +
             "TCBGF" +
             "CBGFT");
-    Library allNull = new Library(
+    Bookshelf allNull = new Bookshelf(
         "XXXXX" +
             "XXXXX" +
             "XXXXX" +
             "XXXXX" +
             "XXXXX" +
             "XXXXX");
-    Library withHorizontalOverlappingLibrary = new Library(
+    Bookshelf withHorizontalOverlappingBookshelf = new Bookshelf(
         "CCCCC" +
             "XXXXX" +
             "CCCCC" +
             "XXXXX" +
             "CCCCC" +
             "XXXXX");
-    Library withVerticalOverlappingLibrary = new Library(
+    Bookshelf withVerticalOverlappingBookshelf = new Bookshelf(
         "XCXCX" +
             "XCCCX" +
             "XCCCX" +
@@ -140,36 +140,36 @@ public class SharedPatternFactoryTest {
 
     assertTrue(SharedPatternFactory.checkFourAdjacents.test(fourAdjacentsMatching));
     assertFalse(SharedPatternFactory.checkFourAdjacents.test(fourAdjacentsNotMatching));
-    assertFalse(SharedPatternFactory.checkFourAdjacents.test(withHorizontalOverlappingLibrary));
-    assertFalse(SharedPatternFactory.checkFourAdjacents.test(withVerticalOverlappingLibrary));
+    assertFalse(SharedPatternFactory.checkFourAdjacents.test(withHorizontalOverlappingBookshelf));
+    assertFalse(SharedPatternFactory.checkFourAdjacents.test(withVerticalOverlappingBookshelf));
     assertFalse(SharedPatternFactory.checkFourAdjacents.test(allNull));
   };
 
   @Test
-  public void SQUARES_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
-      WrongCharLibraryStringException, WrongTileTypeException {
-    Library twoSquaresSameTypeMatching = new Library(
+  public void SQUARES_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
+      WrongCharBookshelfStringException, WrongTileTypeException {
+    Bookshelf twoSquaresSameTypeMatching = new Bookshelf(
         "BCCTG" +
             "BCCGG" +
             "TTTGG" +
             "CCCCC" +
             "GGTTC" +
             "GGTBB");
-    Library twoSquaresDifferentTypesMatching = new Library(
+    Bookshelf twoSquaresDifferentTypesMatching = new Bookshelf(
         "BCCTG" +
             "BCCGG" +
             "TTTGG" +
             "CCCCC" +
             "TTTTT" +
             "GGGGG");
-    Library noSquaresMatching = new Library(
+    Bookshelf noSquaresMatching = new Bookshelf(
         "CBGFT" +
             "BGFTC" +
             "GFTCB" +
             "FTCBG" +
             "TCBGF" +
             "CBGFT");
-    Library allNull = new Library(
+    Bookshelf allNull = new Bookshelf(
         "XXXXX" +
             "XXXXX" +
             "XXXXX" +
@@ -184,30 +184,30 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void MAX_THREE_TYPES_COLUMN_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
-      WrongCharLibraryStringException, WrongTileTypeException {
-    Library threeColumnMaxThreeTypesMatching = new Library(
+  public void MAX_THREE_TYPES_COLUMN_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
+      WrongCharBookshelfStringException, WrongTileTypeException {
+    Bookshelf threeColumnMaxThreeTypesMatching = new Bookshelf(
         "CBTFG" +
             "CBTCB" +
             "CBTGF" +
             "CBTBC" +
             "CBTPP" +
             "PPPTT");
-    Library twoColumnMaxThreeTypesMatching = new Library(
+    Bookshelf twoColumnMaxThreeTypesMatching = new Bookshelf(
         "CBTFG" +
             "BBTCB" +
             "TBTGF" +
             "CBTBC" +
             "BTPPP" +
             "PPTTT");
-    Library noColumnMaxThreeTypesMatching = new Library(
+    Bookshelf noColumnMaxThreeTypesMatching = new Bookshelf(
         "CBGFT" +
             "BGFTC" +
             "GFTCB" +
             "FTCBG" +
             "TCBGF" +
             "CBGFT");
-    Library allNull = new Library(
+    Bookshelf allNull = new Bookshelf(
         "XXXXX" +
             "XXXXX" +
             "XXXXX" +
@@ -222,30 +222,30 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void EIGHT_SAME_TYPE_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
-      WrongCharLibraryStringException, WrongTileTypeException {
-    Library eightSameTypeMatching = new Library(
+  public void EIGHT_SAME_TYPE_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
+      WrongCharBookshelfStringException, WrongTileTypeException {
+    Bookshelf eightSameTypeMatching = new Bookshelf(
         "PPPPP" +
             "PPPGG" +
             "GGGGG" +
             "FFFFF" +
             "BBBBB" +
             "CCCCC");
-    Library sevenSameTypeMatching = new Library(
+    Bookshelf sevenSameTypeMatching = new Bookshelf(
         "PPPPP" +
             "PPCGG" +
             "GGGGG" +
             "FFFFF" +
             "BBBBB" +
             "CCCCC");
-    Library noSameTypeMatching = new Library(
+    Bookshelf noSameTypeMatching = new Bookshelf(
         "CBGFT" +
             "BGFTC" +
             "GFTCB" +
             "FTCBG" +
             "TCBGF" +
             "CBGFT");
-    Library allNull = new Library(
+    Bookshelf allNull = new Bookshelf(
         "XXXXX" +
             "XXXXX" +
             "XXXXX" +
@@ -260,44 +260,44 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void DIAGONALS_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
-      WrongCharLibraryStringException, WrongTileTypeException {
-    Library diagonalTlbrMatching = new Library(
+  public void DIAGONALS_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
+      WrongCharBookshelfStringException, WrongTileTypeException {
+    Bookshelf diagonalTlbrMatching = new Bookshelf(
         "PXXXX" +
             "XPXXX" +
             "XXPXX" +
             "XXXPX" +
             "XXXXP" +
             "XXXXX");
-    Library diagonalTlbrShiftedMatching = new Library(
+    Bookshelf diagonalTlbrShiftedMatching = new Bookshelf(
         "XXXXX" +
             "CXXXX" +
             "XCXXX" +
             "XXCXX" +
             "XXXCX" +
             "XXXXC");
-    Library diagonalTrblMatching = new Library(
+    Bookshelf diagonalTrblMatching = new Bookshelf(
         "XXXXP" +
             "XXXPX" +
             "XXPXX" +
             "XPXXX" +
             "PXXXX" +
             "XXXXX");
-    Library diagonalTrblShiftedMatching = new Library(
+    Bookshelf diagonalTrblShiftedMatching = new Bookshelf(
         "XXXXX" +
             "XXXXP" +
             "XXXPX" +
             "XXPXX" +
             "XPXXX" +
             "PXXXX");
-    Library noDiagonalsMatching = new Library(
+    Bookshelf noDiagonalsMatching = new Bookshelf(
         "CCBGF" +
             "FTBFC" +
             "FCCGF" +
             "CBGFT" +
             "PPCBC" +
             "BCBPC");
-    Library allNull = new Library(
+    Bookshelf allNull = new Bookshelf(
         "XXXXX" +
             "XXXXX" +
             "XXXXX" +
@@ -314,37 +314,37 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void MAX_THREE_TYPES_ROW_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
-      WrongCharLibraryStringException, WrongTileTypeException {
-    Library fourRowsMaxThreeTypesMatching = new Library(
+  public void MAX_THREE_TYPES_ROW_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
+      WrongCharBookshelfStringException, WrongTileTypeException {
+    Bookshelf fourRowsMaxThreeTypesMatching = new Bookshelf(
         "CCCBB" +
             "PBCTG" +
             "GGGGG" +
             "PTCGF" +
             "FFFFP" +
             "GGGGP");
-    Library threeRowsMaxThreeTypesMatching = new Library(
+    Bookshelf threeRowsMaxThreeTypesMatching = new Bookshelf(
         "CCCBB" +
             "PBCTG" +
             "GGGGG" +
             "PTCGF" +
             "FFFFP" +
             "GGTCP");
-    Library twoRowsMaxThreeTypesMatching = new Library(
+    Bookshelf twoRowsMaxThreeTypesMatching = new Bookshelf(
         "CCCCC" +
             "BBBBB" +
             "PTCGF" +
             "PTCGF" +
             "PTCGF" +
             "PTCGF");
-    Library noRowMaxThreeTypesMatching = new Library(
+    Bookshelf noRowMaxThreeTypesMatching = new Bookshelf(
         "PTCGF" +
             "PTCGF" +
             "PTCGF" +
             "PTCGF" +
             "PTCGF" +
             "PTCGF");
-    Library allNull = new Library(
+    Bookshelf allNull = new Bookshelf(
         "XXXXX" +
             "XXXXX" +
             "XXXXX" +
@@ -360,30 +360,30 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void TWO_COLUMNS_DIFF_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
-      WrongCharLibraryStringException, WrongTileTypeException {
-    Library twoColumnAllDiffMatching = new Library(
+  public void TWO_COLUMNS_DIFF_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
+      WrongCharBookshelfStringException, WrongTileTypeException {
+    Bookshelf twoColumnAllDiffMatching = new Bookshelf(
         "PXPXT" +
             "CXCXT" +
             "FXFXF" +
             "BXBXB" +
             "GXGXG" +
             "TXTXX");
-    Library oneColumnAllDiffMatching = new Library(
+    Bookshelf oneColumnAllDiffMatching = new Bookshelf(
         "PXXXT" +
             "CXXXT" +
             "FXXXF" +
             "BXXXB" +
             "GXXXG" +
             "TXXXX");
-    Library noColumnAllDiffMatching = new Library(
+    Bookshelf noColumnAllDiffMatching = new Bookshelf(
         "CCCCC" +
             "CCCCC" +
             "TTTTT" +
             "PPPPP" +
             "GGGGG" +
             "BBBBB");
-    Library allNull = new Library(
+    Bookshelf allNull = new Bookshelf(
         "XXXXX" +
             "XXXXX" +
             "XXXXX" +
@@ -398,30 +398,30 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void TWO_ROWS_DIFF_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
-      WrongCharLibraryStringException, WrongTileTypeException {
-    Library twoRowsAllDiffMatching = new Library(
+  public void TWO_ROWS_DIFF_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
+      WrongCharBookshelfStringException, WrongTileTypeException {
+    Bookshelf twoRowsAllDiffMatching = new Bookshelf(
         "PCTFG"+
         "XXXXX"+
         "GPTFC"+
         "CCCCC"+
         "PTCGT"+
         "PTCGT");
-    Library oneRowAllDiffMatching = new Library(
+    Bookshelf oneRowAllDiffMatching = new Bookshelf(
         "PCTFG"+
         "XXXXX"+
         "GTTFC"+
         "CCCCC"+
         "PTCGT"+
         "PTCGT");
-    Library noRowAllDiffMatching = new Library(
+    Bookshelf noRowAllDiffMatching = new Bookshelf(
         "CCCCC" +
             "CCCCC" +
             "TTTTT" +
             "PPPPP" +
             "GGGGG" +
             "BBBBB");
-    Library allNull = new Library(
+    Bookshelf allNull = new Bookshelf(
         "XXXXX" +
             "XXXXX" +
             "XXXXX" +
@@ -436,30 +436,30 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void X_SHAPE_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
-      WrongCharLibraryStringException, WrongTileTypeException {
-    Library oneXShapeMatching = new Library(
+  public void X_SHAPE_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
+      WrongCharBookshelfStringException, WrongTileTypeException {
+    Bookshelf oneXShapeMatching = new Bookshelf(
         "XXXXX" +
             "XPXPX" +
             "XXPXX" +
             "XPXPX" +
             "XXXXX" +
             "XXXXX");
-    Library noXShapeMatching = new Library(
+    Bookshelf noXShapeMatching = new Bookshelf(
         "PPPPP" +
             "CCCCC" +
             "GGGGG" +
             "FFFFF" +
             "TTTTT" +
             "CCCCC");
-    Library nullXShapeMatching = new Library(
+    Bookshelf nullXShapeMatching = new Bookshelf(
         "PPPPP" +
             "CXCXC" +
             "GGXGG" +
             "TXTXT" +
             "FFFFF" +
             "BBBBB");
-    Library allNull = new Library(
+    Bookshelf allNull = new Bookshelf(
         "XXXXX" +
             "XXXXX" +
             "XXXXX" +
@@ -474,44 +474,44 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void ORDERED_LIBRARY_RULE_satisfied() throws NullPointerException, WrongLengthLibraryStringException,
-      WrongCharLibraryStringException, WrongTileTypeException {
-    Library ascOrderedLibraryMatching = new Library(
+  public void ORDERED_BOOKSHELF_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
+      WrongCharBookshelfStringException, WrongTileTypeException {
+    Bookshelf ascOrderedBookshelfMatching = new Bookshelf(
         "XXXXX" +
             "XXXXG" +
             "XXXBT" +
             "XXCGC" +
             "XTBCG" +
             "BBBBB");
-    Library ascOrderedLibraryShiftedMatching = new Library(
+    Bookshelf ascOrderedBookshelfShiftedMatching = new Bookshelf(
         "XXXXG" +
             "XXXBT" +
             "XXCGC" +
             "XTBCG" +
             "BBBBB" +
             "PPPPP");
-    Library descOrderedLibraryMatching = new Library(
+    Bookshelf descOrderedBookshelfMatching = new Bookshelf(
         "XXXXX" +
             "PXXXX" +
             "CGXXX" +
             "BGCXX" +
             "BGTTX" +
             "PPPPP");
-    Library descOrderedLibraryShiftedMatching = new Library(
+    Bookshelf descOrderedBookshelfShiftedMatching = new Bookshelf(
         "PXXXX" +
             "CGXXX" +
             "CBGXX" +
             "BGTTX" +
             "PPPPP" +
             "BBBBB");
-    Library noOrderedLibraryMatching = new Library(
+    Bookshelf noOrderedBookshelfMatching = new Bookshelf(
         "CCCCC" +
             "BBBBB" +
             "PTCGF" +
             "PTCGF" +
             "PTCGF" +
             "PTCGF");
-    Library allNull = new Library(
+    Bookshelf allNull = new Bookshelf(
         "XXXXX" +
             "XXXXX" +
             "XXXXX" +
@@ -519,12 +519,12 @@ public class SharedPatternFactoryTest {
             "XXXXX" +
             "XXXXX");
 
-    assertTrue(SharedPatternFactory.checkOrderedLibraryColumns.test(ascOrderedLibraryMatching));
-    assertTrue(SharedPatternFactory.checkOrderedLibraryColumns.test(ascOrderedLibraryShiftedMatching));
-    assertTrue(SharedPatternFactory.checkOrderedLibraryColumns.test(descOrderedLibraryMatching));
-    assertTrue(SharedPatternFactory.checkOrderedLibraryColumns.test(descOrderedLibraryShiftedMatching));
-    assertFalse(SharedPatternFactory.checkOrderedLibraryColumns.test(noOrderedLibraryMatching));
-    assertFalse(SharedPatternFactory.checkOrderedLibraryColumns.test(allNull));
+    assertTrue(SharedPatternFactory.checkOrderedBookshelfColumns.test(ascOrderedBookshelfMatching));
+    assertTrue(SharedPatternFactory.checkOrderedBookshelfColumns.test(ascOrderedBookshelfShiftedMatching));
+    assertTrue(SharedPatternFactory.checkOrderedBookshelfColumns.test(descOrderedBookshelfMatching));
+    assertTrue(SharedPatternFactory.checkOrderedBookshelfColumns.test(descOrderedBookshelfShiftedMatching));
+    assertFalse(SharedPatternFactory.checkOrderedBookshelfColumns.test(noOrderedBookshelfMatching));
+    assertFalse(SharedPatternFactory.checkOrderedBookshelfColumns.test(allNull));
   };
 
 }

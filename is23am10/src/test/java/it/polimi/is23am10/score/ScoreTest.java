@@ -10,7 +10,7 @@ public class ScoreTest {
         Score s = new Score();
         Integer zero = 0;
         assertEquals(zero, s.getExtraPoint());
-        assertEquals(zero, s.getLibraryPoints());
+        assertEquals(zero, s.getBookshelfPoints());
         assertEquals(zero, s.getScoreBlockPoints());
         assertEquals(zero, s.getPrivatePoints());
     }

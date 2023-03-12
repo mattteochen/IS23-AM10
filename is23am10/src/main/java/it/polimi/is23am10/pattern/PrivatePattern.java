@@ -1,6 +1,6 @@
 package it.polimi.is23am10.pattern;
 
-import it.polimi.is23am10.items.library.Library;
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
 
 /**
  * Private pattern object.
@@ -13,8 +13,8 @@ import it.polimi.is23am10.items.library.Library;
 public class PrivatePattern extends AbstractPattern {
 
   /**
-   * The pattern play grid. An instance of {@link Library}
+   * The pattern play grid. An instance of {@link Bookshelf}
    * 
    */
-  private Library grid;
+  private Bookshelf grid;
 }
