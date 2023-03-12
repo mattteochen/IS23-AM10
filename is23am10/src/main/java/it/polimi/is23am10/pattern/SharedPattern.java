@@ -1,8 +1,8 @@
 package it.polimi.is23am10.pattern;
 
-import it.polimi.is23am10.items.library.Library;
-
 import java.util.function.Predicate;
+
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
 
 /**
  * Shared pattern object.
@@ -12,7 +12,7 @@ import java.util.function.Predicate;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class SharedPattern<T extends Library> extends AbstractPattern {
+public class SharedPattern<T extends Bookshelf> extends AbstractPattern {
 
   /**
    * A {@link Predicate} instance applying the given rule.

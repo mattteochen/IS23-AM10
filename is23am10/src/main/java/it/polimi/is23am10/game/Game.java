@@ -11,8 +11,8 @@ import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.SharedCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.player.Player;
+import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
-import it.polimi.is23am10.player.exceptions.NullPlayerLibraryException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
@@ -151,13 +151,13 @@ public class Game {
    * @throws NullPlayerScoreBlocksException
    * @throws NullPlayerPrivateCardException
    * @throws NullPlayerScoreException
-   * @throws NullPlayerLibraryException
+   * @throws NullPlayerBookshelfException
    * @throws NullPlayerIdException
    * @throws NullPlayerNameException
    *
    */
   public void addPlayer(String playerName)
-      throws NullPlayerNameException, NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException,
+      throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException {
     players.add(PlayerFactory.getNewPlayer(playerName, getPlayerNames()));

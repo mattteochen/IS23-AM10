@@ -14,13 +14,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
 
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.card.PrivateCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
-import it.polimi.is23am10.items.library.Library;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
+import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
-import it.polimi.is23am10.player.exceptions.NullPlayerLibraryException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
@@ -44,7 +44,7 @@ public class PlayerTest {
 
         @BeforeEach
         void setPlayerID_tests_setup()
-            throws NullPlayerNameException, NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException,
+            throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
             NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
             AlreadyInitiatedPatternException, NullPlayerNamesException {
             players = new ArrayList<String>();
@@ -75,7 +75,7 @@ public class PlayerTest {
 
         @BeforeEach
         void setScore_tests_setup()
-            throws NullPlayerNameException, NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException,
+            throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
             NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
             AlreadyInitiatedPatternException, NullPlayerNamesException {
             players = new ArrayList<String>();
@@ -99,14 +99,14 @@ public class PlayerTest {
     }
     
     @Nested
-    class setLibrary_tests{
+    class setBookshelf_tests{
 
         ArrayList<String> players;
         Player p;
 
         @BeforeEach
-        void setLibrary_tests_setup()
-            throws NullPlayerNameException, NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException,
+        void setBookshelf_tests_setup()
+            throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
             NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
             AlreadyInitiatedPatternException, NullPlayerNamesException {
             players = new ArrayList<String>();
@@ -114,17 +114,17 @@ public class PlayerTest {
         }
         
         @Test
-        public void setLibrary_should_set_Library() throws NullPlayerLibraryException{
-            Library dummyLibrary = new Library();
-            p.setLibrary(dummyLibrary);
-            assertNotNull(p.getLibrary());
-            assertEquals(dummyLibrary, p.getLibrary());
+        public void setBookshelf_should_set_Bookshelf() throws NullPlayerBookshelfException{
+            Bookshelf dummyBookshelf = new Bookshelf();
+            p.setBookshelf(dummyBookshelf);
+            assertNotNull(p.getBookshelf());
+            assertEquals(dummyBookshelf, p.getBookshelf());
         }
     
         @Test
-        public void setLibrary_should_throw_NullPlayerLibraryException() throws NullPlayerLibraryException {
-            Library dummyLibrary = null;
-            assertThrows(NullPlayerLibraryException.class, () -> p.setLibrary(dummyLibrary));
+        public void setBookshelf_should_throw_NullPlayerBookshelfException() throws NullPlayerBookshelfException {
+            Bookshelf dummyBookshelf = null;
+            assertThrows(NullPlayerBookshelfException.class, () -> p.setBookshelf(dummyBookshelf));
         }
 
     }
@@ -137,7 +137,7 @@ public class PlayerTest {
 
         @BeforeEach
         void setPrivateCard_tests_setup()
-            throws NullPlayerNameException, NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException,
+            throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
             NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
             AlreadyInitiatedPatternException, NullPlayerNamesException {
             players = new ArrayList<String>();
@@ -168,7 +168,7 @@ public class PlayerTest {
 
         @BeforeEach
         void setScoreBlocks_tests_setup()
-            throws NullPlayerNameException, NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException,
+            throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
             NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
             AlreadyInitiatedPatternException, NullPlayerNamesException {
             players = new ArrayList<String>();

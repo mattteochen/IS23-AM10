@@ -16,17 +16,17 @@ import it.polimi.is23am10.score.exceptions.NullPointsException;
 public final class Score {
   /**
    * Integer referencing the extra point given to the first player
-   * to complete their library.
+   * to complete their bookshelf.
    * 
    */
   private Integer extraPoint;
 
   /**
    * Integer referencing the points the player receives from
-   * the groups of same type tiles in their library.
+   * the groups of same type tiles in their bookshelf.
    * 
    */
-  private Integer libraryPoints;
+  private Integer bookshelfPoints;
 
   /**
    * Integer referencing the points the player receives from
@@ -49,7 +49,7 @@ public final class Score {
    */
   public Score() {
     extraPoint = 0;
-    libraryPoints = 0;
+    bookshelfPoints = 0;
     scoreBlockPoints = 0;
     privatePoints = 0;
   }
@@ -64,18 +64,18 @@ public final class Score {
   }
 
   /**
-   * libraryPoints setter.
+   * bookshelfPoints setter.
    * 
-   * @param libraryPoints The library points value to be assigned.
+   * @param bookshelfPoints The bookshelf points value to be assigned.
    * @throws NullPointsException.
    * 
    */
-  public void setLibraryPoints(Integer libraryPoints) throws NullPointsException {
-    if (libraryPoints == null) {
+  public void setBookshelfPoints(Integer bookshelfPoints) throws NullPointsException {
+    if (bookshelfPoints == null) {
       throw new NullPointsException(
-          "[class " + this.getClass() + ", method setLibraryPoints]: Null library points value");
+          "[class " + this.getClass() + ", method setBookshelfPoints]: Null bookshelf points value");
     }
-    this.libraryPoints = libraryPoints;
+    this.bookshelfPoints = bookshelfPoints;
   }
 
   /**
@@ -119,13 +119,13 @@ public final class Score {
   }
 
   /**
-   * libraryPoints getter.
+   * bookshelfPoints getter.
    * 
-   * @return The library points value.
+   * @return The bookshelf points value.
    * 
    */
-  public Integer getLibraryPoints() {
-    return libraryPoints;
+  public Integer getBookshelfPoints() {
+    return bookshelfPoints;
   }
 
   /**

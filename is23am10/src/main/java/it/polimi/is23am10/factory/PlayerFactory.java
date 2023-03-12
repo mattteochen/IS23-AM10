@@ -2,12 +2,12 @@ package it.polimi.is23am10.factory;
 
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.card.PrivateCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
-import it.polimi.is23am10.items.library.Library;
 import it.polimi.is23am10.player.Player;
+import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
-import it.polimi.is23am10.player.exceptions.NullPlayerLibraryException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
@@ -62,7 +62,7 @@ public class PlayerFactory {
    * @throws AlreadyInitiatedPatternException
    * @throws DuplicatePlayerNameException
    * @throws NullPlayerIdException
-   * @throws NullPlayerLibraryException
+   * @throws NullPlayerBookshelfException
    * @throws NullPlayerNameException
    * @throws NullPlayerPrivateCardException
    * @throws NullPlayerScoreBlocksException
@@ -71,7 +71,7 @@ public class PlayerFactory {
    * 
    */
   public static Player getNewPlayer(String playerName, List<String> playerNames)
-      throws NullPlayerNameException, NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException,
+      throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException {
 
@@ -100,7 +100,7 @@ public class PlayerFactory {
     instance.setPlayerID(UUID.nameUUIDFromBytes(playerName.getBytes()));
     instance.setPlayerName(playerName);
     instance.setScore(new Score());
-    instance.setLibrary(new Library());
+    instance.setBookshelf(new Bookshelf());
     instance.setPrivateCard(new PrivateCard());
     instance.setScoreBlocks(new ArrayList<>());
 

@@ -8,14 +8,14 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import it.polimi.is23am10.items.library.Library;
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 
 /**
  * Shared pattern factory object.
  * 
- *  NOTE: if not specified, each iteration of the player's library inside the
+ *  NOTE: if not specified, each iteration of the player's bookshelf inside the
  * functions is gonna be first over rows,then columns
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
@@ -72,9 +72,9 @@ public final class SharedPatternFactory{
    * adjacent positions (row or column).
    *
    */
-  public static final Predicate<Library> checkTwoAdjacents = lib -> {
+  public static final Predicate<Bookshelf> checkTwoAdjacents = bs -> {
     int count = 0;
-    Tile[][] grid = lib.getLibraryGrid();
+    Tile[][] grid = bs.getBookshelfGrid();
     Set<String> coordsAdjAlreadyCounted = new HashSet<String>();
 
     for (int i = 0; i < grid.length; i++) {
@@ -110,8 +110,8 @@ public final class SharedPatternFactory{
    * Rule that checks if the elements on all the corners match
    *
    */
-  public static final Predicate<Library> checkCornersMatch = lib -> {
-    Tile[][] grid = lib.getLibraryGrid();
+  public static final Predicate<Bookshelf> checkCornersMatch = bs -> {
+    Tile[][] grid = bs.getBookshelfGrid();
     if(grid[0][0].isEmpty()){
       return false;
     }
@@ -126,9 +126,9 @@ public final class SharedPatternFactory{
    * the same type in adjacent positions(row or column)
    *
    */
-  public static final Predicate<Library> checkFourAdjacents = lib -> {
+  public static final Predicate<Bookshelf> checkFourAdjacents = bs -> {
     int count = 0;
-    Tile[][] grid = lib.getLibraryGrid();
+    Tile[][] grid = bs.getBookshelfGrid();
     Set<String> coordsAdjAlreadyCounted = new HashSet<String>();
 
     for (int i = 0; i < grid.length; i++) {
@@ -173,7 +173,7 @@ public final class SharedPatternFactory{
    * 
    * @param startRow Starting row from where I want to check if it's a valid square
    * @param startCol Starting col from where I want to check if it's a valid square
-   * @param grid library grid
+   * @param grid bookshelf grid
    * 
    * @return True if the square is present.
    */
@@ -196,8 +196,8 @@ public final class SharedPatternFactory{
    * type (the type has to be the same for both the squares)
    * 
    */
-  public static final Predicate<Library> checkSquares = lib -> {
-    Tile[][] grid = lib.getLibraryGrid();
+  public static final Predicate<Bookshelf> checkSquares = bs -> {
+    Tile[][] grid = bs.getBookshelfGrid();
     Map<TileType, Integer> checkCount = new HashMap<TileType, Integer>();
 
     for (int i = 0; i < grid.length - 1; i++) {
@@ -225,9 +225,9 @@ public final class SharedPatternFactory{
    * different types of tiles
    *
    */
-  public static final Predicate<Library> checkMaxThreeTypesInColumn = lib -> {
+  public static final Predicate<Bookshelf> checkMaxThreeTypesInColumn = bs -> {
     int countedColumns = 0;
-    Tile[][] grid = lib.getLibraryGrid();
+    Tile[][] grid = bs.getBookshelfGrid();
 
     // here we want to check every column so we are iterating first over columns
     for (int i = 0; i < grid[i].length; i++) {
@@ -255,8 +255,8 @@ public final class SharedPatternFactory{
    * Rule that checks if there are at least eight different tiles of the same type
    *
    */
-  public static final Predicate<Library> checkEightOfSameType = lib -> {
-    Tile[][] grid = lib.getLibraryGrid();
+  public static final Predicate<Bookshelf> checkEightOfSameType = bs -> {
+    Tile[][] grid = bs.getBookshelfGrid();
     Map<TileType, Integer> checkCount = new HashMap<TileType, Integer>();
     for (int i = 0; i < grid.length; i++) {
       for (int j = 0; j < grid[i].length; j++) {
@@ -277,10 +277,10 @@ public final class SharedPatternFactory{
   };
 
 /**
- * Supporting method checking ascendent diagonal in Library.
+ * Supporting method checking ascendent diagonal in Bookshelf.
  * 
  * @param startingRowOffset tells us if the diagonal is shifted vertically.
- * @param grid library grid
+ * @param grid bookshelf grid
  * @return True if diagonal is present.
  */
   private static final boolean checkAscDiagonal(int startingRowOffset, Tile[][] grid) {
@@ -299,10 +299,10 @@ public final class SharedPatternFactory{
   }
 
   /**
-   * Supporting method checking descendent diagonal in Library.
+   * Supporting method checking descendent diagonal in Bookshelf.
    * 
    * @param startingRowOffset tells us if the diagonal is shifted vertically.
-   * @param grid library grid.
+   * @param grid bookshelf grid.
    * @return True if diagonal is present.
    */
   private static final boolean checkDescDiagonal(int startingRowOffset, Tile[][] grid) {
@@ -326,8 +326,8 @@ public final class SharedPatternFactory{
    * Rule that checks if the diagonals are filled with tiles of the same type
    *
    */
-  public static final Predicate<Library> checkDiagonalsSameType = lib -> {
-    Tile[][] grid = lib.getLibraryGrid();
+  public static final Predicate<Bookshelf> checkDiagonalsSameType = bs -> {
+    Tile[][] grid = bs.getBookshelfGrid();
 
     // I'm cycling with i=0,1 meaning that I'm checking both the diagonals if the
     // starting row is the first one(i=0) or the second one (i=1)
@@ -347,9 +347,9 @@ public final class SharedPatternFactory{
    * rows
    *
    */
-  public static final Predicate<Library> checkMaxThreeTypesInRow = lib -> {
+  public static final Predicate<Bookshelf> checkMaxThreeTypesInRow = bs -> {
     int countRows = 0;
-    Tile[][] grid = lib.getLibraryGrid();
+    Tile[][] grid = bs.getBookshelfGrid();
     for (int i = 0; i < grid.length; i++) {
       Set<TileType> seenTypes = new HashSet<TileType>();
       for (int j = 0; j < grid[0].length; j++) {
@@ -377,9 +377,9 @@ public final class SharedPatternFactory{
    * different type
    *
    */
-  public static final Predicate<Library> checkTwoColumnAllDiff = lib -> {
+  public static final Predicate<Bookshelf> checkTwoColumnAllDiff = bs -> {
     int countColumns = 0;
-    Tile[][] grid = lib.getLibraryGrid();
+    Tile[][] grid = bs.getBookshelfGrid();
     /*
     * here I am iterating over columns first since I want to check if in a column
     * there are all different types
@@ -410,9 +410,9 @@ public final class SharedPatternFactory{
    * tiles
    *
    */
-  public static final Predicate<Library> checkTwoRowsAllDiff = lib -> {
+  public static final Predicate<Bookshelf> checkTwoRowsAllDiff = bs -> {
     int countRows = 0;
-    Tile[][] grid = lib.getLibraryGrid();
+    Tile[][] grid = bs.getBookshelfGrid();
     for (int i = 0; i < grid.length; i++) {
       Set<TileType> seenTypes = new HashSet<TileType>();
       for (int j = 0; j < grid[0].length ; j++) {
@@ -438,7 +438,7 @@ public final class SharedPatternFactory{
    * 
    * @param row Starting row index from where I start to check.
    * @param col Starting col index from where I start to check.
-   * @param grid Library grid.
+   * @param grid Bookshelf grid.
    * 
    * @return True if X shape is present.
    * 
@@ -462,8 +462,8 @@ public final class SharedPatternFactory{
    * Rule that checks if there are 5 tiles of the same type on a 'X' shape
    *
    */
-  public static final Predicate<Library> checkTilesXShape = lib -> {
-    Tile[][] grid = lib.getLibraryGrid();
+  public static final Predicate<Bookshelf> checkTilesXShape = bs -> {
+    Tile[][] grid = bs.getBookshelfGrid();
 
     for (int i = 0; i < grid.length - 2; i++) {
       for (int j = 0; j < grid[0].length - 2; j++) {
@@ -478,12 +478,12 @@ public final class SharedPatternFactory{
   
   /**
    * #12
-   * Rule that checks if the columns in the library are ordered (asc o desc) and
-   * the rest of the library is filled with {@link TileType#EMPTY} 
+   * Rule that checks if the columns in the bookshelf are ordered (asc o desc) and
+   * the rest of the bookshelf is filled with {@link TileType#EMPTY} 
    *
    */
-  public static final Predicate<Library> checkOrderedLibraryColumns = lib -> {
-    Tile[][] grid = lib.getLibraryGrid();
+  public static final Predicate<Bookshelf> checkOrderedBookshelfColumns = bs -> {
+    Tile[][] grid = bs.getBookshelfGrid();
 
     Predicate<Tile[][]> checkDescOrder = g -> {
       for (int i = 0; i < g.length; i++) {
@@ -564,7 +564,7 @@ public final class SharedPatternFactory{
     (new SharedPattern<>(checkTwoColumnAllDiff, "At least two full columns (filled with six tiles), having tiles of all different types.")),
     (new SharedPattern<>(checkTwoRowsAllDiff, "At least two full rows (filled with five tiles), having tiles of all different types.")),
     (new SharedPattern<>(checkTilesXShape, "Five tiles of the same type, forming an X shape.")),
-    (new SharedPattern<>(checkOrderedLibraryColumns, "Five columns with ascending or descending height. Starting from the first or the last column, the next column has to have one tile more. The tile types are not considered."))
+    (new SharedPattern<>(checkOrderedBookshelfColumns, "Five columns with ascending or descending height. Starting from the first or the last column, the next column has to have one tile more. The tile types are not considered."))
   );
 
   /**

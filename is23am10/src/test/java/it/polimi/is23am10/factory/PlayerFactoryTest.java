@@ -13,8 +13,8 @@ import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.player.Player;
+import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
-import it.polimi.is23am10.player.exceptions.NullPlayerLibraryException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
@@ -28,7 +28,7 @@ public class PlayerFactoryTest {
     
     @Test
     public void getNewPlayer_should_return_player() 
-    throws NullPlayerNameException, NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException,
+    throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
             NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
             AlreadyInitiatedPatternException, NullPlayerNamesException{
         ArrayList<String> players = new ArrayList<String>();
@@ -36,7 +36,7 @@ public class PlayerFactoryTest {
 
         assertEquals("myNewPlayer", p.getPlayerName());
         assertEquals(UUID.nameUUIDFromBytes("myNewPlayer".getBytes()), p.getPlayerID());
-        assertNotNull(p.getLibrary());
+        assertNotNull(p.getBookshelf());
         assertNotNull(p.getPrivateCard());
         assertNotNull(p.getScore());
         assertNotNull(p.getScoreBlocks());
@@ -44,7 +44,7 @@ public class PlayerFactoryTest {
     
     @Test
     public void getNewPlayer_should_throw_DuplicatePlayerNameException()
-    throws NullPlayerNameException, NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException,
+    throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
         AlreadyInitiatedPatternException, NullPlayerNamesException{
         ArrayList<String> players = new ArrayList<String>();
@@ -54,7 +54,7 @@ public class PlayerFactoryTest {
     
     @Test
     public void getNewPlayer_should_throw_NullPlayerNamesException()
-    throws NullPlayerNameException, NullPlayerIdException, NullPlayerLibraryException, NullPlayerScoreException,
+    throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
         AlreadyInitiatedPatternException, NullPlayerNamesException{
         assertThrows(NullPlayerNamesException.class, () -> PlayerFactory.getNewPlayer("myPlayerName", null));
