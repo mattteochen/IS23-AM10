@@ -444,7 +444,7 @@ public final class SharedPatternFactory{
    * 
    */
   private static final boolean checkXShape(int row, int col, Tile[][] grid) {
-    if(row >= grid.length || col >= grid[0].length){
+    if(row >= grid.length || col >= grid[0].length || row < 0 || col < 0){
       return false;
     }
     if (grid[row][col].equals(grid[row + 2][col]) &&
