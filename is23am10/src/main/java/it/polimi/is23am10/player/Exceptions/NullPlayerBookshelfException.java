@@ -10,7 +10,8 @@ package it.polimi.is23am10.player.exceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class NullPlayerBookshelfException extends Exception {
-  public NullPlayerBookshelfException(String msg) {
-    super(msg);
+    public NullPlayerBookshelfException(String msg) {
+      super(msg);
+    }
   }
-}
+  
