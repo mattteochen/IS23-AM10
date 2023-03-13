@@ -28,6 +28,8 @@ Sonar lint extensions is available (auto enabled) to detect [issues](https://mar
 Please follow all the best practises.
 
 ## Generate Jacoco test coverage report
+To generate test coverage report launch JaCoCo with the following command:
 ```
 mvn clean jacoco:prepare-agent install jacoco:report -f "/workspaces/IS23-AM10/is23am10/pom.xml"
 ```
+or use the button under "Favorites" in your Maven left-side panel.
