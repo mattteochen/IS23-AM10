@@ -3,6 +3,9 @@ Progetto Ingegneria del Software 2023
 
 [![Actions Status](https://github.com/mattteochen/IS23-AM10/actions/workflows/CI.yml/badge.svg)](https://github.com/mattteochen/IS23-AM10/actions)
 
+![Coverage](.github/badges/jacoco.svg)
+
+
 ## Setup
 *Note, development outside the docker container is not guaranteed to be working!*
 
@@ -24,3 +27,8 @@ Configuration:
 ## Live bug checks
 Sonar lint extensions is available (auto enabled) to detect [issues](https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode) during the development.
 Please follow all the best practises.
+
+## Generate Jacoco test coverage report
+```
+mvn clean jacoco:prepare-agent install jacoco:report -f "/workspaces/IS23-AM10/is23am10/pom.xml"
+```

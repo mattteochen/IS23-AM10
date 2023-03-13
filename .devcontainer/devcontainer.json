@@ -16,7 +16,8 @@
 			"shengchen.vscode-checkstyle",
 			"SonarSource.sonarlint-vscode",
 			"github.vscode-pull-request-github",
-			"streetsidesoftware.code-spell-checker"
+			"streetsidesoftware.code-spell-checker",
+			"redhat.vscode-xml"
 		]
 	  }
 	}
