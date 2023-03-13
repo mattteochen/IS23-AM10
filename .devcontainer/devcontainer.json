@@ -17,7 +17,8 @@
 			"SonarSource.sonarlint-vscode",
 			"github.vscode-pull-request-github",
 			"streetsidesoftware.code-spell-checker",
-			"redhat.vscode-xml"
+			"redhat.vscode-xml",
+			"redhat.vscode-yaml"
 		]
 	  }
 	}
