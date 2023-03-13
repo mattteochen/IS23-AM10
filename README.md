@@ -3,7 +3,7 @@ Progetto Ingegneria del Software 2023
 
 [![Actions Status](https://github.com/mattteochen/IS23-AM10/actions/workflows/CI.yml/badge.svg)](https://github.com/mattteochen/IS23-AM10/actions)
 
-[![Coverage](https://github.com/mattteochen/IS23-AM10/actions/workflows/CI.yml/jacoco.svg)](https://github.com/mattteochen/IS23-AM10/actions)
+![Coverage](.github/badges/jacoco.svg)
 
 ## Setup
 *Note, development outside the docker container is not guaranteed to be working!*
