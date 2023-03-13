@@ -72,6 +72,11 @@ public class Game {
   private Player firstPlayer;
 
   /**
+   * Player currently playing
+   */
+  private Player activePlayer;
+
+  /**
    * The instance {@Board} type.
    * 
    */
@@ -278,5 +283,24 @@ public class Game {
     return players.stream()
         .map(Player::getPlayerName)
         .collect(Collectors.toList());
+  }
+  
+  /**
+   * Method used to retrieve a player from the list 
+   * given its name.
+   * 
+   * @param playerName
+   * @return Player matching provided name.
+   */
+  private Player getPlayerByName(String playerName) {
+    return new Player(); //TODO: Replace with actual logic
+  }
+
+  /**
+   * Method that computes active player's Score, updates the view,
+   * checks if game is over and if not picks next player
+   */
+  public void nextTurn() {
+    //TODO: Replace with actual logic
   }
 }
