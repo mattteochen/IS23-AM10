@@ -27,7 +27,7 @@ jobs:
         run: cd is23am10/ && mvn --batch-mode --update-snapshots package
 
       - name: Generate coverage report with Jacoco
-        run: mvn clean jacoco:prepare-agent install jacoco:report -f "/workspaces/IS23-AM10/is23am10/pom.xml"
+        run: mvn clean jacoco:prepare-agent install jacoco:report -f "/is23am10/pom.xml"
       
       - name: Generate JaCoCo Badge
         uses: cicirello/jacoco-badge-generator@v2
