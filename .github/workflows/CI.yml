@@ -33,3 +33,4 @@ jobs:
         uses: cicirello/jacoco-badge-generator@v2
         with:
           generate-branches-badge: true
+          jacoco-csv-file: is23am10/target/site/jacoco/jacoco.csv/
