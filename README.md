@@ -25,11 +25,11 @@ Configuration:
 
 ## Live bug checks
 Sonar lint extensions is available (auto enabled) to detect [issues](https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode) during the development.
-Please follow all the best practises.
+Please follow all the best practices.
 
 ## Generate Jacoco test coverage report
-To generate test coverage report launch JaCoCo with the following command:
+To generate test coverage report launch JaCoCo with the following command from `<REPOSITORY_DIRECTORY>/is23am10`:
 ```
-mvn clean jacoco:prepare-agent install jacoco:report -f "/workspaces/IS23-AM10/is23am10/pom.xml"
+mvn clean jacoco:prepare-agent install jacoco:report
 ```
 or use the button under "Favorites" in your Maven left-side panel.
