@@ -178,7 +178,7 @@ public class Board {
    * board AND when re-filling it partially mid-game.
    * 
    */
-  public void fillBoardGrid() {
+  private void fillBoardGrid() {
     for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
       for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
         if (blackMap[i][j] <= numOfPlayers) {
@@ -279,5 +279,14 @@ public class Board {
     Tile tile = boardGrid[row][col];
     boardGrid[row][col] = new Tile(TileType.EMPTY);
     return tile;
+  }
+
+  /**
+   * Method called at the end of the turn that
+   * checks if the Board needs to be refilled
+   * and proceeds if so.
+   */
+  public void refillIfNeeded(){
+    //TODO: add logic
   }
 }
