@@ -11,5 +11,11 @@
     "java.test.config": {
         
     },
-    "redhat.telemetry.enabled": false
+    "redhat.telemetry.enabled": false,
+    "maven.terminal.favorites": [
+        {
+            "command": "clean jacoco:prepare-agent install jacoco:report",
+            "debug": false
+        }
+    ]
 }
