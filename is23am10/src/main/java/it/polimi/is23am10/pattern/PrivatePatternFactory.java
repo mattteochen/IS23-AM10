@@ -2,11 +2,10 @@ package it.polimi.is23am10.pattern;
 
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
+
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
-import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
-import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
 import it.polimi.is23am10.items.tile.Tile;
-import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 
 /**
  * Private pattern factory object.
@@ -20,14 +19,9 @@ public final class PrivatePatternFactory  {
 
     /**
      * PrivatePattern Rule #1.
-     * @param bs
-     * @return
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+     * 
      */
-    public static final boolean checkPattern1(Bookshelf bs) throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException{
+    public static final Predicate<Bookshelf> checkPattern1 = bs -> {
         Bookshelf pattern = new Bookshelf(
                 "PXFXX" +
                 "XXXXG" +
@@ -50,14 +44,9 @@ public final class PrivatePatternFactory  {
 
     /**
      * PrivatePattern Rule #2.
-     * @param bs
-     * @return
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+     * 
      */
-    public static final boolean checkPattern2(Bookshelf bs) throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException{
+    public static final Predicate<Bookshelf> checkPattern2 = bs -> {
         Bookshelf pattern = new Bookshelf(
                 "XXXXX" +
                 "XPXXX" +
@@ -80,14 +69,9 @@ public final class PrivatePatternFactory  {
 
     /**
      * PrivatePattern Rule #3.
-     * @param bs
-     * @return
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+     * 
      */
-    public static final boolean checkPattern3(Bookshelf bs) throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException{
+    public static final Predicate<Bookshelf> checkPattern3 = bs -> {
         Bookshelf pattern = new Bookshelf(
                 "XXXXX" +
                 "FXXGX" +
@@ -110,14 +94,9 @@ public final class PrivatePatternFactory  {
 
     /**
      * PrivatePattern Rule #4.
-     * @param bs
-     * @return
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+     * 
      */
-    public static final boolean checkPattern4(Bookshelf bs) throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException{
+    public static final Predicate<Bookshelf> checkPattern4 = bs -> {
         Bookshelf pattern = new Bookshelf(
                 "XXXXG" +
                 "XXXXX" +
@@ -140,14 +119,9 @@ public final class PrivatePatternFactory  {
 
     /**
      * PrivatePattern Rule #5.
-     * @param bs
-     * @return
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+     * 
      */
-    public static final boolean checkPattern5(Bookshelf bs) throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException{
+    public static final Predicate<Bookshelf> checkPattern5 = bs -> {
         Bookshelf pattern = new Bookshelf(
                 "XXXXX" +
                 "XTXXX" +
@@ -170,14 +144,9 @@ public final class PrivatePatternFactory  {
 
     /**
      * PrivatePattern Rule #6.
-     * @param bs
-     * @return
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+     * 
      */
-    public static final boolean checkPattern6(Bookshelf bs) throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException{
+    public static final Predicate<Bookshelf> checkPattern6 = bs -> {
         Bookshelf pattern = new Bookshelf(
                 "XXTXX" +
                 "XXXXX" +
@@ -200,14 +169,9 @@ public final class PrivatePatternFactory  {
 
     /**
      * PrivatePattern Rule #7.
-     * @param bs
-     * @return
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+     * 
      */
-    public static final boolean checkPattern7(Bookshelf bs) throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException{
+    public static final Predicate<Bookshelf> checkPattern7 = bs -> {
         Bookshelf pattern = new Bookshelf(
                 "CXXXX" +
                 "XXXFX" +
@@ -230,14 +194,9 @@ public final class PrivatePatternFactory  {
 
     /**
      * PrivatePattern Rule #8.
-     * @param bs
-     * @return
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+     * 
      */
-    public static final boolean checkPattern8(Bookshelf bs) throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException{
+    public static final Predicate<Bookshelf> checkPattern8 = bs -> {
         Bookshelf pattern = new Bookshelf(
                 "PXFXX" +
                 "XXXXG" +
@@ -260,14 +219,9 @@ public final class PrivatePatternFactory  {
 
     /**
      * PrivatePattern Rule #9.
-     * @param bs
-     * @return
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+     * 
      */
-    public static final boolean checkPattern9(Bookshelf bs) throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException{
+    public static final Predicate<Bookshelf> checkPattern9 = bs -> {
         Bookshelf pattern = new Bookshelf(
                 "XXXXF" +
                 "XCXXX" +
@@ -290,14 +244,9 @@ public final class PrivatePatternFactory  {
 
     /**
      * PrivatePattern Rule #10.
-     * @param bs
-     * @return
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+     * 
      */
-    public static final boolean checkPattern10(Bookshelf bs) throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException{
+    public static final Predicate<Bookshelf> checkPattern10 = bs -> {
         Bookshelf pattern = new Bookshelf(
                 "XXGXX" +
                 "XXXXX" +
@@ -320,14 +269,9 @@ public final class PrivatePatternFactory  {
 
     /**
      * PrivatePattern Rule #11.
-     * @param bs
-     * @return
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+     * 
      */
-    public static final boolean checkPattern11(Bookshelf bs) throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException{
+    public static final Predicate<Bookshelf> checkPattern11 = bs -> {
         Bookshelf pattern = new Bookshelf(
                 "XXXXT" +
                 "XGXXX" +
@@ -350,14 +294,9 @@ public final class PrivatePatternFactory  {
 
     /**
      * PrivatePattern Rule #12.
-     * @param bs
-     * @return
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+     * 
      */
-    public static final boolean checkPattern12(Bookshelf bs) throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException{
+    public static final Predicate<Bookshelf> checkPattern12 = bs -> {
         Bookshelf pattern = new Bookshelf(
                 "XXPXX" +
                 "XBXXX" +
@@ -380,12 +319,24 @@ public final class PrivatePatternFactory  {
 
 
     /**
-     * The list og {@link PrivatePattern} containing all the 12 different patterns.
+     * The list of {@link PrivatePattern} containing all the 12 different patterns.
      * 
      */
-    public static final List<PrivatePattern> patternsArray = List.of();
+    public static final List<PrivatePattern> patternsArray = List.of(
+        (new PrivatePattern(checkPattern1)),
+        (new PrivatePattern(checkPattern2)),
+        (new PrivatePattern(checkPattern3)),
+        (new PrivatePattern(checkPattern4)),
+        (new PrivatePattern(checkPattern5)),
+        (new PrivatePattern(checkPattern6)),
+        (new PrivatePattern(checkPattern7)),
+        (new PrivatePattern(checkPattern8)),
+        (new PrivatePattern(checkPattern9)),
+        (new PrivatePattern(checkPattern10)),
+        (new PrivatePattern(checkPattern11)),
+        (new PrivatePattern(checkPattern12))
+    );
     
-
     /**
      * Method used to get random PrivatePattern between the 12 possible.
      * 
