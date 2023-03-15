@@ -17,5 +17,6 @@
             "command": "clean jacoco:prepare-agent install jacoco:report",
             "debug": false
         }
-    ]
+    ],
+    "java.checkstyle.version": "10.8.1"
 }
