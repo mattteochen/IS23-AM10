@@ -1,6 +1,6 @@
 package it.polimi.is23am10.pattern;
 
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 
@@ -15,16 +15,16 @@ import it.polimi.is23am10.items.bookshelf.Bookshelf;
 public class PrivatePattern extends AbstractPattern {
 
   /**
-   * A {@link Predicate} instance applying the given rule.
+   * A {@link Function} instance applying the given rule.
    * 
    */
-  private Predicate<Bookshelf> rule;
+  private Function<Bookshelf, Integer> rule;
   
   /**
    * The constructor of the class PrivatePattern.
    * 
    */
-  public PrivatePattern(Predicate rule){
+  public PrivatePattern(Function rule){
       this.rule = rule;
   };
 }
