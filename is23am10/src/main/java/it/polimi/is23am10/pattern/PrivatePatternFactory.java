@@ -27,7 +27,7 @@ public final class PrivatePatternFactory  {
         
         if(grid[0][0].getType() == (TileType.PLANT))  cardMatched++;
         if(grid[0][2].getType() == (TileType.FRAME))  cardMatched++;
-        if(grid[1][4].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[1][4].getType() == (TileType.CAT))   cardMatched++;
         if(grid[2][3].getType() == (TileType.BOOK))   cardMatched++;
         if(grid[3][1].getType() == (TileType.GAME))   cardMatched++;
         if(grid[5][2].getType() == (TileType.TROPHY)) cardMatched++;
@@ -62,10 +62,10 @@ public final class PrivatePatternFactory  {
         int cardMatched = 0;
         
         if(grid[1][0].getType() == (TileType.FRAME))  cardMatched++;
-        if(grid[1][2].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[1][3].getType() == (TileType.GAME))   cardMatched++;
         if(grid[2][2].getType() == (TileType.PLANT))  cardMatched++;
         if(grid[3][1].getType() == (TileType.CAT))    cardMatched++;
-        if(grid[4][4].getType() == (TileType.TROPHY)) cardMatched++;
+        if(grid[3][4].getType() == (TileType.TROPHY)) cardMatched++;
         if(grid[5][0].getType() == (TileType.BOOK))   cardMatched++;
         
         return cardMatched;
@@ -118,8 +118,8 @@ public final class PrivatePatternFactory  {
         if(grid[0][2].getType() == (TileType.TROPHY)) cardMatched++;
         if(grid[0][4].getType() == (TileType.CAT))    cardMatched++;
         if(grid[2][3].getType() == (TileType.BOOK))   cardMatched++;
-        if(grid[4][3].getType() == (TileType.GAME))   cardMatched++;
-        if(grid[4][1].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[4][1].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[4][3].getType() == (TileType.FRAME))  cardMatched++;
         if(grid[5][0].getType() == (TileType.PLANT))  cardMatched++;
         
         return cardMatched;
@@ -151,12 +151,12 @@ public final class PrivatePatternFactory  {
         Tile[][] grid = bs.getBookshelfGrid();
         int cardMatched = 0;
         
-        if(grid[0][0].getType() == (TileType.PLANT))  cardMatched++;
-        if(grid[0][2].getType() == (TileType.FRAME))  cardMatched++;
-        if(grid[1][4].getType() == (TileType.GAME))   cardMatched++;
-        if(grid[2][3].getType() == (TileType.BOOK))   cardMatched++;
-        if(grid[3][1].getType() == (TileType.GAME))   cardMatched++;
-        if(grid[5][2].getType() == (TileType.TROPHY)) cardMatched++;
+        if(grid[0][4].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[1][1].getType() == (TileType.CAT))  cardMatched++;
+        if(grid[2][2].getType() == (TileType.TROPHY))   cardMatched++;
+        if(grid[3][0].getType() == (TileType.PLANT))   cardMatched++;
+        if(grid[4][3].getType() == (TileType.BOOK))   cardMatched++;
+        if(grid[5][3].getType() == (TileType.GAME)) cardMatched++;
         
         return cardMatched;
     };
@@ -169,12 +169,12 @@ public final class PrivatePatternFactory  {
         Tile[][] grid = bs.getBookshelfGrid();
         int cardMatched = 0;
         
-        if(grid[0][4].getType() == (TileType.FRAME))  cardMatched++;
-        if(grid[1][1].getType() == (TileType.CAT))    cardMatched++;
-        if(grid[2][2].getType() == (TileType.TROPHY)) cardMatched++;
-        if(grid[3][0].getType() == (TileType.PLANT))  cardMatched++;
-        if(grid[4][4].getType() == (TileType.BOOK))   cardMatched++;
-        if(grid[5][3].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[0][2].getType() == (TileType.GAME))  cardMatched++;
+        if(grid[2][2].getType() == (TileType.CAT))    cardMatched++;
+        if(grid[3][4].getType() == (TileType.BOOK)) cardMatched++;
+        if(grid[4][1].getType() == (TileType.TROPHY))  cardMatched++;
+        if(grid[4][4].getType() == (TileType.PLANT))   cardMatched++;
+        if(grid[5][0].getType() == (TileType.FRAME))   cardMatched++;
         
         return cardMatched;
     };
@@ -187,12 +187,12 @@ public final class PrivatePatternFactory  {
         Tile[][] grid = bs.getBookshelfGrid();
         int cardMatched = 0;
         
-        if(grid[0][2].getType() == (TileType.GAME))   cardMatched++;
-        if(grid[2][2].getType() == (TileType.CAT))    cardMatched++;
-        if(grid[3][4].getType() == (TileType.BOOK))   cardMatched++;
-        if(grid[4][1].getType() == (TileType.TROPHY)) cardMatched++;
-        if(grid[4][4].getType() == (TileType.PLANT))  cardMatched++;
-        if(grid[5][0].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[0][4].getType() == (TileType.TROPHY))   cardMatched++;
+        if(grid[1][1].getType() == (TileType.GAME))    cardMatched++;
+        if(grid[2][0].getType() == (TileType.BOOK))   cardMatched++;
+        if(grid[3][3].getType() == (TileType.CAT)) cardMatched++;
+        if(grid[4][1].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[5][3].getType() == (TileType.PLANT))  cardMatched++;
         
         return cardMatched;
     };
@@ -208,8 +208,8 @@ public final class PrivatePatternFactory  {
         if(grid[0][2].getType() == (TileType.PLANT))  cardMatched++;
         if(grid[1][1].getType() == (TileType.BOOK))   cardMatched++;
         if(grid[2][0].getType() == (TileType.GAME))   cardMatched++;
-        if(grid[2][2].getType() == (TileType.FRAME))  cardMatched++;
-        if(grid[3][4].getType() == (TileType.CAT))    cardMatched++;
+        if(grid[3][2].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[4][4].getType() == (TileType.CAT))    cardMatched++;
         if(grid[5][3].getType() == (TileType.TROPHY)) cardMatched++;
         
         return cardMatched;
