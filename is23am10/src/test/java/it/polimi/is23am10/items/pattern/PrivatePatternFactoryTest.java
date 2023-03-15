@@ -19,99 +19,110 @@ public class PrivatePatternFactoryTest {
       throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
       NullPointerException, WrongTileTypeException {
     Bookshelf testPattern1 = new Bookshelf(
-            "CCBGF" +
+            "PCFGF" +
             "FTBFC" +
-            "FCCGF" +
-            "CBGFT" +
+            "FCCBF" +
+            "CGGFT" +
             "PPCBC" +
-            "BCBPC");
+            "BCTPC");
 
     Bookshelf testPattern2 = new Bookshelf(
             "CCBGF" +
-            "FTBFC" +
-            "FCCGF" +
-            "CBGFT" +
-            "PPCBC" +
-            "BCBPC");
+            "FPBFC" +
+            "CCGGF" +
+            "CBGFB" +
+            "PPCTC" +
+            "BCBPF");
 
     Bookshelf testPattern3 = new Bookshelf(
             "CCBGF" +
-            "FTBFC" +
-            "FCCGF" +
-            "CBGFT" +
+            "FTBGC" +
+            "FCPGF" +
+            "CCGFT" +
             "PPCBC" +
             "BCBPC");
           
     Bookshelf testPattern4 = new Bookshelf(
-            "CCBGF" +
+            "CCBGG" +
             "FTBFC" +
-            "FCCGF" +
-            "CBGFT" +
-            "PPCBC" +
+            "TCFGF" +
+            "CBGPT" +
+            "PBCBC" +
             "BCBPC");
 
     Bookshelf testPattern5 = new Bookshelf(
             "CCBGF" +
             "FTBFC" +
             "FCCGF" +
-            "CBGFT" +
-            "PPCBC" +
-            "BCBPC");
+            "CFBFT" +
+            "PPCBP" +
+            "GCBCC");
     
     Bookshelf testPattern6 = new Bookshelf(
-            "CCBGF" +
+            "CCTGC" +
             "FTBFC" +
-            "FCCGF" +
+            "FCCBF" +
             "CBGFT" +
-            "PPCBC" +
-            "BCBPC");
+            "PGCFC" +
+            "PCBPC");
     Bookshelf testPattern7 = new Bookshelf(
             "CCBGF" +
             "FTBFC" +
-            "FCCGF" +
-            "CBGFT" +
-            "PPCBC" +
+            "FPCGF" +
+            "TBGFT" +
+            "PPCBG" +
             "BCBPC");
     Bookshelf testPattern8 = new Bookshelf(
             "CCBGF" +
-            "FTBFC" +
-            "FCCGF" +
-            "CBGFT" +
+            "FCBFC" +
+            "FCTGF" +
+            "PBGFT" +
             "PPCBC" +
-            "BCBPC");
+            "BCBGC");
     Bookshelf testPattern9 = new Bookshelf(
-            "CCBGF" +
+            "CCGGF" +
             "FTBFC" +
             "FCCGF" +
-            "CBGFT" +
-            "PPCBC" +
-            "BCBPC");
+            "CBGFB" +
+            "PTCBP" +
+            "FCBPC");
 
     Bookshelf testPattern10 = new Bookshelf(
-            "CCBGF" +
-            "FTBFC" +
-            "FCCGF" +
-            "CBGFT" +
-            "PPCBC" +
+            "CCBGT" +
+            "FGBFC" +
+            "BCCGF" +
+            "CBGCT" +
+            "PFCFC" +
             "BCBPC");
 
     Bookshelf testPattern11 = new Bookshelf(
-            "CCBGF" +
-            "FTBFC" +
-            "FCCGF" +
-            "CBGFT" +
+            "CCPGF" +
+            "FBBFC" +
+            "GCCGF" +
+            "CBFFT" +
             "PPCBC" +
-            "BCBPC");
+            "BCBTC");
 
     Bookshelf testPattern12 = new Bookshelf(
             "CCBGF" +
-            "FTBFC" +
-            "FCCGF" +
-            "CBGFT" +
-            "PPCBC" +
-            "BCBPC");
+            "FPBFC" +
+            "FCFGF" +
+            "CBGTT" +
+            "PPCBG" +
+            "CCBPC");
+      
 
-    assertTrue(PrivatePatternFactory.checkPattern1.test(testPattern1));
-
+    assertTrue(PrivatePatternFactory.checkPattern1.apply(testPattern1) == 6);
+    assertTrue(PrivatePatternFactory.checkPattern2.apply(testPattern2) == 6);
+    assertTrue(PrivatePatternFactory.checkPattern3.apply(testPattern3) == 6);
+    assertTrue(PrivatePatternFactory.checkPattern4.apply(testPattern4) == 6);
+    assertTrue(PrivatePatternFactory.checkPattern5.apply(testPattern5) == 6);
+    assertTrue(PrivatePatternFactory.checkPattern6.apply(testPattern6) == 6);
+    assertTrue(PrivatePatternFactory.checkPattern7.apply(testPattern7) == 6);
+    assertTrue(PrivatePatternFactory.checkPattern8.apply(testPattern8) == 6);
+    assertTrue(PrivatePatternFactory.checkPattern9.apply(testPattern9) == 6);
+    assertTrue(PrivatePatternFactory.checkPattern10.apply(testPattern10) == 6);
+    assertTrue(PrivatePatternFactory.checkPattern11.apply(testPattern11) == 6);
+    assertTrue(PrivatePatternFactory.checkPattern12.apply(testPattern12) == 6);
   };
 }
