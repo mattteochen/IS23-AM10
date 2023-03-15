@@ -2,10 +2,10 @@ package it.polimi.is23am10.pattern;
 
 import java.util.List;
 import java.util.Random;
-import java.util.function.Predicate;
-
+import java.util.function.Function;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.tile.Tile;
+import it.polimi.is23am10.items.tile.Tile.TileType;
 
 /**
  * Private pattern factory object.
@@ -21,300 +21,216 @@ public final class PrivatePatternFactory  {
      * PrivatePattern Rule #1.
      * 
      */
-    public static final Predicate<Bookshelf> checkPattern1 = bs -> {
-        Bookshelf pattern = new Bookshelf(
-                "PXFXX" +
-                "XXXXG" +
-                "XXXBX" +
-                "XGXXX" +
-                "XXXXX" +
-                "XXTXX" );
-
+    public static final Function<Bookshelf, Integer> checkPattern1 = bs -> {
         Tile[][] grid = bs.getBookshelfGrid();
-
-        for (int i = 0; i < grid.length; i++){
-            for (int j = 0; j < grid[i].length; j++){
-                if (!pattern.getBookshelfGrid()[i][j].isEmpty())
-                    if (!grid[i][j].equals(pattern.getBookshelfGrid()[i][j]))
-                        return false;
-            }
-        }
-        return true;
+        int cardMatched = 0;
+        
+        if(grid[0][0].getType() == (TileType.PLANT))  cardMatched++;
+        if(grid[0][2].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[1][4].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[2][3].getType() == (TileType.BOOK))   cardMatched++;
+        if(grid[3][1].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[5][2].getType() == (TileType.TROPHY)) cardMatched++;
+        
+        return cardMatched;
     };
 
     /**
      * PrivatePattern Rule #2.
      * 
      */
-    public static final Predicate<Bookshelf> checkPattern2 = bs -> {
-        Bookshelf pattern = new Bookshelf(
-                "XXXXX" +
-                "XPXXX" +
-                "CXGXX" +
-                "XXXXB" +
-                "XXXTX" +
-                "XXXXF" );
-
+    public static final Function<Bookshelf, Integer> checkPattern2 = bs -> {
         Tile[][] grid = bs.getBookshelfGrid();
-
-        for (int i = 0; i < grid.length; i++){
-            for (int j = 0; j < grid[i].length; j++){
-                if (!pattern.getBookshelfGrid()[i][j].isEmpty())
-                    if (!grid[i][j].equals(pattern.getBookshelfGrid()[i][j]))
-                        return false;
-            }
-        }
-        return true;
+        int cardMatched = 0;
+        
+        if(grid[1][1].getType() == (TileType.PLANT))  cardMatched++;
+        if(grid[2][0].getType() == (TileType.CAT))    cardMatched++;
+        if(grid[2][2].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[3][4].getType() == (TileType.BOOK))   cardMatched++;
+        if(grid[4][3].getType() == (TileType.TROPHY)) cardMatched++;
+        if(grid[5][4].getType() == (TileType.FRAME))  cardMatched++;
+        
+        return cardMatched;
     };
 
     /**
      * PrivatePattern Rule #3.
      * 
      */
-    public static final Predicate<Bookshelf> checkPattern3 = bs -> {
-        Bookshelf pattern = new Bookshelf(
-                "XXXXX" +
-                "FXXGX" +
-                "XXPXX" +
-                "XCXXT" +
-                "XXXXX" +
-                "BXXXX" );
-
+    public static final Function<Bookshelf, Integer> checkPattern3 = bs -> {
         Tile[][] grid = bs.getBookshelfGrid();
-
-        for (int i = 0; i < grid.length; i++){
-            for (int j = 0; j < grid[i].length; j++){
-                if (!pattern.getBookshelfGrid()[i][j].isEmpty())
-                    if (!grid[i][j].equals(pattern.getBookshelfGrid()[i][j]))
-                        return false;
-            }
-        }
-        return true;
+        int cardMatched = 0;
+        
+        if(grid[1][0].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[1][2].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[2][2].getType() == (TileType.PLANT))  cardMatched++;
+        if(grid[3][1].getType() == (TileType.CAT))    cardMatched++;
+        if(grid[4][4].getType() == (TileType.TROPHY)) cardMatched++;
+        if(grid[5][0].getType() == (TileType.BOOK))   cardMatched++;
+        
+        return cardMatched;
     };
 
     /**
      * PrivatePattern Rule #4.
      * 
      */
-    public static final Predicate<Bookshelf> checkPattern4 = bs -> {
-        Bookshelf pattern = new Bookshelf(
-                "XXXXG" +
-                "XXXXX" +
-                "TXFXX" +
-                "XXXPX" +
-                "XBCXX" +
-                "XXXXX" );
-
+    public static final Function<Bookshelf, Integer> checkPattern4 = bs -> {
         Tile[][] grid = bs.getBookshelfGrid();
-
-        for (int i = 0; i < grid.length; i++){
-            for (int j = 0; j < grid[i].length; j++){
-                if (!pattern.getBookshelfGrid()[i][j].isEmpty())
-                    if (!grid[i][j].equals(pattern.getBookshelfGrid()[i][j]))
-                        return false;
-            }
-        }
-        return true;
+        int cardMatched = 0;
+        
+        if(grid[0][4].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[2][0].getType() == (TileType.TROPHY)) cardMatched++;
+        if(grid[2][2].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[3][3].getType() == (TileType.PLANT))  cardMatched++;
+        if(grid[4][1].getType() == (TileType.BOOK))   cardMatched++;
+        if(grid[4][2].getType() == (TileType.CAT))    cardMatched++;
+        
+        return cardMatched;
     };
 
     /**
      * PrivatePattern Rule #5.
      * 
      */
-    public static final Predicate<Bookshelf> checkPattern5 = bs -> {
-        Bookshelf pattern = new Bookshelf(
-                "XXXXX" +
-                "XTXXX" +
-                "XXXXX" +
-                "XFBXX" +
-                "XXXXP" +
-                "GXXCX" );
-
+    public static final Function<Bookshelf, Integer> checkPattern5 = bs -> {
         Tile[][] grid = bs.getBookshelfGrid();
-
-        for (int i = 0; i < grid.length; i++){
-            for (int j = 0; j < grid[i].length; j++){
-                if (!pattern.getBookshelfGrid()[i][j].isEmpty())
-                    if (!grid[i][j].equals(pattern.getBookshelfGrid()[i][j]))
-                        return false;
-            }
-        }
-        return true;
+        int cardMatched = 0;
+        
+        if(grid[1][1].getType() == (TileType.TROPHY)) cardMatched++;
+        if(grid[3][1].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[3][2].getType() == (TileType.BOOK))   cardMatched++;
+        if(grid[4][4].getType() == (TileType.PLANT))  cardMatched++;
+        if(grid[5][0].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[5][3].getType() == (TileType.CAT))    cardMatched++;
+        
+        return cardMatched;
     };
 
     /**
      * PrivatePattern Rule #6.
      * 
      */
-    public static final Predicate<Bookshelf> checkPattern6 = bs -> {
-        Bookshelf pattern = new Bookshelf(
-                "XXTXX" +
-                "XXXXX" +
-                "XXXBX" +
-                "XXXXX" +
-                "XGXFX" +
-                "PXXXX" );
-
+    public static final Function<Bookshelf, Integer> checkPattern6 = bs -> {
         Tile[][] grid = bs.getBookshelfGrid();
-
-        for (int i = 0; i < grid.length; i++){
-            for (int j = 0; j < grid[i].length; j++){
-                if (!pattern.getBookshelfGrid()[i][j].isEmpty())
-                    if (!grid[i][j].equals(pattern.getBookshelfGrid()[i][j]))
-                        return false;
-            }
-        }
-        return true;
+        int cardMatched = 0;
+        
+        if(grid[0][2].getType() == (TileType.TROPHY)) cardMatched++;
+        if(grid[0][4].getType() == (TileType.CAT))    cardMatched++;
+        if(grid[2][3].getType() == (TileType.BOOK))   cardMatched++;
+        if(grid[4][3].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[4][1].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[5][0].getType() == (TileType.PLANT))  cardMatched++;
+        
+        return cardMatched;
     };
 
     /**
      * PrivatePattern Rule #7.
      * 
      */
-    public static final Predicate<Bookshelf> checkPattern7 = bs -> {
-        Bookshelf pattern = new Bookshelf(
-                "CXXXX" +
-                "XXXFX" +
-                "XPXXX" +
-                "TXXXX" +
-                "XXXXG" +
-                "XXBXX" );
-
+    public static final Function<Bookshelf, Integer> checkPattern7 = bs -> {
         Tile[][] grid = bs.getBookshelfGrid();
-
-        for (int i = 0; i < grid.length; i++){
-            for (int j = 0; j < grid[i].length; j++){
-                if (!pattern.getBookshelfGrid()[i][j].isEmpty())
-                    if (!grid[i][j].equals(pattern.getBookshelfGrid()[i][j]))
-                        return false;
-            }
-        }
-        return true;
+        int cardMatched = 0;
+        
+        if(grid[0][0].getType() == (TileType.CAT))    cardMatched++;
+        if(grid[1][3].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[2][1].getType() == (TileType.PLANT))  cardMatched++;
+        if(grid[3][0].getType() == (TileType.TROPHY)) cardMatched++;
+        if(grid[4][4].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[5][2].getType() == (TileType.BOOK))   cardMatched++;
+        
+        return cardMatched;
     };
 
     /**
      * PrivatePattern Rule #8.
      * 
      */
-    public static final Predicate<Bookshelf> checkPattern8 = bs -> {
-        Bookshelf pattern = new Bookshelf(
-                "PXFXX" +
-                "XXXXG" +
-                "XXXBX" +
-                "XGXXX" +
-                "XXXXX" +
-                "XXTXX" );
-
+    public static final Function<Bookshelf, Integer> checkPattern8 = bs -> {
         Tile[][] grid = bs.getBookshelfGrid();
-
-        for (int i = 0; i < grid.length; i++){
-            for (int j = 0; j < grid[i].length; j++){
-                if (!pattern.getBookshelfGrid()[i][j].isEmpty())
-                    if (!grid[i][j].equals(pattern.getBookshelfGrid()[i][j]))
-                        return false;
-            }
-        }
-        return true;
+        int cardMatched = 0;
+        
+        if(grid[0][0].getType() == (TileType.PLANT))  cardMatched++;
+        if(grid[0][2].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[1][4].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[2][3].getType() == (TileType.BOOK))   cardMatched++;
+        if(grid[3][1].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[5][2].getType() == (TileType.TROPHY)) cardMatched++;
+        
+        return cardMatched;
     };
 
     /**
      * PrivatePattern Rule #9.
      * 
      */
-    public static final Predicate<Bookshelf> checkPattern9 = bs -> {
-        Bookshelf pattern = new Bookshelf(
-                "XXXXF" +
-                "XCXXX" +
-                "XXTXX" +
-                "PXXXX" +
-                "XXXBX" +
-                "XXXGX" );
-
+    public static final Function<Bookshelf, Integer> checkPattern9 = bs -> {
         Tile[][] grid = bs.getBookshelfGrid();
-
-        for (int i = 0; i < grid.length; i++){
-            for (int j = 0; j < grid[i].length; j++){
-                if (!pattern.getBookshelfGrid()[i][j].isEmpty())
-                    if (!grid[i][j].equals(pattern.getBookshelfGrid()[i][j]))
-                        return false;
-            }
-        }
-        return true;
+        int cardMatched = 0;
+        
+        if(grid[0][4].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[1][1].getType() == (TileType.CAT))    cardMatched++;
+        if(grid[2][2].getType() == (TileType.TROPHY)) cardMatched++;
+        if(grid[3][0].getType() == (TileType.PLANT))  cardMatched++;
+        if(grid[4][4].getType() == (TileType.BOOK))   cardMatched++;
+        if(grid[5][3].getType() == (TileType.GAME))   cardMatched++;
+        
+        return cardMatched;
     };
 
     /**
      * PrivatePattern Rule #10.
      * 
      */
-    public static final Predicate<Bookshelf> checkPattern10 = bs -> {
-        Bookshelf pattern = new Bookshelf(
-                "XXGXX" +
-                "XXXXX" +
-                "XXCXX" +
-                "XXXXB" +
-                "XTXXP" +
-                "FXXXX" );
-
+    public static final Function<Bookshelf, Integer> checkPattern10 = bs -> {
         Tile[][] grid = bs.getBookshelfGrid();
-
-        for (int i = 0; i < grid.length; i++){
-            for (int j = 0; j < grid[i].length; j++){
-                if (!pattern.getBookshelfGrid()[i][j].isEmpty())
-                    if (!grid[i][j].equals(pattern.getBookshelfGrid()[i][j]))
-                        return false;
-            }
-        }
-        return true;
+        int cardMatched = 0;
+        
+        if(grid[0][2].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[2][2].getType() == (TileType.CAT))    cardMatched++;
+        if(grid[3][4].getType() == (TileType.BOOK))   cardMatched++;
+        if(grid[4][1].getType() == (TileType.TROPHY)) cardMatched++;
+        if(grid[4][4].getType() == (TileType.PLANT))  cardMatched++;
+        if(grid[5][0].getType() == (TileType.FRAME))  cardMatched++;
+        
+        return cardMatched;
     };
 
     /**
      * PrivatePattern Rule #11.
      * 
      */
-    public static final Predicate<Bookshelf> checkPattern11 = bs -> {
-        Bookshelf pattern = new Bookshelf(
-                "XXXXT" +
-                "XGXXX" +
-                "BXXBX" +
-                "XXCXX" +
-                "XFXXX" +
-                "XXXPX" );
-
+    public static final Function<Bookshelf, Integer> checkPattern11 = bs -> {
         Tile[][] grid = bs.getBookshelfGrid();
-
-        for (int i = 0; i < grid.length; i++){
-            for (int j = 0; j < grid[i].length; j++){
-                if (!pattern.getBookshelfGrid()[i][j].isEmpty())
-                    if (!grid[i][j].equals(pattern.getBookshelfGrid()[i][j]))
-                        return false;
-            }
-        }
-        return true;
+        int cardMatched = 0;
+        
+        if(grid[0][2].getType() == (TileType.PLANT))  cardMatched++;
+        if(grid[1][1].getType() == (TileType.BOOK))   cardMatched++;
+        if(grid[2][0].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[2][2].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[3][4].getType() == (TileType.CAT))    cardMatched++;
+        if(grid[5][3].getType() == (TileType.TROPHY)) cardMatched++;
+        
+        return cardMatched;
     };
 
     /**
      * PrivatePattern Rule #12.
      * 
      */
-    public static final Predicate<Bookshelf> checkPattern12 = bs -> {
-        Bookshelf pattern = new Bookshelf(
-                "XXPXX" +
-                "XBXXX" +
-                "GXXXX" +
-                "XXFXX" +
-                "XXXXC" +
-                "XXXTX" );
-
+    public static final Function<Bookshelf, Integer> checkPattern12 = bs -> {
         Tile[][] grid = bs.getBookshelfGrid();
-
-        for (int i = 0; i < grid.length; i++){
-            for (int j = 0; j < grid[i].length; j++){
-                if (!pattern.getBookshelfGrid()[i][j].isEmpty())
-                    if (!grid[i][j].equals(pattern.getBookshelfGrid()[i][j]))
-                        return false;
-            }
-        }
-        return true;
+        int cardMatched = 0;
+        
+        if(grid[0][2].getType() == (TileType.BOOK))   cardMatched++;
+        if(grid[1][1].getType() == (TileType.PLANT))  cardMatched++;
+        if(grid[2][2].getType() == (TileType.FRAME))  cardMatched++;
+        if(grid[3][3].getType() == (TileType.TROPHY)) cardMatched++;
+        if(grid[4][4].getType() == (TileType.GAME))   cardMatched++;
+        if(grid[5][0].getType() == (TileType.CAT))    cardMatched++;
+        
+        return cardMatched;
     };
 
 
