@@ -5,7 +5,7 @@ import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.pattern.SharedPattern;
-import it.polimi.is23am10.pattern.SharedPatternFactory;
+import it.polimi.is23am10.factory.SharedPatternFactory;
 
 import java.util.ArrayList;
 import java.util.List;
