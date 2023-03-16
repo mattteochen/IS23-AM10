@@ -1,4 +1,4 @@
-package it.polimi.is23am10.pattern;
+package it.polimi.is23am10.factory;
 
 import java.util.List;
 import java.util.Random;
@@ -6,6 +6,7 @@ import java.util.function.Function;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
+import it.polimi.is23am10.pattern.PrivatePattern;
 
 /**
  * Private pattern factory object.

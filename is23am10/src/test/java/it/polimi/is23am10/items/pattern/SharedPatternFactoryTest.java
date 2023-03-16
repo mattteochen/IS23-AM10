@@ -9,7 +9,7 @@ import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
 import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
-import it.polimi.is23am10.pattern.SharedPatternFactory;
+import it.polimi.is23am10.factory.SharedPatternFactory;
 
 public class SharedPatternFactoryTest {
 

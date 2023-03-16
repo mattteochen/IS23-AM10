@@ -1,10 +1,10 @@
 package it.polimi.is23am10.items.card;
 
+import it.polimi.is23am10.factory.PrivatePatternFactory;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.card.exceptions.NegativeMatchedBlockCountException;
 import it.polimi.is23am10.items.card.exceptions.NullMatchedBlockCountException;
 import it.polimi.is23am10.pattern.PrivatePattern;
-import it.polimi.is23am10.pattern.PrivatePatternFactory;
 
 /**
  * Private card class definition.

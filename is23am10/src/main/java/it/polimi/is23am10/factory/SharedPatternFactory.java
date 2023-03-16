@@ -1,4 +1,4 @@
-package it.polimi.is23am10.pattern;
+package it.polimi.is23am10.factory;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
+import it.polimi.is23am10.pattern.SharedPattern;
 
 /**
  * Shared pattern factory object.
