@@ -17,15 +17,16 @@ public class PrivatePattern extends AbstractPattern {
   /**
    * A {@link Function} that implements a specific rule,
    * which retrieves the number of bookshelf tiles belonging to a player
-   * that match the private card assigned to that player
+   * that match the private card assigned to that player.
    */
   private Function<Bookshelf, Integer> rule;
   
   /**
-   * The constructor of the class PrivatePattern
-   * @param rule a function that takes a Bookshelf object and returns an Integer
+   * The constructor of the class PrivatePattern.
+   * 
+   * @param rule a function that takes a Bookshelf object and returns an Integer.
    */
   public PrivatePattern(Function<Bookshelf, Integer> rule){
-      this.rule = rule;
+    this.rule = rule;
   };
 }
