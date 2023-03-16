@@ -3,10 +3,10 @@ package it.polimi.is23am10.factory;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
+
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
-import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.pattern.PrivatePattern;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
@@ -56,11 +56,10 @@ public final class PrivatePatternFactory  {
       if(bs.getBookshelfGridAt(5, 2).getType() == (TileType.TROPHY)){
         tilesMatched++;
       }
+      return tilesMatched;
     } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException e) {
       return 0;
-    }  
-    
-    return tilesMatched;
+    }      
   };
 
   /**
@@ -89,11 +88,10 @@ public final class PrivatePatternFactory  {
       if(bs.getBookshelfGridAt(5, 4).getType() == (TileType.FRAME)){
         tilesMatched++;
       }
+      return tilesMatched;
     } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException e) {
       return 0;
     }  
-
-    return tilesMatched;
   };
 
   /**
@@ -122,11 +120,10 @@ public final class PrivatePatternFactory  {
       if(bs.getBookshelfGridAt(5, 0).getType() == (TileType.BOOK)){
         tilesMatched++;
       }
+      return tilesMatched;
     } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException e) {
       return 0;
-    }  
-
-    return tilesMatched;
+    }      
   };
 
   /**
@@ -155,11 +152,10 @@ public final class PrivatePatternFactory  {
       if(bs.getBookshelfGridAt(4, 2).getType() == (TileType.CAT)){
         tilesMatched++;
       }
+      return tilesMatched;
     } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException e) {
       return 0;
     }  
-
-    return tilesMatched;
   };
 
   /**
@@ -188,11 +184,10 @@ public final class PrivatePatternFactory  {
       if(bs.getBookshelfGridAt(5, 3).getType() == (TileType.CAT)){
         tilesMatched++;
       }
+      return tilesMatched;
     } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException e){
       return 0;
     }  
-
-    return tilesMatched;
   };
 
   /**
@@ -221,11 +216,10 @@ public final class PrivatePatternFactory  {
       if(bs.getBookshelfGridAt(5, 0).getType() == (TileType.PLANT)){
         tilesMatched++;
       }
+      return tilesMatched;
     } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException e) {
       return 0;
-    }  
-    
-    return tilesMatched;
+    }      
   };
 
   /**
@@ -254,11 +248,10 @@ public final class PrivatePatternFactory  {
       if(bs.getBookshelfGridAt(5, 2).getType() == (TileType.BOOK)){
         tilesMatched++;
       }
+      return tilesMatched;
     } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException e) {
       return 0;
-    }  
-
-    return tilesMatched;
+    }     
   };
 
   /**
@@ -287,11 +280,10 @@ public final class PrivatePatternFactory  {
       if(bs.getBookshelfGridAt(5, 3).getType() == (TileType.GAME)){
         tilesMatched++;
       }
+      return tilesMatched;
     } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException e) {
       return 0;
-    }  
-    
-    return tilesMatched;
+    }      
   };
 
   /**
@@ -320,11 +312,10 @@ public final class PrivatePatternFactory  {
       if(bs.getBookshelfGridAt(5, 0).getType() == (TileType.FRAME)){
         tilesMatched++;
       }
+      return tilesMatched;
     } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException e) {
       return 0;
     }  
-    
-    return tilesMatched;
   };
 
   /**
@@ -353,11 +344,10 @@ public final class PrivatePatternFactory  {
       if(bs.getBookshelfGridAt(5, 3).getType() == (TileType.PLANT)){
         tilesMatched++;
       }
+      return tilesMatched;
     } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException e) {
       return 0;
-    }  
-
-    return tilesMatched;
+    }      
   };
 
   /**
@@ -386,11 +376,10 @@ public final class PrivatePatternFactory  {
       if(bs.getBookshelfGridAt(5, 3).getType() == (TileType.TROPHY)){
         tilesMatched++;
       }
+      return tilesMatched;
     } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException e) {
       return 0;
     }  
-    
-    return tilesMatched;
   };
 
   /**
@@ -419,11 +408,10 @@ public final class PrivatePatternFactory  {
       if(bs.getBookshelfGridAt(5, 0).getType() == (TileType.CAT)){
         tilesMatched++;
       }
+      return tilesMatched;
     } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException e) {
       return 0;
     }  
-    
-    return tilesMatched;
   };
 
 
