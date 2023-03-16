@@ -1,4 +1,4 @@
-package it.polimi.is23am10.pattern;
+package it.polimi.is23am10.factory;
 
 import static org.junit.Assert.assertTrue;
 
@@ -8,7 +8,6 @@ import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
 import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
-import it.polimi.is23am10.factory.PrivatePatternFactory;
 
 public class PrivatePatternFactoryTest {
   /**
