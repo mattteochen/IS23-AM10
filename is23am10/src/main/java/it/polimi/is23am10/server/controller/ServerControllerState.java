@@ -1,8 +1,8 @@
 package it.polimi.is23am10.server.controller;
 
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
-import it.polimi.is23am10.server.controller.exceptions.NullPlayerConnectorInstance;
 import it.polimi.is23am10.server.gamehandler.GameHandler;
+import it.polimi.is23am10.server.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.server.playerconnector.PlayerConnector;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,7 +74,7 @@ public final class ServerControllerState {
    * @param id The game id to remove.
    *
    */
-  public static final synchronized void removeGameHandlerByIdyId(UUID id) {
+  public static final synchronized void removeGameHandlerById(UUID id) {
     if (id == null) {
       return;
     }
@@ -93,13 +93,13 @@ public final class ServerControllerState {
    * 
    *
    * @param playerConnector The connector object to be linked with a player.
-   * @throws NullPlayerConnectorInstance.
+   * @throws NullPlayerConnector.
    *
    */
   public static final synchronized void addPlayerConnector(
-      PlayerConnector playerConnector) throws NullPlayerConnectorInstance {
+      PlayerConnector playerConnector) throws NullPlayerConnector {
     if (playerConnector == null) {
-      throw new NullPlayerConnectorInstance();
+      throw new NullPlayerConnector();
     }
     playersPool.add(playerConnector);
     logger.info("Added new player connector");

@@ -1,20 +1,30 @@
 package it.polimi.is23am10.server.controller;
 
+import it.polimi.is23am10.server.command.AbstractCommand;
+import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
+import it.polimi.is23am10.server.command.StartGameCommand;
+import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
+import it.polimi.is23am10.server.controller.exceptions.StartCommandSerializationErrorException;
+import it.polimi.is23am10.server.controller.interfaces.ControllerConsumer;
+import it.polimi.is23am10.server.factory.exceptions.DuplicatePlayerNameException;
+import it.polimi.is23am10.server.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.server.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.server.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.server.gamehandler.GameHandler;
+import it.polimi.is23am10.server.gamehandler.exceptions.NullPlayerConnector;
+import it.polimi.is23am10.server.items.board.exceptions.InvalidNumOfPlayersException;
+import it.polimi.is23am10.server.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.server.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.server.player.exceptions.NullPlayerBookshelfException;
+import it.polimi.is23am10.server.player.exceptions.NullPlayerIdException;
+import it.polimi.is23am10.server.player.exceptions.NullPlayerNameException;
+import it.polimi.is23am10.server.player.exceptions.NullPlayerPrivateCardException;
+import it.polimi.is23am10.server.player.exceptions.NullPlayerScoreBlocksException;
+import it.polimi.is23am10.server.player.exceptions.NullPlayerScoreException;
+import it.polimi.is23am10.server.playerconnector.PlayerConnector;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import it.polimi.is23am10.server.command.AbstractCommand;
-import it.polimi.is23am10.server.command.StartGameCommand;
-import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
-import it.polimi.is23am10.server.controller.interfaces.ControllerConsumer;
-import it.polimi.is23am10.server.gamehandler.GameHandler;
-import it.polimi.is23am10.server.playerconnector.PlayerConnector;
 
 /**
  * The server controller action class definition.
@@ -32,16 +42,69 @@ public class ServerControllerAction {
    */
   private final Logger logger = LogManager.getLogger(ServerControllerAction.class);
 
-  private final ControllerConsumer<StartGameCommand> startConsumer
-      = (playerConnector, command) -> {
-    GameHandler gameHandler = new GameHandler(command.getStartingPlayerName(), command.getMaxPlayers());
-    gameHandler.addPlayerConnector(playerConnector);
+  /**
+   * The {@link Opcode#START} command callback worker.
+   *
+   */
+  private final ControllerConsumer startConsumer = (playerConnector, command) -> {
+    if (command instanceof StartGameCommand) {
+      try {
+        String playerName = ((StartGameCommand) command).getStartingPlayerName();
+        Integer maxPlayers = ((StartGameCommand) command).getMaxPlayers();
+        GameHandler gameHandler = new GameHandler(playerName, maxPlayers);
+        // add the new player connector to the game handler.
+        gameHandler.addPlayerConnector(playerConnector);
+        
+        // populate the connector with the game and player reference.
+        playerConnector.setGameId(gameHandler.getGame().getGameId());
+        playerConnector.setPlayerName(playerName);
+
+        // add the new game handler instance on the game pool.
+        ServerControllerState.addGameHandler(gameHandler);
+        // add the new player connector instance on the player pool.
+        ServerControllerState.addPlayerConnector(playerConnector);
+
+        logger.info("{} Started new game with id {} from {}",
+            ServerDebugPrefixString.START_COMMAND_PREFIX,
+            gameHandler.getGame().getGameId(), playerName);
+      } catch (NullNumOfPlayersException | NullPlayerNamesException | NullPlayerScoreBlocksException
+          | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
+          | NullPlayerIdException | NullPlayerNameException | NullMaxPlayerException
+          | AlreadyInitiatedPatternException e) {
+        logger.error("{} Failed to initialize new game request {}",
+            ServerDebugPrefixString.START_COMMAND_PREFIX, e);
+      } catch (InvalidNumOfPlayersException | InvalidMaxPlayerException
+          | DuplicatePlayerNameException e) {
+        logger.error("{} {}", ServerDebugPrefixString.START_COMMAND_PREFIX, e);
+      } catch (NullGameHandlerInstance e) {
+        logger.error("{} Failed the game instance creation {}",
+            ServerDebugPrefixString.START_COMMAND_PREFIX, e);
+      } catch (NullPlayerConnector e) {
+        logger.error("{} Failed the player connector creation {}",
+            ServerDebugPrefixString.START_COMMAND_PREFIX, e);
+      } 
+    } else {
+      logger.info("{} Failed to obtain deserialized START command",
+          ServerDebugPrefixString.START_COMMAND_PREFIX);
+      throw new StartCommandSerializationErrorException(StartGameCommand.class.toString());
+    }
   };
 
-  private Map<Opcode, ControllerConsumer> actions = Map.of(
+  /**
+   * A helper mapping to link a {@link Opcode} to the relative worker callback.
+   *
+   */
+  private final Map<Opcode, ControllerConsumer> actions = Map.of(
       Opcode.START, startConsumer);
 
-  public <T extends AbstractCommand> void takeAction(PlayerConnector connector, T command) {
+  /**
+   * Apply the callback to a specific {@link Opcode} received from a {@link PlayerConnector}.
+   *
+   * @param connector The player connector instance.
+   * @param command   The deserialized command.
+   *
+   */
+  public void execute(PlayerConnector connector, AbstractCommand command) {
     actions.get(command.getOpcode()).accept(connector, command);
   }
 }

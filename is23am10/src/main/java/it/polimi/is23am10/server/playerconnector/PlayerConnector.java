@@ -25,7 +25,7 @@ public class PlayerConnector {
    * The unique {@link Game} id reference.
    *
    */
-  private UUID gameID;
+  private UUID gameId;
 
   /**
    * The socket connection reference.
@@ -48,7 +48,53 @@ public class PlayerConnector {
     this.connector = connector;
   }
 
-  public Socket getConnector() {
+  /**
+   * Getter for {@link Socket}, the low level connector.
+   *
+   * @return The socket connector.
+   *
+   */
+  public synchronized Socket getConnector() {
     return connector;
+  }
+
+  /**
+   * Getter for the associated game id.
+   *
+   * @return The game id.
+   *
+   */
+  public synchronized UUID getGameId() {
+    return gameId;
+  }
+
+  /**
+   * Getter for the associated player name.
+   *
+   * @return The player name as string.
+   *
+   */
+  public synchronized String getPlayerName() {
+    return playerName;
+  }
+
+  /**
+   * Setter for the associated game id.
+   *
+   * @param gameId The game id to associate to the current player connector.
+   *
+   */
+  public synchronized void setGameId(UUID gameId) {
+    this.gameId = gameId;
+  }
+
+  /**
+   * Setter for the player name.
+   *
+   * @param playerName The player name to associate to the current player connector.
+   *
+   */
+  public synchronized void setPlayerName(String playerName) {
+    this.playerName = playerName;
   }
 }
