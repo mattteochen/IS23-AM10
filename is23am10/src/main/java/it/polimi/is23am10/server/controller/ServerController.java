@@ -72,6 +72,7 @@ public final class ServerController implements Runnable {
     while (playerConnector != null && playerConnector.getConnector().isConnected()) {
       try {
         AbstractCommand command = buildCommand();
+
         logger.info("Received command: {}", command);
 
         worker.takeAction(playerConnector, command);
@@ -85,6 +86,8 @@ public final class ServerController implements Runnable {
 
   /**
    * Build the player command deserializing the byte stream.
+   * The gson deserialization returns a base class type but if the byte stream contained
+   * a derived type, this can be casted at runtime on the need.
    * 
    * @return An instance of the command object.
    * 
