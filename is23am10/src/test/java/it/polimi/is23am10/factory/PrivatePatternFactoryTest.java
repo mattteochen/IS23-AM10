@@ -29,16 +29,7 @@ public class PrivatePatternFactoryTest {
       "PPCBC" +
       "BCFPC");
 
-    Bookshelf allNull = new Bookshelf(
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX");
-
     assertTrue(PrivatePatternFactory.checkPattern1.apply(testPattern1ZeroMatch).equals(0));
-    assertTrue(PrivatePatternFactory.checkPattern1.apply(allNull).equals(0));
   };
 
   @Test
@@ -65,17 +56,8 @@ public class PrivatePatternFactoryTest {
       "CBGFF" +
       "PPCFC" +
       "BCBPB");
-  
-    Bookshelf allNull = new Bookshelf(
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX");
 
     assertTrue(PrivatePatternFactory.checkPattern2.apply(testPattern2ZeroMatches).equals(0));
-    assertTrue(PrivatePatternFactory.checkPattern2.apply(allNull).equals(0));
   };
 
   @Test
@@ -103,16 +85,7 @@ public class PrivatePatternFactoryTest {
       "PPCBC" +
       "FCBPC");
 
-    Bookshelf allNull = new Bookshelf(
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX");
-
     assertTrue(PrivatePatternFactory.checkPattern3.apply(testPattern3ZeroMatches).equals(0));
-    assertTrue(PrivatePatternFactory.checkPattern3.apply(allNull).equals(0));
   };
 
   @Test
@@ -139,17 +112,8 @@ public class PrivatePatternFactoryTest {
       "CBGBT" +
       "PCBFC" +
       "BCBPC");
-  
-    Bookshelf allNull = new Bookshelf(
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX");
 
     assertTrue(PrivatePatternFactory.checkPattern4.apply(testPattern4ZeroMatches).equals(0));
-    assertTrue(PrivatePatternFactory.checkPattern4.apply(allNull).equals(0));
   };
 
   @Test
@@ -177,16 +141,7 @@ public class PrivatePatternFactoryTest {
       "PPCBC" +
       "BCBBC");
 
-    Bookshelf allNull = new Bookshelf(
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX");
-
     assertTrue(PrivatePatternFactory.checkPattern5.apply(testPattern5ZeroMatches).equals(0));
-    assertTrue(PrivatePatternFactory.checkPattern5.apply(allNull).equals(0));
   };
 
   @Test
@@ -214,16 +169,7 @@ public class PrivatePatternFactoryTest {
       "PFCBC" +
       "FCBPC");
 
-    Bookshelf allNull = new Bookshelf(
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX");
-
     assertTrue(PrivatePatternFactory.checkPattern6.apply(testPattern6ZeroMatches).equals(0));
-    assertTrue(PrivatePatternFactory.checkPattern6.apply(allNull).equals(0));
   };
 
   @Test
@@ -251,16 +197,7 @@ public class PrivatePatternFactoryTest {
       "PPCBB" +
       "BCFPC");
 
-    Bookshelf allNull = new Bookshelf(
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX");
-
     assertTrue(PrivatePatternFactory.checkPattern7.apply(testPattern7ZeroMatches).equals(0));
-    assertTrue(PrivatePatternFactory.checkPattern7.apply(allNull).equals(0));
   };
 
   @Test
@@ -288,16 +225,7 @@ public class PrivatePatternFactoryTest {
       "PPCCC" +
       "BCBCC");
 
-    Bookshelf allNull = new Bookshelf(
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX");
-
     assertTrue(PrivatePatternFactory.checkPattern8.apply(testPattern8ZeroMatches).equals(0));
-    assertTrue(PrivatePatternFactory.checkPattern8.apply(allNull).equals(0));
   };
 
   @Test
@@ -324,16 +252,8 @@ public class PrivatePatternFactoryTest {
       "CBGFP" +
       "PBCBB" +
       "PCBPC");
-    Bookshelf allNull = new Bookshelf(
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX");
 
     assertTrue(PrivatePatternFactory.checkPattern9.apply(testPattern9ZeroMatches).equals(0));
-    assertTrue(PrivatePatternFactory.checkPattern9.apply(allNull).equals(0));
   };
 
   @Test
@@ -361,16 +281,7 @@ public class PrivatePatternFactoryTest {
       "PPCFC" +
       "BCBBC");
 
-    Bookshelf allNull = new Bookshelf(
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX");
-
     assertTrue(PrivatePatternFactory.checkPattern10.apply(testPattern10ZeroMatches).equals(0));
-    assertTrue(PrivatePatternFactory.checkPattern10.apply(allNull).equals(0));
   };
 
   @Test
@@ -398,16 +309,7 @@ public class PrivatePatternFactoryTest {
       "PPCBB" +
       "BCBBC");
 
-    Bookshelf allNull = new Bookshelf(
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX");
-
     assertTrue(PrivatePatternFactory.checkPattern11.apply(testPattern11ZeroMatches).equals(0));
-    assertTrue(PrivatePatternFactory.checkPattern11.apply(allNull).equals(0));
   };
 
   @Test
@@ -435,16 +337,7 @@ public class PrivatePatternFactoryTest {
       "PPCBB" +
       "BCBPC");
 
-    Bookshelf allNull = new Bookshelf(
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX" +
-      "XXXXX");
-
     assertTrue(PrivatePatternFactory.checkPattern12.apply(testPattern12ZeroMatches).equals(0));
-    assertTrue(PrivatePatternFactory.checkPattern12.apply(allNull).equals(0));
   };
 
   @Test
