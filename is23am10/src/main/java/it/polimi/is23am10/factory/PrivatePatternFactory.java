@@ -30,6 +30,12 @@ public final class PrivatePatternFactory {
   }
 
   /**
+   * The random generator instance.
+   * 
+   */
+  private static final Random random = new Random();
+
+  /**
    * PrivatePattern Rule #1.
    * 
    */
@@ -442,8 +448,6 @@ public final class PrivatePatternFactory {
       (new PrivatePattern(checkPattern10)),
       (new PrivatePattern(checkPattern11)),
       (new PrivatePattern(checkPattern12)));
-
-  private static Random random = new Random();
 
   /**
    * Method used to get random PrivatePattern between the 12 possible.
