@@ -68,6 +68,11 @@ public class Bookshelf {
    */
   public Bookshelf() {
     bookshelfGrid = new Tile[BOOKSHELF_ROWS][BOOKSHELF_COLS];
+    for (int i = 0; i < BOOKSHELF_ROWS; i++) {
+      for (int j = 0; j < BOOKSHELF_COLS; j++) {
+        bookshelfGrid[i][j] = new Tile(TileType.EMPTY);
+      }
+    }
   }
 
   /**
@@ -106,8 +111,8 @@ public class Bookshelf {
      * To access the right char in each cycle we are using an index which maps the
      * bidimensional array indexes into one single index.
      */
-    for (int i = 0; i < bookshelfGrid.length; i++) {
-      for (int j = 0; j < bookshelfGrid[0].length; j++) {
+    for (int i = 0; i < BOOKSHELF_ROWS; i++) {
+      for (int j = 0; j < BOOKSHELF_COLS; j++) {
         bookshelfGrid[i][j] = new Tile(tileMap.get(tileChars[BOOKSHELF_COLS * i + j]));
       }
     }
