@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.pattern.PrivatePattern;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 /**
  * Private pattern factory object.
@@ -34,13 +37,33 @@ public final class PrivatePatternFactory  {
   public static final Function<Bookshelf, Integer> checkPattern1 = bs -> {
     Tile[][] grid = bs.getBookshelfGrid();
     int tilesMatched = 0;
-    
-    if(grid[0][0].getType().equals(TileType.PLANT)) tilesMatched++;
-    if(grid[0][2].getType().equals(TileType.FRAME)) tilesMatched++;
-    if(grid[1][4].getType().equals(TileType.CAT))   tilesMatched++;
-    if(grid[2][3].getType().equals(TileType.BOOK))  tilesMatched++;
-    if(grid[3][1].getType().equals(TileType.GAME))  tilesMatched++;
-    if(grid[5][2].getType().equals(TileType.TROPHY))tilesMatched++;
+
+    try {
+      if(bs.getBookshelfGridAt(0, 0).getType() == (TileType.PLANT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(0, 2).getType() == (TileType.FRAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(1, 4).getType() == (TileType.CAT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(2, 3).getType() == (TileType.BOOK)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(3, 1).getType() == (TileType.GAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(5, 2).getType() == (TileType.TROPHY)){
+        tilesMatched++;
+      }
+    } catch (BookshelfGridColIndexOutOfBoundsException e) {
+      return 0;
+    } catch (BookshelfGridRowIndexOutOfBoundsException e) {
+      return 0;
+    } catch (NullIndexValueException e) {
+      return 0;
+    }
     
     return tilesMatched;
   };
@@ -50,16 +73,35 @@ public final class PrivatePatternFactory  {
    * 
    */
   public static final Function<Bookshelf, Integer> checkPattern2 = bs -> {
-    Tile[][] grid = bs.getBookshelfGrid();
     int tilesMatched = 0;
     
-    if(grid[1][1].getType().equals(TileType.PLANT)) tilesMatched++;
-    if(grid[2][0].getType().equals(TileType.CAT))   tilesMatched++;
-    if(grid[2][2].getType().equals(TileType.GAME))  tilesMatched++;
-    if(grid[3][4].getType().equals(TileType.BOOK))  tilesMatched++;
-    if(grid[4][3].getType().equals(TileType.TROPHY))tilesMatched++;
-    if(grid[5][4].getType().equals(TileType.FRAME)) tilesMatched++;
-    
+    try {
+      if(bs.getBookshelfGridAt(1, 1).getType() == (TileType.PLANT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(2, 0).getType() == (TileType.CAT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(2, 2).getType() == (TileType.GAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(3, 4).getType() == (TileType.BOOK)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(4, 3).getType() == (TileType.TROPHY)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(5, 4).getType() == (TileType.FRAME)){
+        tilesMatched++;
+      }
+    } catch (BookshelfGridColIndexOutOfBoundsException e) {
+      return 0;
+    } catch (BookshelfGridRowIndexOutOfBoundsException e) {
+      return 0;
+    } catch (NullIndexValueException e) {
+      return 0;
+    }
+
     return tilesMatched;
   };
 
@@ -68,16 +110,35 @@ public final class PrivatePatternFactory  {
    * 
    */
   public static final Function<Bookshelf, Integer> checkPattern3 = bs -> {
-    Tile[][] grid = bs.getBookshelfGrid();
     int tilesMatched = 0;
     
-    if(grid[1][0].getType().equals(TileType.FRAME)) tilesMatched++;
-    if(grid[1][3].getType().equals(TileType.GAME))  tilesMatched++;
-    if(grid[2][2].getType().equals(TileType.PLANT)) tilesMatched++;
-    if(grid[3][1].getType().equals(TileType.CAT))   tilesMatched++;
-    if(grid[3][4].getType().equals(TileType.TROPHY))tilesMatched++;
-    if(grid[5][0].getType().equals(TileType.BOOK))  tilesMatched++;
-    
+    try {
+      if(bs.getBookshelfGridAt(1, 0).getType() == (TileType.FRAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(1, 3).getType() == (TileType.GAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(2, 2).getType() == (TileType.PLANT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(3, 1).getType() == (TileType.CAT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(3, 4).getType() == (TileType.TROPHY)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(5, 0).getType() == (TileType.BOOK)){
+        tilesMatched++;
+      }
+    } catch (BookshelfGridColIndexOutOfBoundsException e) {
+      return 0;
+    } catch (BookshelfGridRowIndexOutOfBoundsException e) {
+      return 0;
+    } catch (NullIndexValueException e) {
+      return 0;
+    }
+
     return tilesMatched;
   };
 
@@ -86,16 +147,35 @@ public final class PrivatePatternFactory  {
    * 
    */
   public static final Function<Bookshelf, Integer> checkPattern4 = bs -> {
-    Tile[][] grid = bs.getBookshelfGrid();
     int tilesMatched = 0;
     
-    if(grid[0][4].getType().equals(TileType.GAME))  tilesMatched++;
-    if(grid[2][0].getType().equals(TileType.TROPHY))tilesMatched++;
-    if(grid[2][2].getType().equals(TileType.FRAME)) tilesMatched++;
-    if(grid[3][3].getType().equals(TileType.PLANT)) tilesMatched++;
-    if(grid[4][1].getType().equals(TileType.BOOK))  tilesMatched++;
-    if(grid[4][2].getType().equals(TileType.CAT))   tilesMatched++;
-    
+    try {
+      if(bs.getBookshelfGridAt(0, 4).getType() == (TileType.GAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(2, 0).getType() == (TileType.TROPHY)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(2, 2).getType() == (TileType.FRAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(3, 3).getType() == (TileType.PLANT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(4, 1).getType() == (TileType.BOOK)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(4, 2).getType() == (TileType.CAT)){
+        tilesMatched++;
+      }
+    } catch (BookshelfGridColIndexOutOfBoundsException e) {
+      return 0;
+    } catch (BookshelfGridRowIndexOutOfBoundsException e) {
+      return 0;
+    } catch (NullIndexValueException e) {
+      return 0;
+    }
+
     return tilesMatched;
   };
 
@@ -104,16 +184,35 @@ public final class PrivatePatternFactory  {
    * 
    */
   public static final Function<Bookshelf, Integer> checkPattern5 = bs -> {
-    Tile[][] grid = bs.getBookshelfGrid();
     int tilesMatched = 0;
     
-    if(grid[1][1].getType().equals(TileType.TROPHY))tilesMatched++;
-    if(grid[3][1].getType().equals(TileType.FRAME)) tilesMatched++;
-    if(grid[3][2].getType().equals(TileType.BOOK))  tilesMatched++;
-    if(grid[4][4].getType().equals(TileType.PLANT)) tilesMatched++;
-    if(grid[5][0].getType().equals(TileType.GAME))  tilesMatched++;
-    if(grid[5][3].getType().equals(TileType.CAT))   tilesMatched++;
-    
+    try {
+      if(bs.getBookshelfGridAt(1, 1).getType() == (TileType.TROPHY)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(3, 1).getType() == (TileType.FRAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(3, 2).getType() == (TileType.BOOK)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(4, 4).getType() == (TileType.PLANT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(5, 0).getType() == (TileType.GAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(5, 3).getType() == (TileType.CAT)){
+        tilesMatched++;
+      }
+    } catch (BookshelfGridColIndexOutOfBoundsException e) {
+      return 0;
+    } catch (BookshelfGridRowIndexOutOfBoundsException e) {
+      return 0;
+    } catch (NullIndexValueException e) {
+      return 0;
+    }
+
     return tilesMatched;
   };
 
@@ -122,15 +221,34 @@ public final class PrivatePatternFactory  {
    * 
    */
   public static final Function<Bookshelf, Integer> checkPattern6 = bs -> {
-    Tile[][] grid = bs.getBookshelfGrid();
     int tilesMatched = 0;
     
-    if(grid[0][2].getType().equals(TileType.TROPHY))tilesMatched++;
-    if(grid[0][4].getType().equals(TileType.CAT))   tilesMatched++;
-    if(grid[2][3].getType().equals(TileType.BOOK))  tilesMatched++;
-    if(grid[4][1].getType().equals(TileType.GAME))  tilesMatched++;
-    if(grid[4][3].getType().equals(TileType.FRAME)) tilesMatched++;
-    if(grid[5][0].getType().equals(TileType.PLANT)) tilesMatched++;
+    try {
+      if(bs.getBookshelfGridAt(0, 2).getType() == (TileType.TROPHY)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(0, 4).getType() == (TileType.CAT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(2, 3).getType() == (TileType.BOOK)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(4, 1).getType() == (TileType.GAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(4, 3).getType() == (TileType.FRAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(5, 0).getType() == (TileType.PLANT)){
+  tilesMatched++;
+}
+    } catch (BookshelfGridColIndexOutOfBoundsException e) {
+      return 0;
+    } catch (BookshelfGridRowIndexOutOfBoundsException e) {
+      return 0;
+    } catch (NullIndexValueException e) {
+      return 0;
+    }
     
     return tilesMatched;
   };
@@ -140,16 +258,35 @@ public final class PrivatePatternFactory  {
    * 
    */
   public static final Function<Bookshelf, Integer> checkPattern7 = bs -> {
-    Tile[][] grid = bs.getBookshelfGrid();
     int tilesMatched = 0;
     
-    if(grid[0][0].getType().equals(TileType.CAT))   tilesMatched++;
-    if(grid[1][3].getType().equals(TileType.FRAME)) tilesMatched++;
-    if(grid[2][1].getType().equals(TileType.PLANT)) tilesMatched++;
-    if(grid[3][0].getType().equals(TileType.TROPHY))tilesMatched++;
-    if(grid[4][4].getType().equals(TileType.GAME))  tilesMatched++;
-    if(grid[5][2].getType().equals(TileType.BOOK))  tilesMatched++;
-    
+    try {
+      if(bs.getBookshelfGridAt(0, 0).getType() == (TileType.CAT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(1, 3).getType() == (TileType.FRAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(2, 1).getType() == (TileType.PLANT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(3, 0).getType() == (TileType.TROPHY)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(4, 4).getType() == (TileType.GAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(5, 2).getType() == (TileType.BOOK)){
+        tilesMatched++;
+      }
+    } catch (BookshelfGridColIndexOutOfBoundsException e) {
+      return 0;
+    } catch (BookshelfGridRowIndexOutOfBoundsException e) {
+      return 0;
+    } catch (NullIndexValueException e) {
+      return 0;
+    }
+
     return tilesMatched;
   };
 
@@ -158,15 +295,34 @@ public final class PrivatePatternFactory  {
    * 
    */
   public static final Function<Bookshelf, Integer> checkPattern8 = bs -> {
-    Tile[][] grid = bs.getBookshelfGrid();
     int tilesMatched = 0;
     
-    if(grid[0][4].getType().equals(TileType.FRAME)) tilesMatched++;
-    if(grid[1][1].getType().equals(TileType.CAT))   tilesMatched++;
-    if(grid[2][2].getType().equals(TileType.TROPHY))tilesMatched++;
-    if(grid[3][0].getType().equals(TileType.PLANT)) tilesMatched++;
-    if(grid[4][3].getType().equals(TileType.BOOK))  tilesMatched++;
-    if(grid[5][3].getType().equals(TileType.GAME))  tilesMatched++;
+    try {
+      if(bs.getBookshelfGridAt(0, 4).getType() == (TileType.FRAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(1, 1).getType() == (TileType.CAT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(2, 2).getType() == (TileType.TROPHY)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(3, 0).getType() == (TileType.PLANT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(4, 3).getType() == (TileType.BOOK)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(5, 3).getType() == (TileType.GAME)){
+  tilesMatched++;
+}
+    } catch (BookshelfGridColIndexOutOfBoundsException e) {
+      return 0;
+    } catch (BookshelfGridRowIndexOutOfBoundsException e) {
+      return 0;
+    } catch (NullIndexValueException e) {
+      return 0;
+    }
     
     return tilesMatched;
   };
@@ -176,15 +332,34 @@ public final class PrivatePatternFactory  {
    * 
    */
   public static final Function<Bookshelf, Integer> checkPattern9 = bs -> {
-    Tile[][] grid = bs.getBookshelfGrid();
     int tilesMatched = 0;
     
-    if(grid[0][2].getType().equals(TileType.GAME))  tilesMatched++;
-    if(grid[2][2].getType().equals(TileType.CAT))   tilesMatched++;
-    if(grid[3][4].getType().equals(TileType.BOOK))  tilesMatched++;
-    if(grid[4][1].getType().equals(TileType.TROPHY))tilesMatched++;
-    if(grid[4][4].getType().equals(TileType.PLANT)) tilesMatched++;
-    if(grid[5][0].getType().equals(TileType.FRAME)) tilesMatched++;
+    try {
+      if(bs.getBookshelfGridAt(0, 2).getType() == (TileType.GAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(2, 2).getType() == (TileType.CAT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(3, 4).getType() == (TileType.BOOK)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(4, 1).getType() == (TileType.TROPHY)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(4, 4).getType() == (TileType.PLANT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(5, 0).getType() == (TileType.FRAME)){
+        tilesMatched++;
+      }
+    } catch (BookshelfGridColIndexOutOfBoundsException e) {
+      return 0;
+    } catch (BookshelfGridRowIndexOutOfBoundsException e) {
+      return 0;
+    } catch (NullIndexValueException e) {
+      return 0;
+    }
     
     return tilesMatched;
   };
@@ -194,16 +369,35 @@ public final class PrivatePatternFactory  {
    * 
    */
   public static final Function<Bookshelf, Integer> checkPattern10 = bs -> {
-    Tile[][] grid = bs.getBookshelfGrid();
     int tilesMatched = 0;
     
-    if(grid[0][4].getType().equals(TileType.TROPHY))tilesMatched++;
-    if(grid[1][1].getType().equals(TileType.GAME))  tilesMatched++;
-    if(grid[2][0].getType().equals(TileType.BOOK))  tilesMatched++;
-    if(grid[3][3].getType().equals(TileType.CAT))   tilesMatched++;
-    if(grid[4][1].getType().equals(TileType.FRAME)) tilesMatched++;
-    if(grid[5][3].getType().equals(TileType.PLANT)) tilesMatched++;
-    
+    try {
+      if(bs.getBookshelfGridAt(0, 4).getType() == (TileType.TROPHY)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(1, 1).getType() == (TileType.GAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(2, 0).getType() == (TileType.BOOK)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(3, 3).getType() == (TileType.CAT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(4, 1).getType() == (TileType.FRAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(5, 3).getType() == (TileType.PLANT)){
+        tilesMatched++;
+      }
+    } catch (BookshelfGridColIndexOutOfBoundsException e) {
+      return 0;
+    } catch (BookshelfGridRowIndexOutOfBoundsException e) {
+      return 0;
+    } catch (NullIndexValueException e) {
+      return 0;
+    }
+
     return tilesMatched;
   };
 
@@ -212,15 +406,34 @@ public final class PrivatePatternFactory  {
    * 
    */
   public static final Function<Bookshelf, Integer> checkPattern11 = bs -> {
-    Tile[][] grid = bs.getBookshelfGrid();
     int tilesMatched = 0;
     
-    if(grid[0][2].getType().equals(TileType.PLANT)) tilesMatched++;
-    if(grid[1][1].getType().equals(TileType.BOOK))  tilesMatched++;
-    if(grid[2][0].getType().equals(TileType.GAME))  tilesMatched++;
-    if(grid[3][2].getType().equals(TileType.FRAME)) tilesMatched++;
-    if(grid[4][4].getType().equals(TileType.CAT))   tilesMatched++;
-    if(grid[5][3].getType().equals(TileType.TROPHY))tilesMatched++;
+    try {
+      if(bs.getBookshelfGridAt(0, 2).getType() == (TileType.PLANT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(1, 1).getType() == (TileType.BOOK)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(2, 0).getType() == (TileType.GAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(3, 2).getType() == (TileType.FRAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(4, 4).getType() == (TileType.CAT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(5, 3).getType() == (TileType.TROPHY)){
+        tilesMatched++;
+      }
+    } catch (BookshelfGridColIndexOutOfBoundsException e) {
+      return 0;
+    } catch (BookshelfGridRowIndexOutOfBoundsException e) {
+      return 0;
+    } catch (NullIndexValueException e) {
+      return 0;
+    }
     
     return tilesMatched;
   };
@@ -230,15 +443,34 @@ public final class PrivatePatternFactory  {
    * 
    */
   public static final Function<Bookshelf, Integer> checkPattern12 = bs -> {
-    Tile[][] grid = bs.getBookshelfGrid();
     int tilesMatched = 0;
     
-    if(grid[0][2].getType().equals(TileType.BOOK))  tilesMatched++;
-    if(grid[1][1].getType().equals(TileType.PLANT)) tilesMatched++;
-    if(grid[2][2].getType().equals(TileType.FRAME)) tilesMatched++;
-    if(grid[3][3].getType().equals(TileType.TROPHY))tilesMatched++;
-    if(grid[4][4].getType().equals(TileType.GAME))  tilesMatched++;
-    if(grid[5][0].getType().equals(TileType.CAT))   tilesMatched++;
+    try {
+      if(bs.getBookshelfGridAt(0, 2).getType() == (TileType.BOOK)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(1, 1).getType() == (TileType.PLANT)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(2, 2).getType() == (TileType.FRAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(3, 3).getType() == (TileType.TROPHY)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(4, 4).getType() == (TileType.GAME)){
+        tilesMatched++;
+      }
+      if(bs.getBookshelfGridAt(5, 0).getType() == (TileType.CAT)){
+        tilesMatched++;
+      }
+    } catch (BookshelfGridColIndexOutOfBoundsException e) {
+      return 0;
+    } catch (BookshelfGridRowIndexOutOfBoundsException e) {
+      return 0;
+    } catch (NullIndexValueException e) {
+      return 0;
+    }
     
     return tilesMatched;
   };
@@ -263,15 +495,15 @@ public final class PrivatePatternFactory  {
     (new PrivatePattern(checkPattern12))
   );
   
+  private static Random random = new Random();
+
   /**
    * Method used to get random PrivatePattern between the 12 possible.
    * 
    * @return a random {@link PrivatePattern}.
    * 
    */
-  public static final PrivatePattern getRandomPattern(){
-    Random random = new Random();
+  public static PrivatePattern getRandomPattern(){
     return patternsArray.get(random.nextInt(patternsArray.size()));
-  };
-
+  }
 }
