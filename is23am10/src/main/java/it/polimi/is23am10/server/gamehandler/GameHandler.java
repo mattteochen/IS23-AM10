@@ -17,7 +17,6 @@ import it.polimi.is23am10.server.player.exceptions.NullPlayerPrivateCardExceptio
 import it.polimi.is23am10.server.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.playerconnector.PlayerConnector;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
