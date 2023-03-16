@@ -1,5 +1,9 @@
-package it.polimi.is23am10.pattern;
+package it.polimi.is23am10.factory;
 
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.items.tile.Tile;
+import it.polimi.is23am10.items.tile.Tile.TileType;
+import it.polimi.is23am10.pattern.SharedPattern;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,23 +12,21 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import it.polimi.is23am10.items.bookshelf.Bookshelf;
-import it.polimi.is23am10.items.tile.Tile;
-import it.polimi.is23am10.items.tile.Tile.TileType;
-
 /**
  * Shared pattern factory object.
  * 
+ * <p> 
  *  NOTE: if not specified, each iteration of the player's bookshelf inside the
- * functions is gonna be first over rows,then columns
- *
+ *  functions is gonna be first over rows,then columns
+ * </p>
+ * 
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 
-public final class SharedPatternFactory{
+public final class SharedPatternFactory {
 
   /**
    * Number of occurencies need to comply checkTwoAdjacents rule.
@@ -79,26 +81,28 @@ public final class SharedPatternFactory{
 
     for (int i = 0; i < grid.length; i++) {
       for (int j = 0; j < grid[i].length; j++) {
-          if (i < grid.length - 1 && grid[i][j].equals(grid[i + 1][j]) && !grid[i][j].isEmpty()) {
-            if(!coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j)) && !coordsAdjAlreadyCounted.contains(String.valueOf(i+1)+String.valueOf(j))){
-              coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j));
-              coordsAdjAlreadyCounted.add(String.valueOf(i+1)+String.valueOf(j));
-              count++;
-              if (count >= TWO_ADJACENTS_OCC) {
-                return true;
-              }
+        if (i < grid.length - 1 && grid[i][j].equals(grid[i + 1][j]) && !grid[i][j].isEmpty()) {
+          if (!coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j))
+              && !coordsAdjAlreadyCounted.contains(String.valueOf(i + 1) + String.valueOf(j))) {
+            coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j));
+            coordsAdjAlreadyCounted.add(String.valueOf(i + 1) + String.valueOf(j));
+            count++;
+            if (count >= TWO_ADJACENTS_OCC) {
+              return true;
             }
           }
+        }
 
-          if (j < grid[i].length - 1 && grid[i][j].equals(grid[i][j + 1]) && !grid[i][j+1].isEmpty()) {
-            if(!coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j)) && !coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j+1))){
-              coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j));
-              coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j+1));
-              count++;
-              if (count >= TWO_ADJACENTS_OCC) {
-                return true;
-              }
+        if (j < grid[i].length - 1 && grid[i][j].equals(grid[i][j + 1]) && !grid[i][j + 1].isEmpty()) {
+          if (!coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j))
+              && !coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j + 1))) {
+            coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j));
+            coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j + 1));
+            count++;
+            if (count >= TWO_ADJACENTS_OCC) {
+              return true;
             }
+          }
         }
       }
     }
@@ -112,7 +116,7 @@ public final class SharedPatternFactory{
    */
   public static final Predicate<Bookshelf> checkCornersMatch = bs -> {
     Tile[][] grid = bs.getBookshelfGrid();
-    if(grid[0][0].isEmpty()){
+    if (grid[0][0].isEmpty()) {
       return false;
     }
     return (grid[0][0].equals(grid[0][grid[0].length - 1]) &&
@@ -135,32 +139,36 @@ public final class SharedPatternFactory{
       for (int j = 0; j < grid[i].length; j++) {
         if (i < grid.length - 3 && grid[i][j].equals(grid[i + 1][j]) && grid[i][j].equals(grid[i + 2][j])
             && grid[i][j].equals(grid[i + 3][j]) && !grid[i][j].isEmpty()) {
-              if(!coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j)) && !coordsAdjAlreadyCounted.contains(String.valueOf(i+1)+String.valueOf(j)) 
-              && !coordsAdjAlreadyCounted.contains(String.valueOf(i+2)+String.valueOf(j)) && !coordsAdjAlreadyCounted.contains(String.valueOf(i+3)+String.valueOf(j))){
-                coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j));
-                coordsAdjAlreadyCounted.add(String.valueOf(i+1)+String.valueOf(j));
-                coordsAdjAlreadyCounted.add(String.valueOf(i+2)+String.valueOf(j));
-                coordsAdjAlreadyCounted.add(String.valueOf(i+3)+String.valueOf(j));
-                count++;
-                if (count >= FOUR_ADJACENTS_OCC) {
-                  return true;
-                }
-              }
+          if (!coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j))
+              && !coordsAdjAlreadyCounted.contains(String.valueOf(i + 1) + String.valueOf(j))
+              && !coordsAdjAlreadyCounted.contains(String.valueOf(i + 2) + String.valueOf(j))
+              && !coordsAdjAlreadyCounted.contains(String.valueOf(i + 3) + String.valueOf(j))) {
+            coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j));
+            coordsAdjAlreadyCounted.add(String.valueOf(i + 1) + String.valueOf(j));
+            coordsAdjAlreadyCounted.add(String.valueOf(i + 2) + String.valueOf(j));
+            coordsAdjAlreadyCounted.add(String.valueOf(i + 3) + String.valueOf(j));
+            count++;
+            if (count >= FOUR_ADJACENTS_OCC) {
+              return true;
+            }
+          }
         }
 
         if (j < grid[i].length - 3 && grid[i][j].equals(grid[i][j + 1]) && grid[i][j].equals(grid[i][j + 2])
             && grid[i][j].equals(grid[i][j + 3]) && !grid[i][j].isEmpty()) {
-              if(!coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j)) && !coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j+1)) 
-              && !coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j+2)) && !coordsAdjAlreadyCounted.contains(String.valueOf(i)+String.valueOf(j+3))){
-                coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j));
-                coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j+1));
-                coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j+2));
-                coordsAdjAlreadyCounted.add(String.valueOf(i)+String.valueOf(j+3));
-                count++;
-                if (count >= FOUR_ADJACENTS_OCC) {
-                  return true;
-                }
-              }
+          if (!coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j))
+              && !coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j + 1))
+              && !coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j + 2))
+              && !coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j + 3))) {
+            coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j));
+            coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j + 1));
+            coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j + 2));
+            coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j + 3));
+            count++;
+            if (count >= FOUR_ADJACENTS_OCC) {
+              return true;
+            }
+          }
         }
       }
     }
@@ -171,14 +179,16 @@ public final class SharedPatternFactory{
    * Support function that checks if there's a 2x2 square of tiles with the same
    * type
    * 
-   * @param startRow Starting row from where I want to check if it's a valid square
-   * @param startCol Starting col from where I want to check if it's a valid square
-   * @param grid bookshelf grid
+   * @param startRow Starting row from where I want to check if it's a valid
+   *                 square
+   * @param startCol Starting col from where I want to check if it's a valid
+   *                 square
+   * @param grid     bookshelf grid
    * 
    * @return True if the square is present.
    */
   private static final boolean isValidSquare(int startRow, int startCol, Tile[][] grid) {
-    if(startRow>= grid.length || startCol >=grid[0].length || startRow <0 || startCol <0){
+    if (startRow >= grid.length || startCol >= grid[0].length || startRow < 0 || startCol < 0) {
       return false;
     }
     TileType currType = grid[startRow][startCol].getType();
@@ -276,19 +286,20 @@ public final class SharedPatternFactory{
     return false;
   };
 
-/**
- * Supporting method checking ascendent diagonal in Bookshelf.
- * 
- * @param startingRowOffset tells us if the diagonal is shifted vertically.
- * @param grid bookshelf grid
- * @return True if diagonal is present.
- */
+  /**
+   * Supporting method checking ascendent diagonal in Bookshelf.
+   * 
+   * @param startingRowOffset tells us if the diagonal is shifted vertically.
+   * @param grid              bookshelf grid
+   * @return True if diagonal is present.
+   */
   private static final boolean checkAscDiagonal(int startingRowOffset, Tile[][] grid) {
-    if(startingRowOffset >= grid.length || startingRowOffset <0){
+    if (startingRowOffset >= grid.length || startingRowOffset < 0) {
       return false;
     }
     for (int i = 0; i < grid[0].length - 1; i++) {
-      if (!grid[i + startingRowOffset][i].equals(grid[i + 1 + startingRowOffset][i + 1]) || grid[i+startingRowOffset][i].isEmpty()) {
+      if (!grid[i + startingRowOffset][i].equals(grid[i + 1 + startingRowOffset][i + 1])
+          || grid[i + startingRowOffset][i].isEmpty()) {
         break;
       }
       if (i == grid[0].length - 2) {
@@ -302,16 +313,17 @@ public final class SharedPatternFactory{
    * Supporting method checking descendent diagonal in Bookshelf.
    * 
    * @param startingRowOffset tells us if the diagonal is shifted vertically.
-   * @param grid bookshelf grid.
+   * @param grid              bookshelf grid.
    * @return True if diagonal is present.
    */
   private static final boolean checkDescDiagonal(int startingRowOffset, Tile[][] grid) {
-    if(startingRowOffset >= grid.length){
+    if (startingRowOffset >= grid.length) {
       return false;
     }
     for (int i = 0; i < grid[0].length - 1; i++) {
       if (!grid[grid.length - 1 - i - startingRowOffset][i]
-          .equals(grid[grid.length - 2 - i - startingRowOffset][i + 1]) || grid[grid.length - 1 - i - startingRowOffset][i].isEmpty()) {
+          .equals(grid[grid.length - 2 - i - startingRowOffset][i + 1])
+          || grid[grid.length - 1 - i - startingRowOffset][i].isEmpty()) {
         break;
       }
       if (i == grid[0].length - 2) {
@@ -381,10 +393,10 @@ public final class SharedPatternFactory{
     int countColumns = 0;
     Tile[][] grid = bs.getBookshelfGrid();
     /*
-    * here I am iterating over columns first since I want to check if in a column
-    * there are all different types
-    * 
-    */
+     * here I am iterating over columns first since I want to check if in a column
+     * there are all different types
+     * 
+     */
     for (int i = 0; i < grid[0].length; i++) {
       Set<TileType> seenTypes = new HashSet<TileType>();
       for (int j = 0; j < grid.length; j++) {
@@ -415,7 +427,7 @@ public final class SharedPatternFactory{
     Tile[][] grid = bs.getBookshelfGrid();
     for (int i = 0; i < grid.length; i++) {
       Set<TileType> seenTypes = new HashSet<TileType>();
-      for (int j = 0; j < grid[0].length ; j++) {
+      for (int j = 0; j < grid[0].length; j++) {
         if (grid[i][j].isEmpty() || seenTypes.contains(grid[i][j].getType())) {
           break;
         }
@@ -436,15 +448,15 @@ public final class SharedPatternFactory{
    * Support function that checks, starting from a tile in the grid, if it's part
    * of an X shape of tiles with the same type.
    * 
-   * @param row Starting row index from where I start to check.
-   * @param col Starting col index from where I start to check.
+   * @param row  Starting row index from where I start to check.
+   * @param col  Starting col index from where I start to check.
    * @param grid Bookshelf grid.
    * 
    * @return True if X shape is present.
    * 
    */
   private static final boolean checkXShape(int row, int col, Tile[][] grid) {
-    if(row >= grid.length || col >= grid[0].length || row < 0 || col < 0){
+    if (row >= grid.length || col >= grid[0].length || row < 0 || col < 0) {
       return false;
     }
     if (grid[row][col].equals(grid[row + 2][col]) &&
@@ -475,11 +487,10 @@ public final class SharedPatternFactory{
     return false;
   };
 
-  
   /**
    * #12
    * Rule that checks if the columns in the bookshelf are ordered (asc o desc) and
-   * the rest of the bookshelf is filled with {@link TileType#EMPTY} 
+   * the rest of the bookshelf is filled with {@link TileType#EMPTY}
    *
    */
   public static final Predicate<Bookshelf> checkOrderedBookshelfColumns = bs -> {
@@ -553,19 +564,27 @@ public final class SharedPatternFactory{
    *
    */
   private static final List<SharedPattern> patternsArray = List.of(
-    (new SharedPattern<>(checkTwoAdjacents, "Six separated groups made of two adjacent tiles of the same type. The tile type of different groups can be different.")),
-    (new SharedPattern<>(checkCornersMatch, "The four tiles at the corners of the bookshelf are of the same type.")),
-    (new SharedPattern<>(checkFourAdjacents, "Four separated groups made of four adjacent tiles of the same type. The tile's type of different groups can be different.")),
-    (new SharedPattern<>(checkSquares, "Two groups of four tiles of the same type forming a 2x2 square shape. The tile type of the two squares has to be the same.")),
-    (new SharedPattern<>(checkMaxThreeTypesInColumn, "At least three full columns (filled with six tiles), having maximum three different tile types per column. ")),
-    (new SharedPattern<>(checkEightOfSameType, "At least eight tiles of the same type. There are no restrictions concerning their positions.")),
-    (new SharedPattern<>(checkDiagonalsSameType, "Five tiles of the same type forming a diagonal.")),
-    (new SharedPattern<>(checkMaxThreeTypesInRow, "At least four full rows (filled with five tiles), having maximum three different tile types per row.")),
-    (new SharedPattern<>(checkTwoColumnAllDiff, "At least two full columns (filled with six tiles), having tiles of all different types.")),
-    (new SharedPattern<>(checkTwoRowsAllDiff, "At least two full rows (filled with five tiles), having tiles of all different types.")),
-    (new SharedPattern<>(checkTilesXShape, "Five tiles of the same type, forming an X shape.")),
-    (new SharedPattern<>(checkOrderedBookshelfColumns, "Five columns with ascending or descending height. Starting from the first or the last column, the next column has to have one tile more. The tile types are not considered."))
-  );
+      (new SharedPattern<>(checkTwoAdjacents,
+          "Six separated groups made of two adjacent tiles of the same type. The tile type of different groups can be different.")),
+      (new SharedPattern<>(checkCornersMatch, "The four tiles at the corners of the bookshelf are of the same type.")),
+      (new SharedPattern<>(checkFourAdjacents,
+          "Four separated groups made of four adjacent tiles of the same type. The tile's type of different groups can be different.")),
+      (new SharedPattern<>(checkSquares,
+          "Two groups of four tiles of the same type forming a 2x2 square shape. The tile type of the two squares has to be the same.")),
+      (new SharedPattern<>(checkMaxThreeTypesInColumn,
+          "At least three full columns (filled with six tiles), having maximum three different tile types per column. ")),
+      (new SharedPattern<>(checkEightOfSameType,
+          "At least eight tiles of the same type. There are no restrictions concerning their positions.")),
+      (new SharedPattern<>(checkDiagonalsSameType, "Five tiles of the same type forming a diagonal.")),
+      (new SharedPattern<>(checkMaxThreeTypesInRow,
+          "At least four full rows (filled with five tiles), having maximum three different tile types per row.")),
+      (new SharedPattern<>(checkTwoColumnAllDiff,
+          "At least two full columns (filled with six tiles), having tiles of all different types.")),
+      (new SharedPattern<>(checkTwoRowsAllDiff,
+          "At least two full rows (filled with five tiles), having tiles of all different types.")),
+      (new SharedPattern<>(checkTilesXShape, "Five tiles of the same type, forming an X shape.")),
+      (new SharedPattern<>(checkOrderedBookshelfColumns,
+          "Five columns with ascending or descending height. Starting from the first or the last column, the next column has to have one tile more. The tile types are not considered.")));
 
   /**
    * Method used to get a random SharedPattern between the 12 possible.
@@ -573,7 +592,7 @@ public final class SharedPatternFactory{
    * @return a random {@link SharedPattern}.
    * 
    */
-  public static final SharedPattern getRandomPattern(){
+  public static final SharedPattern getRandomPattern() {
     Random random = new Random();
     return patternsArray.get(random.nextInt(patternsArray.size()));
   };
