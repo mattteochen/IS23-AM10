@@ -15,10 +15,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
 
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
+import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
 import it.polimi.is23am10.items.card.PrivateCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.items.card.exceptions.NegativeMatchedBlockCountException;
+import it.polimi.is23am10.items.card.exceptions.NullMatchedBlockCountException;
+import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
+import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
@@ -26,6 +34,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.score.Score;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
@@ -196,4 +205,64 @@ public class PlayerTest {
 
     }
     
+    /**
+     * Test to check that the updateScore() method 
+     * actually updates all scores.
+     * 
+     * @throws NullPlayerNameException
+     * @throws NullPlayerIdException
+     * @throws NullPlayerBookshelfException
+     * @throws NullPlayerScoreException
+     * @throws NullPlayerPrivateCardException
+     * @throws NullPlayerScoreBlocksException
+     * @throws DuplicatePlayerNameException
+     * @throws AlreadyInitiatedPatternException
+     * @throws NullPlayerNamesException
+     * @throws NullPointerException
+     * @throws WrongLengthBookshelfStringException
+     * @throws WrongCharBookshelfStringException
+     * @throws WrongTileTypeException
+     * @throws NotValidScoreBlockValueException
+     * @throws NullMatchedBlockCountException
+     * @throws NegativeMatchedBlockCountException
+     * @throws BookshelfGridColIndexOutOfBoundsException
+     * @throws BookshelfGridRowIndexOutOfBoundsException
+     * @throws NullIndexValueException
+     * @throws NullScoreBlockListException
+     */
+    @Test
+    public void updateScore_should_update_score()
+    throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+    NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException, NullPointerException,
+    WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException, NotValidScoreBlockValueException,
+    NullMatchedBlockCountException, NegativeMatchedBlockCountException, BookshelfGridColIndexOutOfBoundsException,
+    BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullScoreBlockListException{
+        
+        final Integer SIX = 6;
+        final Integer THIRTHYSEVEN = 37;
+        Player p = PlayerFactory.getNewPlayer("myNewPlayer", new ArrayList<String>());
+
+        p.setBookshelf(new Bookshelf(
+            "PPPXX" +
+            "BPPCX" +
+            "FBFBX" +
+            "TGTGX" +
+            "TTCCC" + 
+            "TTTCC"
+        ));
+
+        p.setScoreBlocks(List.of(
+            new ScoreBlock(2),
+            new ScoreBlock(4)
+        ));
+
+        PrivateCard pc = new PrivateCard();
+        pc.setMatchedBlocksCount(SIX);
+        p.setPrivateCard(pc);
+
+        p.getScore().setExtraPoint();
+        
+        p.updateScore();
+        assertEquals(THIRTHYSEVEN, p.getScore().getTotalScore());
+    }
 }

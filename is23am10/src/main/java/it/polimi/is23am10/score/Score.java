@@ -255,4 +255,8 @@ public final class Score {
     
     return count;
   }
+
+  public Integer getTotalScore(){
+    return extraPoint + scoreBlockPoints + privatePoints + bookshelfPoints;
+  }
 }
