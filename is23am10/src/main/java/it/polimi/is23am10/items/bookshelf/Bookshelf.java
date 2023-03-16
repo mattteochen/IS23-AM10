@@ -168,7 +168,7 @@ public class Bookshelf {
     if (!IndexValidator.validRowIndex(row, Bookshelf.BOOKSHELF_ROWS)) {
       throw new BookshelfGridRowIndexOutOfBoundsException(row);
     }
-    if (!IndexValidator.validColIndex(row, Bookshelf.BOOKSHELF_COLS)) {
+    if (!IndexValidator.validColIndex(col, Bookshelf.BOOKSHELF_COLS)) {
       throw new BookshelfGridColIndexOutOfBoundsException(col);
     }
     return bookshelfGrid[row][col];}
