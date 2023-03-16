@@ -56,7 +56,7 @@ public final class ServerControllerState {
    * @throws NullGameHandlerInstance.
    *
    */
-  public static final synchronized void addGameHandler(
+  public static final void addGameHandler(
       GameHandler handler) throws NullGameHandlerInstance {
     if (handler == null) {
       throw new NullGameHandlerInstance();
@@ -74,13 +74,18 @@ public final class ServerControllerState {
    * @param id The game id to remove.
    *
    */
-  public static final synchronized void removeGameHandlerById(UUID id) {
+  public static final void removeGameHandlerById(UUID id) {
     if (id == null) {
       return;
     }
-    Optional<GameHandler> target = gamePool.stream()
-        .filter(game -> game.getGame().getGameId().equals(id))
-        .findFirst();
+
+    Optional<GameHandler> target = Optional.empty();
+
+    synchronized (gamePool) {
+      target = gamePool.stream()
+          .filter(game -> game.getGame().getGameId().equals(id))
+          .findFirst();
+    }
     if (target.isPresent()) {
       // TODO client disconnection
       gamePool.remove(target.get());
@@ -96,7 +101,7 @@ public final class ServerControllerState {
    * @throws NullPlayerConnector.
    *
    */
-  public static final synchronized void addPlayerConnector(
+  public static final void addPlayerConnector(
       PlayerConnector playerConnector) throws NullPlayerConnector {
     if (playerConnector == null) {
       throw new NullPlayerConnector();
