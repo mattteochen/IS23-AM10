@@ -5,7 +5,6 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
-import it.polimi.is23am10.server.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.server.playerconnector.PlayerConnector;
 import it.polimi.is23am10.server.playerconnector.exceptions.NullSocketConnectorException;
 import java.io.IOException;
@@ -60,8 +59,7 @@ public final class ServerController implements Runnable {
   public ServerController(Socket connector) {
     try {
       this.playerConnector = new PlayerConnector(connector);
-      ServerControllerState.addPlayerConnector(this.playerConnector);
-    } catch (NullSocketConnectorException | NullPlayerConnector e) {
+    } catch (NullSocketConnectorException e) {
       logger.error(e);
     } 
   }
