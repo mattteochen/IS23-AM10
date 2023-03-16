@@ -1,9 +1,8 @@
 package it.polimi.is23am10.playerconnector;
 
+import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.net.Socket;
 import java.util.UUID;
-
-import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 
 /**
  * The player connector class definition.
