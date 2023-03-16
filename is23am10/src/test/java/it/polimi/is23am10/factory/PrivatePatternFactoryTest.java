@@ -1,6 +1,6 @@
 package it.polimi.is23am10.factory;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +21,7 @@ public class PrivatePatternFactoryTest {
   @Test
   public void RULE1_should_find_ZERO_matches()
     throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException, WrongTileTypeException {
-    Bookshelf testPattern1ZeroMatch = new Bookshelf(
+    Bookshelf testPattern1ZeroMatches = new Bookshelf(
       "CCCGF" +
       "FTBFF" +
       "FCCFF" +
@@ -29,7 +29,7 @@ public class PrivatePatternFactoryTest {
       "PPCBC" +
       "BCFPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern1.apply(testPattern1ZeroMatch).equals(0));
+    assertEquals(0, PrivatePatternFactory.checkPattern1.apply(testPattern1ZeroMatches));
   };
 
   @Test
@@ -43,7 +43,7 @@ public class PrivatePatternFactoryTest {
       "PPCBC" +
       "BCTPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern1.apply(testPattern1).equals(6));
+    assertEquals(6, PrivatePatternFactory.checkPattern1.apply(testPattern1));
   };
 
   @Test
@@ -57,7 +57,7 @@ public class PrivatePatternFactoryTest {
       "PPCFC" +
       "BCBPB");
 
-    assertTrue(PrivatePatternFactory.checkPattern2.apply(testPattern2ZeroMatches).equals(0));
+    assertEquals(0, PrivatePatternFactory.checkPattern2.apply(testPattern2ZeroMatches));
   };
 
   @Test
@@ -71,7 +71,7 @@ public class PrivatePatternFactoryTest {
       "PPCTC" +
       "BCBPF");
 
-    assertTrue(PrivatePatternFactory.checkPattern2.apply(testPattern2).equals(6));
+    assertEquals(6, PrivatePatternFactory.checkPattern2.apply(testPattern2));
   };
 
   @Test
@@ -85,7 +85,7 @@ public class PrivatePatternFactoryTest {
       "PPCBC" +
       "FCBPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern3.apply(testPattern3ZeroMatches).equals(0));
+    assertEquals(0, PrivatePatternFactory.checkPattern3.apply(testPattern3ZeroMatches));
   };
 
   @Test
@@ -99,7 +99,7 @@ public class PrivatePatternFactoryTest {
       "PPCBC" +
       "BCBPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern3.apply(testPattern3).equals(6));
+    assertEquals(6, PrivatePatternFactory.checkPattern3.apply(testPattern3));
   };
 
   @Test
@@ -113,7 +113,7 @@ public class PrivatePatternFactoryTest {
       "PCBFC" +
       "BCBPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern4.apply(testPattern4ZeroMatches).equals(0));
+    assertEquals(0, PrivatePatternFactory.checkPattern4.apply(testPattern4ZeroMatches));;
   };
 
   @Test
@@ -127,7 +127,7 @@ public class PrivatePatternFactoryTest {
       "PBCBC" +
       "BCBPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern4.apply(testPattern4).equals(6));
+    assertEquals(6, PrivatePatternFactory.checkPattern4.apply(testPattern4));
   };
 
   @Test
@@ -141,7 +141,7 @@ public class PrivatePatternFactoryTest {
       "PPCBC" +
       "BCBBC");
 
-    assertTrue(PrivatePatternFactory.checkPattern5.apply(testPattern5ZeroMatches).equals(0));
+    assertEquals(0, PrivatePatternFactory.checkPattern5.apply(testPattern5ZeroMatches));
   };
 
   @Test
@@ -155,7 +155,7 @@ public class PrivatePatternFactoryTest {
       "PPCBP" +
       "GCBCC");
 
-    assertTrue(PrivatePatternFactory.checkPattern5.apply(testPattern5).equals(6));
+    assertEquals(6, PrivatePatternFactory.checkPattern5.apply(testPattern5));
   };
 
   @Test
@@ -169,7 +169,7 @@ public class PrivatePatternFactoryTest {
       "PFCBC" +
       "FCBPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern6.apply(testPattern6ZeroMatches).equals(0));
+    assertEquals(0, PrivatePatternFactory.checkPattern6.apply(testPattern6ZeroMatches));
   };
 
   @Test
@@ -183,7 +183,7 @@ public class PrivatePatternFactoryTest {
       "PGCFC" +
       "PCBPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern6.apply(testPattern6).equals(6));
+    assertEquals(6, PrivatePatternFactory.checkPattern6.apply(testPattern6));
   };
 
   @Test
@@ -197,7 +197,7 @@ public class PrivatePatternFactoryTest {
       "PPCBB" +
       "BCFPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern7.apply(testPattern7ZeroMatches).equals(0));
+    assertEquals(0, PrivatePatternFactory.checkPattern7.apply(testPattern7ZeroMatches));
   };
 
   @Test
@@ -211,7 +211,7 @@ public class PrivatePatternFactoryTest {
       "PPCBG" +
       "BCBPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern7.apply(testPattern7).equals(6));
+    assertEquals(6, PrivatePatternFactory.checkPattern7.apply(testPattern7));
   };
 
   @Test
@@ -225,7 +225,7 @@ public class PrivatePatternFactoryTest {
       "PPCCC" +
       "BCBCC");
 
-    assertTrue(PrivatePatternFactory.checkPattern8.apply(testPattern8ZeroMatches).equals(0));
+    assertEquals(0, PrivatePatternFactory.checkPattern8.apply(testPattern8ZeroMatches));
   };
 
   @Test
@@ -239,7 +239,7 @@ public class PrivatePatternFactoryTest {
       "PPCBC" +
       "BCBGC");
 
-    assertTrue(PrivatePatternFactory.checkPattern8.apply(testPattern8).equals(6));
+    assertEquals(6, PrivatePatternFactory.checkPattern8.apply(testPattern8));
   };
 
   @Test
@@ -253,7 +253,7 @@ public class PrivatePatternFactoryTest {
       "PBCBB" +
       "PCBPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern9.apply(testPattern9ZeroMatches).equals(0));
+    assertEquals(0, PrivatePatternFactory.checkPattern9.apply(testPattern9ZeroMatches));
   };
 
   @Test
@@ -267,7 +267,7 @@ public class PrivatePatternFactoryTest {
       "PTCBP" +
       "FCBPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern9.apply(testPattern9).equals(6));
+    assertEquals(6, PrivatePatternFactory.checkPattern9.apply(testPattern9));
   };
 
   @Test
@@ -281,7 +281,7 @@ public class PrivatePatternFactoryTest {
       "PPCFC" +
       "BCBBC");
 
-    assertTrue(PrivatePatternFactory.checkPattern10.apply(testPattern10ZeroMatches).equals(0));
+    assertEquals(0, PrivatePatternFactory.checkPattern10.apply(testPattern10ZeroMatches));
   };
 
   @Test
@@ -295,7 +295,7 @@ public class PrivatePatternFactoryTest {
       "PFCFC" +
       "BCBPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern10.apply(testPattern10).equals(6));
+    assertEquals(6, PrivatePatternFactory.checkPattern10.apply(testPattern10));
   };
 
   @Test
@@ -309,7 +309,7 @@ public class PrivatePatternFactoryTest {
       "PPCBB" +
       "BCBBC");
 
-    assertTrue(PrivatePatternFactory.checkPattern11.apply(testPattern11ZeroMatches).equals(0));
+    assertEquals(0, PrivatePatternFactory.checkPattern11.apply(testPattern11ZeroMatches));
   };
 
   @Test
@@ -323,7 +323,7 @@ public class PrivatePatternFactoryTest {
       "PPCBC" +
       "BCBTC");
 
-    assertTrue(PrivatePatternFactory.checkPattern11.apply(testPattern11).equals(6));
+    assertEquals(6, PrivatePatternFactory.checkPattern11.apply(testPattern11));
   };
 
   @Test
@@ -337,7 +337,7 @@ public class PrivatePatternFactoryTest {
       "PPCBB" +
       "BCBPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern12.apply(testPattern12ZeroMatches).equals(0));
+    assertEquals(0, PrivatePatternFactory.checkPattern12.apply(testPattern12ZeroMatches));;
   };
 
   @Test
@@ -351,6 +351,6 @@ public class PrivatePatternFactoryTest {
       "PPCBG" +
       "CCBPC");
 
-    assertTrue(PrivatePatternFactory.checkPattern12.apply(testPattern12).equals(6));
+    assertEquals(6, PrivatePatternFactory.checkPattern12.apply(testPattern12));
   };
 }
