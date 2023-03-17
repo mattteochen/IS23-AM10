@@ -1,8 +1,8 @@
 package it.polimi.is23am10.controller;
 
 import it.polimi.is23am10.command.AbstractCommand;
-import it.polimi.is23am10.command.StartGameCommand;
 import it.polimi.is23am10.command.AbstractCommand.Opcode;
+import it.polimi.is23am10.command.StartGameCommand;
 import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.controller.exceptions.StartCommandSerializationErrorException;
 import it.polimi.is23am10.controller.interfaces.ControllerConsumer;
@@ -22,7 +22,6 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
-
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,7 +46,7 @@ public class ServerControllerAction {
    * The {@link Opcode#START} command callback worker.
    *
    */
-  private final ControllerConsumer startConsumer = (playerConnector, command) -> {
+  protected final ControllerConsumer startConsumer = (playerConnector, command) -> {
     if (command instanceof StartGameCommand) {
       try {
         String playerName = ((StartGameCommand) command).getStartingPlayerName();
@@ -81,11 +80,11 @@ public class ServerControllerAction {
         logger.error("{} Failed the game instance creation {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       } catch (NullPlayerConnector e) {
-        logger.error("{} Failed the player connector creation {}",
+        logger.error("{} Failed to add player connector {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       } 
     } else {
-      logger.info("{} Failed to obtain deserialized START command",
+      logger.error("{} Failed to obtain deserialized START command",
           ServerDebugPrefixString.START_COMMAND_PREFIX);
       throw new StartCommandSerializationErrorException(StartGameCommand.class.toString());
     }

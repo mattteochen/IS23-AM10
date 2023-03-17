@@ -4,7 +4,6 @@ import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +51,6 @@ public final class ServerControllerState {
   /**
    * Add a new game handler to the pool.
    * 
-   *
    * @param handler The game handler instance to add.
    * @throws NullGameHandlerInstance.
    *
@@ -70,7 +68,6 @@ public final class ServerControllerState {
   /**
    * Remove a new game handler from the pool.
    * This performs all the clients disconnections.
-   * 
    *
    * @param id The game id to remove.
    *
@@ -96,7 +93,6 @@ public final class ServerControllerState {
 
   /**
    * Add player link to the pool.
-   * 
    *
    * @param playerConnector The connector object to be linked with a player.
    * @throws NullPlayerConnector.
@@ -109,5 +105,25 @@ public final class ServerControllerState {
     }
     playersPool.add(playerConnector);
     logger.info("Added new player connector");
+  }
+
+  /**
+   * Player pool getter
+   *
+   * @return The actively connected players.
+   *
+   */
+  public static synchronized List<PlayerConnector> getPlayersPool() {
+    return playersPool;
+  }
+
+  /**
+   * Game pool getter
+   * 
+   * @return The actively started games instances.
+   *
+   */
+  public static synchronized List<GameHandler> getGamePools() {
+    return gamePool;
   }
 }
