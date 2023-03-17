@@ -24,4 +24,10 @@ public final class ServerDebugPrefixString {
    *
    */
   public static final String START_COMMAND_PREFIX = "START ->";
+
+  /**
+   * {@link Opcode#ADD_PLAYER} prefix string.
+   *
+   */
+  public static final String ADD_PLAYER_COMMAND_PREFIX = "ADD_PLAYER ->";
 }

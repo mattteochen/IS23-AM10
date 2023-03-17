@@ -16,6 +16,7 @@ public abstract class AbstractCommand {
    */
   public enum Opcode {
     START,
+    ADD_PLAYER,
     NULL
   }
 
@@ -35,7 +36,7 @@ public abstract class AbstractCommand {
 
   /**
    * Opcode getter.
-   * 
+   *
    * @return The current command Opcode.
    * 
    */

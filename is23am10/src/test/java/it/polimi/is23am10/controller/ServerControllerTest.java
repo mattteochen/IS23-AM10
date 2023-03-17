@@ -14,12 +14,16 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+
+import it.polimi.is23am10.command.AddPlayerCommand;
 import it.polimi.is23am10.command.StartGameCommand;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -104,7 +108,7 @@ class ServerControllerTest {
   }
 
   @Test
-  void BUILD_COMMAND_green_path() throws JsonIOException, JsonSyntaxException, IOException {
+  void BUILD_START_COMMAND_green_path() throws JsonIOException, JsonSyntaxException, IOException {
     Socket mockSocket = Mockito.mock(Socket.class);
     StartGameCommand cmd = new StartGameCommand("optimus prime", 4);
     Gson gson = new Gson();
@@ -114,6 +118,19 @@ class ServerControllerTest {
     when(playerConnector.getConnector()).thenReturn(mockSocket);
     when(mockSocket.getInputStream()).thenReturn(inputStream);
     assertEquals(cmd, (StartGameCommand) controller.buildCommand());
+  }
+
+  @Test
+  void BUILD_ADD_PLAYER_COMMAND_green_path() throws JsonIOException, JsonSyntaxException, IOException {
+    Socket mockSocket = Mockito.mock(Socket.class);
+    AddPlayerCommand cmd = new AddPlayerCommand("optimus prime", UUID.randomUUID());
+    Gson gson = new Gson();
+    String json = gson.toJson(cmd);
+    ByteArrayInputStream inputStream = new ByteArrayInputStream(json.getBytes());
+
+    when(playerConnector.getConnector()).thenReturn(mockSocket);
+    when(mockSocket.getInputStream()).thenReturn(inputStream);
+    assertEquals(cmd, (AddPlayerCommand) controller.buildCommand());
   }
 
   @Test
