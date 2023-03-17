@@ -27,6 +27,7 @@ public final class ServerConfig {
 
   /**
    * The max allowed connection for this server instance.
+   * This is a momentary max value.
    * 
    */
   public static final Integer MAX_CLIENT_CONNECTION = 8;
