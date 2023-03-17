@@ -4,6 +4,7 @@ import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +67,7 @@ public final class ServerControllerState {
   }
 
   /**
-   * Remove a new game handler from the pool.
+   * Remove a game handler from the pool.
    * This performs all the clients disconnections.
    *
    * @param id The game id to remove.
@@ -85,8 +86,12 @@ public final class ServerControllerState {
           .findFirst();
     }
     if (target.isPresent()) {
-      // TODO client disconnection
-      gamePool.remove(target.get());
+      GameHandler targetHandler = target.get();
+      targetHandler.getPlayerConnectors()
+        .stream()
+        //point of optimization, can be parallelized
+        .forEach(connector -> removePlayerByGameAndName(connector.getGameId(), connector.getPlayerName()));
+      gamePool.remove(targetHandler);
       logger.info("Removed game handler with id {}", id);
     }
   }
@@ -105,6 +110,39 @@ public final class ServerControllerState {
     }
     playersPool.add(playerConnector);
     logger.info("Added new player connector");
+  }
+
+  /**
+   * Remove a player connector from the pool.
+   * This closes the socket connection.
+   *
+   * @param gameId The game id reference.
+   * @param playerName The playerName.
+   * @throws IOException
+   *
+   */
+  public static final void removePlayerByGameAndName(UUID gameId, String playerName) {
+    if (gameId == null || playerName == null) {
+      return;
+    }
+
+    Optional<PlayerConnector> target = Optional.empty();
+
+    synchronized (playersPool) {
+      target = playersPool.stream()
+          .filter(connector -> connector.getGameId().equals(gameId) && connector.getPlayerName().equals(playerName))
+          .findFirst();
+    }
+    if (target.isPresent()) {
+      PlayerConnector targetConnector = target.get();
+      try {
+        targetConnector.getConnector().close();
+      } catch (IOException e) {
+        logger.error("Failed to close socket connection", e);
+      }
+      playersPool.remove(targetConnector);
+      logger.info("Removed player connector from game {} with name {}", gameId, playerName);
+    }
   }
 
   /**
