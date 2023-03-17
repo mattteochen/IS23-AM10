@@ -1,9 +1,5 @@
 package it.polimi.is23am10.score;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
@@ -15,6 +11,11 @@ import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+
 /**
  * The Score class definition.
  *
@@ -24,8 +25,6 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 
-// TODO: Change setter methods to accept Objects and compute scores directly in
-// setter
 public final class Score {
   /**
    * Integer referencing the extra point given to the first player
@@ -57,7 +56,7 @@ public final class Score {
 
   /**
    * Map that allows the conversion from number of matches 
-   * in private cards to points received
+   * in private cards to points received.
    */
   public static final Map<Integer, Integer> privateCardPointsMap = Map.of(
       0, 0,
@@ -71,7 +70,7 @@ public final class Score {
 
   /**
    * Map that allows the conversion from number of groups
-   * in player's bookshelf to points received
+   * in player's bookshelf to points received.
    */
   private static final Map<Integer, Integer> bookshelfPointsMap = Map.of(
       3, 2,
@@ -82,7 +81,7 @@ public final class Score {
 
   /**
    * Integer representing the minimum group size
-   * for counting bookshelf points
+   * for counting bookshelf points.
    */
   private static final Integer MIN_GROUP_SIZE = 3;
 
@@ -126,28 +125,34 @@ public final class Score {
    * 
    */
   public void setBookshelfPoints(Bookshelf bs) 
-  throws NullPointerException, BookshelfGridColIndexOutOfBoundsException,
-  BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException {
-    if (bs == null) throw new NullPlayerBookshelfException("[Score:setBookshelfPoints] Player's bookshelf must not be null");
-    
+      throws NullPointerException, BookshelfGridColIndexOutOfBoundsException,
+      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException {
+    if (bs == null) {
+      throw new NullPlayerBookshelfException("[Score:setBookshelfPoints] Player's bookshelf must not be null");
+    }
+
     List<Integer> groupsSizes = new ArrayList<>();
     Integer[][] visitedMap = new Integer[Bookshelf.BOOKSHELF_ROWS][Bookshelf.BOOKSHELF_COLS];
-    
+
     // Traverse each tile in the grid
     for (int i = 0; i < Bookshelf.BOOKSHELF_ROWS; i++) {
-        for (int j = 0; j < Bookshelf.BOOKSHELF_COLS; j++) {
-            // Check if the tile has already been visited
-            if (visitedMap[i][j] == null) {
-                Tile tile = bs.getBookshelfGridAt(i, j);
-                if (!tile.isEmpty()) {
-                  int groupSize = countAdjacentTilesRecursive(bs, i, j, visitedMap, tile.getType());
-                  
-                  // I only consider valid groups.
-                  if (groupSize >= MIN_GROUP_SIZE && groupSize <= MAX_GROUP_SIZE) groupsSizes.add(groupSize);
-                  if (groupSize > MAX_GROUP_SIZE) groupsSizes.add(MAX_GROUP_SIZE);
-                }
+      for (int j = 0; j < Bookshelf.BOOKSHELF_COLS; j++) {
+        // Check if the tile has already been visited
+        if (visitedMap[i][j] == null) {
+          Tile tile = bs.getBookshelfGridAt(i, j);
+          if (!tile.isEmpty()) {
+            int groupSize = countAdjacentTilesRecursive(bs, i, j, visitedMap, tile.getType());
+
+            // I only consider valid groups.
+            if (groupSize >= MIN_GROUP_SIZE && groupSize <= MAX_GROUP_SIZE) {
+              groupsSizes.add(groupSize);
             }
+            if (groupSize > MAX_GROUP_SIZE) {
+              groupsSizes.add(MAX_GROUP_SIZE);
+            }
+          }
         }
+      }
     }
 
     bookshelfPoints = groupsSizes.stream().mapToInt(bookshelfPointsMap::get).sum();
@@ -156,24 +161,28 @@ public final class Score {
   /**
    * scoreBlockPoints setter.
    * 
-   * @param scoreBlockPoints The scoreBlock points value to be assigned.
+   * @param scoreBlocks The scoreblock list to get points from.
    * @throws NullPointsException.
    * 
    */
   public void setScoreBlockPoints(List<ScoreBlock> scoreBlocks) throws NullScoreBlockListException {
-    if (scoreBlocks == null) throw new NullScoreBlockListException("[Score:setScoreBlockPoints] Player's scoreBlocks should not be null");
+    if (scoreBlocks == null) {
+      throw new NullScoreBlockListException("[Score:setScoreBlockPoints] Player's scoreBlocks should not be null");
+    }
     scoreBlockPoints = scoreBlocks.stream().mapToInt(sb -> sb.getScore()).sum();
   }
 
   /**
    * privatePoints setter.
    * 
-   * @param privatePoints The private card points value to be assigned.
+   * @param pc The private card to get points from.
    * @throws NullPointsException.
    * 
    */
   public void setPrivatePoints(PrivateCard pc) throws NullPointerException {
-    if (pc == null) throw new NullPointerException("[Score:setPrivatePoints] Player's private card should not be null");
+    if (pc == null) {
+      throw new NullPointerException("[Score:setPrivatePoints] Player's private card should not be null");
+    }
     privatePoints = privateCardPointsMap.get(pc.getMatchedBlocksCount());
   }
 
@@ -218,7 +227,7 @@ public final class Score {
   }
 
   /**
-   * Helper function to help with BFS in bookshelf to find groups of same tile type
+   * Helper function to help with BFS in bookshelf to find groups of same tile type.
    * 
    * @param bs Bookshelf to check for groups in
    * @param row Row index 
@@ -231,16 +240,16 @@ public final class Score {
    * @throws NullIndexValueException
    */
   private int countAdjacentTilesRecursive(Bookshelf bs, int row, int col, Integer[][] visitedMap, TileType type) 
-  throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
     // Check if the current tile is within the grid bounds and has the same type as the original tile, is not empty not visited
     if (
-      row < 0 || row >= Bookshelf.BOOKSHELF_ROWS ||
-      col < 0 || col >= Bookshelf.BOOKSHELF_COLS || 
-      bs.getBookshelfGridAt(row, col).getType() != type ||
-      bs.getBookshelfGridAt(row, col).getType() == TileType.EMPTY ||
-      visitedMap[row][col] != null
+        row < 0 || row >= Bookshelf.BOOKSHELF_ROWS 
+        || col < 0 || col >= Bookshelf.BOOKSHELF_COLS 
+        || bs.getBookshelfGridAt(row, col).getType() != type 
+        || bs.getBookshelfGridAt(row, col).getType() == TileType.EMPTY 
+        || visitedMap[row][col] != null
     ) {
-        return 0;
+      return 0;
     }
     
     // Mark the current tile as visited by setting it to 1
@@ -256,7 +265,7 @@ public final class Score {
     return count;
   }
 
-  public Integer getTotalScore(){
+  public Integer getTotalScore() {
     return extraPoint + scoreBlockPoints + privatePoints + bookshelfPoints;
   }
 }
