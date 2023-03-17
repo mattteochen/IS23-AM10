@@ -2,7 +2,10 @@ package it.polimi.is23am10.player;
 
 import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.card.PrivateCard;
+import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.pattern.PrivatePattern;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
@@ -12,6 +15,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.score.Score;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 import java.util.List;
 import java.util.UUID;
@@ -202,5 +206,22 @@ public class Player {
    */
   public List<ScoreBlock> getScoreBlocks() {
     return scoreBlocks;
+  }
+
+  /**
+   * Function to be called by {@link Game} at the end of Player's turn.
+   * Updates its scores passing their score-giving objects to specific methods.
+   * @throws NullPointerException
+   * @throws BookshelfGridColIndexOutOfBoundsException
+   * @throws BookshelfGridRowIndexOutOfBoundsException
+   * @throws NullIndexValueException
+   * @throws NullPlayerBookshelfException
+   * @throws NullScoreBlockListException
+   */
+  public void updateScore() throws NullPointerException, BookshelfGridColIndexOutOfBoundsException, 
+  BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException{
+    score.setBookshelfPoints(bookshelf);    
+    score.setPrivatePoints(privateCard);    
+    score.setScoreBlockPoints(scoreBlocks);
   }
 }

@@ -1,7 +1,5 @@
 package it.polimi.is23am10.items.bookshelf;
 
-import java.util.Map;
-
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.NullTileException;
@@ -12,6 +10,9 @@ import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.utils.IndexValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+
+import java.util.Map;
+
 
 /**
  * Players' bookshelf class definition.
@@ -68,6 +69,11 @@ public class Bookshelf {
    */
   public Bookshelf() {
     bookshelfGrid = new Tile[BOOKSHELF_ROWS][BOOKSHELF_COLS];
+    for (int i = 0; i < BOOKSHELF_ROWS; i++) {
+      for (int j = 0; j < BOOKSHELF_COLS; j++) {
+        bookshelfGrid[i][j] = new Tile(TileType.EMPTY);
+      }
+    }
   }
 
   /**
@@ -106,8 +112,8 @@ public class Bookshelf {
      * To access the right char in each cycle we are using an index which maps the
      * bidimensional array indexes into one single index.
      */
-    for (int i = 0; i < bookshelfGrid.length; i++) {
-      for (int j = 0; j < bookshelfGrid[0].length; j++) {
+    for (int i = 0; i < BOOKSHELF_ROWS; i++) {
+      for (int j = 0; j < BOOKSHELF_COLS; j++) {
         bookshelfGrid[i][j] = new Tile(tileMap.get(tileChars[BOOKSHELF_COLS * i + j]));
       }
     }
