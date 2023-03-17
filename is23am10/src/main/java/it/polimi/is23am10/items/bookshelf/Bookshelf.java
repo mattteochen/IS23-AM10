@@ -1,17 +1,18 @@
 package it.polimi.is23am10.items.bookshelf;
 
-import java.util.Map;
-
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.NullTileException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
 import it.polimi.is23am10.items.tile.Tile;
-import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.items.tile.Tile.TileType;
+import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.utils.IndexValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+
+import java.util.Map;
+
 
 /**
  * Players' bookshelf class definition.

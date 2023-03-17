@@ -4,16 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Nested;
-
+import it.polimi.is23am10.factory.PlayerFactory;
+import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
+import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
@@ -35,9 +28,16 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.score.Score;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-import it.polimi.is23am10.factory.PlayerFactory;
-import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
-import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
 
 /**
  * Test class to check getters and setters from
@@ -45,129 +45,129 @@ import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
  */
 public class PlayerTest {
 
-    @Nested
-    class setPlayerID_tests{
+  @Nested
+  class setPlayerID_tests{
 
-        ArrayList<String> players;
-        Player p;
+      ArrayList<String> players;
+      Player p;
 
-        @BeforeEach
-        void setPlayerID_tests_setup()
-            throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
-            NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-            AlreadyInitiatedPatternException, NullPlayerNamesException {
-            players = new ArrayList<String>();
-            p = PlayerFactory.getNewPlayer("myNewPlayer", players);
-        }
-        
-        @Test
-        public void setPlayerID_should_set_playerID() throws NullPlayerIdException{
-            UUID dummyUuid = UUID.randomUUID();
-            p.setPlayerID(dummyUuid);
-            assertNotNull(p.getPlayerID());
-            assertEquals(dummyUuid, p.getPlayerID());
-        }
+      @BeforeEach
+      void setPlayerID_tests_setup()
+          throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
+          NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
+          AlreadyInitiatedPatternException, NullPlayerNamesException {
+          players = new ArrayList<String>();
+          p = PlayerFactory.getNewPlayer("myNewPlayer", players);
+      }
+      
+      @Test
+      public void setPlayerID_should_set_playerID() throws NullPlayerIdException{
+          UUID dummyUuid = UUID.randomUUID();
+          p.setPlayerID(dummyUuid);
+          assertNotNull(p.getPlayerID());
+          assertEquals(dummyUuid, p.getPlayerID());
+      }
+  
+      @Test
+      public void setPlayerID_should_throw_NullPlayerIdException() throws NullPlayerIdException {
+          UUID dummyUuid = null;
+          assertThrows(NullPlayerIdException.class, () -> p.setPlayerID(dummyUuid));
+      }
+
+  }
+
+  @Nested
+  class setScore_tests{
+
+      ArrayList<String> players;
+      Player p;
+
+      @BeforeEach
+      void setScore_tests_setup()
+          throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
+          NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
+          AlreadyInitiatedPatternException, NullPlayerNamesException {
+          players = new ArrayList<String>();
+          p = PlayerFactory.getNewPlayer("myNewPlayer", players);
+      }
+      
+      @Test
+      public void setScore_should_set_Score() throws NullPlayerScoreException{
+          Score dummyScore = new Score();
+          p.setScore(dummyScore);
+          assertNotNull(p.getScore());
+          assertEquals(dummyScore, p.getScore());
+      }
+  
+      @Test
+      public void setScore_should_throw_NullPlayerScoreException() throws NullPlayerScoreException {
+          Score dummyScore = null;
+          assertThrows(NullPlayerScoreException.class, () -> p.setScore(dummyScore));
+      }
+
+  }
+  
+  @Nested
+  class setBookshelf_tests{
+
+      ArrayList<String> players;
+      Player p;
+
+      @BeforeEach
+      void setBookshelf_tests_setup()
+          throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
+          NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
+          AlreadyInitiatedPatternException, NullPlayerNamesException {
+          players = new ArrayList<String>();
+          p = PlayerFactory.getNewPlayer("myNewPlayer", players);
+      }
+      
+      @Test
+      public void setBookshelf_should_set_Bookshelf() throws NullPlayerBookshelfException{
+          Bookshelf dummyBookshelf = new Bookshelf();
+          p.setBookshelf(dummyBookshelf);
+          assertNotNull(p.getBookshelf());
+          assertEquals(dummyBookshelf, p.getBookshelf());
+      }
+  
+      @Test
+      public void setBookshelf_should_throw_NullPlayerBookshelfException() throws NullPlayerBookshelfException {
+          Bookshelf dummyBookshelf = null;
+          assertThrows(NullPlayerBookshelfException.class, () -> p.setBookshelf(dummyBookshelf));
+      }
+
+  }
+  
+  @Nested
+  class setPrivateCard_tests{
+
+    ArrayList<String> players;
+    Player p;
+
+    @BeforeEach
+    void setPrivateCard_tests_setup()
+        throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
+        NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
+        AlreadyInitiatedPatternException, NullPlayerNamesException {
+      players = new ArrayList<String>();
+      p = PlayerFactory.getNewPlayer("myNewPlayer", players);
+    }
     
-        @Test
-        public void setPlayerID_should_throw_NullPlayerIdException() throws NullPlayerIdException {
-            UUID dummyUuid = null;
-            assertThrows(NullPlayerIdException.class, () -> p.setPlayerID(dummyUuid));
-        }
-
+    @Test
+    public void setPrivateCard_should_set_PrivateCard() throws NullPlayerPrivateCardException, AlreadyInitiatedPatternException{
+      PrivateCard dummyPrivateCard = new PrivateCard();
+      p.setPrivateCard(dummyPrivateCard);
+      assertNotNull(p.getPrivateCard());
+      assertEquals(dummyPrivateCard, p.getPrivateCard());
     }
 
-    @Nested
-    class setScore_tests{
-
-        ArrayList<String> players;
-        Player p;
-
-        @BeforeEach
-        void setScore_tests_setup()
-            throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
-            NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-            AlreadyInitiatedPatternException, NullPlayerNamesException {
-            players = new ArrayList<String>();
-            p = PlayerFactory.getNewPlayer("myNewPlayer", players);
-        }
-        
-        @Test
-        public void setScore_should_set_Score() throws NullPlayerScoreException{
-            Score dummyScore = new Score();
-            p.setScore(dummyScore);
-            assertNotNull(p.getScore());
-            assertEquals(dummyScore, p.getScore());
-        }
-    
-        @Test
-        public void setScore_should_throw_NullPlayerScoreException() throws NullPlayerScoreException {
-            Score dummyScore = null;
-            assertThrows(NullPlayerScoreException.class, () -> p.setScore(dummyScore));
-        }
-
+    @Test
+    public void setPrivateCard_should_throw_NullPlayerPrivateCardException() throws NullPlayerPrivateCardException {
+      PrivateCard dummyPrivateCard = null;
+      assertThrows(NullPlayerPrivateCardException.class, () -> p.setPrivateCard(dummyPrivateCard));
     }
-    
-    @Nested
-    class setBookshelf_tests{
 
-        ArrayList<String> players;
-        Player p;
-
-        @BeforeEach
-        void setBookshelf_tests_setup()
-            throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
-            NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-            AlreadyInitiatedPatternException, NullPlayerNamesException {
-            players = new ArrayList<String>();
-            p = PlayerFactory.getNewPlayer("myNewPlayer", players);
-        }
-        
-        @Test
-        public void setBookshelf_should_set_Bookshelf() throws NullPlayerBookshelfException{
-            Bookshelf dummyBookshelf = new Bookshelf();
-            p.setBookshelf(dummyBookshelf);
-            assertNotNull(p.getBookshelf());
-            assertEquals(dummyBookshelf, p.getBookshelf());
-        }
-    
-        @Test
-        public void setBookshelf_should_throw_NullPlayerBookshelfException() throws NullPlayerBookshelfException {
-            Bookshelf dummyBookshelf = null;
-            assertThrows(NullPlayerBookshelfException.class, () -> p.setBookshelf(dummyBookshelf));
-        }
-
-    }
-    
-    @Nested
-    class setPrivateCard_tests{
-
-        ArrayList<String> players;
-        Player p;
-
-        @BeforeEach
-        void setPrivateCard_tests_setup()
-            throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
-            NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-            AlreadyInitiatedPatternException, NullPlayerNamesException {
-            players = new ArrayList<String>();
-            p = PlayerFactory.getNewPlayer("myNewPlayer", players);
-        }
-        
-        @Test
-        public void setPrivateCard_should_set_PrivateCard() throws NullPlayerPrivateCardException, AlreadyInitiatedPatternException{
-            PrivateCard dummyPrivateCard = new PrivateCard();
-            p.setPrivateCard(dummyPrivateCard);
-            assertNotNull(p.getPrivateCard());
-            assertEquals(dummyPrivateCard, p.getPrivateCard());
-        }
-    
-        @Test
-        public void setPrivateCard_should_throw_NullPlayerPrivateCardException() throws NullPlayerPrivateCardException {
-            PrivateCard dummyPrivateCard = null;
-            assertThrows(NullPlayerPrivateCardException.class, () -> p.setPrivateCard(dummyPrivateCard));
-        }
-
-    }
+  }
 
     @Nested
     class setScoreBlocks_tests{
@@ -232,37 +232,39 @@ public class PlayerTest {
      */
     @Test
     public void updateScore_should_update_score()
-    throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
-    NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException, NullPointerException,
-    WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException, NotValidScoreBlockValueException,
-    NullMatchedBlockCountException, NegativeMatchedBlockCountException, BookshelfGridColIndexOutOfBoundsException,
-    BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullScoreBlockListException{
-        
-        final Integer SIX = 6;
-        final Integer THIRTHYSEVEN = 37;
-        Player p = PlayerFactory.getNewPlayer("myNewPlayer", new ArrayList<String>());
+        throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+        NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException, NullPointerException,
+        WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException, NotValidScoreBlockValueException,
+        NullMatchedBlockCountException, NegativeMatchedBlockCountException, BookshelfGridColIndexOutOfBoundsException,
+        BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullScoreBlockListException{
+    
+    // Desired matched blocks count in private card
+    final Integer SIX = 6;
+    // It comes from 18 bookshelf points + 6 scoreblocks + 12 private card points + 1 extra point for ending the game first.
+    final Integer THIRTHYSEVEN = 37;
+    Player p = PlayerFactory.getNewPlayer("myNewPlayer", new ArrayList<String>());
 
-        p.setBookshelf(new Bookshelf(
-            "PPPXX" +
-            "BPPCX" +
-            "FBFBX" +
-            "TGTGX" +
-            "TTCCC" + 
-            "TTTCC"
-        ));
+    p.setBookshelf(new Bookshelf(
+        "PPPXX" +
+        "BPPCX" +
+        "FBFBX" +
+        "TGTGX" +
+        "TTCCC" + 
+        "TTTCC"
+    ));
 
-        p.setScoreBlocks(List.of(
-            new ScoreBlock(2),
-            new ScoreBlock(4)
-        ));
+    p.setScoreBlocks(List.of(
+        new ScoreBlock(2),
+        new ScoreBlock(4)
+    ));
 
-        PrivateCard pc = new PrivateCard();
-        pc.setMatchedBlocksCount(SIX);
-        p.setPrivateCard(pc);
+    PrivateCard pc = new PrivateCard();
+    pc.setMatchedBlocksCount(SIX);
+    p.setPrivateCard(pc);
 
-        p.getScore().setExtraPoint();
-        
-        p.updateScore();
-        assertEquals(THIRTHYSEVEN, p.getScore().getTotalScore());
-    }
+    p.getScore().setExtraPoint();
+    
+    p.updateScore();
+    assertEquals(THIRTHYSEVEN, p.getScore().getTotalScore());
+  }
 }

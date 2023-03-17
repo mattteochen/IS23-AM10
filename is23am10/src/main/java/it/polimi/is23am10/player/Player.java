@@ -210,7 +210,7 @@ public class Player {
 
   /**
    * Function to be called by {@link Game} at the end of Player's turn.
-   * Updates its scores passing their score-giving objects to specific methods
+   * Updates its scores passing their score-giving objects to specific methods.
    * @throws NullPointerException
    * @throws BookshelfGridColIndexOutOfBoundsException
    * @throws BookshelfGridRowIndexOutOfBoundsException

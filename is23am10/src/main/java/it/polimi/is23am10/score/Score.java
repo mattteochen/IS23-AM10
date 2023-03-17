@@ -128,7 +128,7 @@ public final class Score {
       throws NullPointerException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException {
     if (bs == null) {
-      throw new NullPlayerBookshelfException("[Score:setBookshelfPoints] Player's bookshelf must not be null");
+      throw new NullPlayerBookshelfException("[Score:setBookshelfPoints]");
     }
 
     List<Integer> groupsSizes = new ArrayList<>();
@@ -167,7 +167,7 @@ public final class Score {
    */
   public void setScoreBlockPoints(List<ScoreBlock> scoreBlocks) throws NullScoreBlockListException {
     if (scoreBlocks == null) {
-      throw new NullScoreBlockListException("[Score:setScoreBlockPoints] Player's scoreBlocks should not be null");
+      throw new NullScoreBlockListException("[Score:setScoreBlockPoints]");
     }
     scoreBlockPoints = scoreBlocks.stream().mapToInt(sb -> sb.getScore()).sum();
   }
@@ -181,7 +181,7 @@ public final class Score {
    */
   public void setPrivatePoints(PrivateCard pc) throws NullPointerException {
     if (pc == null) {
-      throw new NullPointerException("[Score:setPrivatePoints] Player's private card should not be null");
+      throw new NullPointerException("[Score:setPrivatePoints]");
     }
     privatePoints = privateCardPointsMap.get(pc.getMatchedBlocksCount());
   }
@@ -228,6 +228,7 @@ public final class Score {
 
   /**
    * Helper function to help with BFS in bookshelf to find groups of same tile type.
+   * NOTE: this function should be called from setBookshelfPoints()
    * 
    * @param bs Bookshelf to check for groups in
    * @param row Row index 
@@ -265,6 +266,11 @@ public final class Score {
     return count;
   }
 
+  /**
+   * Getter method that returns the total score
+   * computing it from all the available scores 
+   * @return total score
+   */
   public Integer getTotalScore() {
     return extraPoint + scoreBlockPoints + privatePoints + bookshelfPoints;
   }
