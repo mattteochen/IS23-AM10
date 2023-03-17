@@ -70,6 +70,7 @@ public class Server {
     while (!serverSocket.isClosed()) {
       try {
         Socket client = serverSocket.accept();
+        client.setKeepAlive(true);
         logger.info("Received new connection");
         executorService.execute(new ServerController(new PlayerConnector(client),
             new ServerControllerAction()));
