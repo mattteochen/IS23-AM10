@@ -122,11 +122,11 @@ public class ServerControllerAction {
           // will be thrown from the model.
           gameHandler.getGame().addPlayer(playerName);
 
-          // add the new player connector instance on the player pool.
-          ServerControllerState.addPlayerConnector(playerConnector);
-
           // add the new player connector instance to the game's player pool.
           gameHandler.addPlayerConnector(playerConnector);
+
+          // add the new player connector instance on the player pool.
+          ServerControllerState.addPlayerConnector(playerConnector);
 
           // populate the connector with the game and player reference.
           playerConnector.setGameId(gameId);
