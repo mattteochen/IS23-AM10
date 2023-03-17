@@ -1,12 +1,13 @@
 package it.polimi.is23am10;
 
-import it.polimi.is23am10.config.ServerConfig;
 import it.polimi.is23am10.controller.ServerController;
+import it.polimi.is23am10.controller.ServerControllerAction;
+import it.polimi.is23am10.playerconnector.PlayerConnector;
+import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,7 +35,7 @@ public class Server {
    * Logger instance.
    *
    */
-  protected Logger logger;
+  protected final Logger logger = LogManager.getLogger(Server.class);
 
   /**
    * Socket serverSocket instance.
@@ -46,46 +47,34 @@ public class Server {
    * Server thread executor service manager.
    *
    */
-  protected ExecutorService threadPool; 
+  protected ExecutorService executorService;
 
   /**
    * Constructor.
    *
    */
-  public Server() {
-    logger = LogManager.getLogger(Server.class);
-    threadPool = Executors.newFixedThreadPool(
-      ServerConfig.MAX_CLIENT_CONNECTION);
-  }
-
-  /**
-   * Initialized the server socket instance.
-   * @throws IOException
-   *
-   */
-  protected void initServerSocket() throws IOException {
-    serverSocket = new ServerSocket(ServerConfig.SERVER_PORT);
+  public Server(ServerSocket serverSocket, ExecutorService executorService) {
+    this.executorService = executorService;
+    this.serverSocket = serverSocket;
   }
 
   /**
    * Server entry point.
    * A new {@link ServerSocket} instance is spawned and in a
    * infinity loop listens for clients connections.
-   * @throws IOException
    *
    */
-  public void start() throws IOException {
+  public void start() {
     logger.info("Starting Spurious Dragon, try to kill me...");
-    // instantiate the thread pools executor service.
     // https://www.youtube.com/watch?v=Jo6fKboqfMs&ab_channel=memesammler
-    initServerSocket();
     while (!serverSocket.isClosed()) {
       try {
         Socket client = serverSocket.accept();
         logger.info("Received new connection");
-        threadPool.execute(new ServerController(client));
-      } catch (IOException e) {
-        logger.error("Failed to accept connection", e);
+        executorService.execute(new ServerController(new PlayerConnector(client),
+            new ServerControllerAction()));
+      } catch (IOException | NullSocketConnectorException e) {
+        logger.error("Failed to process connection", e);
       }
     }
   }
@@ -109,7 +98,7 @@ public class Server {
    *
    */
   public ServerStatus status() {
-    return serverSocket == null || serverSocket.isClosed() ? ServerStatus.STOPPED :
-        ServerStatus.STARTED;
+    return serverSocket == null || serverSocket.isClosed()
+        ? ServerStatus.STOPPED : ServerStatus.STARTED;
   }
 }

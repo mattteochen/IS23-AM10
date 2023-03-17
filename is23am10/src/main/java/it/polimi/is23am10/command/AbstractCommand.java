@@ -1,27 +1,44 @@
 package it.polimi.is23am10.command;
 
-import com.google.gson.Gson;
+/**
+ * The abstract command class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public abstract class AbstractCommand {
 
-public class AbstractCommand {
-
+  /**
+   * Opcodes to communicate the action taken by a player.
+   * 
+   */
   public enum Opcode {
     START,
     NULL
   }
 
+  /**
+   * The opcode instance for the current command instance.
+   * 
+   */
   protected Opcode opcode;
 
-  protected final Gson gson = new Gson();
-
-  AbstractCommand(Opcode opcode) {
+  /**
+   * The opcode instance for the current command instance.
+   * 
+   */
+  protected AbstractCommand(Opcode opcode) {
     this.opcode = opcode != null ? opcode : Opcode.NULL;
   }
 
-  @Override
-  public String toString() {
-    return "";
-  }
-
+  /**
+   * Opcode getter.
+   * 
+   * @return The current command Opcode.
+   * 
+   */
   public Opcode getOpcode() {
     return opcode;
   }

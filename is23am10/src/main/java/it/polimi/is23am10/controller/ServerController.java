@@ -1,18 +1,22 @@
 package it.polimi.is23am10.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
-
 import it.polimi.is23am10.command.AbstractCommand;
 import it.polimi.is23am10.command.AbstractCommand.Opcode;
+import it.polimi.is23am10.command.StartGameCommand;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
-import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.Socket;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,39 +35,43 @@ public final class ServerController implements Runnable {
    * The logger, an instance of {@link Logger}.
    *
    */
-  private final Logger logger = LogManager.getLogger(ServerController.class);
+  protected Logger logger = LogManager.getLogger(ServerController.class);
 
   /**
    * The single client connection instance of type {@link PlayerConnector}.
    * This is the entry and exit point for out responsive application.
    *
    */
-  private PlayerConnector playerConnector;
+  protected PlayerConnector playerConnector;
 
   /**
-   * The {@link Gson} serializer and deserializer for game's {@link AbstractCommand}.
+   * The {@link Gson} serializer and deserializer for game's
+   * {@link AbstractCommand}.
+   * We need a custom {@link Gson} instance as we have to deserialize polymorphic
+   * objects {@link AbstractCommand}.
    *
    */
-  private final Gson gson = new Gson();
+  protected Gson gson = new GsonBuilder()
+      .registerTypeAdapter(AbstractCommand.class, new CommandDeserializer())
+      .create();
 
   /**
    * The action taker instance. This works on a given command {@link Opcode}.
    *
    */
-  private final ServerControllerAction worker = new ServerControllerAction();
-  
+  protected ServerControllerAction serverControllerAction;
+
   /**
    * Constructor.
    *
-   * @param connector The {@link Socket} instance from the server handler.
-   * 
+   * @param playerConnector        The already build player connector instance
+   *                               with the low level socket instance.
+   * @param serverControllerAction The server action taker instance.
    */
-  public ServerController(Socket connector) {
-    try {
-      this.playerConnector = new PlayerConnector(connector);
-    } catch (NullSocketConnectorException e) {
-      logger.error(e);
-    } 
+  public ServerController(PlayerConnector playerConnector,
+      ServerControllerAction serverControllerAction) {
+    this.playerConnector = playerConnector;
+    this.serverControllerAction = serverControllerAction;
   }
 
   /**
@@ -78,7 +86,7 @@ public final class ServerController implements Runnable {
 
         logger.info("Received command: {}", command);
 
-        worker.execute(playerConnector, command);
+        serverControllerAction.execute(playerConnector, command);
       } catch (IOException e) {
         logger.error("Failed to retrieve socket payload", e);
       } catch (JsonIOException | JsonSyntaxException e) {
@@ -89,16 +97,44 @@ public final class ServerController implements Runnable {
 
   /**
    * Build the player command deserializing the byte stream.
-   * The gson deserialization returns a base class type but if the byte stream contained
-   * a derived type, this can be casted at runtime on the need.
+   * The gson deserialization returns a base class type but if the byte stream
+   * contained a derived type, this can be casted at runtime on the need.
    *
    * @return An instance of the command object.
    * 
    */
-  private synchronized AbstractCommand buildCommand()
+  protected synchronized AbstractCommand buildCommand()
       throws IOException, JsonIOException, JsonSyntaxException {
     Reader reader = new InputStreamReader(
         playerConnector.getConnector().getInputStream(), StandardCharsets.UTF_8);
     return gson.fromJson(reader, AbstractCommand.class);
+  }
+
+  /**
+   * Custom deserializer class definition for {@link Gson} usage.
+   * This works on polymorfics {@link AbstractCommand} objects.
+   * 
+   */
+  class CommandDeserializer implements JsonDeserializer<AbstractCommand> {
+    @Override
+    public AbstractCommand deserialize(
+        JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      JsonObject jsonObject = json.getAsJsonObject();
+
+      String className = "";
+      try {
+        className = jsonObject.get("className").getAsString();
+      } catch (Exception e) {
+        throw new JsonParseException(e);
+      }
+
+      switch (className) {
+        case "it.polimi.is23am10.command.StartGameCommand":
+          return context.deserialize(jsonObject, StartGameCommand.class);
+        default:
+          throw new JsonParseException("Unknown class name: " + className);
+      }
+    }
   }
 }
