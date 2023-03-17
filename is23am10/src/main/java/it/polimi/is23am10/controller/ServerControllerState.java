@@ -88,9 +88,10 @@ public final class ServerControllerState {
     if (target.isPresent()) {
       GameHandler targetHandler = target.get();
       targetHandler.getPlayerConnectors()
-        .stream()
-        //point of optimization, can be parallelized
-        .forEach(connector -> removePlayerByGameAndName(connector.getGameId(), connector.getPlayerName()));
+          .stream()
+          // point of optimization, can be parallelized
+          .forEach(connector ->
+              removePlayerByGameAndName(connector.getGameId(), connector.getPlayerName()));
       gamePool.remove(targetHandler);
       logger.info("Removed game handler with id {}", id);
     }
@@ -116,7 +117,7 @@ public final class ServerControllerState {
    * Remove a player connector from the pool.
    * This closes the socket connection.
    *
-   * @param gameId The game id reference.
+   * @param gameId     The game id reference.
    * @param playerName The playerName.
    * @throws IOException
    *
@@ -130,7 +131,8 @@ public final class ServerControllerState {
 
     synchronized (playersPool) {
       target = playersPool.stream()
-          .filter(connector -> connector.getGameId().equals(gameId) && connector.getPlayerName().equals(playerName))
+          .filter(connector ->
+              connector.getGameId().equals(gameId) && connector.getPlayerName().equals(playerName))
           .findFirst();
     }
     if (target.isPresent()) {
@@ -146,7 +148,7 @@ public final class ServerControllerState {
   }
 
   /**
-   * Player pool getter
+   * Player pool getter.
    *
    * @return The actively connected players.
    *
@@ -156,8 +158,8 @@ public final class ServerControllerState {
   }
 
   /**
-   * Game pool getter
-   * 
+   * Game pool getter.
+   *
    * @return The actively started games instances.
    *
    */
