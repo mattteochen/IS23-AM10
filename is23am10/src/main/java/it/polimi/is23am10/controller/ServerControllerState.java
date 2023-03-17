@@ -51,7 +51,7 @@ public final class ServerControllerState {
 
   /**
    * Add a new game handler to the pool.
-   * 
+   *
    * @param handler The game handler instance to add.
    * @throws NullGameHandlerInstance.
    *
