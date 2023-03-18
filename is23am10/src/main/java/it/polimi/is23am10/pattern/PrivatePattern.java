@@ -20,13 +20,13 @@ public class PrivatePattern extends AbstractPattern {
    * that match the private card assigned to that player.
    */
   private Function<Bookshelf, Integer> rule;
-  
+
   /**
    * The constructor of the class PrivatePattern.
    * 
    * @param rule a function that takes a Bookshelf object and returns an Integer.
    */
-  public PrivatePattern(Function<Bookshelf, Integer> rule){
+  public PrivatePattern(Function<Bookshelf, Integer> rule) {
     this.rule = rule;
   };
 }
