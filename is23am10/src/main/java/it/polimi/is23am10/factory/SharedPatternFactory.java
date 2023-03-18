@@ -4,6 +4,9 @@ import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.pattern.SharedPattern;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,9 +18,9 @@ import java.util.function.Predicate;
 /**
  * Shared pattern factory object.
  * 
- * <p> 
- *  NOTE: if not specified, each iteration of the player's bookshelf inside the
- *  functions is gonna be first over rows,then columns
+ * <p>
+ * NOTE: if not specified, each iteration of the player's bookshelf inside the
+ * functions is gonna be first over rows,then columns
  * </p>
  * 
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
@@ -593,8 +596,32 @@ public final class SharedPatternFactory {
    * 
    */
   public static final SharedPattern getRandomPattern() {
-    Random random = new Random();
-    return patternsArray.get(random.nextInt(patternsArray.size()));
+    List<Predicate<Bookshelf>> patternCheckers = List.of(
+        checkCornersMatch,
+        checkDiagonalsSameType,
+        checkEightOfSameType,
+        checkFourAdjacents,
+        checkMaxThreeTypesInColumn,
+        checkMaxThreeTypesInRow,
+        checkOrderedBookshelfColumns,
+        checkSquares,
+        checkTilesXShape,
+        checkTwoAdjacents,
+        checkTwoColumnAllDiff,
+        checkTwoRowsAllDiff);
+    List<Predicate<Bookshelf>> patternList = new ArrayList<>(patternCheckers);
+    Collections.shuffle(patternList);
+    Set<SharedPattern> usedPatterns = new HashSet<>();
+
+    for (Predicate<Bookshelf> patternChecker : patternList) {
+      SharedPattern pattern = new SharedPattern<>(patternChecker, null);
+      while (!usedPatterns.contains(patternChecker)) {
+        usedPatterns.add(pattern);
+        return pattern;
+      }
+    }
+    return null;
+
   };
 
 }
