@@ -12,7 +12,7 @@ class AddPlayerGameCommandTest {
   final UUID uuid = UUID.randomUUID();
 
   @Test
-  void EQUALS_green_path() {
+  void EQUALS_should_COMPARE_CONTENT_EQUALITY() {
 
     class Utils extends AbstractCommand {
       Utils(Opcode op) {
@@ -32,7 +32,7 @@ class AddPlayerGameCommandTest {
   }
 
   @Test
-  void HASH_CODE_green_path() {
+  void HASH_CODE_should_GIVE_CUSTOM_HASH_CODE() {
     final AddPlayerCommand steve = new AddPlayerCommand("Steve", uuid);
 
     assertEquals(steve.hashCode(), steve.getPlayerName().hashCode() * uuid.hashCode());

@@ -49,7 +49,7 @@ class ServerTest {
   }
 
   @Test
-  void START_SOCKET_SERVER_green_path() throws IOException {
+  void START_SOCKET_SERVER_should_START_SOCKET_SERVER() throws IOException {
     when(serverSocket.isClosed()).thenReturn(true, false, true, false);
     assertEquals(ServerStatus.STOPPED, server.status());
 
@@ -62,7 +62,7 @@ class ServerTest {
   }
 
   @Test
-  void SOCKET_SERVER_ACCEPT_throws_IOException() throws IOException {
+  void SOCKET_SERVER_ACCEPT_should_THROW_IOException() throws IOException {
     when(serverSocket.isClosed()).thenReturn(false, true);
 
     when(serverSocket.accept()).thenThrow(IOException.class);
@@ -71,7 +71,7 @@ class ServerTest {
   }
 
   @Test
-  void STOP_SOCKET_SERVER_green_path() throws IOException {
+  void STOP_SOCKET_SERVER_should_STOP_SERVER() throws IOException {
     when(serverSocket.isClosed()).thenReturn(true, false, true, false, false, true);
     assertEquals(ServerStatus.STOPPED, server.status());
 
@@ -86,7 +86,7 @@ class ServerTest {
   }
 
   @Test
-  void STOP_SOCKET_SERVER_throws_IOException() throws IOException {
+  void STOP_SOCKET_SERVER_should_THROW_IOException() throws IOException {
     doThrow(IOException.class).when(serverSocket).close();
     assertThrows(IOException.class, () -> server.stop());
   }

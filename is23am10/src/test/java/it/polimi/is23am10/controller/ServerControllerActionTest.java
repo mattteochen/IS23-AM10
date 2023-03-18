@@ -52,7 +52,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void EXECUTE_green_path() throws NullSocketConnectorException {
+  void EXECUTE_should_EXECUTE_COMMAND() throws NullSocketConnectorException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket);
     AbstractCommand cmd = new StartGameCommand("player", 2);
@@ -62,7 +62,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void EXECUTE_NULL_COMMAND_green_path() throws NullSocketConnectorException {
+  void EXECUTE_should_NOT_EXECUTE_NULL_COMMAND() throws NullSocketConnectorException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket);
     AbstractCommand cmd = null;
@@ -72,7 +72,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void START_CONSUMER_green_path() throws NullSocketConnectorException {
+  void START_CONSUMER_should_CONSUME_START_COMMAND() throws NullSocketConnectorException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket);
     AbstractCommand cmd = new StartGameCommand("Steve", 2);
@@ -91,7 +91,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void START_CONSUMER_throws_nullPlayerValue() throws NullSocketConnectorException {
+  void START_CONSUMER_should_THROW_NullPlayerException() throws NullSocketConnectorException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket);
     AbstractCommand cmd = new StartGameCommand(null, 2);
@@ -106,7 +106,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void START_CONSUMER_throws_nullMaxPlayersValue() throws NullSocketConnectorException {
+  void START_CONSUMER_should_THROW_nullMaxPlayersValue() throws NullSocketConnectorException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket);
     AbstractCommand cmd = new StartGameCommand("Steve", null);
@@ -121,7 +121,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void START_CONSUMER_throws_invalidNumOfPlayers() throws NullSocketConnectorException {
+  void START_CONSUMER_should_THROW_invalidNumOfPlayers() throws NullSocketConnectorException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket);
     AbstractCommand cmd = new StartGameCommand("Steve", 56);
@@ -136,7 +136,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void START_CONSUMER_throws_nullPlayerConnector() throws NullSocketConnectorException {
+  void START_CONSUMER_should_THROW_nullPlayerConnector() throws NullSocketConnectorException {
     PlayerConnector playerConnector = null;
     AbstractCommand cmd = new StartGameCommand("Steve", 2);
 
@@ -147,7 +147,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void START_CONSUMER_throws_StartCommandSerializationErrorException() throws NullSocketConnectorException {
+  void START_CONSUMER_should_THROW_StartCommandSerializationErrorException() throws NullSocketConnectorException {
 
     class Utils extends AbstractCommand {
       Utils(Opcode op) {
@@ -164,7 +164,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void ADD_PLAYER_CONSUMER_green_path() throws NullSocketConnectorException, NullGameHandlerInstance,
+  void ADD_PLAYER_should_CONSUME_ADD_PLAYER_COMMAND() throws NullSocketConnectorException, NullGameHandlerInstance,
       NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
@@ -193,7 +193,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void ADD_PLAYER_CONSUMER_noMatch_green_path() throws NullSocketConnectorException, NullGameHandlerInstance,
+  void ADD_PLAYER_CONSUMER_should_not_ADD_PLAYER_IF_GAME_NO_MATCH() throws NullSocketConnectorException, NullGameHandlerInstance,
       NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
@@ -222,7 +222,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void ADD_PLAYER_CONSUMER_throws_nullPlayerValue()
+  void ADD_PLAYER_CONSUMER_should_THROW_nullPlayerValue()
       throws NullSocketConnectorException, NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
@@ -243,7 +243,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void ADD_PLAYER_CONSUMER_throws_DuplicatePlayerNameException()
+  void ADD_PLAYER_CONSUMER_should_THROW_DuplicatePlayerNameException()
       throws NullSocketConnectorException, NullGameHandlerInstance,
       NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
@@ -280,7 +280,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void ADD_PLAYER_CONSUMER_throws_nullPlayerConnector()
+  void ADD_PLAYER_CONSUMER_should_THROW_nullPlayerConnector()
       throws NullSocketConnectorException, NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
@@ -298,7 +298,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void ADD_PLAYER_CONSUMER_throws_AddPlayerCommandSerializationErrorException()
+  void ADD_PLAYER_CONSUMER_should_THROW_AddPlayerCommandSerializationErrorException()
       throws NullSocketConnectorException {
     class Utils extends AbstractCommand {
       Utils(Opcode op) {

@@ -37,7 +37,7 @@ class ServerControllerStateTest {
   }
 
   @Test
-  void ADD_GAME_HANDLER_green_path() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void ADD_GAME_HANDLER_should_ADD_NEW_GAME() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance {
@@ -48,7 +48,7 @@ class ServerControllerStateTest {
   }
 
   @Test
-  void ADD_GAME_HANDLER_throws_NullGameHandlerInstance() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void ADD_GAME_HANDLER_should_THROW_NullGameHandlerInstance() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance {
@@ -58,7 +58,7 @@ class ServerControllerStateTest {
   }
 
   @Test
-  void REMOVE_GAME_HANDLER_green_path() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void REMOVE_GAME_HANDLER_should_REMOVE_GAME_INSTANCE() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance {
@@ -77,7 +77,7 @@ class ServerControllerStateTest {
   }
 
   @Test
-  void ADD_PLAYER_CONNECTOR_throws_NullGameHandlerInstance() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void ADD_PLAYER_CONNECTOR_should_THROW_NullGameHandlerInstance() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullSocketConnectorException, NullPlayerConnector {
@@ -88,7 +88,7 @@ class ServerControllerStateTest {
   }
 
   @Test
-  void ADD_PLAYER_CONNECTOR_throws_NullPlayerConnector() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void ADD_PLAYER_CONNECTOR_should_THROW_NullPlayerConnector() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullSocketConnectorException, NullPlayerConnector {
@@ -98,7 +98,7 @@ class ServerControllerStateTest {
   }
 
   @Test
-  void REMOVE_PLAYER_CONNECTOR_green_path() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void REMOVE_PLAYER_CONNECTOR_should_REMOVE_PLAYER_CONNECTOR() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullSocketConnectorException, NullPlayerConnector {
@@ -122,7 +122,7 @@ class ServerControllerStateTest {
   }
 
   @Test
-  void REMOVE_GAME_HANDLER_PLAYER_CONNECTORS_green_path() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void REMOVE_GAME_HANDLER_PLAYER_CONNECTORS_should_REMOVE_PLAYER_CONNECTOR_IN_GAME_HANDLER() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullSocketConnectorException, NullPlayerConnector {

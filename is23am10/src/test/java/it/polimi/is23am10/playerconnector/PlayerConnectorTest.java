@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 class PlayerConnectorTest {
   @Test
-  void CONSTRUCTOR_throws_NullSocketConnectorException() {
+  void CONSTRUCTOR_should_THROW_NullSocketConnectorException() {
     assertThrows(NullSocketConnectorException.class, () -> new PlayerConnector(null));
   }
 }

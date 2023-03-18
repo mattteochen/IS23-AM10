@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 class StartGameCommandTest {
   @Test
-  void EQUALS_green_path() {
+  void EQUALS_should_COMPARE_CONTENT_EQUALITY() {
 
     class Utils extends AbstractCommand {
       Utils(Opcode op) {
@@ -28,7 +28,7 @@ class StartGameCommandTest {
   }
 
   @Test
-  void HASH_CODE_green_path() {
+  void HASH_CODE_should_GIVE_CUSTOM_HASH_CODE() {
     final StartGameCommand steve = new StartGameCommand("Steve", 2);
 
     assertEquals(steve.hashCode(), steve.getStartingPlayerName().hashCode());

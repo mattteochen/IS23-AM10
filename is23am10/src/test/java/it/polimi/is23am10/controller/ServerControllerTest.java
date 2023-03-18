@@ -60,7 +60,7 @@ class ServerControllerTest {
   }
 
   @Test
-  void CONSTRUCTOR_green_path() throws NullSocketConnectorException {
+  void CONSTRUCTOR_should_BUILD_OBJECT() throws NullSocketConnectorException {
     Socket socket = new Socket();
     ServerController testController =
         new ServerController(new PlayerConnector(socket), new ServerControllerAction());
@@ -68,7 +68,7 @@ class ServerControllerTest {
   }
 
   @Test
-  void RUN_green_path() throws JsonIOException, JsonSyntaxException, IOException {
+  void RUN_should_START_CONTROLLER() throws JsonIOException, JsonSyntaxException, IOException {
     Socket mockSocket = Mockito.mock(Socket.class);
     StartGameCommand cmd = new StartGameCommand("test", 2);
 
@@ -82,7 +82,7 @@ class ServerControllerTest {
   }
 
   @Test
-  void RUN_throws_IOException() throws JsonIOException, JsonSyntaxException, IOException {
+  void RUN_should_THROW_IOException() throws JsonIOException, JsonSyntaxException, IOException {
     Socket mockSocket = Mockito.mock(Socket.class);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);
@@ -94,7 +94,7 @@ class ServerControllerTest {
   }
 
   @Test
-  void RUN_throws_JSONException() throws JsonIOException, JsonSyntaxException, IOException {
+  void RUN_should_THROW_JSONException() throws JsonIOException, JsonSyntaxException, IOException {
     Socket mockSocket = Mockito.mock(Socket.class);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);
@@ -106,7 +106,7 @@ class ServerControllerTest {
   }
 
   @Test
-  void BUILD_START_COMMAND_green_path() throws JsonIOException, JsonSyntaxException, IOException {
+  void BUILD_START_COMMAND_should_BUILD_START_COMMAND() throws JsonIOException, JsonSyntaxException, IOException {
     Socket mockSocket = Mockito.mock(Socket.class);
     StartGameCommand cmd = new StartGameCommand("optimus prime", 4);
     Gson gson = new Gson();
@@ -119,7 +119,7 @@ class ServerControllerTest {
   }
 
   @Test
-  void BUILD_ADD_PLAYER_COMMAND_green_path() throws JsonIOException, JsonSyntaxException, IOException {
+  void BUILD_ADD_PLAYER_COMMAND_should_BUILD_ADD_PLAYER_COMMAND() throws JsonIOException, JsonSyntaxException, IOException {
     Socket mockSocket = Mockito.mock(Socket.class);
     AddPlayerCommand cmd = new AddPlayerCommand("optimus prime", UUID.randomUUID());
     Gson gson = new Gson();
@@ -132,7 +132,7 @@ class ServerControllerTest {
   }
 
   @Test
-  void BUILD_COMMAND_throws_JsonParseException_noClassName() throws JsonIOException, JsonSyntaxException, IOException {
+  void BUILD_COMMAND_should_THROW_JsonParseException_noClassName() throws JsonIOException, JsonSyntaxException, IOException {
 
     TestingPurposesClass f = new TestingPurposesClass();
 
@@ -147,7 +147,7 @@ class ServerControllerTest {
   }
 
   @Test
-  void BUILD_COMMAND_throws_JsonParseException_wrongClassName() throws JsonIOException, JsonSyntaxException, IOException {
+  void BUILD_COMMAND_should_THROW_JsonParseException_wrongClassName() throws JsonIOException, JsonSyntaxException, IOException {
 
     TestingPurposesClass2 f = new TestingPurposesClass2();
 
