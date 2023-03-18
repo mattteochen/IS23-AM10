@@ -1,7 +1,12 @@
 package it.polimi.is23am10.factory;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +14,7 @@ import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
 import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
+import it.polimi.is23am10.pattern.SharedPattern;
 
 public class SharedPatternFactoryTest {
 
@@ -58,7 +64,6 @@ public class SharedPatternFactoryTest {
             "XXCXX" +
             "XXCXX" +
             "XXCXX");
-
 
     assertTrue(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentMatching));
     assertTrue(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentAllEqualsMatching));
@@ -400,19 +405,19 @@ public class SharedPatternFactoryTest {
   public void TWO_ROWS_DIFF_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
       WrongCharBookshelfStringException, WrongTileTypeException {
     Bookshelf twoRowsAllDiffMatching = new Bookshelf(
-        "PCTFG"+
-        "XXXXX"+
-        "GPTFC"+
-        "CCCCC"+
-        "PTCGT"+
-        "PTCGT");
+        "PCTFG" +
+            "XXXXX" +
+            "GPTFC" +
+            "CCCCC" +
+            "PTCGT" +
+            "PTCGT");
     Bookshelf oneRowAllDiffMatching = new Bookshelf(
-        "PCTFG"+
-        "XXXXX"+
-        "GTTFC"+
-        "CCCCC"+
-        "PTCGT"+
-        "PTCGT");
+        "PCTFG" +
+            "XXXXX" +
+            "GTTFC" +
+            "CCCCC" +
+            "PTCGT" +
+            "PTCGT");
     Bookshelf noRowAllDiffMatching = new Bookshelf(
         "CCCCC" +
             "CCCCC" +
@@ -526,4 +531,37 @@ public class SharedPatternFactoryTest {
     assertFalse(SharedPatternFactory.checkOrderedBookshelfColumns.test(allNull));
   };
 
+  @Test
+  public void TEST_GET_RANDOM_PATTERN_no_duplicates() {
+    Set<SharedPattern> patterns = new HashSet<>();
+    for (int i = 0; i < 12; i++) {
+      patterns.add(SharedPatternFactory.getRandomPattern());
+    }
+    assertEquals(12, patterns.size());
+  }
+
+  @Test
+  public void TWO_DIFFERENT_ARRAYS() {
+    SharedPattern[] patterns1 = new SharedPattern[12];
+    SharedPattern[] patterns2 = new SharedPattern[12];
+
+    for (int i = 0; i < 12; i++) {
+      patterns1[i] = SharedPatternFactory.getRandomPattern();
+    }
+
+    // Generate the second array of patterns.
+    for (int i = 0; i < 12; i++) {
+      patterns2[i] = SharedPatternFactory.getRandomPattern();
+    }
+
+    // Assert that the length of the arrays is the same.
+    assertEquals(12, patterns1.length);
+    assertEquals(12, patterns2.length);
+
+    // Assert that each element in the first array is not equal to the corresponding
+    // element in the second array.
+    for (int i = 0; i < 12; i++) {
+      assertNotEquals(patterns1[i], patterns2[i]);
+    }
+  }
 }
