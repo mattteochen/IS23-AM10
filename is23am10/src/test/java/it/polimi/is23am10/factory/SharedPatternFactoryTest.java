@@ -544,22 +544,14 @@ public class SharedPatternFactoryTest {
   public void TWO_DIFFERENT_ARRAYS() {
     SharedPattern[] patterns1 = new SharedPattern[12];
     SharedPattern[] patterns2 = new SharedPattern[12];
-
     for (int i = 0; i < 12; i++) {
       patterns1[i] = SharedPatternFactory.getRandomPattern();
     }
-
-    // Generate the second array of patterns.
     for (int i = 0; i < 12; i++) {
       patterns2[i] = SharedPatternFactory.getRandomPattern();
     }
-
-    // Assert that the length of the arrays is the same.
     assertEquals(12, patterns1.length);
     assertEquals(12, patterns2.length);
-
-    // Assert that each element in the first array is not equal to the corresponding
-    // element in the second array.
     for (int i = 0; i < 12; i++) {
       assertNotEquals(patterns1[i], patterns2[i]);
     }

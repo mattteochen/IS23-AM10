@@ -398,22 +398,14 @@ public class PrivatePatternFactoryTest {
   public void TWO_DIFFERENT_ARRAYS() {
     PrivatePattern[] patterns1 = new PrivatePattern[12];
     PrivatePattern[] patterns2 = new PrivatePattern[12];
-
     for (int i = 0; i < 12; i++) {
       patterns1[i] = PrivatePatternFactory.getRandomPattern();
     }
-
-    // Generate the second array of patterns.
     for (int i = 0; i < 12; i++) {
       patterns2[i] = PrivatePatternFactory.getRandomPattern();
     }
-
-    // Assert that the length of the arrays is the same.
     assertEquals(12, patterns1.length);
     assertEquals(12, patterns2.length);
-
-    // Assert that each element in the first array is not equal to the corresponding
-    // element in the second array.
     for (int i = 0; i < 12; i++) {
       assertNotEquals(patterns1[i], patterns2[i]);
     }
