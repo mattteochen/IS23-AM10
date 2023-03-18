@@ -12,7 +12,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * This class implements java socket client.
+ * This class implements an example of java socket client.
+ * 
+ * <p>
+ *  How to use:
+ *  - Start the socket server (ServerMain.java)
+ *  - Start this main method
+ * </p>
  *
  */
 public class SocketClientExample {
