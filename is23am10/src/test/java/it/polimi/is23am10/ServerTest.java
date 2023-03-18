@@ -9,6 +9,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import it.polimi.is23am10.Server.ServerStatus;
+import it.polimi.is23am10.config.ServerConfigContext;
+import it.polimi.is23am10.config.ServerConfigDefault;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -36,6 +39,9 @@ class ServerTest {
   @InjectMocks
   Server server;
 
+  ServerConfigContext ctx = new ServerConfigContext(ServerConfigDefault.SERVER_PORT,
+      ServerConfigDefault.MAX_CLIENT_CONNECTION, ServerConfigDefault.KEEP_ALIVE);
+
   @BeforeEach
   public void setup() {
     // if we don't call below, we will get NullPointerException
@@ -49,7 +55,7 @@ class ServerTest {
 
     when(serverSocket.accept()).thenReturn(Mockito.mock(Socket.class));
     doNothing().when(executorService).execute(any());
-    server.start();
+    server.start(ctx);
     assertEquals(ServerStatus.STARTED, server.status());
 
 		verify(executorService, Mockito.times(1)).execute(any());
@@ -60,8 +66,8 @@ class ServerTest {
     when(serverSocket.isClosed()).thenReturn(false, true);
 
     when(serverSocket.accept()).thenThrow(IOException.class);
-    server.start();
-    verify(server).start();
+    server.start(ctx);
+    verify(server).start(ctx);
   }
 
   @Test
@@ -71,7 +77,7 @@ class ServerTest {
 
     when(serverSocket.accept()).thenReturn(Mockito.mock(Socket.class));
     doNothing().when(executorService).execute(any());
-    server.start();
+    server.start(ctx);
     assertEquals(ServerStatus.STARTED, server.status());
 
     doNothing().when(serverSocket).close();

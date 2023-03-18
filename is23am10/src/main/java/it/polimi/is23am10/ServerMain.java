@@ -1,6 +1,7 @@
 package it.polimi.is23am10;
 
-import it.polimi.is23am10.config.ServerConfig;
+import it.polimi.is23am10.config.ServerConfigContext;
+import it.polimi.is23am10.config.ServerConfigDefault;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.Executors;
@@ -20,8 +21,12 @@ public final class ServerMain {
    *
    */
   public static void main(String[] args) throws IOException {
-    Server server = new Server(new ServerSocket(ServerConfig.SERVER_PORT),
-        Executors.newFixedThreadPool(ServerConfig.MAX_CLIENT_CONNECTION));
-    server.start();
+    // TODO add args parser for CLI context loading if args is present
+    ServerConfigContext ctx = new ServerConfigContext(ServerConfigDefault.SERVER_PORT,
+        ServerConfigDefault.MAX_CLIENT_CONNECTION, ServerConfigDefault.KEEP_ALIVE);
+
+    Server server = new Server(new ServerSocket(ctx.getServerPort()),
+        Executors.newFixedThreadPool(ctx.getMaxConnections()));
+    server.start(ctx);
   }
 }

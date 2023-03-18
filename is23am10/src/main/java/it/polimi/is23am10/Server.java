@@ -1,5 +1,6 @@
 package it.polimi.is23am10;
 
+import it.polimi.is23am10.config.ServerConfigContext;
 import it.polimi.is23am10.controller.ServerController;
 import it.polimi.is23am10.controller.ServerControllerAction;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
@@ -64,13 +65,13 @@ public class Server {
    * infinity loop listens for clients connections.
    *
    */
-  public void start() {
+  public void start(ServerConfigContext ctx) {
     logger.info("Starting Spurious Dragon, try to kill me...");
     // https://www.youtube.com/watch?v=Jo6fKboqfMs&ab_channel=memesammler
     while (!serverSocket.isClosed()) {
       try {
         Socket client = serverSocket.accept();
-        client.setKeepAlive(true);
+        client.setKeepAlive(ctx.getKeepAlive());
         logger.info("Received new connection");
         executorService.execute(new ServerController(new PlayerConnector(client),
             new ServerControllerAction()));
@@ -100,6 +101,7 @@ public class Server {
    */
   public ServerStatus status() {
     return serverSocket == null || serverSocket.isClosed()
-        ? ServerStatus.STOPPED : ServerStatus.STARTED;
+        ? ServerStatus.STOPPED
+        : ServerStatus.STARTED;
   }
 }
