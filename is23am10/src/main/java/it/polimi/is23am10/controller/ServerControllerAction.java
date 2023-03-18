@@ -136,7 +136,7 @@ public class ServerControllerAction {
               ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
               playerName, gameId);
         } else {
-          logger.error("{} 404 game id {} not found",
+          logger.error("{} Game id {} not found",
               ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, gameId);
         }
       } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
