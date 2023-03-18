@@ -177,6 +177,9 @@ public class ServerControllerAction {
    *
    */
   public void execute(PlayerConnector connector, AbstractCommand command) {
+    if (command == null) {
+      return;
+    }
     actions.get(command.getOpcode()).accept(connector, command);
   }
 }

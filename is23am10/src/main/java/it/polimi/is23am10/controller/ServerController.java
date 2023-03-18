@@ -14,11 +14,10 @@ import it.polimi.is23am10.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.command.AddPlayerCommand;
 import it.polimi.is23am10.command.StartGameCommand;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -84,9 +83,6 @@ public final class ServerController implements Runnable {
     while (playerConnector != null && playerConnector.getConnector().isConnected()) {
       try {
         AbstractCommand command = buildCommand();
-
-        logger.info("Received command: {}", command);
-
         serverControllerAction.execute(playerConnector, command);
       } catch (IOException e) {
         logger.error("Failed to retrieve socket payload", e);
@@ -106,14 +102,21 @@ public final class ServerController implements Runnable {
    */
   protected synchronized AbstractCommand buildCommand()
       throws IOException, JsonIOException, JsonSyntaxException {
-    Reader reader = new InputStreamReader(
-        playerConnector.getConnector().getInputStream(), StandardCharsets.UTF_8);
-    return gson.fromJson(reader, AbstractCommand.class);
+    BufferedReader reader = new BufferedReader(
+          new InputStreamReader(playerConnector.getConnector().getInputStream()));
+    String payload = null;
+    if (reader.ready()) {
+      payload = reader.readLine();
+    }
+    if (payload != null) {
+      logger.info("Socket buffer reader received {}", payload);
+    }
+    return gson.fromJson(payload, AbstractCommand.class);
   }
 
   /**
    * Custom deserializer class definition for {@link Gson} usage.
-   * This works on polymorfics {@link AbstractCommand} objects.
+   * This works on polymorphic {@link AbstractCommand} objects.
    * 
    */
   class CommandDeserializer implements JsonDeserializer<AbstractCommand> {

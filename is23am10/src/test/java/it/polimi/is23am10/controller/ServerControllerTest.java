@@ -14,7 +14,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
-
 import it.polimi.is23am10.command.AddPlayerCommand;
 import it.polimi.is23am10.command.StartGameCommand;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
@@ -23,7 +22,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;

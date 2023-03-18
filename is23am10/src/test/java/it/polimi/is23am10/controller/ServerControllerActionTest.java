@@ -62,6 +62,16 @@ class ServerControllerActionTest {
   }
 
   @Test
+  void EXECUTE_NULL_COMMAND_green_path() throws NullSocketConnectorException {
+    Socket socket = new Socket();
+    PlayerConnector playerConnector = new PlayerConnector(socket);
+    AbstractCommand cmd = null;
+
+    serverControllerAction.execute(playerConnector, cmd);
+    assertEquals(0, ServerControllerState.getGamePools().size());
+  }
+
+  @Test
   void START_CONSUMER_green_path() throws NullSocketConnectorException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket);

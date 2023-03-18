@@ -23,7 +23,7 @@ public final class ServerConfig {
    * The server config class definition.
    * 
    */
-  public static final Integer SERVER_PORT = 9000;
+  public static final Integer SERVER_PORT = 9001;
 
   /**
    * The max allowed connection for this server instance.
