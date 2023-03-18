@@ -1,7 +1,7 @@
 package it.polimi.is23am10.items.board;
 
-import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.tile.Tile;

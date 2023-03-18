@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 
 /**

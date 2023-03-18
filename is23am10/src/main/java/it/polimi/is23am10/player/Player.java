@@ -224,4 +224,5 @@ public class Player {
     score.setPrivatePoints(privateCard);    
     score.setScoreBlockPoints(scoreBlocks);
   }
+
 }

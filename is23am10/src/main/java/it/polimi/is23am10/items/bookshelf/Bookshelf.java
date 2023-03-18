@@ -178,4 +178,19 @@ public class Bookshelf {
       throw new BookshelfGridColIndexOutOfBoundsException(col);
     }
     return bookshelfGrid[row][col];}
+
+  /**
+   * This function checks if player's bookshelf is full of tiles.
+   * @return True if bookshelf grid is full.
+   */
+  public boolean isBookshelfFull(){
+    for (int i = 0; i < BOOKSHELF_ROWS; i++) {
+      for (int j = 0; j < BOOKSHELF_COLS; j++) {
+        if(bookshelfGrid[i][j].getType() == TileType.EMPTY){
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 }
