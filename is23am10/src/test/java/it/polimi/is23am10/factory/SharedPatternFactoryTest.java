@@ -2,10 +2,11 @@ package it.polimi.is23am10.factory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -188,7 +189,8 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void MAX_THREE_TYPES_COLUMN_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
+  public void MAX_THREE_TYPES_COLUMN_RULE_satisfied()
+      throws NullPointerException, WrongLengthBookshelfStringException,
       WrongCharBookshelfStringException, WrongTileTypeException {
     Bookshelf threeColumnMaxThreeTypesMatching = new Bookshelf(
         "CBTFG" +
@@ -533,27 +535,11 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void TEST_GET_RANDOM_PATTERN_no_duplicates() {
+    List<SharedPattern> usedPatterns = new ArrayList<>();
     Set<SharedPattern> patterns = new HashSet<>();
     for (int i = 0; i < 12; i++) {
-      patterns.add(SharedPatternFactory.getRandomPattern());
+      patterns.add(SharedPatternFactory.getRandomPattern(usedPatterns));
     }
     assertEquals(12, patterns.size());
-  }
-
-  @Test
-  public void TWO_DIFFERENT_ARRAYS() {
-    SharedPattern[] patterns1 = new SharedPattern[12];
-    SharedPattern[] patterns2 = new SharedPattern[12];
-    for (int i = 0; i < 12; i++) {
-      patterns1[i] = SharedPatternFactory.getRandomPattern();
-    }
-    for (int i = 0; i < 12; i++) {
-      patterns2[i] = SharedPatternFactory.getRandomPattern();
-    }
-    assertEquals(12, patterns1.length);
-    assertEquals(12, patterns2.length);
-    for (int i = 0; i < 12; i++) {
-      assertNotEquals(patterns1[i], patterns2[i]);
-    }
   }
 }

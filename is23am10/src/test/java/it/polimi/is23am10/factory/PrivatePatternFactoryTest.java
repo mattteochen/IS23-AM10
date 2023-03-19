@@ -1,9 +1,10 @@
 package it.polimi.is23am10.factory;
 
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.Test;
@@ -387,27 +388,11 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void TEST_GET_RANDOM_PATTERN_no_duplicates() {
+    List<PrivatePattern> usedPatterns = new ArrayList<>();
     Set<PrivatePattern> patterns = new HashSet<>();
     for (int i = 0; i < 12; i++) {
-      patterns.add(PrivatePatternFactory.getRandomPattern());
+      patterns.add(PrivatePatternFactory.getRandomPattern(usedPatterns));
     }
     assertEquals(12, patterns.size());
-  }
-
-  @Test
-  public void TWO_DIFFERENT_ARRAYS() {
-    PrivatePattern[] patterns1 = new PrivatePattern[12];
-    PrivatePattern[] patterns2 = new PrivatePattern[12];
-    for (int i = 0; i < 12; i++) {
-      patterns1[i] = PrivatePatternFactory.getRandomPattern();
-    }
-    for (int i = 0; i < 12; i++) {
-      patterns2[i] = PrivatePatternFactory.getRandomPattern();
-    }
-    assertEquals(12, patterns1.length);
-    assertEquals(12, patterns2.length);
-    for (int i = 0; i < 12; i++) {
-      assertNotEquals(patterns1[i], patterns2[i]);
-    }
   }
 }
