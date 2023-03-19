@@ -10,6 +10,7 @@ import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.SharedCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.pattern.SharedPattern;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -93,6 +94,13 @@ public class Game {
    * 
    */
   private boolean ended;
+
+  /**
+   * A list of {@link SharedPattern} instances.
+   * Use this list to avoid duplicates cards in the game.
+   * 
+   */
+  private List<SharedPattern> usedPatterns = new ArrayList<>();
 
   /**
    * Constructor that assigns the only value that is
@@ -187,8 +195,8 @@ public class Game {
    */
   public void setSharedCards() throws AlreadyInitiatedPatternException {
     this.sharedCards = new ArrayList<>();
-    sharedCards.add(new SharedCard());
-    sharedCards.add(new SharedCard());
+    sharedCards.add(new SharedCard(this.usedPatterns));
+    sharedCards.add(new SharedCard(this.usedPatterns));
   }
 
   /**
@@ -284,16 +292,16 @@ public class Game {
         .map(Player::getPlayerName)
         .collect(Collectors.toList());
   }
-  
+
   /**
-   * Method used to retrieve a player from the list 
+   * Method used to retrieve a player from the list
    * given its name.
    * 
    * @param playerName
    * @return Player matching provided name.
    */
   private Player getPlayerByName(String playerName) {
-    return new Player(); //TODO: Replace with actual logic
+    return new Player(); // TODO: Replace with actual logic
   }
 
   /**
@@ -301,6 +309,6 @@ public class Game {
    * checks if game is over and if not picks next player
    */
   public void nextTurn() {
-    //TODO: Replace with actual logic
+    // TODO: Replace with actual logic
   }
 }

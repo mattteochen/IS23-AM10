@@ -30,14 +30,14 @@ public class SharedCard extends AbstractCard<SharedPattern<Bookshelf>> {
 
   /**
    * Constructor.
+   * @param usedCards
    * 
    * @throws AlreadyInitiatedPatternException
    * 
    */
-  public SharedCard() throws AlreadyInitiatedPatternException {
+  public SharedCard(List<SharedPattern> usedPatterns) throws AlreadyInitiatedPatternException {
     scoreBlocks = new ArrayList<>();
-    // TODO: assign pattern with private pattern factory
-    setPattern(SharedPatternFactory.getRandomPattern());
+    setPattern(SharedPatternFactory.getRandomPattern(usedPatterns));
   }
 
   /**

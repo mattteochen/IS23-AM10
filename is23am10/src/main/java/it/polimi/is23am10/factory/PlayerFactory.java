@@ -5,6 +5,7 @@ import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.card.PrivateCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.pattern.PrivatePattern;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -76,6 +77,12 @@ public class PlayerFactory {
       AlreadyInitiatedPatternException, NullPlayerNamesException {
 
     /**
+     * List of PrivatePattern used to avoid duplicate PrivateCards.
+     * 
+     */
+    List<PrivatePattern> usedPatterns = new ArrayList<>();
+
+    /**
      * Consumer must handle this {@link DuplicatePlayerNameException}.
      * 
      */
@@ -101,7 +108,7 @@ public class PlayerFactory {
     instance.setPlayerName(playerName);
     instance.setScore(new Score());
     instance.setBookshelf(new Bookshelf());
-    instance.setPrivateCard(new PrivateCard());
+    instance.setPrivateCard(new PrivateCard(usedPatterns));
     instance.setScoreBlocks(new ArrayList<>());
 
     return instance;

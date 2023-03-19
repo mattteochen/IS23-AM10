@@ -5,8 +5,6 @@ import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.pattern.SharedPattern;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +12,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Shared pattern factory object.
@@ -595,33 +594,13 @@ public final class SharedPatternFactory {
    * @return a random {@link SharedPattern}.
    * 
    */
-  public static final SharedPattern getRandomPattern() {
-    List<Predicate<Bookshelf>> patternCheckers = List.of(
-        checkCornersMatch,
-        checkDiagonalsSameType,
-        checkEightOfSameType,
-        checkFourAdjacents,
-        checkMaxThreeTypesInColumn,
-        checkMaxThreeTypesInRow,
-        checkOrderedBookshelfColumns,
-        checkSquares,
-        checkTilesXShape,
-        checkTwoAdjacents,
-        checkTwoColumnAllDiff,
-        checkTwoRowsAllDiff);
-    List<Predicate<Bookshelf>> patternList = new ArrayList<>(patternCheckers);
-    Collections.shuffle(patternList);
-    Set<SharedPattern> usedPatterns = new HashSet<>();
-
-    for (Predicate<Bookshelf> patternChecker : patternList) {
-      SharedPattern pattern = new SharedPattern<>(patternChecker, null);
-      while (!usedPatterns.contains(patternChecker)) {
-        usedPatterns.add(pattern);
-        return pattern;
-      }
-    }
-    return null;
-
-  };
-
+  public static SharedPattern getRandomPattern(List<SharedPattern> usedPatterns) {
+    Random random = new Random();
+    List<SharedPattern> unusedPatterns = patternsArray.stream()
+        .filter(pattern -> !usedPatterns.contains(pattern))
+        .collect(Collectors.toList());
+    SharedPattern selectedPattern = unusedPatterns.get(random.nextInt(unusedPatterns.size()));
+    usedPatterns.add(selectedPattern);
+    return selectedPattern;
+  }
 }

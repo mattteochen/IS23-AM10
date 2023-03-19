@@ -7,13 +7,10 @@ import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.pattern.PrivatePattern;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Private pattern factory object.
@@ -460,31 +457,13 @@ public final class PrivatePatternFactory {
    * @return a random {@link PrivatePattern}.
    * 
    */
-  public static PrivatePattern getRandomPattern() {
-    List<Function<Bookshelf, Integer>> patternCheckers = List.of(
-        checkPattern1,
-        checkPattern2,
-        checkPattern3,
-        checkPattern4,
-        checkPattern5,
-        checkPattern6,
-        checkPattern7,
-        checkPattern8,
-        checkPattern9,
-        checkPattern10,
-        checkPattern11,
-        checkPattern12);
-    List<Function<Bookshelf, Integer>> patternList = new ArrayList<>(patternCheckers);
-    Collections.shuffle(patternList);
-    Set<PrivatePattern> usedPatterns = new HashSet<>();
-
-    for (Function<Bookshelf, Integer> patternChecker : patternList) {
-      PrivatePattern pattern = new PrivatePattern(patternChecker);
-      while (!usedPatterns.contains(pattern)) {
-        usedPatterns.add(pattern);
-        return pattern;
-      }
-    }
-    return null;
+  public static PrivatePattern getRandomPattern(List<PrivatePattern> usedPatterns) {
+    Random random = new Random();
+    List<PrivatePattern> unusedPatterns = patternsArray.stream()
+        .filter(pattern -> !usedPatterns.contains(pattern))
+        .collect(Collectors.toList());
+    PrivatePattern selectedPattern = unusedPatterns.get(random.nextInt(unusedPatterns.size()));
+    usedPatterns.add(selectedPattern);
+    return selectedPattern;
   }
 }
