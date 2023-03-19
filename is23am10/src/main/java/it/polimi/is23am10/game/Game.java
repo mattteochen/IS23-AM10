@@ -343,7 +343,7 @@ public class Game {
    * @param playerName The player name we are looking for.
    * @return Player matching provided name.
    */
-  private Optional<Player> getPlayerByName(String playerName) throws NullPlayerNameException {
+  public Optional<Player> getPlayerByName(String playerName) throws NullPlayerNameException {
     if (playerName == null) {
       throw new NullPlayerNameException("[Class Game, method getPlayerByName]");
     }
@@ -383,7 +383,7 @@ public class Game {
    * 
    * @return active player
    */
-  private Player getActivePlayer() {
+  public Player getActivePlayer() {
     return activePlayer;
 >>>>>>> f4cf0ad (added Coordinates class and implemented nextTurn() Game method)
   }
