@@ -32,7 +32,7 @@ public class PrivateCard extends AbstractCard<PrivatePattern> {
    */
   public PrivateCard(List<PrivatePattern> usedPatterns) throws AlreadyInitiatedPatternException {
     matchedBlocksCount = 0;
-    setPattern(PrivatePatternFactory.getRandomPattern(usedPatterns));
+    setPattern(PrivatePatternFactory.getNotUsedPattern(usedPatterns));
   }
 
   /**

@@ -31,6 +31,12 @@ import java.util.UUID;
 public class PlayerFactory {
 
   /**
+   * List of PrivatePattern used to store already used patterns.
+   * 
+   */
+  private static List<PrivatePattern> usedPatterns;
+
+  /**
    * Private constructor.
    * 
    */
@@ -77,12 +83,6 @@ public class PlayerFactory {
       AlreadyInitiatedPatternException, NullPlayerNamesException {
 
     /**
-     * List of PrivatePattern used to avoid duplicate PrivateCards.
-     * 
-     */
-    List<PrivatePattern> usedPatterns = new ArrayList<>();
-
-    /**
      * Consumer must handle this {@link DuplicatePlayerNameException}.
      * 
      */
@@ -103,15 +103,16 @@ public class PlayerFactory {
     }
 
     Player instance = new Player();
+    PrivateCard privateCard = new PrivateCard(usedPatterns);
+    usedPatterns.add(privateCard.getPattern());
 
     instance.setPlayerID(UUID.nameUUIDFromBytes(playerName.getBytes()));
     instance.setPlayerName(playerName);
     instance.setScore(new Score());
     instance.setBookshelf(new Bookshelf());
-    instance.setPrivateCard(new PrivateCard(usedPatterns));
+    instance.setPrivateCard(privateCard);
     instance.setScoreBlocks(new ArrayList<>());
 
     return instance;
   }
-
 }

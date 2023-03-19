@@ -454,16 +454,18 @@ public final class PrivatePatternFactory {
   /**
    * Method used to get random PrivatePattern between the 12 possible.
    * 
-   * @return a random {@link PrivatePattern}.
-   * 
+   * @param usedPatterns a List of {@link PrivatePattern} storing the already used
+   *                     patterns.
+   * @return a random pattern between the 12 possible.
    */
-  public static PrivatePattern getRandomPattern(List<PrivatePattern> usedPatterns) {
-    Random random = new Random();
-    List<PrivatePattern> unusedPatterns = patternsArray.stream()
-        .filter(pattern -> !usedPatterns.contains(pattern))
-        .collect(Collectors.toList());
-    PrivatePattern selectedPattern = unusedPatterns.get(random.nextInt(unusedPatterns.size()));
-    usedPatterns.add(selectedPattern);
-    return selectedPattern;
+  public static PrivatePattern getNotUsedPattern(List<PrivatePattern> usedPatterns) {
+    if (usedPatterns == null) {
+      return patternsArray.get(random.nextInt(patternsArray.size()));
+    } else {
+      List<PrivatePattern> unusedPatterns = patternsArray.stream()
+          .filter(pattern -> !usedPatterns.contains(pattern))
+          .collect(Collectors.toList());
+      return unusedPatterns.get(random.nextInt(unusedPatterns.size()));
+    }
   }
 }
