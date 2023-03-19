@@ -27,9 +27,11 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
+import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.net.Socket;
 import java.util.UUID;
+import java.util.concurrent.LinkedBlockingQueue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -52,9 +54,9 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void EXECUTE_should_EXECUTE_COMMAND() throws NullSocketConnectorException {
+  void EXECUTE_should_EXECUTE_COMMAND() throws NullSocketConnectorException, NullBlockingQueueException {
     Socket socket = new Socket();
-    PlayerConnector playerConnector = new PlayerConnector(socket);
+    PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new StartGameCommand("player", 2);
 
     serverControllerAction.execute(playerConnector, cmd);
@@ -62,9 +64,9 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void EXECUTE_should_NOT_EXECUTE_NULL_COMMAND() throws NullSocketConnectorException {
+  void EXECUTE_should_NOT_EXECUTE_NULL_COMMAND() throws NullSocketConnectorException, NullBlockingQueueException {
     Socket socket = new Socket();
-    PlayerConnector playerConnector = new PlayerConnector(socket);
+    PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = null;
 
     serverControllerAction.execute(playerConnector, cmd);
@@ -72,9 +74,10 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void START_CONSUMER_should_CONSUME_START_COMMAND() throws NullSocketConnectorException {
+  void START_CONSUMER_should_CONSUME_START_COMMAND()
+      throws NullSocketConnectorException, NullBlockingQueueException, InterruptedException {
     Socket socket = new Socket();
-    PlayerConnector playerConnector = new PlayerConnector(socket);
+    PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new StartGameCommand("Steve", 2);
 
     assertEquals(null, playerConnector.getPlayerName());
@@ -88,12 +91,14 @@ class ServerControllerActionTest {
     assertEquals(
         ServerControllerState.getGamePools().get(0).getGame().getGameId(),
         playerConnector.getGameId());
+    assertEquals(1, playerConnector.getMsgQueueSize());
   }
 
   @Test
-  void START_CONSUMER_should_THROW_NullPlayerException() throws NullSocketConnectorException {
+  void START_CONSUMER_should_THROW_NullPlayerException()
+      throws NullSocketConnectorException, NullBlockingQueueException {
     Socket socket = new Socket();
-    PlayerConnector playerConnector = new PlayerConnector(socket);
+    PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new StartGameCommand(null, 2);
 
     assertEquals(null, playerConnector.getPlayerName());
@@ -106,9 +111,10 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void START_CONSUMER_should_THROW_nullMaxPlayersValue() throws NullSocketConnectorException {
+  void START_CONSUMER_should_THROW_nullMaxPlayersValue()
+      throws NullSocketConnectorException, NullBlockingQueueException {
     Socket socket = new Socket();
-    PlayerConnector playerConnector = new PlayerConnector(socket);
+    PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new StartGameCommand("Steve", null);
 
     assertEquals(null, playerConnector.getPlayerName());
@@ -121,9 +127,10 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void START_CONSUMER_should_THROW_invalidNumOfPlayers() throws NullSocketConnectorException {
+  void START_CONSUMER_should_THROW_invalidNumOfPlayers()
+      throws NullSocketConnectorException, NullBlockingQueueException {
     Socket socket = new Socket();
-    PlayerConnector playerConnector = new PlayerConnector(socket);
+    PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new StartGameCommand("Steve", 56);
 
     assertEquals(null, playerConnector.getPlayerName());
@@ -147,7 +154,8 @@ class ServerControllerActionTest {
   }
 
   @Test
-  void START_CONSUMER_should_THROW_StartCommandSerializationErrorException() throws NullSocketConnectorException {
+  void START_CONSUMER_should_THROW_StartCommandSerializationErrorException()
+      throws NullSocketConnectorException, NullBlockingQueueException {
 
     class Utils extends AbstractCommand {
       Utils(Opcode op) {
@@ -156,7 +164,7 @@ class ServerControllerActionTest {
     }
 
     Socket socket = new Socket();
-    PlayerConnector playerConnector = new PlayerConnector(socket);
+    PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new Utils(Opcode.START);
 
     assertThrows(StartCommandSerializationErrorException.class,
@@ -168,9 +176,9 @@ class ServerControllerActionTest {
       NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException {
     Socket socket = new Socket();
-    PlayerConnector playerConnector = new PlayerConnector(socket);
+    PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
 
     GameHandler handler = new GameHandler("Max", 2);
     ServerControllerState.addGameHandler(handler);
@@ -190,16 +198,18 @@ class ServerControllerActionTest {
     assertEquals(oldPlayerConnectors + 1, ServerControllerState.getPlayersPool().size());
     assertTrue(handler.getPlayerConnectors().contains(playerConnector));
     assertTrue(handler.getGame().getPlayerNames().contains("Steve"));
+    assertEquals(1, playerConnector.getMsgQueueSize());
   }
 
   @Test
-  void ADD_PLAYER_CONSUMER_should_not_ADD_PLAYER_IF_GAME_NO_MATCH() throws NullSocketConnectorException, NullGameHandlerInstance,
+  void ADD_PLAYER_CONSUMER_should_not_ADD_PLAYER_IF_GAME_NO_MATCH()
+      throws NullSocketConnectorException, NullGameHandlerInstance,
       NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException {
     Socket socket = new Socket();
-    PlayerConnector playerConnector = new PlayerConnector(socket);
+    PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
 
     GameHandler handler = new GameHandler("Max", 2);
     ServerControllerState.addGameHandler(handler);
@@ -226,9 +236,10 @@ class ServerControllerActionTest {
       throws NullSocketConnectorException, NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
+      NullBlockingQueueException {
     Socket socket = new Socket();
-    PlayerConnector playerConnector = new PlayerConnector(socket);
+    PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     GameHandler handler = new GameHandler("Max", 2);
     ServerControllerState.addGameHandler(handler);
     AbstractCommand cmd = new AddPlayerCommand(null, handler.getGame().getGameId());
@@ -248,10 +259,10 @@ class ServerControllerActionTest {
       NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException {
 
     Socket socket = new Socket();
-    PlayerConnector steve = new PlayerConnector(socket);
+    PlayerConnector steve = new PlayerConnector(socket, new LinkedBlockingQueue<>());
 
     GameHandler handler = new GameHandler("Max", 2);
     ServerControllerState.addGameHandler(handler);
@@ -272,7 +283,7 @@ class ServerControllerActionTest {
     assertTrue(handler.getPlayerConnectors().contains(steve));
     assertTrue(handler.getGame().getPlayerNames().contains("Steve"));
 
-    PlayerConnector steveBrother = new PlayerConnector(socket);
+    PlayerConnector steveBrother = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand steveBrotherCmd = new AddPlayerCommand("Steve", handler.getGame().getGameId());
     serverControllerAction.addPlayerConsumer.accept(steveBrother, steveBrotherCmd);
     assertEquals(oldPlayerConnectors + 1, ServerControllerState.getPlayersPool().size());
@@ -299,7 +310,7 @@ class ServerControllerActionTest {
 
   @Test
   void ADD_PLAYER_CONSUMER_should_THROW_AddPlayerCommandSerializationErrorException()
-      throws NullSocketConnectorException {
+      throws NullSocketConnectorException, NullBlockingQueueException {
     class Utils extends AbstractCommand {
       Utils(Opcode op) {
         super(op);
@@ -307,7 +318,7 @@ class ServerControllerActionTest {
     }
 
     Socket socket = new Socket();
-    PlayerConnector playerConnector = new PlayerConnector(socket);
+    PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new Utils(Opcode.START);
 
     assertThrows(AddPlayerCommandSerializationErrorException.class,

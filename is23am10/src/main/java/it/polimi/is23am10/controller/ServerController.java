@@ -13,11 +13,15 @@ import it.polimi.is23am10.command.AbstractCommand;
 import it.polimi.is23am10.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.command.AddPlayerCommand;
 import it.polimi.is23am10.command.StartGameCommand;
+import it.polimi.is23am10.game.Game;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -79,16 +83,38 @@ public final class ServerController implements Runnable {
    *
    */
   @Override
-  public synchronized void run() {
+  public void run() {
     while (playerConnector != null && playerConnector.getConnector().isConnected()) {
       try {
         AbstractCommand command = buildCommand();
         serverControllerAction.execute(playerConnector, command);
+        update();
       } catch (IOException e) {
         logger.error("Failed to retrieve socket payload", e);
       } catch (JsonIOException | JsonSyntaxException e) {
         logger.error("Failed to parse socket payload", e);
+      } catch (InterruptedException e) {
+        logger.error("Failed get response message from the queue", e);
+        // note, we are not raising the interrupted flag as we don't want to stop this thread.
       }
+    }
+  }
+
+  /**
+   * Build the response message and sent it to the client when any game update is available.
+   *
+   * @throws IOException
+   * @throws InterruptedException
+   * 
+   */
+  protected void update() throws InterruptedException, IOException {
+    Optional<Game> message = playerConnector.getMessageFromQueue();
+    if (message.isPresent()) {
+      PrintWriter printer = new PrintWriter(
+          playerConnector.getConnector().getOutputStream(), true, StandardCharsets.UTF_8);
+      String jsonMessage = gson.toJson(message.get());
+      printer.println(jsonMessage);
+      logger.info("Update sent to client {}", jsonMessage);
     }
   }
 
@@ -98,9 +124,12 @@ public final class ServerController implements Runnable {
    * contained a derived type, this can be casted at runtime on the need.
    *
    * @return An instance of the command object.
+   * @throws IOException
+   * @throws JsonIOException
+   * @throws JsonSyntaxException
    * 
    */
-  protected synchronized AbstractCommand buildCommand()
+  protected AbstractCommand buildCommand()
       throws IOException, JsonIOException, JsonSyntaxException {
     BufferedReader reader = new BufferedReader(
           new InputStreamReader(playerConnector.getConnector().getInputStream()));

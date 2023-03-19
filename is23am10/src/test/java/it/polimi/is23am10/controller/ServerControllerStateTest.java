@@ -20,8 +20,10 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
+import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.net.Socket;
+import java.util.concurrent.LinkedBlockingQueue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +39,8 @@ class ServerControllerStateTest {
   }
 
   @Test
-  void ADD_GAME_HANDLER_should_ADD_NEW_GAME() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void ADD_GAME_HANDLER_should_ADD_NEW_GAME()
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance {
@@ -48,7 +51,8 @@ class ServerControllerStateTest {
   }
 
   @Test
-  void ADD_GAME_HANDLER_should_THROW_NullGameHandlerInstance() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void ADD_GAME_HANDLER_should_THROW_NullGameHandlerInstance()
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance {
@@ -58,7 +62,8 @@ class ServerControllerStateTest {
   }
 
   @Test
-  void REMOVE_GAME_HANDLER_should_REMOVE_GAME_INSTANCE() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void REMOVE_GAME_HANDLER_should_REMOVE_GAME_INSTANCE()
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance {
@@ -77,35 +82,41 @@ class ServerControllerStateTest {
   }
 
   @Test
-  void ADD_PLAYER_CONNECTOR_should_THROW_NullGameHandlerInstance() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void ADD_PLAYER_CONNECTOR_should_THROW_NullGameHandlerInstance()
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullSocketConnectorException, NullPlayerConnector {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
+      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException {
 
-    PlayerConnector playerConnector = new PlayerConnector(new Socket());
+    PlayerConnector playerConnector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
     ServerControllerState.addPlayerConnector(playerConnector);
     assertEquals(1, ServerControllerState.getPlayersPool().size());
   }
 
   @Test
-  void ADD_PLAYER_CONNECTOR_should_THROW_NullPlayerConnector() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void ADD_PLAYER_CONNECTOR_should_THROW_NullPlayerConnector()
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullSocketConnectorException, NullPlayerConnector {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
+      NullSocketConnectorException, NullPlayerConnector {
 
     assertThrows(NullPlayerConnector.class, () -> ServerControllerState.addPlayerConnector(null));
     assertEquals(0, ServerControllerState.getPlayersPool().size());
   }
 
   @Test
-  void REMOVE_PLAYER_CONNECTOR_should_REMOVE_PLAYER_CONNECTOR() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void REMOVE_PLAYER_CONNECTOR_should_REMOVE_PLAYER_CONNECTOR()
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullSocketConnectorException, NullPlayerConnector {
-   
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
+      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException {
+
     GameHandler handler = new GameHandler("Steve", 2);
-    PlayerConnector steve = new PlayerConnector(new Socket());
-    PlayerConnector alice  = new PlayerConnector(new Socket());
+    PlayerConnector steve = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    PlayerConnector alice = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
     steve.setGameId(handler.getGame().getGameId());
     steve.setPlayerName("Steve");
     alice.setGameId(handler.getGame().getGameId());
@@ -116,22 +127,24 @@ class ServerControllerStateTest {
     ServerControllerState.removePlayerByGameAndName(handler.getGame().getGameId(), alice.getPlayerName());
     assertEquals(1, ServerControllerState.getPlayersPool().size());
     ServerControllerState.removePlayerByGameAndName(null, null);
-		assertEquals(1, ServerControllerState.getPlayersPool().size());
+    assertEquals(1, ServerControllerState.getPlayersPool().size());
     ServerControllerState.removePlayerByGameAndName(handler.getGame().getGameId(), steve.getPlayerName());
     assertEquals(0, ServerControllerState.getPlayersPool().size());
   }
 
   @Test
-  void REMOVE_GAME_HANDLER_PLAYER_CONNECTORS_should_REMOVE_PLAYER_CONNECTOR_IN_GAME_HANDLER() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+  void REMOVE_GAME_HANDLER_PLAYER_CONNECTORS_should_REMOVE_PLAYER_CONNECTOR_IN_GAME_HANDLER()
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullSocketConnectorException, NullPlayerConnector {
-   
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
+      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException {
+
     GameHandler handler = new GameHandler("Steve", 2);
     GameHandler handler2 = new GameHandler("Bob", 2);
-    PlayerConnector steve = new PlayerConnector(new Socket());
-    PlayerConnector alice  = new PlayerConnector(new Socket());
-    PlayerConnector bob  = new PlayerConnector(new Socket());
+    PlayerConnector steve = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    PlayerConnector alice = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    PlayerConnector bob = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
     handler.addPlayerConnector(steve);
     handler.addPlayerConnector(alice);
     handler2.addPlayerConnector(bob);

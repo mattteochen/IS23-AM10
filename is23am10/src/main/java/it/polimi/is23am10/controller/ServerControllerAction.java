@@ -73,6 +73,9 @@ public class ServerControllerAction {
         logger.info("{} Started new game with id {} from {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX,
             gameHandler.getGame().getGameId(), playerName);
+
+        // send the game model update to all the connected players
+        updateAllPlayers(gameHandler);
       } catch (NullNumOfPlayersException | NullPlayerNamesException | NullPlayerScoreBlocksException
           | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
           | NullPlayerIdException | NullPlayerNameException | NullMaxPlayerException
@@ -88,6 +91,9 @@ public class ServerControllerAction {
       } catch (NullPlayerConnector e) {
         //TODO: as we have a null connector, the model should expose something to remove the player.
         logger.error("{} Failed to add player connector {}",
+            ServerDebugPrefixString.START_COMMAND_PREFIX, e);
+      } catch (InterruptedException e) {
+        logger.error("{} Failed to push update to all player connectors {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       }
     } else {
@@ -135,6 +141,9 @@ public class ServerControllerAction {
           logger.info("{} Added new player {} to game {}",
               ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
               playerName, gameId);
+              
+          // send the game model update to all the connected players
+          updateAllPlayers(gameHandler);
         } else {
           logger.error("{} Game id {} not found",
               ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, gameId);
@@ -151,6 +160,9 @@ public class ServerControllerAction {
         //TODO: as we have a null connector, the model should expose something to remove the player.
         logger.error("{} Failed to add player connector {}",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
+      } catch (InterruptedException e) {
+        logger.error("{} Failed to push update to all player connectors {}",
+            ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
       }
     } else {
       logger.error("{} Failed to obtain deserialized ADD_PLAYER command",
@@ -158,6 +170,19 @@ public class ServerControllerAction {
       throw new AddPlayerCommandSerializationErrorException(AddPlayerCommand.class.toString());
     }
   };
+
+  /**
+   * Update all the connected players game state by sending a {@link Game} message.
+   *
+   * @param handler The current game instance handler.
+   * @throws InterruptedException
+   *
+   */
+  protected void updateAllPlayers(GameHandler handler) throws InterruptedException {
+    if (handler != null) {
+      handler.pushGameState();
+    }
+  }
 
   /**
    * A helper mapping to link a {@link Opcode} to the relative worker callback.

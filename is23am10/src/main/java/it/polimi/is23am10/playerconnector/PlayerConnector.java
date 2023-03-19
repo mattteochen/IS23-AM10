@@ -1,8 +1,14 @@
 package it.polimi.is23am10.playerconnector;
 
+import it.polimi.is23am10.command.AbstractCommand;
+import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.net.Socket;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * The player connector class definition.
@@ -34,18 +40,30 @@ public class PlayerConnector {
   private Socket connector;
 
   /**
+   * The connector message queue.
+   *
+   */
+  private BlockingQueue<Game> msgQueue;
+
+  /**
    * Constructor.
    *
    *
    * @param connector The {@link Socket} instance linked to a player client.
    * @throws NullSocketConnectorException
+   * @throws NullBlockingQueueException
    *
    */
-  public PlayerConnector(Socket connector) throws NullSocketConnectorException {
+  public PlayerConnector(Socket connector, LinkedBlockingQueue<Game> msgQueue)
+      throws NullSocketConnectorException, NullBlockingQueueException {
     if (connector == null) {
       throw new NullSocketConnectorException();
     }
+    if (msgQueue == null) {
+      throw new NullBlockingQueueException();
+    }
     this.connector = connector;
+    this.msgQueue = msgQueue;
   }
 
   /**
@@ -76,6 +94,48 @@ public class PlayerConnector {
    */
   public synchronized String getPlayerName() {
     return playerName;
+  }
+
+  /**
+   * Retrieve a message from the queue.
+   * This deletes the retrieved message.
+   *
+   * @return The oldest message if present.
+   * @throws InterruptedException
+   *
+   */
+  public Optional<Game> getMessageFromQueue() throws InterruptedException {
+    if (msgQueue.isEmpty()) {
+      return Optional.empty();
+    }
+    return Optional.of(msgQueue.take());
+  }
+
+  /**
+   * Retrieve the message queue size.
+   *
+   * @return The blocking message queue size.
+   * @throws InterruptedException
+   *
+   */
+  public int getMsgQueueSize() {
+    return msgQueue.size();
+  }
+
+  /**
+   * Add a message from the queue.
+   * This blocks undefinably until the queue is available.
+   * {@link Game} model instances should leverage this
+   * queue to send responses to the client (i.e. game updates).
+   *
+   * @param message The message to be added.
+   * @throws InterruptedException
+   *
+   */
+  public void addMessageToQueue(Game message) throws InterruptedException {
+    if (message != null) {
+      msgQueue.put(message);
+    }
   }
 
   /**
