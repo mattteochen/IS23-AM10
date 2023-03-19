@@ -31,6 +31,14 @@ import java.util.stream.Collectors;
 public final class SharedPatternFactory {
 
   /**
+   * Private constructor.
+   * 
+   */
+  private SharedPatternFactory() {
+
+  }
+
+  /**
    * Number of occurencies need to comply checkTwoAdjacents rule.
    */
   private static final int TWO_ADJACENTS_OCC = 6;
@@ -69,6 +77,12 @@ public final class SharedPatternFactory {
    * Number of occurencies need to comply checkTwoRowsAllDiff rule.
    */
   private static final int ROW_ALL_DIFF_OCC = 2;
+
+  /**
+   * The random generator instance.
+   * 
+   */
+  private static final Random random = new Random();
 
   /**
    * #1
@@ -565,7 +579,7 @@ public final class SharedPatternFactory {
    * rules with their lambda functions
    *
    */
-  private static final List<SharedPattern> patternsArray = List.of(
+  private static final List<SharedPattern<Bookshelf>> patternsArray = List.of(
       (new SharedPattern<>(checkTwoAdjacents,
           "Six separated groups made of two adjacent tiles of the same type. The tile type of different groups can be different.")),
       (new SharedPattern<>(checkCornersMatch, "The four tiles at the corners of the bookshelf are of the same type.")),
@@ -589,18 +603,20 @@ public final class SharedPatternFactory {
           "Five columns with ascending or descending height. Starting from the first or the last column, the next column has to have one tile more. The tile types are not considered.")));
 
   /**
-   * Method used to get a random SharedPattern between the 12 possible.
+   * Method used to get random PrivatePattern between the 12 possible.
    * 
-   * @return a random {@link SharedPattern}.
-   * 
+   * @param usedPatterns a List of {@link SharedPattern} storing the already used
+   *                     patterns.
+   * @return a random pattern between the 12 possible.
    */
-  public static SharedPattern getRandomPattern(List<SharedPattern> usedPatterns) {
-    Random random = new Random();
-    List<SharedPattern> unusedPatterns = patternsArray.stream()
-        .filter(pattern -> !usedPatterns.contains(pattern))
-        .collect(Collectors.toList());
-    SharedPattern selectedPattern = unusedPatterns.get(random.nextInt(unusedPatterns.size()));
-    usedPatterns.add(selectedPattern);
-    return selectedPattern;
+  public static SharedPattern<Bookshelf> getNotUsedPattern(List<SharedPattern<Bookshelf>> usedPatterns) {
+    if (usedPatterns == null) {
+      return patternsArray.get(random.nextInt(patternsArray.size()));
+    } else {
+      List<SharedPattern<Bookshelf>> unusedPatterns = patternsArray.stream()
+          .filter(pattern -> !usedPatterns.contains(pattern))
+          .collect(Collectors.toList());
+      return unusedPatterns.get(random.nextInt(unusedPatterns.size()));
+    }
   }
 }

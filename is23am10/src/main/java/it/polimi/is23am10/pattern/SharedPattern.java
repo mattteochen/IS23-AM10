@@ -30,7 +30,7 @@ public class SharedPattern<T extends Bookshelf> extends AbstractPattern {
    * The constructor of the class SharedPattern
    *
    */
-  public SharedPattern(Predicate rule, String description){
+  public SharedPattern(Predicate<T> rule, String description){
     this.rule = rule;
     this.patternDescription = description;
   };

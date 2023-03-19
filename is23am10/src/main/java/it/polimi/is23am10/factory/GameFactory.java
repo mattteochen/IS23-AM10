@@ -1,5 +1,7 @@
 package it.polimi.is23am10.factory;
 
+import java.util.List;
+
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
@@ -7,7 +9,10 @@ import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.items.card.SharedCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.pattern.SharedPattern;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
@@ -32,6 +37,13 @@ public final class GameFactory {
   private GameFactory() {
 
   }
+
+  /**
+   * A list of {@link SharedPattern} instances.
+   * Use this list to avoid duplicates cards in the game.
+   * 
+   */
+  private static List<SharedPattern<Bookshelf>> usedSharedPatterns;
 
   /**
    * Create a new {@link Game} instance.
@@ -60,12 +72,17 @@ public final class GameFactory {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+
     Game game = new Game();
+    SharedCard sharedCard1 = new SharedCard(usedSharedPatterns);
+    usedSharedPatterns.add(sharedCard1.getPattern());
+    SharedCard sharedCard2 = new SharedCard(usedSharedPatterns);
+    usedSharedPatterns.add(sharedCard2.getPattern());
 
     game.setMaxPlayers(maxPlayerNum);
     game.addPlayer(startingPlayerName);
     game.setGameBoard();
-    game.setSharedCards();
+    game.setSharedCards(sharedCard1, sharedCard2);
     game.setEnded(false);
 
     return game;

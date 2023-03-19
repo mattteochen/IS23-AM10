@@ -10,7 +10,6 @@ import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.SharedCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
-import it.polimi.is23am10.pattern.SharedPattern;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -94,13 +93,6 @@ public class Game {
    * 
    */
   private boolean ended;
-
-  /**
-   * A list of {@link SharedPattern} instances.
-   * Use this list to avoid duplicates cards in the game.
-   * 
-   */
-  private List<SharedPattern> usedPatterns = new ArrayList<>();
 
   /**
    * Constructor that assigns the only value that is
@@ -187,16 +179,17 @@ public class Game {
     this.gameBoard = new Board(maxPlayers);
   }
 
-  /**
-   * sharedCards setter.
-   * 
-   * @throws AlreadyInitiatedPatternException.
-   *
-   */
-  public void setSharedCards() throws AlreadyInitiatedPatternException {
+   /**
+    * SharedCards setter. 
+    *
+    * @param sharedCard1 first shared card for the game.
+    * @param sharedCard2 second shared card for the game.
+    * @throws AlreadyInitiatedPatternException
+    */
+  public void setSharedCards(SharedCard sharedCard1, SharedCard sharedCard2) throws AlreadyInitiatedPatternException {
     this.sharedCards = new ArrayList<>();
-    sharedCards.add(new SharedCard(this.usedPatterns));
-    sharedCards.add(new SharedCard(this.usedPatterns));
+    sharedCards.add(sharedCard1);
+    sharedCards.add(sharedCard2);
   }
 
   /**
