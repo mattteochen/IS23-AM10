@@ -27,12 +27,13 @@ public class PrivateCard extends AbstractCard<PrivatePattern> {
   /**
    * Constructor.
    * 
+   * @param usedPrivatePatterns is a list of PrivatePattern used to store the already
+   *                     used one.
    * @throws AlreadyInitiatedPatternException
-   * 
    */
-  public PrivateCard(List<PrivatePattern> usedPatterns) throws AlreadyInitiatedPatternException {
+  public PrivateCard(List<PrivatePattern> usedPrivatePatterns) throws AlreadyInitiatedPatternException {
     matchedBlocksCount = 0;
-    setPattern(PrivatePatternFactory.getNotUsedPattern(usedPatterns));
+    setPattern(PrivatePatternFactory.getNotUsedPattern(usedPrivatePatterns));
   }
 
   /**

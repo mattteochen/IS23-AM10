@@ -34,7 +34,7 @@ public class PlayerFactory {
    * List of PrivatePattern used to store already used patterns.
    * 
    */
-  private static List<PrivatePattern> usedPatterns;
+  private static List<PrivatePattern> usedPrivatePatterns;
 
   /**
    * Private constructor.
@@ -103,8 +103,8 @@ public class PlayerFactory {
     }
 
     Player instance = new Player();
-    PrivateCard privateCard = new PrivateCard(usedPatterns);
-    usedPatterns.add(privateCard.getPattern());
+    PrivateCard privateCard = new PrivateCard(usedPrivatePatterns);
+    usedPrivatePatterns.add(privateCard.getPattern());
 
     instance.setPlayerID(UUID.nameUUIDFromBytes(playerName.getBytes()));
     instance.setPlayerName(playerName);

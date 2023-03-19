@@ -28,5 +28,5 @@ public class PrivatePattern extends AbstractPattern {
    */
   public PrivatePattern(Function<Bookshelf, Integer> rule) {
     this.rule = rule;
-  };
+  }
 }
