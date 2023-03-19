@@ -281,12 +281,29 @@ public class Board {
     return tile;
   }
 
+  private boolean isRefillNeeded(){
+    for (int i = 0; i < Board.BOARD_GRID_ROWS - 1; i++) {
+      for (int j = 0; j < Board.BOARD_GRID_COLS - 1; j++) {
+        if(boardGrid[i][j].getType() != TileType.EMPTY &&
+        boardGrid[i+1][j].getType() != TileType.EMPTY ||
+        boardGrid[i-1][j].getType() != TileType.EMPTY ||
+        boardGrid[i][j+1].getType() != TileType.EMPTY ||
+        boardGrid[i][j-1].getType() != TileType.EMPTY ){
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   /**
    * Method called at the end of the turn that
    * checks if the Board needs to be refilled
    * and proceeds if so.
    */
   public void refillIfNeeded(){
-    //TODO: add logic
+    if(isRefillNeeded()){
+      fillBoardGrid();
+    }
   }
 }
