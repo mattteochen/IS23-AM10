@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
  * 
  */
 public class CoordinatesTest {
+
     @Test
     public void constructor_should_create_Coordinates(){
         Integer row = 4;
@@ -17,6 +18,7 @@ public class CoordinatesTest {
         assertEquals(row, coord.getRow());
         assertEquals(col, coord.getCol());
     }
+
     @Test
     public void row_setter_should_set_Coordinates_row(){
         Coordinates coord = new Coordinates();
@@ -24,12 +26,22 @@ public class CoordinatesTest {
         coord.setRow(row);
         assertEquals(row, coord.getRow());
     }
+
     @Test
     public void col_setter_should_set_Coordinates_col(){
         Coordinates coord = new Coordinates();
         Integer col = 5;
         coord.setCol(col);
         assertEquals(col, coord.getCol());
+    }
+
+    @Test
+    public void hash_code_should_give_custom_hash_code(){
+        Integer row = 4;
+        Integer col = 2;
+        Coordinates coord = new Coordinates(row, col);
+
+        assertEquals(coord.hashCode(), row + (col + ((row+1)/2)) * (col + ((row+1)/2)) );
     }
 
 }
