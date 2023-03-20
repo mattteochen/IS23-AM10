@@ -18,5 +18,5 @@
             "debug": false
         }
     ],
-    "java.checkstyle.version": "8.18"
+    "java.checkstyle.version": "10.9.1"
 }

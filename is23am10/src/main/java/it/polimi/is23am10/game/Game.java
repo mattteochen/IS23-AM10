@@ -17,7 +17,6 @@ import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -72,7 +71,7 @@ public class Game {
   private Player firstPlayer;
 
   /**
-   * Player currently playing
+   * Player currently playing.
    */
   private Player activePlayer;
 
@@ -96,7 +95,7 @@ public class Game {
 
   /**
    * Constructor that assigns the only value that is
-   * generated, immutable and not set by factory
+   * generated, immutable and not set by factory.
    */
   public Game() {
     gameId = UUID.randomUUID();
@@ -104,7 +103,7 @@ public class Game {
 
   /**
    * Check if a maxPlayer value is correct.
-   * 
+   *
    * @param maxPlayers The value to be controlled.
    * @throws NullMaxPlayerException.
    *
@@ -118,13 +117,14 @@ public class Game {
 
   /**
    * maxPlayers setter.
-   * 
+   *
    * @param maxPlayers The value to be assigned.
    * @throws NullMaxPlayerException.
    * @throws InvalidMaxPlayerException.
    *
    */
-  public void setMaxPlayers(Integer maxPlayers) throws NullMaxPlayerException, InvalidMaxPlayerException {
+  public void setMaxPlayers(Integer maxPlayers)
+      throws NullMaxPlayerException, InvalidMaxPlayerException {
     if (!validMaxPlayers(maxPlayers)) {
       throw new InvalidMaxPlayerException();
     }
@@ -133,7 +133,7 @@ public class Game {
 
   /**
    * firstPlayer setter.
-   * 
+   *
    * @param playerName The first player's name.
    *
    */
@@ -162,15 +162,17 @@ public class Game {
    *
    */
   public void addPlayer(String playerName)
-      throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
-      NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatternException, NullPlayerNamesException {
+      throws NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException,
+      NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
+      DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException {
     players.add(PlayerFactory.getNewPlayer(playerName, getPlayerNames()));
   }
 
   /**
    * gameBoard setter.
-   * 
+   *
    * @throws InvalidNumOfPlayersException.
    * @throws NullNumOfPlayersException.
    *
@@ -179,14 +181,13 @@ public class Game {
     this.gameBoard = new Board(maxPlayers);
   }
 
-   /**
-    * SharedCards setter. 
-    *
-    * @param sharedCard1 first shared card for the game.
-    * @param sharedCard2 second shared card for the game.
-    * @throws AlreadyInitiatedPatternException
-    */
-  public void setSharedCards(List<SharedCard> cards) throws AlreadyInitiatedPatternException {
+  /**
+   * sharedCards setter.
+   * 
+   * @throws AlreadyInitiatedPatternException.
+   *
+   */
+  public void setSharedCards() throws AlreadyInitiatedPatternException {
     this.sharedCards = new ArrayList<>();
     sharedCards.add(cards.get(0));
     sharedCards.add(cards.get(1));
@@ -194,7 +195,7 @@ public class Game {
 
   /**
    * ended setter.
-   * 
+   *
    * @param ended A flag referencing if the game is ended.
    *
    */
@@ -204,7 +205,7 @@ public class Game {
 
   /**
    * gameId getter.
-   * 
+   *
    * @return The game id.
    *
    */
@@ -214,7 +215,7 @@ public class Game {
 
   /**
    * maxPlayer getter.
-   * 
+   *
    * @return The maximum number of players for the current game instance.
    *
    */
@@ -224,7 +225,7 @@ public class Game {
 
   /**
    * players getter.
-   * 
+   *
    * @return A list containing all the current players.
    *
    */
@@ -234,7 +235,7 @@ public class Game {
 
   /**
    * firstPlayer getter.
-   * 
+   *
    * @return The game first player.
    *         This player has started the game.
    *
@@ -245,7 +246,7 @@ public class Game {
 
   /**
    * gameBoard getter.
-   * 
+   *
    * @return The game board grid.
    *
    */
@@ -255,7 +256,7 @@ public class Game {
 
   /**
    * sharedCards getter.
-   * 
+   *
    * @return The assigned shared cards to the current game instance.
    *
    */
@@ -265,7 +266,7 @@ public class Game {
 
   /**
    * ended getter.
-   * 
+   *
    * @return A boolean values stating if the current game is still running or
    *         not.
    *
@@ -276,7 +277,7 @@ public class Game {
 
   /**
    * Retrieve the current players' names.
-   * 
+   *
    * @return A {@link List} containing all the current players' names.
    *
    */
@@ -289,7 +290,7 @@ public class Game {
   /**
    * Method used to retrieve a player from the list
    * given its name.
-   * 
+   *
    * @param playerName
    * @return Player matching provided name.
    */

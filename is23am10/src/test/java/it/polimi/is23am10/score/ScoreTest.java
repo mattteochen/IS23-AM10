@@ -29,6 +29,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 
+import it.polimi.is23am10.score.Score;
+
 public class ScoreTest {
   @Test
   public void constructor_should_set_zeros() {

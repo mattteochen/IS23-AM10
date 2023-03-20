@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import org.junit.jupiter.api.Test;
 
+import it.polimi.is23am10.items.board.Board;
 import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
