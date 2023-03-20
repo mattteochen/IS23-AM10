@@ -27,7 +27,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
  */
 public class PlayerFactoryTest {
   @BeforeEach
-  public void clearList() {
+  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
     PlayerFactory.clearUsedPatternsList();
   }
 

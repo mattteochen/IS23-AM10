@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
@@ -35,10 +36,16 @@ public class GameFactoryTest {
 
     String dummyPlayerName = "myNewPlayer";
 
+    @BeforeEach
+    public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
+        PlayerFactory.clearUsedPatternsList();
+    }
+
     @Test
     public void getNewGame_should_return_player()
             throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
-            NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+            NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
+            NullPlayerPrivateCardException,
             NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
             NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
 

@@ -9,13 +9,21 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
+import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
-import it.polimi.is23am10.items.card.PrivateCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.pattern.PrivatePattern;
+import it.polimi.is23am10.player.Player;
+import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
+import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
+import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
+import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
+import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
+import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 
 public class PrivatePatternFactoryTest {
   /**
@@ -389,14 +397,17 @@ public class PrivatePatternFactoryTest {
   };
 
   @Test
-  public void TEST_GET_RANDOM_PRIVATECARDS_no_duplicates() throws AlreadyInitiatedPatternException {
-    List<PrivatePattern> usedPatterns = new ArrayList<>();
-    Set<PrivateCard> pc = new HashSet<>();
-    for (int i = 0; i < 12; i++) {
-      PrivateCard card = new PrivateCard(usedPatterns);
-      usedPatterns.add(card.getPattern());
-      pc.add(card);
+  public void TEST_GET_RANDOM_PRIVATECARDS_no_duplicates()
+      throws AlreadyInitiatedPatternException, NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, NullPlayerNamesException {
+    Set<PrivatePattern> patterns = new HashSet<>();
+    List<String> playerNames = new ArrayList<>();
+    for (int i = 0; i < 6; i++) {
+      Player player = PlayerFactory.getNewPlayer(String.valueOf(i), playerNames);
+      playerNames.add(String.valueOf(i));
+      patterns.add(player.getPrivateCard().getPattern());
     }
-    assertEquals(12, pc.size());
+    assertEquals(6, patterns.size());
   }
 }

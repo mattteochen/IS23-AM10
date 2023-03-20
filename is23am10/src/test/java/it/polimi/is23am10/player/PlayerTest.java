@@ -45,10 +45,10 @@ import org.junit.jupiter.api.Test;
  */
 public class PlayerTest {
   @BeforeEach
-  public void clearList() {
+  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
     PlayerFactory.clearUsedPatternsList();
   }
-  
+
   @Nested
   class setPlayerID_tests {
 
