@@ -3,14 +3,6 @@ package it.polimi.is23am10.factory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.junit.jupiter.api.Test;
 
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
@@ -22,7 +14,6 @@ import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
-import it.polimi.is23am10.items.card.SharedCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.pattern.SharedPattern;
@@ -32,6 +23,9 @@ import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.Test;
 
 public class SharedPatternFactoryTest {
 
@@ -555,14 +549,12 @@ public class SharedPatternFactoryTest {
       NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
-    Integer dummyPlayerNum = 4;
-    String dummyPlayerName = "myNewPlayer";
-    Set<SharedCard> sc = new HashSet<>();
-    for (int i = 0; i < 6; i++) {
-      Game game = GameFactory.getNewGame(dummyPlayerName, dummyPlayerNum);
-      sc.add(game.getSharedCard().get(0));
-      sc.add(game.getSharedCard().get(1));
-    }
-    assertEquals(12, sc.size());
+
+    Game game = GameFactory.getNewGame("firstPlayer", 4);
+
+    List<SharedPattern<Bookshelf>> allUsedPatterns
+        = game.getSharedCard().stream().map(card -> card.getPattern()).distinct().collect(Collectors.toList());
+
+    assertEquals(2, allUsedPatterns.size());
   }
 }

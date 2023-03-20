@@ -2,29 +2,29 @@ package it.polimi.is23am10.factory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
+import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.pattern.PrivatePattern;
-import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class PrivatePatternFactoryTest {
   /**
@@ -406,14 +406,15 @@ public class PrivatePatternFactoryTest {
   public void TEST_GET_RANDOM_PRIVATECARDS_no_duplicates()
       throws AlreadyInitiatedPatternException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
-      NullPlayerScoreBlocksException, DuplicatePlayerNameException, NullPlayerNamesException {
-    Set<PrivatePattern> patterns = new HashSet<>();
-    List<String> playerNames = new ArrayList<>();
-    for (int i = 0; i < 6; i++) {
-      Player player = PlayerFactory.getNewPlayer(String.valueOf(i), playerNames);
-      playerNames.add(String.valueOf(i));
-      patterns.add(player.getPrivateCard().getPattern());
-    }
-    assertEquals(6, patterns.size());
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, NullPlayerNamesException, NullMaxPlayerException, InvalidMaxPlayerException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+    Game game = GameFactory.getNewGame("firstPlayer", 4);
+    game.addPlayer("secondPlayer");
+    game.addPlayer("thirdPlayer");
+    game.addPlayer("fourthPlayer");
+
+    List<PrivatePattern> allUsedPatterns
+        = game.getPlayers().stream().map(player -> player.getPrivateCard().getPattern()).distinct().collect(Collectors.toList());
+
+    assertEquals(4, allUsedPatterns.size());
   }
 }

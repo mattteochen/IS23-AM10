@@ -1,8 +1,7 @@
 package it.polimi.is23am10.pattern;
 
-import java.util.function.Function;
-
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
+import java.util.function.Function;
 
 /**
  * Private pattern object.
@@ -23,10 +22,40 @@ public class PrivatePattern extends AbstractPattern {
 
   /**
    * The constructor of the class PrivatePattern.
-   * 
+   *
    * @param rule a function that takes a Bookshelf object and returns an Integer.
    */
   public PrivatePattern(Function<Bookshelf, Integer> rule) {
     this.rule = rule;
+  }
+
+  /**
+   * Rule getter.
+   *
+   * @return The rule function.
+   */
+  public Function<Bookshelf, Integer> getRule() {
+    return rule;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof PrivatePattern)) {
+      return false;
+    }
+    return this.rule == ((PrivatePattern) obj).getRule();
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  public int hashCode() {
+    return rule.hashCode();
   }
 }

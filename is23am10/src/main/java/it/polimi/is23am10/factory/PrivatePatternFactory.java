@@ -6,7 +6,6 @@ import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfB
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.pattern.PrivatePattern;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
@@ -453,7 +452,7 @@ public final class PrivatePatternFactory {
 
   /**
    * Method used to get random PrivatePattern between the 12 possible.
-   * 
+   *
    * @param usedPatterns a List of {@link PrivatePattern} storing the already used
    *                     patterns.
    * @return a random pattern between the 12 possible.

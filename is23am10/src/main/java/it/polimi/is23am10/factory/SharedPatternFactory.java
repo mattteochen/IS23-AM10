@@ -4,7 +4,6 @@ import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.pattern.SharedPattern;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.stream.Collectors;
  * NOTE: if not specified, each iteration of the player's bookshelf inside the
  * functions is gonna be first over rows,then columns
  * </p>
- * 
+ *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
@@ -604,12 +603,13 @@ public final class SharedPatternFactory {
 
   /**
    * Method used to get random PrivatePattern between the 12 possible.
-   * 
+   *
    * @param usedPatterns a List of {@link SharedPattern} storing the already used
    *                     patterns.
    * @return a random pattern between the 12 possible.
    */
-  public static SharedPattern<Bookshelf> getNotUsedPattern(List<SharedPattern<Bookshelf>> usedPatterns) {
+  public static SharedPattern<Bookshelf> getNotUsedPattern(
+      List<SharedPattern<Bookshelf>> usedPatterns) {
     if (usedPatterns.isEmpty()) {
       return patternsArray.get(random.nextInt(patternsArray.size()));
     } else {

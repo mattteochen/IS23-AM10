@@ -27,12 +27,51 @@ public class SharedPattern<T extends Bookshelf> extends AbstractPattern {
   private String patternDescription;
 
   /**
-   * The constructor of the class SharedPattern
+   * The constructor of the class SharedPattern.
    *
    */
-  public SharedPattern(Predicate<T> rule, String description){
+  public SharedPattern(Predicate<T> rule, String description) {
     this.rule = rule;
     this.patternDescription = description;
-  };
+  }
 
+  /**
+   * Rule getter.
+   *
+   * @return The rule function.
+   */
+  public Predicate<T> getRule() {
+    return rule;
+  }
+
+  /**
+   * Pattern description getter.
+   *
+   * @return The patter describing the assigned rule.
+   */
+  public String getPatternDescription() {
+    return patternDescription;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof SharedPattern )) {
+      return false;
+    }
+    return this.rule == ((SharedPattern<Bookshelf>) obj).getRule()
+        && this.patternDescription.equals(((SharedPattern<Bookshelf>) obj).getPatternDescription());
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  public int hashCode() {
+    return rule.hashCode() * patternDescription.hashCode();
+  }
 }

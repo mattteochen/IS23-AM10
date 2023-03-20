@@ -14,7 +14,6 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.score.Score;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,7 +30,7 @@ import java.util.UUID;
 public class PlayerFactory {
 
   /**
-   * List of PrivatePattern used to store already used patterns.
+   * A list of already used {@link PrivatePattern} instances.
    * 
    */
   private static List<PrivatePattern> usedPrivatePatterns = new ArrayList<>();
@@ -45,7 +44,7 @@ public class PlayerFactory {
 
   /**
    * Check if a player name has already been used across the game instance.
-   * 
+   *
    * @param playerName  The chosen player name.
    * @param playerNames Current game instance already available players names.
    * 
@@ -71,7 +70,7 @@ public class PlayerFactory {
    * Build a new {@link Player} object.
    * This method has the ownership to ensure unique player names inside
    * a game instance.
-   * 
+   *
    * @param playerName  The chosen player name.
    * @param playerNames Current game instance already available players names.
    * @throws AlreadyInitiatedPatternException
@@ -86,14 +85,11 @@ public class PlayerFactory {
    * 
    */
   public static Player getNewPlayer(String playerName, List<String> playerNames)
-      throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
-      NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatternException, NullPlayerNamesException {
+      throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
+      NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
+      DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException {
 
-    /**
-     * Consumer must handle this {@link DuplicatePlayerNameException}.
-     * 
-     */
+    // Consumer must handle this {@link DuplicatePlayerNameException}.
 
     if (playerName == null) {
       throw new NullPlayerNameException(
