@@ -15,7 +15,6 @@ import it.polimi.is23am10.items.card.exceptions.NullMatchedBlockCountException;
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
-import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
@@ -53,7 +52,7 @@ public class ScoreTest {
     /**
      * This test comes directly from the rulebook.
      * Check Rulebook - page 2 - Final count example.
-     * @throws WrongTileTypeException
+  
      * @throws WrongCharBookshelfStringException
      * @throws WrongLengthBookshelfStringException
      * @throws NullPointerException
@@ -64,7 +63,7 @@ public class ScoreTest {
      */
     @Test
     public void setBookshelfPoints_should_set_exampleBS() 
-        throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException,
+        throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
         BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException {
       Score s = new Score();
       Bookshelf bs = new Bookshelf(
@@ -88,7 +87,7 @@ public class ScoreTest {
      * @throws NullPointerException
      * @throws WrongLengthBookshelfStringException
      * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+  
      * @throws BookshelfGridColIndexOutOfBoundsException
      * @throws BookshelfGridRowIndexOutOfBoundsException
      * @throws NullIndexValueException
@@ -96,7 +95,7 @@ public class ScoreTest {
      */
     @Test
     public void setBookshelfPoints_should_set_emptyBS() 
-        throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException,
+        throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
         BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException {
       Score s = new Score();
       Bookshelf bs = new Bookshelf();
@@ -113,7 +112,7 @@ public class ScoreTest {
      * @throws NullPointerException
      * @throws WrongLengthBookshelfStringException
      * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+  
      * @throws BookshelfGridColIndexOutOfBoundsException
      * @throws BookshelfGridRowIndexOutOfBoundsException
      * @throws NullIndexValueException
@@ -121,7 +120,7 @@ public class ScoreTest {
      */
     @Test
     public void setBookshelfPoints_should_set_bigGroupsBS() 
-        throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException,
+        throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
         BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException {
       Score s = new Score();
       Bookshelf bs = new Bookshelf(
@@ -147,7 +146,7 @@ public class ScoreTest {
      * @throws NullPointerException
      * @throws WrongLengthBookshelfStringException
      * @throws WrongCharBookshelfStringException
-     * @throws WrongTileTypeException
+  
      * @throws BookshelfGridColIndexOutOfBoundsException
      * @throws BookshelfGridRowIndexOutOfBoundsException
      * @throws NullIndexValueException
@@ -155,7 +154,7 @@ public class ScoreTest {
      */
     @Test
     public void setBookshelfPoints_should_set_smallGroupsBS() 
-        throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException,
+        throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
         BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException {
       Score s = new Score();
       Bookshelf bs = new Bookshelf(

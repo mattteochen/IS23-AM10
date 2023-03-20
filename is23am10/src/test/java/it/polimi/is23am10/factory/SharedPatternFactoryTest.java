@@ -8,14 +8,13 @@ import org.junit.jupiter.api.Test;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
-import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 
 public class SharedPatternFactoryTest {
 
   @Test
   public void TWO_ADJACENTS_RULE_satisfied()
       throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
-      NullPointerException, WrongTileTypeException {
+      NullPointerException {
     Bookshelf twoAdjacentMatching = new Bookshelf(
         "CCBGF" +
             "FTBFC" +
@@ -70,7 +69,7 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void FOUR_CORNERS_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
-      WrongCharBookshelfStringException, WrongTileTypeException {
+      WrongCharBookshelfStringException {
     Bookshelf fourCornersMatching = new Bookshelf(
         "CBBBC" +
             "BBBBB" +
@@ -100,7 +99,7 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void FOUR_ADJACENTS_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
-      WrongCharBookshelfStringException, WrongTileTypeException {
+      WrongCharBookshelfStringException {
     Bookshelf fourAdjacentsMatching = new Bookshelf(
         "CCCCB" +
             "FTTTT" +
@@ -146,7 +145,7 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void SQUARES_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
-      WrongCharBookshelfStringException, WrongTileTypeException {
+      WrongCharBookshelfStringException {
     Bookshelf twoSquaresSameTypeMatching = new Bookshelf(
         "BCCTG" +
             "BCCGG" +
@@ -184,7 +183,7 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void MAX_THREE_TYPES_COLUMN_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
-      WrongCharBookshelfStringException, WrongTileTypeException {
+      WrongCharBookshelfStringException {
     Bookshelf threeColumnMaxThreeTypesMatching = new Bookshelf(
         "CBTFG" +
             "CBTCB" +
@@ -222,7 +221,7 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void EIGHT_SAME_TYPE_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
-      WrongCharBookshelfStringException, WrongTileTypeException {
+      WrongCharBookshelfStringException {
     Bookshelf eightSameTypeMatching = new Bookshelf(
         "PPPPP" +
             "PPPGG" +
@@ -260,7 +259,7 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void DIAGONALS_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
-      WrongCharBookshelfStringException, WrongTileTypeException {
+      WrongCharBookshelfStringException {
     Bookshelf diagonalTlbrMatching = new Bookshelf(
         "PXXXX" +
             "XPXXX" +
@@ -314,7 +313,7 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void MAX_THREE_TYPES_ROW_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
-      WrongCharBookshelfStringException, WrongTileTypeException {
+      WrongCharBookshelfStringException {
     Bookshelf fourRowsMaxThreeTypesMatching = new Bookshelf(
         "CCCBB" +
             "PBCTG" +
@@ -360,7 +359,7 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void TWO_COLUMNS_DIFF_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
-      WrongCharBookshelfStringException, WrongTileTypeException {
+      WrongCharBookshelfStringException {
     Bookshelf twoColumnAllDiffMatching = new Bookshelf(
         "PXPXT" +
             "CXCXT" +
@@ -398,7 +397,7 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void TWO_ROWS_DIFF_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
-      WrongCharBookshelfStringException, WrongTileTypeException {
+      WrongCharBookshelfStringException {
     Bookshelf twoRowsAllDiffMatching = new Bookshelf(
         "PCTFG"+
         "XXXXX"+
@@ -436,7 +435,7 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void X_SHAPE_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
-      WrongCharBookshelfStringException, WrongTileTypeException {
+      WrongCharBookshelfStringException {
     Bookshelf oneXShapeMatching = new Bookshelf(
         "XXXXX" +
             "XPXPX" +
@@ -474,7 +473,7 @@ public class SharedPatternFactoryTest {
 
   @Test
   public void ORDERED_BOOKSHELF_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
-      WrongCharBookshelfStringException, WrongTileTypeException {
+      WrongCharBookshelfStringException {
     Bookshelf ascOrderedBookshelfMatching = new Bookshelf(
         "XXXXX" +
             "XXXXG" +

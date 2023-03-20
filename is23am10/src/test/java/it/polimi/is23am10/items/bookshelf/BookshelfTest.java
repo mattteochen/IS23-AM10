@@ -12,7 +12,6 @@ import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringExc
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
-import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -79,7 +78,7 @@ public class BookshelfTest {
    * @throws NullPointerException
    * @throws WrongLengthBookshelfStringException
    * @throws WrongCharBookshelfStringException
-   * @throws WrongTileTypeException
+
    * @throws BookshelfGridColIndexOutOfBoundsException
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws NullIndexValueException
@@ -87,7 +86,7 @@ public class BookshelfTest {
   @Test
   public void string_constructor_should_create_Bookshelf() 
       throws NullPointerException, WrongLengthBookshelfStringException,
-      WrongCharBookshelfStringException, WrongTileTypeException,
+      WrongCharBookshelfStringException,
       BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException {
 
