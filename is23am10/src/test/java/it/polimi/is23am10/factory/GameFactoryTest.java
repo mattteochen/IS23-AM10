@@ -38,7 +38,7 @@ public class GameFactoryTest {
 
   @BeforeEach
   public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
-    PlayerFactory.clearUsedPatternsList();
+    GameFactory.clearUsedPatternsList();
   }
 
   @Test

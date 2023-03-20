@@ -25,9 +25,17 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class SharedPatternFactoryTest {
+
+  @BeforeEach
+  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
+    GameFactory.clearUsedPatternsList();
+    PlayerFactory.clearUsedPatternsList();
+  }
 
   @Test
   public void TWO_ADJACENTS_RULE_satisfied()
