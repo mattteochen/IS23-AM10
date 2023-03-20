@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
+import it.polimi.is23am10.items.card.SharedCard;
+import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.pattern.SharedPattern;
 
@@ -534,12 +536,14 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void TEST_GET_RANDOM_PATTERN_no_duplicates() {
-    List<SharedPattern> usedPatterns = new ArrayList<>();
-    Set<SharedPattern> patterns = new HashSet<>();
+  public void TEST_GET_RANDOM_SHAREDCARDS_no_duplicates() throws AlreadyInitiatedPatternException {
+    List<SharedPattern<Bookshelf>> usedPatterns = new ArrayList<>();
+    Set<SharedCard> sc = new HashSet<>();
     for (int i = 0; i < 12; i++) {
-      patterns.add(SharedPatternFactory.getRandomPattern(usedPatterns));
+      SharedCard card = new SharedCard(usedPatterns);
+      usedPatterns.add(card.getPattern());
+      sc.add(card);
     }
-    assertEquals(12, patterns.size());
+    assertEquals(12, sc.size());
   }
 }
