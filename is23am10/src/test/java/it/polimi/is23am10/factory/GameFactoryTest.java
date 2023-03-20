@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import it.polimi.is23am10.factory.GameFactory;
-import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
@@ -36,47 +34,47 @@ import java.util.ArrayList;
  */
 public class GameFactoryTest {
 
-    String dummyPlayerName = "myNewPlayer";
+  String dummyPlayerName = "myNewPlayer";
 
-    @BeforeEach
-    public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
-        PlayerFactory.clearUsedPatternsList();
-    }
+  @BeforeEach
+  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
+    PlayerFactory.clearUsedPatternsList();
+  }
 
-    @Test
-    public void getNewGame_should_return_player()
-            throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
-            NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
-            NullPlayerPrivateCardException,
-            NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-            NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+  @Test
+  public void getNewGame_should_return_player()
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+      NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
+      NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
 
-        Integer dummyPlayerNum = 4;
+    Integer dummyPlayerNum = 4;
 
-        Game g = GameFactory.getNewGame(dummyPlayerName, dummyPlayerNum);
+    Game g = GameFactory.getNewGame(dummyPlayerName, dummyPlayerNum);
 
-        List<String> expectedPLayedNames = Arrays.asList(dummyPlayerName);
+    List<String> expectedPLayedNames = Arrays.asList(dummyPlayerName);
 
-        List<String> emptyList = new ArrayList<>();
+    List<String> emptyList = new ArrayList<>();
 
-        List<Player> expectedPlayers = Arrays.asList(PlayerFactory.getNewPlayer(dummyPlayerName, emptyList));
+    List<Player> expectedPlayers = Arrays.asList(PlayerFactory.getNewPlayer(dummyPlayerName, emptyList));
 
-        assertNull(g.getFirstPlayer());
-        assertEquals(dummyPlayerNum, g.getMaxPlayer());
-        assertNotNull(g.getGameBoard());
-        assertNotNull(g.getSharedCard());
-        assertEquals(false, g.getEnded());
-        assertEquals(expectedPLayedNames, g.getPlayerNames());
-        assertEquals(expectedPlayers.size(), g.getPlayers().size());
-    }
+    assertNull(g.getFirstPlayer());
+    assertEquals(dummyPlayerNum, g.getMaxPlayer());
+    assertNotNull(g.getGameBoard());
+    assertNotNull(g.getSharedCard());
+    assertEquals(false, g.getEnded());
+    assertEquals(expectedPLayedNames, g.getPlayerNames());
+    assertEquals(expectedPlayers.size(), g.getPlayers().size());
+  }
 
-    @Test
-    public void getNewGame_should_throw_NullMaxPlayerException() {
-        assertThrows(NullMaxPlayerException.class, () -> GameFactory.getNewGame(dummyPlayerName, null));
-    }
+  @Test
+  public void getNewGame_should_throw_NullMaxPlayerException() {
+    assertThrows(NullMaxPlayerException.class, () -> GameFactory.getNewGame(dummyPlayerName, null));
+  }
 
-    @Test
-    public void getNewGame_should_throw_InvalidMaxPlayerException() {
-        assertThrows(InvalidMaxPlayerException.class, () -> GameFactory.getNewGame(dummyPlayerName, 7));
-    }
+  @Test
+  public void getNewGame_should_throw_InvalidMaxPlayerException() {
+    assertThrows(InvalidMaxPlayerException.class, () -> GameFactory.getNewGame(dummyPlayerName, 7));
+  }
 }

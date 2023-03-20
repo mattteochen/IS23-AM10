@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
@@ -33,6 +34,11 @@ public class PrivatePatternFactoryTest {
    * @throws NullPointerException
    * @throws WrongTileTypeException
    */
+
+  @BeforeEach
+  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
+    PlayerFactory.clearUsedPatternsList();
+  }
 
   @Test
   public void RULE1_should_find_ZERO_matches()

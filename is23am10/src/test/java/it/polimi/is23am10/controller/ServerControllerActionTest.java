@@ -12,6 +12,7 @@ import it.polimi.is23am10.command.StartGameCommand;
 import it.polimi.is23am10.controller.exceptions.AddPlayerCommandSerializationErrorException;
 import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.controller.exceptions.StartCommandSerializationErrorException;
+import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
@@ -39,6 +40,11 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 class ServerControllerActionTest {
+
+  @BeforeEach
+  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
+    PlayerFactory.clearUsedPatternsList();
+  }
 
   @Spy
   ServerControllerAction serverControllerAction = new ServerControllerAction();
