@@ -44,7 +44,11 @@ import org.junit.jupiter.api.Test;
  * the Player class
  */
 public class PlayerTest {
-
+  @BeforeEach
+  public void clearList() {
+    PlayerFactory.clearUsedPatternsList();
+  }
+  
   @Nested
   class setPlayerID_tests {
 
