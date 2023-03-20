@@ -12,8 +12,11 @@ import org.junit.jupiter.api.Test;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
+import it.polimi.is23am10.items.card.PrivateCard;
+import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.pattern.PrivatePattern;
+import it.polimi.is23am10.player.Player;
 
 public class PrivatePatternFactoryTest {
   /**
@@ -387,12 +390,14 @@ public class PrivatePatternFactoryTest {
   };
 
   @Test
-  public void TEST_GET_RANDOM_PATTERN_no_duplicates() {
+  public void TEST_GET_RANDOM_PRIVATECARDS_no_duplicates() throws AlreadyInitiatedPatternException {
     List<PrivatePattern> usedPatterns = new ArrayList<>();
-    Set<PrivatePattern> patterns = new HashSet<>();
+    Set<PrivateCard> pc = new HashSet<>();
     for (int i = 0; i < 12; i++) {
-      patterns.add(PrivatePatternFactory.getRandomPattern(usedPatterns));
+      PrivateCard card = new PrivateCard(usedPatterns);
+      usedPatterns.add(card.getPattern());
+      pc.add(card);
     }
-    assertEquals(12, patterns.size());
+    assertEquals(12, pc.size());
   }
 }
