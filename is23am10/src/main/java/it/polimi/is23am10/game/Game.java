@@ -186,10 +186,10 @@ public class Game {
     * @param sharedCard2 second shared card for the game.
     * @throws AlreadyInitiatedPatternException
     */
-  public void setSharedCards(SharedCard sharedCard1, SharedCard sharedCard2) throws AlreadyInitiatedPatternException {
+  public void setSharedCards(List<SharedCard> cards) throws AlreadyInitiatedPatternException {
     this.sharedCards = new ArrayList<>();
-    sharedCards.add(sharedCard1);
-    sharedCards.add(sharedCard2);
+    sharedCards.add(cards.get(0));
+    sharedCards.add(cards.get(1));
   }
 
   /**

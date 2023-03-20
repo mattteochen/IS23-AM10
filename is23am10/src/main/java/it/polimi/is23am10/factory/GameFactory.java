@@ -1,6 +1,7 @@
 package it.polimi.is23am10.factory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
@@ -40,6 +41,14 @@ public final class GameFactory {
   }
 
   /**
+   * Method used to clear the list of used patterns.
+   * 
+   */
+  public static void clearUsedPatternsList() {
+    usedSharedPatterns.clear();
+  }
+
+  /**
    * A list of {@link SharedPattern} instances.
    * Use this list to avoid duplicates cards in the game.
    * 
@@ -75,15 +84,14 @@ public final class GameFactory {
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
 
     Game game = new Game();
-    SharedCard sharedCard1 = new SharedCard(usedSharedPatterns);
-    usedSharedPatterns.add(sharedCard1.getPattern());
-    SharedCard sharedCard2 = new SharedCard(usedSharedPatterns);
-    usedSharedPatterns.add(sharedCard2.getPattern());
+    List<SharedCard> sharedCards = Arrays.asList(
+        new SharedCard(usedSharedPatterns),
+        new SharedCard(usedSharedPatterns));
 
     game.setMaxPlayers(maxPlayerNum);
     game.addPlayer(startingPlayerName);
     game.setGameBoard();
-    game.setSharedCards(sharedCard1, sharedCard2);
+    game.setSharedCards(sharedCards);
     game.setEnded(false);
 
     return game;

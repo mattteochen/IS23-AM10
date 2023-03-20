@@ -60,7 +60,7 @@ public class PlayerFactory {
   }
 
   /**
-   * Method used to clear used to clear list of used patterns.
+   * Method used to clear the list of used patterns.
    * 
    */
   public static void clearUsedPatternsList() {

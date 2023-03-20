@@ -610,7 +610,7 @@ public final class SharedPatternFactory {
    * @return a random pattern between the 12 possible.
    */
   public static SharedPattern<Bookshelf> getNotUsedPattern(List<SharedPattern<Bookshelf>> usedPatterns) {
-    if (usedPatterns == null) {
+    if (usedPatterns.isEmpty()) {
       return patternsArray.get(random.nextInt(patternsArray.size()));
     } else {
       List<SharedPattern<Bookshelf>> unusedPatterns = patternsArray.stream()
