@@ -16,7 +16,6 @@ import it.polimi.is23am10.items.card.PrivateCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.pattern.PrivatePattern;
-import it.polimi.is23am10.player.Player;
 
 public class PrivatePatternFactoryTest {
   /**
