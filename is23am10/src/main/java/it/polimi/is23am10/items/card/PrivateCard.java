@@ -1,5 +1,7 @@
 package it.polimi.is23am10.items.card;
 
+import java.util.List;
+
 import it.polimi.is23am10.factory.PrivatePatternFactory;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.card.exceptions.NegativeMatchedBlockCountException;
@@ -25,12 +27,13 @@ public class PrivateCard extends AbstractCard<PrivatePattern> {
   /**
    * Constructor.
    * 
+   * @param usedPrivatePatterns is a list of PrivatePattern used to store the already
+   *                     used one.
    * @throws AlreadyInitiatedPatternException
-   * 
    */
-  public PrivateCard() throws AlreadyInitiatedPatternException {
+  public PrivateCard(List<PrivatePattern> usedPrivatePatterns) throws AlreadyInitiatedPatternException {
     matchedBlocksCount = 0;
-    setPattern(PrivatePatternFactory.getRandomPattern());
+    setPattern(PrivatePatternFactory.getNotUsedPattern(usedPrivatePatterns));
   }
 
   /**

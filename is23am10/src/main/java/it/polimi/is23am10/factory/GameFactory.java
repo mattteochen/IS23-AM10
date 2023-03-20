@@ -1,5 +1,11 @@
 package it.polimi.is23am10.factory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
@@ -7,7 +13,11 @@ import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.items.card.AbstractCard;
+import it.polimi.is23am10.items.card.SharedCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.pattern.SharedPattern;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
@@ -34,6 +44,12 @@ public final class GameFactory {
   }
 
   /**
+   * A list of already used {@link SharedPattern} instances.
+   * 
+   */
+  private static List<SharedPattern<Bookshelf>> usedSharedPatterns = new ArrayList<>();
+
+  /**
    * Create a new {@link Game} instance.
    *
    * @param startingPlayerName The starting player name, who has requested the
@@ -57,17 +73,32 @@ public final class GameFactory {
    */
   public static Game getNewGame(String startingPlayerName, Integer maxPlayerNum)
       throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
-      NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
-      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
+      NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
+      DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+
     Game game = new Game();
+    List<SharedCard> sharedCards = Arrays.asList(
+        new SharedCard(usedSharedPatterns),
+        new SharedCard(usedSharedPatterns));
+    usedSharedPatterns.addAll(
+        sharedCards.stream().map(AbstractCard::getPattern).collect(Collectors.toList()));
 
     game.setMaxPlayers(maxPlayerNum);
     game.addPlayer(startingPlayerName);
     game.setGameBoard();
-    game.setSharedCards();
+    game.setSharedCards(sharedCards);
     game.setEnded(false);
 
     return game;
+  }
+
+  /**
+   * Method used to clear the list of used patterns.
+   * 
+   */
+  public static void clearUsedPatternsList() {
+    usedSharedPatterns.clear();
   }
 }
