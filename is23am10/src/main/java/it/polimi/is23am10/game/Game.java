@@ -25,16 +25,9 @@ import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import it.polimi.is23am10.utils.IndexValidator;
-=======
 import it.polimi.is23am10.utils.Coordinates;
->>>>>>> 20bb7c3 (implemented activePlayerMove and conditions when game ends)
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
->>>>>>> f4cf0ad (added Coordinates class and implemented nextTurn() Game method)
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -317,6 +310,17 @@ public class Game {
   }
 
   /**
+   * last lap getter.
+   * 
+   * @return A boolean values stating if the current game is still running or
+   *         not.
+   *
+   */
+  public boolean getLastLap() {
+    return this.lastLap;
+  }
+
+  /**
    * Retrieve the current players' names.
    *
    * @return A {@link List} containing all the current players' names.
@@ -331,14 +335,6 @@ public class Game {
   /**
    * Method used to retrieve a player from the list
    * given its name.
-<<<<<<< HEAD
-   *
-   * @param playerName
-   * @return Player matching provided name.
-   */
-  private Player getPlayerByName(String playerName) {
-    return new Player(); // TODO: Replace with actual logic
-=======
    * 
    * @param playerName The player name we are looking for.
    * @return Player matching provided name.
@@ -358,7 +354,7 @@ public class Game {
    * @param player
    * @throws NullPointerException
    */
-  private void setActivePlayer(Player player) throws NullPointerException {
+  public void setActivePlayer(Player player) throws NullPointerException {
     if (player == null) {
       throw new NullPointerException("[Class Game, method setActivePlayer]");
     }
@@ -371,7 +367,7 @@ public class Game {
    * @param player
    * @throws NullPointerException
    */
-  private void setWinningPlayer(Player player) throws NullPointerException {
+  public void setWinningPlayer(Player player) throws NullPointerException {
     if (player == null) {
       throw new NullPointerException("[Class Game, method setWinningPlayer]");
     }
@@ -385,7 +381,15 @@ public class Game {
    */
   public Player getActivePlayer() {
     return activePlayer;
->>>>>>> f4cf0ad (added Coordinates class and implemented nextTurn() Game method)
+  }
+
+  /**
+   * winningPlayer getter.
+   * 
+   * @return active player
+   */
+  public Player getWinningPlayer() {
+    return this.winningPlayer;
   }
 
   /**
@@ -399,45 +403,15 @@ public class Game {
    * @throws BookshelfGridColIndexOutOfBoundsException
    * @throws NullPointerException
    */
-<<<<<<< HEAD
-  public void nextTurn() {
-    // TODO: Replace with actual logic
-=======
-  private void nextTurn()
+  public void nextTurn()
       throws NullPointerException, BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException {
     activePlayer.updateScore();
     gameBoard.refillIfNeeded();
     int idxNextPlayer = players.indexOf(activePlayer) == players.size() - 1 ? 0 : players.indexOf(activePlayer) + 1;
-<<<<<<< HEAD
-    setActivePlayer(players.get(idxNextPlayer));
->>>>>>> f4cf0ad (added Coordinates class and implemented nextTurn() Game method)
-  }
-
-  /**
-   * Function that checks if the tile has an adjacent {@link TileType#EMPTY} tile.
-   * 
-   * @param tRow tile row index on board.
-   * @param tCol tile col index on board.
-   * @return true if
-   * @throws NullIndexValueException
-   * @throws BoardGridColIndexOutOfBoundsException
-   * @throws BoardGridRowIndexOutOfBoundsException
-   * @throws InvalidBoardTileSelectionException
-   */
-  private boolean hasAdjacentEmptyTile(int tRow, int tCol)
-      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
-    // Not doing input validation because it is done previously
-    if (gameBoard.getTileAt(tRow + 1, tCol).getType() != TileType.EMPTY &&
-        gameBoard.getTileAt(tRow - 1, tCol).getType() != TileType.EMPTY &&
-        gameBoard.getTileAt(tRow, tCol + 1).getType() != TileType.EMPTY &&
-        gameBoard.getTileAt(tRow, tCol - 1).getType() != TileType.EMPTY) {
-      return false;
-=======
-    if(lastLap && idxNextPlayer == players.indexOf(winningPlayer)){
+    if (lastLap && idxNextPlayer == players.indexOf(winningPlayer)) {
       setEnded(true);
       return;
->>>>>>> 20bb7c3 (implemented activePlayerMove and conditions when game ends)
     }
     setActivePlayer(players.get(idxNextPlayer));
   }
@@ -451,32 +425,57 @@ public class Game {
    * @throws BoardGridRowIndexOutOfBoundsException
    * @throws NullIndexValueException
    */
-  private Tile takeTileAction(Coordinates coord) throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException{
+  public Tile takeTileAction(Coordinates coord)
+      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
     return gameBoard.takeTileAt(coord.getRow(), coord.getCol());
   }
 
   /**
    * Function that puts a tile inside the active player's bookshelf.
    * 
-   * @param t Tile taken from the board.
+   * @param t     Tile taken from the board.
    * @param coord Coordinates of the bookshelf.
    * @throws BookshelfGridColIndexOutOfBoundsException
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws NullIndexValueException
    * @throws NullTileException
    */
-  public void putTileAction(Tile t, Coordinates coord) throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullTileException{
+  public void putTileAction(Tile t, Coordinates coord) throws BookshelfGridColIndexOutOfBoundsException,
+      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullTileException {
     activePlayer.getBookshelf().setBookshelfGridIndex(coord.getRow(), coord.getCol(), t);
   }
 
   /**
+   * Function that checks if there's a winner and sets flags of lastLap and ended
+   * accordingly.
+   * 
+   */
+  public void checkWin() {
+    if (this.activePlayer.getBookshelf().isBookshelfFull()) {
+      setWinningPlayer(activePlayer);
+      if (this.activePlayer.equals(this.firstPlayer)) {
+        setEnded(true);
+      } else {
+        setLastLap(true);
+      }
+    }
+  }
+
+  /**
    * Method that plays the active player's turn.
-   * It's important to understand the structure of the Hashmap, which allows to find a correspondence between the coordinates of the taken tile of the board 
-   * and the coordinates of the player's bookshelf where he/she/they wants to put the taken tile in.
+   * It's important to understand the structure of the Hashmap, which allows to
+   * find a correspondence between the coordinates of the taken tile of the board
+   * and the coordinates of the player's bookshelf where he/she/they wants to put
+   * the taken tile in.
    * 
-   * Note that I'm assuming all the params given to the method are valid since the input validation will be implemented client side in the selection of those coordinates.
+   * Note that I'm assuming all the params given to the method are valid since the
+   * input validation will be implemented client side in the selection of those
+   * coordinates.
    * 
-   * @param selectedCoordinates Map containing the coordinates of selected tiles from board as key and the corresponding coordinates of the active player bookshelf as value.
+   * @param selectedCoordinates Map containing the coordinates of selected tiles
+   *                            from board as key and the corresponding
+   *                            coordinates of the active player bookshelf as
+   *                            value.
    * @throws BoardGridColIndexOutOfBoundsException
    * @throws BoardGridRowIndexOutOfBoundsException
    * @throws InvalidBoardTileSelectionException
@@ -488,23 +487,18 @@ public class Game {
    * @throws NullPlayerBookshelfException
    * @throws NullScoreBlockListException
    */
-  public void activePlayerMove(Map<Coordinates,Coordinates> selectedCoordinates) throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException, InvalidBoardTileSelectionException, NullIndexValueException, BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPointerException, NullPlayerBookshelfException, NullScoreBlockListException
-    {
-    for(Map.Entry<Coordinates,Coordinates> entry: selectedCoordinates.entrySet()){
+  public void activePlayerMove(Map<Coordinates, Coordinates> selectedCoordinates)
+      throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
+      InvalidBoardTileSelectionException, NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
+      BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPointerException, NullPlayerBookshelfException,
+      NullScoreBlockListException {
+    for (Map.Entry<Coordinates, Coordinates> entry : selectedCoordinates.entrySet()) {
       Coordinates boardCoord = entry.getKey();
       Coordinates bsCoord = entry.getValue();
       Tile takenTile = takeTileAction(boardCoord);
-      putTileAction(takenTile,bsCoord);
+      putTileAction(takenTile, bsCoord);
     }
-    if (this.activePlayer.getBookshelf().isBookshelfFull()) {
-      setWinningPlayer(activePlayer);
-      if(this.activePlayer.equals(this.firstPlayer)){
-        setLastLap(true);
-      }
-      else{
-        setEnded(true);
-      }
-    }
+    checkWin();
     nextTurn();
   }
 
