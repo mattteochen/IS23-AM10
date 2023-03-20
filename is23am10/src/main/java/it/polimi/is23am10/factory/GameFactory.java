@@ -1,5 +1,6 @@
 package it.polimi.is23am10.factory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
@@ -43,7 +44,7 @@ public final class GameFactory {
    * Use this list to avoid duplicates cards in the game.
    * 
    */
-  private static List<SharedPattern<Bookshelf>> usedSharedPatterns;
+  private static List<SharedPattern<Bookshelf>> usedSharedPatterns = new ArrayList<>();
 
   /**
    * Create a new {@link Game} instance.

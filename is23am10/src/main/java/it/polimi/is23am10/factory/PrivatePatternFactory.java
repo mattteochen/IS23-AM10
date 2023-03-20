@@ -459,7 +459,7 @@ public final class PrivatePatternFactory {
    * @return a random pattern between the 12 possible.
    */
   public static PrivatePattern getNotUsedPattern(List<PrivatePattern> usedPatterns) {
-    if (usedPatterns == null) {
+    if (usedPatterns.isEmpty()) {
       return patternsArray.get(random.nextInt(patternsArray.size()));
     } else {
       List<PrivatePattern> unusedPatterns = patternsArray.stream()

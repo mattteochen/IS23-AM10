@@ -34,7 +34,7 @@ public class PlayerFactory {
    * List of PrivatePattern used to store already used patterns.
    * 
    */
-  private static List<PrivatePattern> usedPrivatePatterns;
+  private static List<PrivatePattern> usedPrivatePatterns = new ArrayList<>();
 
   /**
    * Private constructor.
@@ -57,6 +57,14 @@ public class PlayerFactory {
       }
     }
     return false;
+  }
+
+  /**
+   * Method used to clear used to clear list of used patterns.
+   * 
+   */
+  public static void clearUsedPatternsList() {
+    usedPrivatePatterns.clear();
   }
 
   /**
