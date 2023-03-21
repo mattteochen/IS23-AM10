@@ -183,14 +183,14 @@ public class Game {
 
   /**
    * sharedCards setter.
-   *
+   * 
    * @throws AlreadyInitiatedPatternException.
    *
    */
-  public void setSharedCards() throws AlreadyInitiatedPatternException {
+  public void setSharedCards(List<SharedCard> cards) throws AlreadyInitiatedPatternException {
     this.sharedCards = new ArrayList<>();
-    sharedCards.add(new SharedCard());
-    sharedCards.add(new SharedCard());
+    sharedCards.add(cards.get(0));
+    sharedCards.add(cards.get(1));
   }
 
   /**

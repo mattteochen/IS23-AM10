@@ -11,15 +11,16 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Shared pattern factory object.
  * 
- * <p> 
- *  NOTE: if not specified, each iteration of the player's bookshelf inside the
- *  functions is gonna be first over rows,then columns
+ * <p>
+ * NOTE: if not specified, each iteration of the player's bookshelf inside the
+ * functions is gonna be first over rows,then columns
  * </p>
- * 
+ *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
@@ -27,6 +28,14 @@ import java.util.function.Predicate;
  */
 
 public final class SharedPatternFactory {
+
+  /**
+   * Private constructor.
+   * 
+   */
+  private SharedPatternFactory() {
+
+  }
 
   /**
    * Number of occurencies need to comply checkTwoAdjacents rule.
@@ -67,6 +76,12 @@ public final class SharedPatternFactory {
    * Number of occurencies need to comply checkTwoRowsAllDiff rule.
    */
   private static final int ROW_ALL_DIFF_OCC = 2;
+
+  /**
+   * The random generator instance.
+   * 
+   */
+  private static final Random random = new Random();
 
   /**
    * #1
@@ -563,7 +578,7 @@ public final class SharedPatternFactory {
    * rules with their lambda functions
    *
    */
-  private static final List<SharedPattern> patternsArray = List.of(
+  private static final List<SharedPattern<Bookshelf>> patternsArray = List.of(
       (new SharedPattern<>(checkTwoAdjacents,
           "Six separated groups made of two adjacent tiles of the same type. The tile type of different groups can be different.")),
       (new SharedPattern<>(checkCornersMatch, "The four tiles at the corners of the bookshelf are of the same type.")),
@@ -587,14 +602,21 @@ public final class SharedPatternFactory {
           "Five columns with ascending or descending height. Starting from the first or the last column, the next column has to have one tile more. The tile types are not considered.")));
 
   /**
-   * Method used to get a random SharedPattern between the 12 possible.
-   * 
-   * @return a random {@link SharedPattern}.
-   * 
+   * Method used to get random PrivatePattern between the 12 possible.
+   *
+   * @param usedPatterns a List of {@link SharedPattern} storing the already used
+   *                     patterns.
+   * @return a random pattern between the 12 possible.
    */
-  public static final SharedPattern getRandomPattern() {
-    Random random = new Random();
-    return patternsArray.get(random.nextInt(patternsArray.size()));
-  };
-
+  public static SharedPattern<Bookshelf> getNotUsedPattern(
+      List<SharedPattern<Bookshelf>> usedPatterns) {
+    if (usedPatterns.isEmpty()) {
+      return patternsArray.get(random.nextInt(patternsArray.size()));
+    } else {
+      List<SharedPattern<Bookshelf>> unusedPatterns = patternsArray.stream()
+          .filter(pattern -> !usedPatterns.contains(pattern))
+          .collect(Collectors.toList());
+      return unusedPatterns.get(random.nextInt(unusedPatterns.size()));
+    }
+  }
 }

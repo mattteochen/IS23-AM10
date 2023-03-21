@@ -4,6 +4,8 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
+import it.polimi.is23am10.factory.GameFactory;
+import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
@@ -36,6 +38,8 @@ class ServerControllerStateTest {
   void setup() {
     ServerControllerState.getGamePools().clear();
     ServerControllerState.getPlayersPool().clear();
+    PlayerFactory.clearUsedPatternsList();
+    GameFactory.clearUsedPatternsList();
   }
 
   @Test

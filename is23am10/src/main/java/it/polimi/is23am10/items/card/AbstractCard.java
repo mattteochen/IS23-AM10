@@ -40,7 +40,7 @@ public abstract class AbstractCard<T extends AbstractPattern> {
   protected void setPattern(T pattern) throws AlreadyInitiatedPatternException {
     if (this.pattern != null) {
       throw new AlreadyInitiatedPatternException(
-          "[Class " + this.getClass() + ", method setPattern]: The pattern has already been intantiated");
+          "[Class " + this.getClass() + ", method setPattern]: The pattern has already been instantiated");
     }
     this.pattern = pattern;
   }
