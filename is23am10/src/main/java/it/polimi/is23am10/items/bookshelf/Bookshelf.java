@@ -12,7 +12,6 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 import java.util.Map;
 
-
 /**
  * Players' bookshelf class definition.
  *
@@ -26,9 +25,9 @@ public class Bookshelf {
    * These are the constants used inside the class bookshelf
    */
 
-   /**
-    * The bookshelf max rows value.
-    */
+  /**
+   * The bookshelf max rows value.
+   */
   public static final int BOOKSHELF_ROWS = 6;
 
   /**
@@ -52,10 +51,9 @@ public class Bookshelf {
       "X", TileType.EMPTY);
 
   /**
-   * Max bookshelf grid size. 
+   * Max bookshelf grid size.
    */
   private static final int BOOKSHELF_SIZE = BOOKSHELF_COLS * BOOKSHELF_ROWS;
-
 
   /**
    * A fixed 2d array referencing the physical bookshelf instance.
@@ -117,8 +115,6 @@ public class Bookshelf {
     }
   }
 
-
-
   /**
    * Set a {@link Tile} inside the bookshelf grid.
    * 
@@ -131,7 +127,8 @@ public class Bookshelf {
    * 
    */
   public void setBookshelfGridIndex(Integer row, Integer col, Tile tile)
-      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullTileException {
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+      NullIndexValueException, NullTileException {
     if (!IndexValidator.validRowIndex(row, Bookshelf.BOOKSHELF_ROWS)) {
       throw new BookshelfGridRowIndexOutOfBoundsException(row);
     }
@@ -144,17 +141,15 @@ public class Bookshelf {
     bookshelfGrid[row][col] = tile;
   }
 
-
- /**
+  /**
    * bookshelfGrid getter.
    * 
    * @return The bookshelf's 6x5 playground grid.
-   *    
-*/
+   * 
+   */
   public Tile[][] getBookshelfGrid() {
     return bookshelfGrid;
   }
-
 
   /**
    * bookshelfGrid index getter.
@@ -168,12 +163,31 @@ public class Bookshelf {
    * 
    */
   public Tile getBookshelfGridAt(Integer row, Integer col)
-      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+      NullIndexValueException {
     if (!IndexValidator.validRowIndex(row, Bookshelf.BOOKSHELF_ROWS)) {
       throw new BookshelfGridRowIndexOutOfBoundsException(row);
     }
     if (!IndexValidator.validColIndex(col, Bookshelf.BOOKSHELF_COLS)) {
       throw new BookshelfGridColIndexOutOfBoundsException(col);
     }
-    return bookshelfGrid[row][col];}
+    return bookshelfGrid[row][col];
+  }
+
+  /**
+   * 
+   * This function checks if player's bookshelf is full of tiles.
+   * 
+   * @return True if bookshelf grid is full.
+   */
+  public boolean isBookshelfFull() {
+    for (int i = 0; i < BOOKSHELF_ROWS; i++) {
+      for (int j = 0; j < BOOKSHELF_COLS; j++) {
+        if (bookshelfGrid[i][j].isEmpty()) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 }
