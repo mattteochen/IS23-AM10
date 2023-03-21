@@ -2,6 +2,7 @@ package it.polimi.is23am10.player;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import it.polimi.is23am10.factory.PlayerFactory;
@@ -28,24 +29,35 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.score.Score;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
  * Test class to check getters and setters from
- * the Player class
+ * the Player class.
  */
 public class PlayerTest {
   @BeforeEach
   public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
     PlayerFactory.clearUsedPatternsList();
+  }
+
+  @Test
+  public void OVERRIDE_should_OVERRIDE()
+      throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
+      NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
+      AlreadyInitiatedPatternException, NullPlayerNamesException {
+    Player player = PlayerFactory.getNewPlayer("newPlayer", new ArrayList<>());
+    Player playerBrother = PlayerFactory.getNewPlayer("newPlayer", new ArrayList<>());
+    Object outsideTheFamily = new Object();
+    assertEquals(player.hashCode(), player.getPlayerID().hashCode() * player.getPlayerName().hashCode());
+    assertEquals(player, playerBrother);
+    assertNotEquals(player, outsideTheFamily);
   }
 
   @Nested
