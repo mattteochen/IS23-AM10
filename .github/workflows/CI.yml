@@ -24,7 +24,7 @@ jobs:
           distribution: "temurin"
 
       - name: Build with Maven
-        run: cd is23am10/ && mvn --batch-mode --update-snapshots package
+        run: cd is23am10/ && mvn clean && mvn --batch-mode --update-snapshots package
 
       - name: Generate coverage report with Jacoco
         run: cd is23am10/ && mvn clean jacoco:prepare-agent install jacoco:report
