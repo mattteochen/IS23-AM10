@@ -20,6 +20,7 @@ import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
+import it.polimi.is23am10.pattern.PrivatePattern;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
@@ -43,6 +44,10 @@ import org.junit.jupiter.api.Test;
  * the Player class
  */
 public class PlayerTest {
+  @BeforeEach
+  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
+    PlayerFactory.clearUsedPatternsList();
+  }
 
   @Nested
   class setPlayerID_tests {
@@ -155,7 +160,8 @@ public class PlayerTest {
     @Test
     public void setPrivateCard_should_set_PrivateCard()
         throws NullPlayerPrivateCardException, AlreadyInitiatedPatternException {
-      PrivateCard dummyPrivateCard = new PrivateCard();
+      List<PrivatePattern> usedPatterns = new ArrayList<>();
+      PrivateCard dummyPrivateCard = new PrivateCard(usedPatterns);
       p.setPrivateCard(dummyPrivateCard);
       assertNotNull(p.getPrivateCard());
       assertEquals(dummyPrivateCard, p.getPrivateCard());
@@ -261,7 +267,8 @@ public class PlayerTest {
         new ScoreBlock(2),
         new ScoreBlock(4)));
 
-    PrivateCard pc = new PrivateCard();
+    List<PrivatePattern> usedPatterns = new ArrayList<>();
+    PrivateCard pc = new PrivateCard(usedPatterns);
     pc.setMatchedBlocksCount(SIX);
     p.setPrivateCard(pc);
 

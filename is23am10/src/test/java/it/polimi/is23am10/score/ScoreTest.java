@@ -16,9 +16,11 @@ import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
+import it.polimi.is23am10.pattern.PrivatePattern;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Nested;
@@ -228,6 +230,8 @@ public class ScoreTest {
   @Nested
   class setPrivatePoints_tests {
 
+    private List<PrivatePattern> usedPatterns = new ArrayList<>();
+
     /**
      * Test to check exception throws.
      */
@@ -251,7 +255,7 @@ public class ScoreTest {
         AlreadyInitiatedPatternException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
         
       Score s = new Score();
-      PrivateCard pc = new PrivateCard();
+      PrivateCard pc = new PrivateCard(usedPatterns);
       pc.setMatchedBlocksCount(value);
 
       s.setPrivatePoints(pc);

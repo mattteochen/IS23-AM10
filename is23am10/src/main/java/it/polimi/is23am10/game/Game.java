@@ -6,6 +6,8 @@ import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.NullPlayerException;
+import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.items.board.Board;
 import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
@@ -89,9 +91,9 @@ public class Game {
   private Player activePlayer;
 
   /**
-   * Winning player.
+   * Winner player.
    */
-  private Player winningPlayer;
+  private Player winnerPlayer;
 
   /**
    * The instance {@Board} type.
@@ -112,10 +114,10 @@ public class Game {
   private boolean ended;
 
   /**
-   * A boolean signaling the game is in its last lap of rounds.
+   * A boolean signaling the game is in its last round of rounds.
    * 
    */
-  private boolean lastLap;
+  private boolean lastRound;
 
   /**
    * Constructor that assigns the only value that is
@@ -140,7 +142,7 @@ public class Game {
   }
 
   /**
-   * maxPlayers setter.
+   * The maxPlayers setter.
    *
    * @param maxPlayers The value to be assigned.
    * @throws NullMaxPlayerException     maxPlayers value is null.
@@ -156,7 +158,7 @@ public class Game {
   }
 
   /**
-   * firstPlayer setter.
+   * The firstPlayer setter.
    *
    * @param playerName The first player's name.
    *
@@ -206,19 +208,19 @@ public class Game {
   }
 
   /**
-   * sharedCards setter.
+   * The sharedCards setter.
    *
    * @throws AlreadyInitiatedPatternException.
    *
    */
-  public void setSharedCards() throws AlreadyInitiatedPatternException {
+  public void setSharedCards(List<SharedCard> cards) throws AlreadyInitiatedPatternException {
     this.sharedCards = new ArrayList<>();
-    sharedCards.add(new SharedCard());
-    sharedCards.add(new SharedCard());
+    sharedCards.add(cards.get(0));
+    sharedCards.add(cards.get(1));
   }
 
   /**
-   * ended setter.
+   * The ended setter.
    *
    * @param ended A flag referencing if the game is ended.
    *
@@ -228,17 +230,17 @@ public class Game {
   }
 
   /**
-   * lastLap setter.
+   * The lastRound setter.
    * 
-   * @param lastLap A flag referencing if the game is in its last lap of rounds.
+   * @param lastRound A flag referencing if the game is in its last round of rounds.
    *
    */
-  public void setLastLap(boolean lastLap) {
-    this.lastLap = lastLap;
+  public void setLastRound() {
+    this.lastRound = true;
   }
 
   /**
-   * gameId getter.
+   * The gameId getter.
    *
    * @return The game id.
    *
@@ -258,7 +260,7 @@ public class Game {
   }
 
   /**
-   * players getter.
+   * The players getter.
    *
    * @return A list containing all the current players.
    *
@@ -268,7 +270,7 @@ public class Game {
   }
 
   /**
-   * firstPlayer getter.
+   * The firstPlayer getter.
    *
    * @return The game first player.
    *         This player has started the game.
@@ -279,7 +281,7 @@ public class Game {
   }
 
   /**
-   * gameBoard getter.
+   * The gameBoard getter.
    *
    * @return The game board grid.
    *
@@ -289,7 +291,7 @@ public class Game {
   }
 
   /**
-   * sharedCards getter.
+   * The sharedCards getter.
    *
    * @return The assigned shared cards to the current game instance.
    *
@@ -299,7 +301,7 @@ public class Game {
   }
 
   /**
-   * ended getter.
+   * The ended status getter.
    *
    * @return A boolean values stating if the current game is still running or
    *         not.
@@ -310,14 +312,14 @@ public class Game {
   }
 
   /**
-   * last lap getter.
+   * A last round getter.
    * 
    * @return A boolean values stating if the current game is still running or
    *         not.
    *
    */
-  public boolean getLastLap() {
-    return this.lastLap;
+  public boolean isLastRound() {
+    return this.lastRound;
   }
 
   /**
@@ -338,14 +340,20 @@ public class Game {
    * 
    * @param playerName The player name we are looking for.
    * @return Player matching provided name.
+   * @throws PlayerNotFoundException
    */
-  public Optional<Player> getPlayerByName(String playerName) throws NullPlayerNameException {
+  public Player getPlayerByName(String playerName) throws NullPlayerNameException, PlayerNotFoundException {
     if (playerName == null) {
       throw new NullPlayerNameException("[Class Game, method getPlayerByName]");
     }
-    return players.stream()
+    Optional<Player> player = players.stream()
         .filter(p -> p.getPlayerName().equals(playerName))
         .findFirst();
+    if(player.isPresent()){
+      return player.get();
+    }else{
+      throw new PlayerNotFoundException();
+    }
   }
 
   /**
@@ -362,16 +370,16 @@ public class Game {
   }
 
   /**
-   * winningPlayer setter
+   * winnerPlayer setter
    * 
    * @param player
    * @throws NullPointerException
    */
-  public void setWinningPlayer(Player player) throws NullPointerException {
+  public void setWinnerPlayer(Player player) throws NullPlayerException {
     if (player == null) {
-      throw new NullPointerException("[Class Game, method setWinningPlayer]");
+      throw new NullPlayerException();
     }
-    this.winningPlayer = player;
+    this.winnerPlayer = player;
   }
 
   /**
@@ -384,13 +392,14 @@ public class Game {
   }
 
   /**
-   * winningPlayer getter.
+   * winnerPlayer getter.
    * 
    * @return active player
    */
-  public Player getWinningPlayer() {
-    return this.winningPlayer;
+  public Player getWinnerPlayer() {
+    return this.winnerPlayer;
   }
+  
 
   /**
    * Method that computes active player's Score, updates the view,
@@ -402,14 +411,16 @@ public class Game {
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws BookshelfGridColIndexOutOfBoundsException
    * @throws NullPointerException
+   * @throws NullPlayerException
    */
   public void nextTurn()
-      throws NullPointerException, BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-      NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException {
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+      NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException {
+    checkWin();
     activePlayer.updateScore();
     gameBoard.refillIfNeeded();
-    int idxNextPlayer = players.indexOf(activePlayer) == players.size() - 1 ? 0 : players.indexOf(activePlayer) + 1;
-    if (lastLap && idxNextPlayer == players.indexOf(winningPlayer)) {
+    int idxNextPlayer = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size() ;
+    if (lastRound && idxNextPlayer == players.indexOf(winnerPlayer)) {
       setEnded(true);
       return;
     }
@@ -446,17 +457,18 @@ public class Game {
   }
 
   /**
-   * Function that checks if there's a winner and sets flags of lastLap and ended
+   * Function that checks if there's a winner and sets flags of lastRound and ended
    * accordingly.
+   * @throws NullPlayerException
    * 
    */
-  public void checkWin() {
+  public void checkWin() throws NullPlayerException {
     if (this.activePlayer.getBookshelf().isBookshelfFull()) {
-      setWinningPlayer(activePlayer);
+      setWinnerPlayer(activePlayer);
       if (this.activePlayer.equals(this.firstPlayer)) {
         setEnded(true);
       } else {
-        setLastLap(true);
+        setLastRound();
       }
     }
   }
@@ -486,19 +498,19 @@ public class Game {
    * @throws NullPointerException
    * @throws NullPlayerBookshelfException
    * @throws NullScoreBlockListException
+   * @throws NullPlayerException
    */
   public void activePlayerMove(Map<Coordinates, Coordinates> selectedCoordinates)
       throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
       InvalidBoardTileSelectionException, NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
-      BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPointerException, NullPlayerBookshelfException,
-      NullScoreBlockListException {
+      BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPlayerBookshelfException,
+      NullScoreBlockListException, NullPlayerException {
     for (Map.Entry<Coordinates, Coordinates> entry : selectedCoordinates.entrySet()) {
       Coordinates boardCoord = entry.getKey();
       Coordinates bsCoord = entry.getValue();
       Tile takenTile = takeTileAction(boardCoord);
       putTileAction(takenTile, bsCoord);
     }
-    checkWin();
     nextTurn();
   }
 
