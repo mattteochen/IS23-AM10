@@ -4,11 +4,13 @@ import it.polimi.is23am10.config.ServerConfigContext;
 import it.polimi.is23am10.controller.ServerController;
 import it.polimi.is23am10.controller.ServerControllerAction;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
+import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -73,9 +75,11 @@ public class Server {
         Socket client = serverSocket.accept();
         client.setKeepAlive(ctx.getKeepAlive());
         logger.info("Received new connection");
-        executorService.execute(new ServerController(new PlayerConnector(client),
+        executorService.execute(new ServerController(
+            new PlayerConnector(client,
+                new LinkedBlockingQueue<>()),
             new ServerControllerAction()));
-      } catch (IOException | NullSocketConnectorException e) {
+      } catch (IOException | NullSocketConnectorException | NullBlockingQueueException e) {
         logger.error("Failed to process connection", e);
       }
     }

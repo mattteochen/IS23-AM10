@@ -17,7 +17,6 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -115,5 +114,21 @@ public class GameHandler {
       throw new NullPlayerConnector();
     }
     playerConnectors.add(playerConnector);
+  }
+
+  /**
+   * Push a new game state to the message queue for each connected player.
+   *
+   * @throws InterruptedException
+   *
+   */
+  public void pushGameState() throws InterruptedException {
+    // iterating over the Collections.synchronizedList requires synch.
+    synchronized (playerConnectors) {
+      for (PlayerConnector pc : playerConnectors) {
+        // synch is performed by the blocking queue.
+        pc.addMessageToQueue(game);
+      }
+    }
   }
 }
