@@ -257,6 +257,25 @@ public class Board {
   }
 
   /**
+   * Support method that removes a tile 
+   * 
+   * @param row row index of removed tile
+   * @param col col index of removed tile
+   * @throws BoardGridColIndexOutOfBoundsException
+   * @throws BoardGridRowIndexOutOfBoundsException
+   * @throws NullIndexValueException
+   */
+  public void removeTileAt(Integer row, Integer col) throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException, NullIndexValueException{
+    if (!IndexValidator.validColIndex(col, Board.BOARD_GRID_COLS)) {
+      throw new BoardGridColIndexOutOfBoundsException(col);
+    }
+    if (!IndexValidator.validRowIndex(row, Board.BOARD_GRID_ROWS)) {
+      throw new BoardGridRowIndexOutOfBoundsException(row);
+    }
+    boardGrid[row][col] = new Tile(TileType.EMPTY);
+  }
+
+  /**
    * Retrieve the tile in a specific board position.
    * This method removes the returned tile from the sack.
    * 
@@ -281,12 +300,30 @@ public class Board {
     return tile;
   }
 
+  public boolean isRefillNeeded(){
+    for (int i = 0; i < Board.BOARD_GRID_ROWS ; i++) {
+      for (int j = 0; j < Board.BOARD_GRID_COLS ; j++) {
+        if(boardGrid[i][j].getType() != TileType.EMPTY){
+          if((i > 0 &&  boardGrid[i-1][j].getType() != TileType.EMPTY) ||
+          (i < Board.BOARD_GRID_ROWS - 1 &&  boardGrid[i+1][j].getType() != TileType.EMPTY) ||
+          (j > 0 &&  boardGrid[i][j-1].getType() != TileType.EMPTY) ||
+          (j < Board.BOARD_GRID_COLS - 1 &&  boardGrid[i][j+1].getType() != TileType.EMPTY)){
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }
+
   /**
    * Method called at the end of the turn that
    * checks if the Board needs to be refilled
    * and proceeds if so.
    */
   public void refillIfNeeded(){
-    //TODO: add logic
+    if(isRefillNeeded()){
+      fillBoardGrid();
+    }
   }
 }

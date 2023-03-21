@@ -1,6 +1,7 @@
 package it.polimi.is23am10.player;
 
 import it.polimi.is23am10.factory.PlayerFactory;
+import it.polimi.is23am10.game.exceptions.NullPlayerException;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
@@ -224,4 +225,21 @@ public class Player {
     score.setPrivatePoints(privateCard);    
     score.setScoreBlockPoints(scoreBlocks);
   }
+
+    /**
+   * The method that allows us to compare two Players.
+   * 
+   * @param p The player we want to have a comparison with.
+   * 
+   * @return True if the players are equals.
+   */
+  public boolean equals(Player p) throws NullPlayerException {
+    if (p == null) {
+      throw new NullPlayerException();
+    }
+    return (this.playerId == p.getPlayerID() &&
+      this.playerName.equals(p.getPlayerName())
+    );
+  }
+
 }
