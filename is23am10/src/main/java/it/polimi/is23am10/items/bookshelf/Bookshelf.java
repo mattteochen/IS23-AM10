@@ -7,7 +7,6 @@ import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringExc
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
-import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.utils.IndexValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
@@ -79,20 +78,16 @@ public class Bookshelf {
    * of a bookshelf, with each tile associated to a letter, as shown below
    * and builds and returns the matching bookshelf object.
    * 
-   * @param bookshelfString A string that allows us to fill the bookshelfGrid with
-   *                        the
-   *                        correspondance between each char and the position in
-   *                        the
-   *                        grid, there's a map to help us matching the char with
-   *                        the {@link TileType}
-   * @throws WrongTileTypeException
+   * @param bookshelfString A string that allows us to fill the bookshelfGrid with the
+   *                      correspondance between each char and the position in the
+   *                      grid, there's a map to help us matching the char with
+   *                      the {@link TileType}
    * @throws WrongLengthBookshelfStringException
    * @throws WrongCharBookshelfStringException
    * @throws NullPointerException
    */
-  public Bookshelf(String bookshelfString)
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
-      NullPointerException, WrongTileTypeException {
+  public Bookshelf(String bookshelfString) throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
+      NullPointerException {
 
     if (bookshelfString.length() != BOOKSHELF_SIZE) {
       throw new WrongLengthBookshelfStringException(
@@ -137,11 +132,11 @@ public class Bookshelf {
     if (!IndexValidator.validRowIndex(row, Bookshelf.BOOKSHELF_ROWS)) {
       throw new BookshelfGridRowIndexOutOfBoundsException(row);
     }
-    if (!IndexValidator.validColIndex(row, Bookshelf.BOOKSHELF_COLS)) {
+    if (!IndexValidator.validColIndex(col, Bookshelf.BOOKSHELF_COLS)) {
       throw new BookshelfGridColIndexOutOfBoundsException(col);
     }
-    if (tile == null) {
-      throw new NullTileException("[Class Bookshelf, method SetBookshelfGridIndex]: Null tile exception ");
+    if(tile == null){
+      throw new NullTileException("[Class Bookshelf, method SetBookshelfGridIndex]");
     }
     bookshelfGrid[row][col] = tile;
   }

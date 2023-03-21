@@ -30,7 +30,6 @@ import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
-import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -245,7 +244,7 @@ public class GameTest {
     public void checkWin_should_set_winner() 
         throws NullPlayerBookshelfException, NullPointerException,
         WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
-        WrongTileTypeException, NullPlayerException {
+        NullPlayerException {
 
       Bookshelf fullBookshelf = new Bookshelf(
           "CCCCC" 
@@ -266,7 +265,7 @@ public class GameTest {
     public void checkWin_should_not_set_winner() 
         throws NullPlayerBookshelfException, NullPointerException,
         WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
-        WrongTileTypeException, NullPlayerException {
+        NullPlayerException {
 
       Bookshelf fullBookshelf = new Bookshelf(
           "XXCXX"
