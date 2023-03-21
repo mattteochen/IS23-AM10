@@ -188,7 +188,7 @@ public class Bookshelf {
   public boolean isBookshelfFull() {
     for (int i = 0; i < BOOKSHELF_ROWS; i++) {
       for (int j = 0; j < BOOKSHELF_COLS; j++) {
-        if (bookshelfGrid[i][j].getType() == TileType.EMPTY) {
+        if (bookshelfGrid[i][j].isEmpty()) {
           return false;
         }
       }
