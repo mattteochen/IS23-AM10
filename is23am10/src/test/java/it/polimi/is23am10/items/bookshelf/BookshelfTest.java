@@ -54,7 +54,7 @@ public class BookshelfTest {
   public void string_constructor_should_throw_WrongLengthBookshelfStringException() {
 
     // String-based constructor takes strings of exactly 30 chars.
-    final String WRONG_LENGTH_STRING = "ABCD";
+    final String WRONG_LENGTH_STRING = "CCCC";
 
     assertThrows(WrongLengthBookshelfStringException.class, () -> new Bookshelf(WRONG_LENGTH_STRING));
   }
