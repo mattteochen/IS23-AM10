@@ -1,15 +1,40 @@
 package it.polimi.is23am10.factory;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.jupiter.api.Test;
-
+import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
+import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
+import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
+import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.pattern.SharedPattern;
+import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
+import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
+import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
+import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
+import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
+import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SharedPatternFactoryTest {
+
+  @BeforeEach
+  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
+    GameFactory.clearUsedPatternsList();
+    PlayerFactory.clearUsedPatternsList();
+  }
 
   @Test
   public void TWO_ADJACENTS_RULE_satisfied()
@@ -57,7 +82,6 @@ public class SharedPatternFactoryTest {
             "XXCXX" +
             "XXCXX" +
             "XXCXX");
-
 
     assertTrue(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentMatching));
     assertTrue(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentAllEqualsMatching));
@@ -182,7 +206,8 @@ public class SharedPatternFactoryTest {
   };
 
   @Test
-  public void MAX_THREE_TYPES_COLUMN_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
+  public void MAX_THREE_TYPES_COLUMN_RULE_satisfied()
+      throws NullPointerException, WrongLengthBookshelfStringException,
       WrongCharBookshelfStringException {
     Bookshelf threeColumnMaxThreeTypesMatching = new Bookshelf(
         "CBTFG" +
@@ -399,19 +424,19 @@ public class SharedPatternFactoryTest {
   public void TWO_ROWS_DIFF_RULE_satisfied() throws NullPointerException, WrongLengthBookshelfStringException,
       WrongCharBookshelfStringException {
     Bookshelf twoRowsAllDiffMatching = new Bookshelf(
-        "PCTFG"+
-        "XXXXX"+
-        "GPTFC"+
-        "CCCCC"+
-        "PTCGT"+
-        "PTCGT");
+        "PCTFG" +
+            "XXXXX" +
+            "GPTFC" +
+            "CCCCC" +
+            "PTCGT" +
+            "PTCGT");
     Bookshelf oneRowAllDiffMatching = new Bookshelf(
-        "PCTFG"+
-        "XXXXX"+
-        "GTTFC"+
-        "CCCCC"+
-        "PTCGT"+
-        "PTCGT");
+        "PCTFG" +
+            "XXXXX" +
+            "GTTFC" +
+            "CCCCC" +
+            "PTCGT" +
+            "PTCGT");
     Bookshelf noRowAllDiffMatching = new Bookshelf(
         "CCCCC" +
             "CCCCC" +
@@ -525,4 +550,18 @@ public class SharedPatternFactoryTest {
     assertFalse(SharedPatternFactory.checkOrderedBookshelfColumns.test(allNull));
   };
 
+  @Test
+  public void TEST_GET_RANDOM_SHAREDCARDS_no_duplicates()
+      throws AlreadyInitiatedPatternException, NullMaxPlayerException, InvalidMaxPlayerException,
+      NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
+      NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+
+    Game game = GameFactory.getNewGame("firstPlayer", 4);
+
+    List<SharedPattern<Bookshelf>> allUsedPatterns
+        = game.getSharedCard().stream().map(card -> card.getPattern()).distinct().collect(Collectors.toList());
+
+    assertEquals(2, allUsedPatterns.size());
+  }
 }

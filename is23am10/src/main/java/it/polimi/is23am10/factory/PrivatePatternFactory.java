@@ -9,6 +9,7 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Private pattern factory object.
@@ -451,11 +452,19 @@ public final class PrivatePatternFactory {
 
   /**
    * Method used to get random PrivatePattern between the 12 possible.
-   * 
-   * @return a random {@link PrivatePattern}.
-   * 
+   *
+   * @param usedPatterns a List of {@link PrivatePattern} storing the already used
+   *                     patterns.
+   * @return a random pattern between the 12 possible.
    */
-  public static PrivatePattern getRandomPattern() {
-    return patternsArray.get(random.nextInt(patternsArray.size()));
+  public static PrivatePattern getNotUsedPattern(List<PrivatePattern> usedPatterns) {
+    if (usedPatterns.isEmpty()) {
+      return patternsArray.get(random.nextInt(patternsArray.size()));
+    } else {
+      List<PrivatePattern> unusedPatterns = patternsArray.stream()
+          .filter(pattern -> !usedPatterns.contains(pattern))
+          .collect(Collectors.toList());
+      return unusedPatterns.get(random.nextInt(unusedPatterns.size()));
+    }
   }
 }
