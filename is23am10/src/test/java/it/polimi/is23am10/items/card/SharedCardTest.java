@@ -5,13 +5,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import it.polimi.is23am10.factory.SharedPatternFactory;
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
+import it.polimi.is23am10.pattern.SharedPattern;
 
 public class SharedCardTest {
   /**
@@ -20,7 +23,8 @@ public class SharedCardTest {
    */
   @Test
   public void constructor_should_create_SharedCard() throws AlreadyInitiatedPatternException {
-    SharedCard sc = new SharedCard();
+    final List<SharedPattern<Bookshelf>> emptyList = new ArrayList<SharedPattern<Bookshelf>>();
+    SharedCard sc = new SharedCard(emptyList);
 
     assertNotNull(sc);
     assertNotNull(sc.getPattern());
@@ -34,8 +38,9 @@ public class SharedCardTest {
    */
   @Test
   public void setPattern_should_throw_AlreadyInitiatedPatternException() throws AlreadyInitiatedPatternException {
-    SharedCard sc = new SharedCard();
-    assertThrows(AlreadyInitiatedPatternException.class, () -> sc.setPattern(SharedPatternFactory.getRandomPattern()));
+    final List<SharedPattern<Bookshelf>> emptyList = new ArrayList<SharedPattern<Bookshelf>>();
+    SharedCard sc = new SharedCard(emptyList);
+    assertThrows(AlreadyInitiatedPatternException.class, () -> sc.setPattern(SharedPatternFactory.getNotUsedPattern(emptyList)));
   }
 
   /**
@@ -44,7 +49,8 @@ public class SharedCardTest {
    */
   @Test
   public void setScoreBlocks_should_throw_NullScoreBlockListException() throws AlreadyInitiatedPatternException {
-    SharedCard sc = new SharedCard();
+    final List<SharedPattern<Bookshelf>> emptyList = new ArrayList<SharedPattern<Bookshelf>>();
+    SharedCard sc = new SharedCard(emptyList);
     assertThrows(NullScoreBlockListException.class, () -> sc.setScoreBlocks(null));
   }
 
@@ -57,7 +63,8 @@ public class SharedCardTest {
   public void setScoreBlocks_should_set_scoreblocks() 
       throws AlreadyInitiatedPatternException, NullScoreBlockListException {
     
-    SharedCard sc = new SharedCard();
+    final List<SharedPattern<Bookshelf>> emptyList = new ArrayList<SharedPattern<Bookshelf>>();
+    SharedCard sc = new SharedCard(emptyList);
     final ArrayList arr = new ArrayList<ScoreBlock>();
 
     sc.setScoreBlocks(arr);

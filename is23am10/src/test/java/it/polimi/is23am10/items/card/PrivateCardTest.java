@@ -4,12 +4,16 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import it.polimi.is23am10.factory.PrivatePatternFactory;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.card.exceptions.NegativeMatchedBlockCountException;
 import it.polimi.is23am10.items.card.exceptions.NullMatchedBlockCountException;
+import it.polimi.is23am10.pattern.PrivatePattern;
 
 public class PrivateCardTest {
   /**
@@ -19,7 +23,8 @@ public class PrivateCardTest {
   @Test
   public void constructor_should_create_PrivateCard() throws AlreadyInitiatedPatternException {
     final Integer ZERO = 0;
-    PrivateCard pc = new PrivateCard();
+    final List<PrivatePattern> emptyList = new ArrayList<PrivatePattern>();
+    PrivateCard pc = new PrivateCard(emptyList);
 
     assertNotNull(pc);
     assertNotNull(pc.getPattern());
@@ -33,8 +38,9 @@ public class PrivateCardTest {
    */
   @Test
   public void setPattern_should_throw_AlreadyInitiatedPatternException() throws AlreadyInitiatedPatternException {
-    PrivateCard pc = new PrivateCard();
-    assertThrows(AlreadyInitiatedPatternException.class, () -> pc.setPattern(PrivatePatternFactory.getRandomPattern()));
+    final List<PrivatePattern> emptyList = new ArrayList<PrivatePattern>();
+    PrivateCard pc = new PrivateCard(emptyList);
+    assertThrows(AlreadyInitiatedPatternException.class, () -> pc.setPattern(PrivatePatternFactory.getNotUsedPattern(emptyList)));
   }
 
   /**
@@ -44,7 +50,8 @@ public class PrivateCardTest {
    */
   @Test
   public void setMatchedBlocksCount_should_throw_NullMatchedBlockCountException() throws AlreadyInitiatedPatternException {
-    PrivateCard pc = new PrivateCard();
+    final List<PrivatePattern> emptyList = new ArrayList<PrivatePattern>();
+    PrivateCard pc = new PrivateCard(emptyList);
     assertThrows(NullMatchedBlockCountException.class, () -> pc.setMatchedBlocksCount(null));
   }
 
@@ -56,7 +63,8 @@ public class PrivateCardTest {
   @Test
   public void setMatchedBlocksCount_should_throw_NegativeMatchedBlockCountException() throws AlreadyInitiatedPatternException {
     final Integer NEGATIVE_VAL = -1;
-    PrivateCard pc = new PrivateCard();
+    final List<PrivatePattern> emptyList = new ArrayList<PrivatePattern>();
+    PrivateCard pc = new PrivateCard(emptyList);
     assertThrows(NegativeMatchedBlockCountException.class, () -> pc.setMatchedBlocksCount(NEGATIVE_VAL));
   }
 }
