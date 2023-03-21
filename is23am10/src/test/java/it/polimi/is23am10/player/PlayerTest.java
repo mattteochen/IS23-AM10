@@ -19,7 +19,6 @@ import it.polimi.is23am10.items.card.exceptions.NullMatchedBlockCountException;
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
-import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 import it.polimi.is23am10.pattern.PrivatePattern;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -228,7 +227,6 @@ public class PlayerTest {
    * @throws NullPointerException
    * @throws WrongLengthBookshelfStringException
    * @throws WrongCharBookshelfStringException
-   * @throws WrongTileTypeException
    * @throws NotValidScoreBlockValueException
    * @throws NullMatchedBlockCountException
    * @throws NegativeMatchedBlockCountException
@@ -243,7 +241,7 @@ public class PlayerTest {
       NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, NullPointerException,
-      WrongLengthBookshelfStringException, WrongCharBookshelfStringException, WrongTileTypeException,
+      WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
       NotValidScoreBlockValueException,
       NullMatchedBlockCountException, NegativeMatchedBlockCountException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullScoreBlockListException {

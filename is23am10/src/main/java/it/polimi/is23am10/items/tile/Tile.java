@@ -1,6 +1,5 @@
 package it.polimi.is23am10.items.tile;
 
-import it.polimi.is23am10.items.tile.exceptions.WrongTileTypeException;
 
 /**
  * The tile class definition.
@@ -57,16 +56,12 @@ public class Tile {
    * The method that allows us to manually change the type of a specific Tile.
    * 
    * @throws NullPointerException
-   * @throws WrongTileTypeException
    * 
    * @param tt The tile type we want to set for the tile.
    */
-  public void setTile(TileType tt) throws NullPointerException, WrongTileTypeException {
+  public void setTile(TileType tt) throws NullPointerException {
     if (tt == null) {
       throw new NullPointerException("[Class Tile, method setTile]: Null pointer exception");
-    }
-    if (!isValidTileType(tt)) {
-      throw new WrongTileTypeException("[Class Tile, method setTile]: Wrong TileType exception");
     }
     type = tt;
   }
@@ -97,19 +92,5 @@ public class Tile {
       return true;
     }
     return false;
-  }
-
-  /**
-   * Method checking if the {@link TileType} of a tile is in the enum of possible tile types.
-   * 
-   * @param tt tile type we want to check.
-   * @return True if the tile type is valid.
-   */
-  public boolean isValidTileType(TileType tt){
-    if(tt != TileType.CAT && tt != TileType.BOOK && tt != TileType.GAME && tt != TileType.FRAME
-    && tt != TileType.TROPHY && tt != TileType.PLANT && tt != TileType.EMPTY){
-      return false;
-    }
-    return true;
   }
 }
