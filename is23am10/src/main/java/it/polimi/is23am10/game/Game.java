@@ -29,7 +29,6 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -210,10 +209,8 @@ public class Game {
   /**
    * The sharedCards setter.
    *
-   * @throws AlreadyInitiatedPatternException.
-   *
    */
-  public void setSharedCards(List<SharedCard> cards) throws AlreadyInitiatedPatternException {
+  public void setSharedCards(List<SharedCard> cards) {
     this.sharedCards = new ArrayList<>();
     sharedCards.add(cards.get(0));
     sharedCards.add(cards.get(1));
@@ -232,7 +229,8 @@ public class Game {
   /**
    * The lastRound setter.
    * 
-   * @param lastRound A flag referencing if the game is in its last round of rounds.
+   * @param lastRound A flag referencing if the game is in its last round of
+   *                  rounds.
    *
    */
   public void setLastRound() {
@@ -349,9 +347,9 @@ public class Game {
     Optional<Player> player = players.stream()
         .filter(p -> p.getPlayerName().equals(playerName))
         .findFirst();
-    if(player.isPresent()){
+    if (player.isPresent()) {
       return player.get();
-    }else{
+    } else {
       throw new PlayerNotFoundException();
     }
   }
@@ -399,7 +397,6 @@ public class Game {
   public Player getWinnerPlayer() {
     return this.winnerPlayer;
   }
-  
 
   /**
    * Method that computes active player's Score, updates the view,
@@ -419,7 +416,7 @@ public class Game {
     checkWin();
     activePlayer.updateScore();
     gameBoard.refillIfNeeded();
-    int idxNextPlayer = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size() ;
+    int idxNextPlayer = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size();
     if (lastRound && idxNextPlayer == players.indexOf(winnerPlayer)) {
       setEnded(true);
       return;
@@ -457,8 +454,10 @@ public class Game {
   }
 
   /**
-   * Function that checks if there's a winner and sets flags of lastRound and ended
+   * Function that checks if there's a winner and sets flags of lastRound and
+   * ended
    * accordingly.
+   * 
    * @throws NullPlayerException
    * 
    */
@@ -502,7 +501,7 @@ public class Game {
    */
   public void activePlayerMove(Map<Coordinates, Coordinates> selectedCoordinates)
       throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
-      InvalidBoardTileSelectionException, NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
+      NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPlayerBookshelfException,
       NullScoreBlockListException, NullPlayerException {
     for (Map.Entry<Coordinates, Coordinates> entry : selectedCoordinates.entrySet()) {

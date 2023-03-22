@@ -21,6 +21,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ public class PrivatePatternFactoryTest {
    * @throws WrongLengthBookshelfStringException
    * @throws WrongCharBookshelfStringException
    * @throws NullPointerException
-
+   * 
    */
 
   @BeforeEach
@@ -42,8 +43,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE1_should_find_ZERO_matches()
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException
-       {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern1ZeroMatches = new Bookshelf(
         "CCCGF" +
             "FTBFF" +
@@ -57,8 +57,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE1_should_find_SIX_matches()
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException
-       {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern1 = new Bookshelf(
         "PCFGF" +
             "FTBFC" +
@@ -72,8 +71,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE2_should_find_ZERO_matches()
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException
-       {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern2ZeroMatches = new Bookshelf(
         "CCBGF" +
             "FFBFC" +
@@ -87,8 +85,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE2_should_find_SIX_matches()
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException
-       {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern2 = new Bookshelf(
         "CCBGF" +
             "FPBFC" +
@@ -102,8 +99,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE3_should_find_ZERO_matches()
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException
-       {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern3ZeroMatches = new Bookshelf(
         "CCBGF" +
             "BTBBC" +
@@ -117,8 +113,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE3_should_find_SIX_matches()
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException
-       {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern3 = new Bookshelf(
         "CCBGF" +
             "FTBGC" +
@@ -132,8 +127,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE4_should_find_ZERO_matches()
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException
-       {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern4ZeroMatches = new Bookshelf(
         "CCBGF" +
             "FTBFC" +
@@ -148,8 +142,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE4_should_find_SIX_matches()
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException
-       {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern4 = new Bookshelf(
         "CCBGG" +
             "FTBFC" +
@@ -163,8 +156,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE5_should_find_ZERO_matches()
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException
-       {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern5ZeroMatches = new Bookshelf(
         "CCBGF" +
             "FCBFC" +
@@ -178,8 +170,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE5_should_find_SIX_matches()
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException
-       {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern5 = new Bookshelf(
         "CCBGF" +
             "FTBFC" +
@@ -193,8 +184,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE6_should_find_ZERO_matches()
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException
-       {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern6ZeroMatches = new Bookshelf(
         "CCFGF" +
             "FTBFC" +
@@ -208,8 +198,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE6_should_find_SIX_matches()
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException
-       {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern6 = new Bookshelf(
         "CCTGC" +
             "FTBFC" +
@@ -251,7 +240,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE8_should_find_ZERO_matches()
-  throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern8ZeroMatches = new Bookshelf(
         "CCBGB" +
             "FBBFC" +
@@ -265,7 +254,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE8_should_find_SIX_matches()
-  throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern8 = new Bookshelf(
         "CCBGF" +
             "FCBFC" +
@@ -279,7 +268,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE9_should_find_ZERO_matches()
-  throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern9ZeroMatches = new Bookshelf(
         "CCPGF" +
             "FTBFC" +
@@ -293,7 +282,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE9_should_find_SIX_matches()
-  throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern9 = new Bookshelf(
         "CCGGF" +
             "FTBFC" +
@@ -307,7 +296,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE10_should_find_ZERO_matches()
-  throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern10ZeroMatches = new Bookshelf(
         "CCBGP" +
             "FPBFC" +
@@ -321,7 +310,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE10_should_find_SIX_matches()
-  throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern10 = new Bookshelf(
         "CCBGT" +
             "FGBFC" +
@@ -335,7 +324,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE11_should_find_ZERO_matches()
-  throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern11ZeroMatches = new Bookshelf(
         "CCFGF" +
             "FFBFC" +
@@ -349,7 +338,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE11_should_find_SIX_matches()
-  throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern11 = new Bookshelf(
         "CCPGF" +
             "FBBFC" +
@@ -363,7 +352,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE12_should_find_ZERO_matches()
-  throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern12ZeroMatches = new Bookshelf(
         "CCFGF" +
             "FFBFC" +
@@ -378,7 +367,7 @@ public class PrivatePatternFactoryTest {
 
   @Test
   public void RULE12_should_find_SIX_matches()
-  throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
     Bookshelf testPattern12 = new Bookshelf(
         "CCBGF" +
             "FPBFC" +
@@ -394,14 +383,15 @@ public class PrivatePatternFactoryTest {
   public void TEST_GET_RANDOM_PRIVATECARDS_no_duplicates()
       throws AlreadyInitiatedPatternException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
-      NullPlayerScoreBlocksException, DuplicatePlayerNameException, NullPlayerNamesException, NullMaxPlayerException, InvalidMaxPlayerException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, NullPlayerNamesException, NullMaxPlayerException,
+      InvalidMaxPlayerException, InvalidNumOfPlayersException, NullNumOfPlayersException {
     Game game = GameFactory.getNewGame("firstPlayer", 4);
     game.addPlayer("secondPlayer");
     game.addPlayer("thirdPlayer");
     game.addPlayer("fourthPlayer");
 
-    List<PrivatePattern> allUsedPatterns
-        = game.getPlayers().stream().map(player -> player.getPrivateCard().getPattern()).distinct().collect(Collectors.toList());
+    List<PrivatePattern<Function<Bookshelf, Integer>>> allUsedPatterns = game.getPlayers().stream()
+        .map(player -> player.getPrivateCard().getPattern()).distinct().collect(Collectors.toList());
 
     assertEquals(4, allUsedPatterns.size());
   }

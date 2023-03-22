@@ -436,19 +436,19 @@ public final class PrivatePatternFactory {
    * The list of {@link PrivatePattern} containing all the 12 different patterns.
    * 
    */
-  public static final List<PrivatePattern> patternsArray = List.of(
-      (new PrivatePattern(checkPattern1)),
-      (new PrivatePattern(checkPattern2)),
-      (new PrivatePattern(checkPattern3)),
-      (new PrivatePattern(checkPattern4)),
-      (new PrivatePattern(checkPattern5)),
-      (new PrivatePattern(checkPattern6)),
-      (new PrivatePattern(checkPattern7)),
-      (new PrivatePattern(checkPattern8)),
-      (new PrivatePattern(checkPattern9)),
-      (new PrivatePattern(checkPattern10)),
-      (new PrivatePattern(checkPattern11)),
-      (new PrivatePattern(checkPattern12)));
+  public static final List<PrivatePattern<Function<Bookshelf, Integer>>> patternsArray = List.of(
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern1)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern2)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern3)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern4)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern5)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern6)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern7)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern8)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern9)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern10)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern11)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern12)));
 
   /**
    * Method used to get random PrivatePattern between the 12 possible.
@@ -457,11 +457,12 @@ public final class PrivatePatternFactory {
    *                     patterns.
    * @return a random pattern between the 12 possible.
    */
-  public static PrivatePattern getNotUsedPattern(List<PrivatePattern> usedPatterns) {
+  public static PrivatePattern<Function<Bookshelf, Integer>> getNotUsedPattern(
+      List<PrivatePattern<Function<Bookshelf, Integer>>> usedPatterns) {
     if (usedPatterns.isEmpty()) {
       return patternsArray.get(random.nextInt(patternsArray.size()));
     } else {
-      List<PrivatePattern> unusedPatterns = patternsArray.stream()
+      List<PrivatePattern<Function<Bookshelf, Integer>>> unusedPatterns = patternsArray.stream()
           .filter(pattern -> !usedPatterns.contains(pattern))
           .collect(Collectors.toList());
       return unusedPatterns.get(random.nextInt(unusedPatterns.size()));

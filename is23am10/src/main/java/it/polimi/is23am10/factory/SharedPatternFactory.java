@@ -578,27 +578,29 @@ public final class SharedPatternFactory {
    * rules with their lambda functions
    *
    */
-  private static final List<SharedPattern<Bookshelf>> patternsArray = List.of(
-      (new SharedPattern<>(checkTwoAdjacents,
+  private static final List<SharedPattern<Predicate<Bookshelf>>> patternsArray = List.of(
+      (new SharedPattern<Predicate<Bookshelf>>(checkTwoAdjacents,
           "Six separated groups made of two adjacent tiles of the same type. The tile type of different groups can be different.")),
-      (new SharedPattern<>(checkCornersMatch, "The four tiles at the corners of the bookshelf are of the same type.")),
-      (new SharedPattern<>(checkFourAdjacents,
+      (new SharedPattern<Predicate<Bookshelf>>(checkCornersMatch,
+          "The four tiles at the corners of the bookshelf are of the same type.")),
+      (new SharedPattern<Predicate<Bookshelf>>(checkFourAdjacents,
           "Four separated groups made of four adjacent tiles of the same type. The tile's type of different groups can be different.")),
-      (new SharedPattern<>(checkSquares,
+      (new SharedPattern<Predicate<Bookshelf>>(checkSquares,
           "Two groups of four tiles of the same type forming a 2x2 square shape. The tile type of the two squares has to be the same.")),
-      (new SharedPattern<>(checkMaxThreeTypesInColumn,
+      (new SharedPattern<Predicate<Bookshelf>>(checkMaxThreeTypesInColumn,
           "At least three full columns (filled with six tiles), having maximum three different tile types per column. ")),
-      (new SharedPattern<>(checkEightOfSameType,
+      (new SharedPattern<Predicate<Bookshelf>>(checkEightOfSameType,
           "At least eight tiles of the same type. There are no restrictions concerning their positions.")),
-      (new SharedPattern<>(checkDiagonalsSameType, "Five tiles of the same type forming a diagonal.")),
-      (new SharedPattern<>(checkMaxThreeTypesInRow,
+      (new SharedPattern<Predicate<Bookshelf>>(checkDiagonalsSameType,
+          "Five tiles of the same type forming a diagonal.")),
+      (new SharedPattern<Predicate<Bookshelf>>(checkMaxThreeTypesInRow,
           "At least four full rows (filled with five tiles), having maximum three different tile types per row.")),
-      (new SharedPattern<>(checkTwoColumnAllDiff,
+      (new SharedPattern<Predicate<Bookshelf>>(checkTwoColumnAllDiff,
           "At least two full columns (filled with six tiles), having tiles of all different types.")),
-      (new SharedPattern<>(checkTwoRowsAllDiff,
+      (new SharedPattern<Predicate<Bookshelf>>(checkTwoRowsAllDiff,
           "At least two full rows (filled with five tiles), having tiles of all different types.")),
-      (new SharedPattern<>(checkTilesXShape, "Five tiles of the same type, forming an X shape.")),
-      (new SharedPattern<>(checkOrderedBookshelfColumns,
+      (new SharedPattern<Predicate<Bookshelf>>(checkTilesXShape, "Five tiles of the same type, forming an X shape.")),
+      (new SharedPattern<Predicate<Bookshelf>>(checkOrderedBookshelfColumns,
           "Five columns with ascending or descending height. Starting from the first or the last column, the next column has to have one tile more. The tile types are not considered.")));
 
   /**
@@ -608,12 +610,12 @@ public final class SharedPatternFactory {
    *                     patterns.
    * @return a random pattern between the 12 possible.
    */
-  public static SharedPattern<Bookshelf> getNotUsedPattern(
-      List<SharedPattern<Bookshelf>> usedPatterns) {
+  public static SharedPattern<Predicate<Bookshelf>> getNotUsedPattern(
+      List<SharedPattern<Predicate<Bookshelf>>> usedPatterns) {
     if (usedPatterns.isEmpty()) {
       return patternsArray.get(random.nextInt(patternsArray.size()));
     } else {
-      List<SharedPattern<Bookshelf>> unusedPatterns = patternsArray.stream()
+      List<SharedPattern<Predicate<Bookshelf>>> unusedPatterns = patternsArray.stream()
           .filter(pattern -> !usedPatterns.contains(pattern))
           .collect(Collectors.toList());
       return unusedPatterns.get(random.nextInt(unusedPatterns.size()));

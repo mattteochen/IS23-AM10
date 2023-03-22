@@ -8,12 +8,30 @@ package it.polimi.is23am10.pattern;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public abstract class AbstractPattern {
+public abstract class AbstractPattern<T> {
 
   /**
-   * The pattern id.
+   * The assigned rule to this pattern.
    * 
    */
-  private Integer id;
+  protected T rule;
 
+  /**
+   * Constructor.
+   * 
+   * @param rule The rule assigned to the current pattern..
+   * 
+   */
+  protected AbstractPattern(T rule) {
+    this.rule = rule;
+  }
+
+  /**
+   * Rule getter.
+   *
+   * @return The rule function.
+   */
+  public T getRule() {
+    return rule;
+  }
 }

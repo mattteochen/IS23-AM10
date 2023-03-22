@@ -23,6 +23,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -559,8 +560,8 @@ public class SharedPatternFactoryTest {
 
     Game game = GameFactory.getNewGame("firstPlayer", 4);
 
-    List<SharedPattern<Bookshelf>> allUsedPatterns
-        = game.getSharedCard().stream().map(card -> card.getPattern()).distinct().collect(Collectors.toList());
+    List<SharedPattern<Predicate<Bookshelf>>> allUsedPatterns = game.getSharedCard().stream()
+        .map(card -> card.getPattern()).distinct().collect(Collectors.toList());
 
     assertEquals(2, allUsedPatterns.size());
   }

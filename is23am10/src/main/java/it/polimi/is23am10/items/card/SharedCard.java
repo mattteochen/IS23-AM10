@@ -1,14 +1,14 @@
 package it.polimi.is23am10.items.card;
 
+import it.polimi.is23am10.factory.SharedPatternFactory;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.pattern.SharedPattern;
-import it.polimi.is23am10.factory.SharedPatternFactory;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Shared card object.
@@ -18,7 +18,7 @@ import java.util.List;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class SharedCard extends AbstractCard<SharedPattern<Bookshelf>> {
+public class SharedCard extends AbstractCard<Predicate<Bookshelf>, SharedPattern<Predicate<Bookshelf>>> {
 
   /**
    * A list of {@link ScoreBlock} instances.
@@ -28,13 +28,15 @@ public class SharedCard extends AbstractCard<SharedPattern<Bookshelf>> {
    */
   private List<ScoreBlock> scoreBlocks;
 
-   /**
-    * Constructor.
-    *
-    * @param usedPatterns is a list of SharedPattern used to store the already used.
-    * @throws AlreadyInitiatedPatternException
-    */
-  public SharedCard(List<SharedPattern<Bookshelf>> usedSharedPatterns) throws AlreadyInitiatedPatternException {
+  /**
+   * Constructor.
+   *
+   * @param usedPatterns is a list of SharedPattern used to store the already
+   *                     used.
+   * @throws AlreadyInitiatedPatternException
+   */
+  public SharedCard(List<SharedPattern<Predicate<Bookshelf>>> usedSharedPatterns)
+      throws AlreadyInitiatedPatternException {
     scoreBlocks = new ArrayList<>();
     setPattern(SharedPatternFactory.getNotUsedPattern(usedSharedPatterns));
   }
