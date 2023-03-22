@@ -1,11 +1,5 @@
 package it.polimi.is23am10.factory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
@@ -24,6 +18,11 @@ import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * The GameFactory class definition.
@@ -47,7 +46,7 @@ public final class GameFactory {
    * A list of already used {@link SharedPattern} instances.
    * 
    */
-  private static List<SharedPattern<Bookshelf>> usedSharedPatterns = new ArrayList<>();
+  private static List<SharedPattern<Predicate<Bookshelf>>> usedSharedPatterns = new ArrayList<>();
 
   /**
    * Create a new {@link Game} instance.

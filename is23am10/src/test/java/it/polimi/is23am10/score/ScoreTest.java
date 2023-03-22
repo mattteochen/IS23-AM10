@@ -21,12 +21,12 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
 
 public class ScoreTest {
   @Test
@@ -38,7 +38,7 @@ public class ScoreTest {
     assertEquals(zero, s.getScoreBlockPoints());
     assertEquals(zero, s.getPrivatePoints());
   }
-    
+
   @Test
   public void setExtraPoint_should_set_extraPoint() {
     Score s = new Score();
@@ -52,7 +52,7 @@ public class ScoreTest {
     /**
      * This test comes directly from the rulebook.
      * Check Rulebook - page 2 - Final count example.
-  
+     * 
      * @throws WrongCharBookshelfStringException
      * @throws WrongLengthBookshelfStringException
      * @throws NullPointerException
@@ -62,41 +62,43 @@ public class ScoreTest {
      * @throws NullPlayerBookshelfException
      */
     @Test
-    public void setBookshelfPoints_should_set_exampleBS() 
+    public void setBookshelfPoints_should_set_exampleBS()
         throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
-        BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException {
+        BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
+        NullPlayerBookshelfException {
       Score s = new Score();
       Bookshelf bs = new Bookshelf(
           "PPPXX" +
-          "BPPCX" +
-          "FBFBX" +
-          "TGTGX" +
-          "TTCCC" + 
-          "TTTCC"
-      );
+              "BPPCX" +
+              "FBFBX" +
+              "TGTGX" +
+              "TTCCC" +
+              "TTTCC");
 
       s.setBookshelfPoints(bs);
       final Integer EIGHTEEN = 18;
 
-      assertEquals(EIGHTEEN, s.getBookshelfPoints());   
+      assertEquals(EIGHTEEN, s.getBookshelfPoints());
     }
 
     /**
-     * This test checks that an empty bookshelf 
+     * This test checks that an empty bookshelf
      * returns a zero score.
+     * 
      * @throws NullPointerException
      * @throws WrongLengthBookshelfStringException
      * @throws WrongCharBookshelfStringException
-  
+     * 
      * @throws BookshelfGridColIndexOutOfBoundsException
      * @throws BookshelfGridRowIndexOutOfBoundsException
      * @throws NullIndexValueException
      * @throws NullPlayerBookshelfException
      */
     @Test
-    public void setBookshelfPoints_should_set_emptyBS() 
+    public void setBookshelfPoints_should_set_emptyBS()
         throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
-        BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException {
+        BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
+        NullPlayerBookshelfException {
       Score s = new Score();
       Bookshelf bs = new Bookshelf();
 
@@ -109,67 +111,69 @@ public class ScoreTest {
     /**
      * This tests checks that groups bigger than {@link Score#MAX_GROUP_SIZE}
      * only count as {@link Score#MAX_GROUP_SIZE}-big groups.
+     * 
      * @throws NullPointerException
      * @throws WrongLengthBookshelfStringException
      * @throws WrongCharBookshelfStringException
-  
+     * 
      * @throws BookshelfGridColIndexOutOfBoundsException
      * @throws BookshelfGridRowIndexOutOfBoundsException
      * @throws NullIndexValueException
      * @throws NullPlayerBookshelfException
      */
     @Test
-    public void setBookshelfPoints_should_set_bigGroupsBS() 
+    public void setBookshelfPoints_should_set_bigGroupsBS()
         throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
-        BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException {
+        BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
+        NullPlayerBookshelfException {
       Score s = new Score();
       Bookshelf bs = new Bookshelf(
           "PPPPP" +
-          "PPPPP" +
-          "PPPPP" +
-          "CCCCC" +
-          "CCCCC" + 
-          "CCCCC"
-      );
+              "PPPPP" +
+              "PPPPP" +
+              "CCCCC" +
+              "CCCCC" +
+              "CCCCC");
 
       s.setBookshelfPoints(bs);
       // Two groups of 6+ should be counted as two groups of 6
       // returning 2x8 = 16 score
       final Integer SIXTEEN = 16;
 
-      assertEquals(SIXTEEN, s.getBookshelfPoints());   
+      assertEquals(SIXTEEN, s.getBookshelfPoints());
     }
 
     /**
      * This tests checks that groups smaller than {@link Score#MIN_GROUP_SIZE}
      * get ignored.
+     * 
      * @throws NullPointerException
      * @throws WrongLengthBookshelfStringException
      * @throws WrongCharBookshelfStringException
-  
+     * 
      * @throws BookshelfGridColIndexOutOfBoundsException
      * @throws BookshelfGridRowIndexOutOfBoundsException
      * @throws NullIndexValueException
      * @throws NullPlayerBookshelfException
      */
     @Test
-    public void setBookshelfPoints_should_set_smallGroupsBS() 
+    public void setBookshelfPoints_should_set_smallGroupsBS()
         throws NullPointerException, WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
-        BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException {
+        BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
+        NullPlayerBookshelfException {
       Score s = new Score();
       Bookshelf bs = new Bookshelf(
           "PCPCP" +
-          "CPCPC" +
-          "PCPCP" +
-          "CPCPC" +
-          "PCPCP" + 
-          "CPCPC"
-      );
+              "CPCPC" +
+              "PCPCP" +
+              "CPCPC" +
+              "PCPCP" +
+              "CPCPC");
 
       s.setBookshelfPoints(bs);
       final Integer ZERO = 0;
 
-      assertEquals(ZERO, s.getBookshelfPoints());   
+      assertEquals(ZERO, s.getBookshelfPoints());
     }
   }
 
@@ -183,10 +187,11 @@ public class ScoreTest {
     public void setScoreBlockPoints_should_throw_NullScoreBlockListException() {
       Score s = new Score();
       assertThrows(NullScoreBlockListException.class, () -> s.setScoreBlockPoints(null));
-    } 
+    }
 
     /**
      * Test to check green path. Scoreblocks are present and valid
+     * 
      * @throws NotValidScoreBlockValueException
      * @throws NullScoreBlockListException
      */
@@ -195,8 +200,7 @@ public class ScoreTest {
       Score s = new Score();
       List<ScoreBlock> list = List.of(
           new ScoreBlock(2),
-          new ScoreBlock(4)
-      );
+          new ScoreBlock(4));
 
       s.setScoreBlockPoints(list);
 
@@ -209,11 +213,13 @@ public class ScoreTest {
     /**
      * Test to check that an empty list of scoreblocks
      * results in a zero-score.
+     * 
      * @throws NotValidScoreBlockValueException
      * @throws NullScoreBlockListException
      */
     @Test
-    public void setScoreBlockPoints_should_set_empty() throws NotValidScoreBlockValueException, NullScoreBlockListException {
+    public void setScoreBlockPoints_should_set_empty()
+        throws NotValidScoreBlockValueException, NullScoreBlockListException {
       Score s = new Score();
       List<ScoreBlock> list = List.of();
 
@@ -227,7 +233,7 @@ public class ScoreTest {
   @Nested
   class setPrivatePoints_tests {
 
-    private List<PrivatePattern> usedPatterns = new ArrayList<>();
+    private List<PrivatePattern<Function<Bookshelf, Integer>>> usedPatterns = new ArrayList<>();
 
     /**
      * Test to check exception throws.
@@ -236,10 +242,11 @@ public class ScoreTest {
     public void setPrivatePoints_should_throw_NullPointerException() {
       Score s = new Score();
       assertThrows(NullPointerException.class, () -> s.setPrivatePoints(null));
-    } 
+    }
 
     /**
-     * Test to check green path. Private 
+     * Test to check green path. Private
+     * 
      * @throws NotValidScoreBlockValueException
      * @throws NullScoreBlockListException
      * @throws AlreadyInitiatedPatternException
@@ -247,10 +254,11 @@ public class ScoreTest {
      * @throws NullMatchedBlockCountException
      */
     @ParameterizedTest
-    @ValueSource(ints = {0,1,2,3,4,5,6})
-    public void setPrivatePoints_should_set(Integer value) throws NotValidScoreBlockValueException, NullScoreBlockListException,
+    @ValueSource(ints = { 0, 1, 2, 3, 4, 5, 6 })
+    public void setPrivatePoints_should_set(Integer value)
+        throws NotValidScoreBlockValueException, NullScoreBlockListException,
         AlreadyInitiatedPatternException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
-        
+
       Score s = new Score();
       PrivateCard pc = new PrivateCard(usedPatterns);
       pc.setMatchedBlocksCount(value);

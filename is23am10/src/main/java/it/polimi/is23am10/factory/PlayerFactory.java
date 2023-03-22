@@ -17,6 +17,7 @@ import it.polimi.is23am10.score.Score;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * The PlayerFactory class definition.
@@ -33,7 +34,7 @@ public class PlayerFactory {
    * A list of already used {@link PrivatePattern} instances.
    * 
    */
-  private static List<PrivatePattern> usedPrivatePatterns = new ArrayList<>();
+  private static List<PrivatePattern<Function<Bookshelf, Integer>>> usedPrivatePatterns = new ArrayList<>();
 
   /**
    * Private constructor.

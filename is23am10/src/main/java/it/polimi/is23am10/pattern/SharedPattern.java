@@ -12,13 +12,7 @@ import it.polimi.is23am10.items.bookshelf.Bookshelf;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class SharedPattern<T extends Bookshelf> extends AbstractPattern {
-
-  /**
-   * A {@link Predicate} instance applying the given rule.
-   * 
-   */
-  private Predicate<T> rule;
+public class SharedPattern<T> extends AbstractPattern<T> {
 
   /**
    * A string describing the pattern.
@@ -30,18 +24,9 @@ public class SharedPattern<T extends Bookshelf> extends AbstractPattern {
    * The constructor of the class SharedPattern.
    *
    */
-  public SharedPattern(Predicate<T> rule, String description) {
-    this.rule = rule;
+  public SharedPattern(T rule, String description) {
+    super(rule);
     this.patternDescription = description;
-  }
-
-  /**
-   * Rule getter.
-   *
-   * @return The rule function.
-   */
-  public Predicate<T> getRule() {
-    return rule;
   }
 
   /**
@@ -62,8 +47,8 @@ public class SharedPattern<T extends Bookshelf> extends AbstractPattern {
     if (!(obj instanceof SharedPattern )) {
       return false;
     }
-    return this.rule == ((SharedPattern<Bookshelf>) obj).getRule()
-        && this.patternDescription.equals(((SharedPattern<Bookshelf>) obj).getPatternDescription());
+    return this.rule == ((SharedPattern<T>) obj).getRule()
+        && this.patternDescription.equals(((SharedPattern<T>) obj).getPatternDescription());
   }
 
   /**

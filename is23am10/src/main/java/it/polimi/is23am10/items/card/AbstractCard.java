@@ -14,19 +14,13 @@ import it.polimi.is23am10.pattern.AbstractPattern;
  * @param T The type of the assigned
  *          {@link AbstractPattern}.
  */
-public abstract class AbstractCard<T extends AbstractPattern> {
+public abstract class AbstractCard<R, T extends AbstractPattern<R>> {
 
   /**
    * The pattern instance.
    * Its type must extends {@link AbstractPattern}
    */
   private T pattern;
-
-  /**
-   * The instance id.
-   * TODO: maybe unused
-   */
-  private int id;
 
   /**
    * Pattern setter.

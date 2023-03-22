@@ -1,12 +1,13 @@
 package it.polimi.is23am10.items.card;
 
-import java.util.List;
-
 import it.polimi.is23am10.factory.PrivatePatternFactory;
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.card.exceptions.NegativeMatchedBlockCountException;
 import it.polimi.is23am10.items.card.exceptions.NullMatchedBlockCountException;
 import it.polimi.is23am10.pattern.PrivatePattern;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Private card class definition.
@@ -16,7 +17,8 @@ import it.polimi.is23am10.pattern.PrivatePattern;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class PrivateCard extends AbstractCard<PrivatePattern> {
+public class PrivateCard
+    extends AbstractCard<Function<Bookshelf, Integer>, PrivatePattern<Function<Bookshelf, Integer>>> {
 
   /**
    * A counter for the number of matched blocks in the {@link PrivatePattern}.
@@ -27,11 +29,13 @@ public class PrivateCard extends AbstractCard<PrivatePattern> {
   /**
    * Constructor.
    * 
-   * @param usedPrivatePatterns is a list of PrivatePattern used to store the already
-   *                     used one.
+   * @param usedPrivatePatterns is a list of PrivatePattern used to store the
+   *                            already
+   *                            used one.
    * @throws AlreadyInitiatedPatternException
    */
-  public PrivateCard(List<PrivatePattern> usedPrivatePatterns) throws AlreadyInitiatedPatternException {
+  public PrivateCard(List<PrivatePattern<Function<Bookshelf, Integer>>> usedPrivatePatterns)
+      throws AlreadyInitiatedPatternException {
     matchedBlocksCount = 0;
     setPattern(PrivatePatternFactory.getNotUsedPattern(usedPrivatePatterns));
   }
