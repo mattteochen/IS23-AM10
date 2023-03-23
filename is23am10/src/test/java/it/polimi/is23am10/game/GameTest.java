@@ -1,6 +1,7 @@
 package it.polimi.is23am10.game;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -13,6 +14,7 @@ import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.InvalidPlayersNumberException;
+import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullPlayerException;
 import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
@@ -53,12 +55,6 @@ import org.junit.jupiter.api.Test;
  */
 public class GameTest {
 
-  @BeforeEach
-  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
-    GameFactory.clearUsedPatternsList();
-    PlayerFactory.clearUsedPatternsList();
-  }
-
   @Test
   public void constructor_should_create_Game() {
     Game g = new Game();
@@ -67,12 +63,25 @@ public class GameTest {
   }
 
   @Test
+  public void addNullSharedPattern_should_throw_NullAssignedPatternException() {
+    Game game = new Game();
+    assertThrows(NullAssignedPatternException.class, () -> game.addAssignedSharedPattern(null));
+  }
+
+  @Test
+  public void addNullPrivatePattern_should_throw_NullAssignedPatternException() {
+    Game game = new Game();
+    assertThrows(NullAssignedPatternException.class, () -> game.addAssignedPrivatePattern(null));
+  }
+
+  @Test
   public void setFirstPlayer_should_set_first_player()
       throws NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException, 
-      NullMaxPlayerException, InvalidMaxPlayerException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+      NullMaxPlayerException, InvalidMaxPlayerException, InvalidNumOfPlayersException, 
+      NullNumOfPlayersException, NullAssignedPatternException {
     
     Game g = GameFactory.getNewGame("dummyPlayer", 4);
     Player dummyPlayer = g.getPlayerByName("dummyPlayer");
@@ -87,7 +96,7 @@ public class GameTest {
       throws NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException {
+      AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException, NullAssignedPatternException {
     Game g = new Game();
     final String playerName = "dummyPlayer";
     g.addPlayer(playerName);
@@ -109,17 +118,14 @@ public class GameTest {
         DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
         NullMaxPlayerException, InvalidMaxPlayerException,
         InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException,
-        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException {
+        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException {
 
       final Integer dummyPlayerNum = 3;
-      
-      GameFactory.clearUsedPatternsList();
-      PlayerFactory.clearUsedPatternsList();
 
       g = GameFactory.getNewGame("player1", dummyPlayerNum);
       p1 = g.getPlayerByName("player1");
-      p2 = PlayerFactory.getNewPlayer("player2", g.getPlayerNames());
-      p3 = PlayerFactory.getNewPlayer("player3", g.getPlayerNames());
+      p2 = PlayerFactory.getNewPlayer("player2", g.getPlayerNames(),g);
+      p3 = PlayerFactory.getNewPlayer("player3", g.getPlayerNames(),g);
 
       // Using addPlayers() method I can force the play order
       g.addPlayers(List.of(p2,p3));
@@ -188,7 +194,7 @@ public class GameTest {
       NullNumOfPlayersException,
       BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
       NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
-      BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPointerException, PlayerNotFoundException {
+      BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPointerException, PlayerNotFoundException, NullAssignedPatternException {
     final Integer row = 2;
     final Integer col = 4;
     final Integer numMaxPlayers = 3;
@@ -214,14 +220,14 @@ public class GameTest {
         DuplicatePlayerNameException, AlreadyInitiatedPatternException,
         NullPlayerNamesException, NullMaxPlayerException, InvalidMaxPlayerException,
         InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException, 
-        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException {
+        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException {
       
       Integer dummyPlayerNum = 3;
       g = GameFactory.getNewGame("player1", dummyPlayerNum);
       
       p1 = g.getPlayerByName("player1");
-      p2 = PlayerFactory.getNewPlayer("player2", g.getPlayerNames());
-      p3 = PlayerFactory.getNewPlayer("player3", g.getPlayerNames());
+      p2 = PlayerFactory.getNewPlayer("player2", g.getPlayerNames(),g);
+      p3 = PlayerFactory.getNewPlayer("player3", g.getPlayerNames(),g);
 
       // Using addPlayers() method I can force the play order
       g.addPlayers(List.of(p2,p3));

@@ -4,25 +4,19 @@ import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
-import it.polimi.is23am10.items.bookshelf.Bookshelf;
-import it.polimi.is23am10.items.card.AbstractCard;
 import it.polimi.is23am10.items.card.SharedCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
-import it.polimi.is23am10.pattern.SharedPattern;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * The GameFactory class definition.
@@ -41,12 +35,6 @@ public final class GameFactory {
   private GameFactory() {
 
   }
-
-  /**
-   * A list of already used {@link SharedPattern} instances.
-   * 
-   */
-  private static List<SharedPattern<Predicate<Bookshelf>>> usedSharedPatterns = new ArrayList<>();
 
   /**
    * Create a new {@link Game} instance.
@@ -68,6 +56,7 @@ public final class GameFactory {
    * @throws NullPlayerNamesException
    * @throws InvalidNumOfPlayersException
    * @throws NullNumOfPlayersException
+   * @throws NullAssignedPatternException
    * 
    */
   public static Game getNewGame(String startingPlayerName, Integer maxPlayerNum)
@@ -75,29 +64,21 @@ public final class GameFactory {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException,
+      NullAssignedPatternException {
 
     Game game = new Game();
-    List<SharedCard> sharedCards = Arrays.asList(
-        new SharedCard(usedSharedPatterns),
-        new SharedCard(usedSharedPatterns));
-    usedSharedPatterns.addAll(
-        sharedCards.stream().map(AbstractCard::getPattern).collect(Collectors.toList()));
+    SharedCard firstCard = new SharedCard(game.getAssignedSharedPatterns());
+    game.addAssignedSharedPattern(firstCard.getPattern());
+    SharedCard secondCard = new SharedCard(game.getAssignedSharedPatterns());
+    game.addAssignedSharedPattern(secondCard.getPattern());
 
     game.setMaxPlayers(maxPlayerNum);
     game.addPlayer(startingPlayerName);
     game.setGameBoard();
-    game.setSharedCards(sharedCards);
+    game.setSharedCards(Arrays.asList(firstCard, secondCard));
     game.setEnded(false);
 
     return game;
-  }
-
-  /**
-   * Method used to clear the list of used patterns.
-   * 
-   */
-  public static void clearUsedPatternsList() {
-    usedSharedPatterns.clear();
   }
 }

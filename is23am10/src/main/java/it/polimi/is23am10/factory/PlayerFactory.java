@@ -2,10 +2,11 @@ package it.polimi.is23am10.factory;
 
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.card.PrivateCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
-import it.polimi.is23am10.pattern.PrivatePattern;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -17,7 +18,6 @@ import it.polimi.is23am10.score.Score;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
 
 /**
  * The PlayerFactory class definition.
@@ -29,12 +29,6 @@ import java.util.function.Function;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class PlayerFactory {
-
-  /**
-   * A list of already used {@link PrivatePattern} instances.
-   * 
-   */
-  private static List<PrivatePattern<Function<Bookshelf, Integer>>> usedPrivatePatterns = new ArrayList<>();
 
   /**
    * Private constructor.
@@ -60,20 +54,13 @@ public class PlayerFactory {
   }
 
   /**
-   * Method used to clear the list of used patterns.
-   * 
-   */
-  public static void clearUsedPatternsList() {
-    usedPrivatePatterns.clear();
-  }
-
-  /**
    * Build a new {@link Player} object.
    * This method has the ownership to ensure unique player names inside
    * a game instance.
    *
    * @param playerName  The chosen player name.
    * @param playerNames Current game instance already available players names.
+   * @param game The game reference instance where the new player will be added.
    * @throws AlreadyInitiatedPatternException
    * @throws DuplicatePlayerNameException
    * @throws NullPlayerIdException
@@ -83,12 +70,14 @@ public class PlayerFactory {
    * @throws NullPlayerScoreBlocksException
    * @throws NullPlayerScoreException
    * @throws NullPlayerNamesException
+   * @throws NullAssignedPatternException
    * 
    */
-  public static Player getNewPlayer(String playerName, List<String> playerNames)
+  public static Player getNewPlayer(String playerName, List<String> playerNames, Game game)
       throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
       NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
-      DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException {
+      DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
+      NullAssignedPatternException {
 
     // Consumer must handle this {@link DuplicatePlayerNameException}.
 
@@ -108,8 +97,8 @@ public class PlayerFactory {
     }
 
     Player instance = new Player();
-    PrivateCard privateCard = new PrivateCard(usedPrivatePatterns);
-    usedPrivatePatterns.add(privateCard.getPattern());
+    PrivateCard privateCard = new PrivateCard(game.getAssignedPrivatePatterns());
+    game.addAssignedPrivatePattern(privateCard.getPattern());
 
     instance.setPlayerID(UUID.nameUUIDFromBytes(playerName.getBytes()));
     instance.setPlayerName(playerName);
