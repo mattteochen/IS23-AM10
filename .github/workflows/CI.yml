@@ -36,7 +36,7 @@ jobs:
         run: mvn --batch-mode --update-snapshots package
 
       - name: Generate coverage report with Jacoco
-        run: && mvn clean jacoco:prepare-agent install jacoco:report
+        run: mvn clean jacoco:prepare-agent install jacoco:report
 
       - name: Generate JaCoCo Badge
         id: jacoco
