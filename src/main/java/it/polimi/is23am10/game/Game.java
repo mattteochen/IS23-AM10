@@ -138,6 +138,7 @@ public class Game {
    */
   private List<PrivatePattern<Function<Bookshelf, Integer>>> assignedPrivatePatterns;
 
+
   /**
    * Constructor that assigns the only value that is
    * generated, immutable and not set by factory.
@@ -258,9 +259,9 @@ public class Game {
  * @throws NullAssignedPatternException
    *
    */
-  private void addPlayer(Player player)
-      throws NullPlayerNamesException {
-    Random random = new Random(); //TODO: Replace with unique random object
+  private void addPlayer(Player player) {
+    //TODO: class level random is colliding with gson
+    Random random = new Random();
     final Integer position = players.isEmpty() ? 0 : random.nextInt(players.size());
     players.add(position, player);
   }
@@ -525,7 +526,7 @@ public class Game {
    */
   public void nextTurn()
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-      NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException {
+      NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException {
     
     activePlayer.updateScore();
     checkEndGame();
@@ -660,7 +661,7 @@ public class Game {
       throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
       NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPlayerBookshelfException,
-      NullScoreBlockListException, NullPlayerException {
+      NullScoreBlockListException {
     for (Map.Entry<Coordinates, Coordinates> entry : selectedCoordinates.entrySet()) {
       Coordinates boardCoord = entry.getKey();
       Coordinates bsCoord = entry.getValue();

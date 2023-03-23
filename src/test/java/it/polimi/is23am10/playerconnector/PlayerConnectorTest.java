@@ -27,6 +27,10 @@ import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck", "checkstyle:variabledeclarationusagedistancecheck",
+    "checkstyle:operatorwrapcheck", "checkstyle:multiplevariabledeclarationscheck", "checkstyle:membernamecheck",
+    "checkstyle:nonemptyatclausedescriptioncheck", "checkstyle:typenamecheck" })
 class PlayerConnectorTest {
   @Test
   void CONSTRUCTOR_should_THROW_NullSocketConnectorException() {

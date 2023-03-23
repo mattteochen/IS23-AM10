@@ -44,6 +44,10 @@ import org.junit.jupiter.api.Test;
  * Test class to check getters and setters from
  * the Player class.
  */
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck", "checkstyle:variabledeclarationusagedistancecheck",
+    "checkstyle:operatorwrapcheck", "checkstyle:multiplevariabledeclarationscheck", "checkstyle:membernamecheck",
+    "checkstyle:nonemptyatclausedescriptioncheck", "checkstyle:typenamecheck" })
 public class PlayerTest {
   @Test
   public void OVERRIDE_should_OVERRIDE()
@@ -235,7 +239,7 @@ public class PlayerTest {
   /**
    * Test to check that the updateScore() method
    * actually updates all scores.
-   * 
+   *
    * @throws NullPlayerNameException
    * @throws NullPlayerIdException
    * @throws NullPlayerBookshelfException

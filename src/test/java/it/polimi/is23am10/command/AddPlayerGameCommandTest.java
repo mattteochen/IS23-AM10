@@ -7,6 +7,7 @@ import it.polimi.is23am10.command.AbstractCommand.Opcode;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck" })
 class AddPlayerGameCommandTest {
 
   final UUID uuid = UUID.randomUUID();

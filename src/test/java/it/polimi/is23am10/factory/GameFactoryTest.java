@@ -29,8 +29,10 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class to check Player Factory work
- * and exceptions thrown
+ * and exceptions thrown.
  */
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck", "checkstyle:variabledeclarationusagedistancecheck" })
 public class GameFactoryTest {
 
   String dummyPlayerName = "myNewPlayer";

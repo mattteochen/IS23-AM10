@@ -26,7 +26,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
-public class PrivatePatternFactoryTest {
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck", "checkstyle:variabledeclarationusagedistancecheck",
+    "checkstyle:operatorwrapcheck" })
+class PrivatePatternFactoryTest {
   @Test
   public void RULE1_should_find_ZERO_matches()
       throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException, NullPointerException {
@@ -39,7 +42,7 @@ public class PrivatePatternFactoryTest {
             "BCFPC");
 
     assertEquals(0, PrivatePatternFactory.checkPattern1.apply(testPattern1ZeroMatches));
-  };
+  }
 
   @Test
   public void RULE1_should_find_SIX_matches()
@@ -53,7 +56,7 @@ public class PrivatePatternFactoryTest {
             "BCTPC");
 
     assertEquals(6, PrivatePatternFactory.checkPattern1.apply(testPattern1));
-  };
+  }
 
   @Test
   public void RULE2_should_find_ZERO_matches()
@@ -67,7 +70,7 @@ public class PrivatePatternFactoryTest {
             "BCBPB");
 
     assertEquals(0, PrivatePatternFactory.checkPattern2.apply(testPattern2ZeroMatches));
-  };
+  }
 
   @Test
   public void RULE2_should_find_SIX_matches()
@@ -81,7 +84,7 @@ public class PrivatePatternFactoryTest {
             "BCBPF");
 
     assertEquals(6, PrivatePatternFactory.checkPattern2.apply(testPattern2));
-  };
+  }
 
   @Test
   public void RULE3_should_find_ZERO_matches()
@@ -95,7 +98,7 @@ public class PrivatePatternFactoryTest {
             "FCBPC");
 
     assertEquals(0, PrivatePatternFactory.checkPattern3.apply(testPattern3ZeroMatches));
-  };
+  }
 
   @Test
   public void RULE3_should_find_SIX_matches()
@@ -109,7 +112,7 @@ public class PrivatePatternFactoryTest {
             "BCBPC");
 
     assertEquals(6, PrivatePatternFactory.checkPattern3.apply(testPattern3));
-  };
+  }
 
   @Test
   public void RULE4_should_find_ZERO_matches()
@@ -124,7 +127,7 @@ public class PrivatePatternFactoryTest {
 
     assertEquals(0, PrivatePatternFactory.checkPattern4.apply(testPattern4ZeroMatches));
     ;
-  };
+  }
 
   @Test
   public void RULE4_should_find_SIX_matches()
@@ -138,7 +141,7 @@ public class PrivatePatternFactoryTest {
             "BCBPC");
 
     assertEquals(6, PrivatePatternFactory.checkPattern4.apply(testPattern4));
-  };
+  }
 
   @Test
   public void RULE5_should_find_ZERO_matches()
@@ -152,7 +155,7 @@ public class PrivatePatternFactoryTest {
             "BCBBC");
 
     assertEquals(0, PrivatePatternFactory.checkPattern5.apply(testPattern5ZeroMatches));
-  };
+  }
 
   @Test
   public void RULE5_should_find_SIX_matches()
@@ -166,7 +169,7 @@ public class PrivatePatternFactoryTest {
             "GCBCC");
 
     assertEquals(6, PrivatePatternFactory.checkPattern5.apply(testPattern5));
-  };
+  }
 
   @Test
   public void RULE6_should_find_ZERO_matches()
@@ -180,7 +183,7 @@ public class PrivatePatternFactoryTest {
             "FCBPC");
 
     assertEquals(0, PrivatePatternFactory.checkPattern6.apply(testPattern6ZeroMatches));
-  };
+  }
 
   @Test
   public void RULE6_should_find_SIX_matches()
@@ -194,7 +197,7 @@ public class PrivatePatternFactoryTest {
             "PCBPC");
 
     assertEquals(6, PrivatePatternFactory.checkPattern6.apply(testPattern6));
-  };
+  }
 
   @Test
   public void RULE7_should_find_ZERO_matches()
@@ -208,7 +211,7 @@ public class PrivatePatternFactoryTest {
             "BCFPC");
 
     assertEquals(0, PrivatePatternFactory.checkPattern7.apply(testPattern7ZeroMatches));
-  };
+  }
 
   @Test
   public void RULE7_should_find_SIX_matches()
@@ -222,7 +225,7 @@ public class PrivatePatternFactoryTest {
             "BCBPC");
 
     assertEquals(6, PrivatePatternFactory.checkPattern7.apply(testPattern7));
-  };
+  }
 
   @Test
   public void RULE8_should_find_ZERO_matches()
@@ -236,7 +239,7 @@ public class PrivatePatternFactoryTest {
             "BCBCC");
 
     assertEquals(0, PrivatePatternFactory.checkPattern8.apply(testPattern8ZeroMatches));
-  };
+  }
 
   @Test
   public void RULE8_should_find_SIX_matches()
@@ -250,7 +253,7 @@ public class PrivatePatternFactoryTest {
             "BCBGC");
 
     assertEquals(6, PrivatePatternFactory.checkPattern8.apply(testPattern8));
-  };
+  }
 
   @Test
   public void RULE9_should_find_ZERO_matches()
@@ -264,7 +267,7 @@ public class PrivatePatternFactoryTest {
             "PCBPC");
 
     assertEquals(0, PrivatePatternFactory.checkPattern9.apply(testPattern9ZeroMatches));
-  };
+  }
 
   @Test
   public void RULE9_should_find_SIX_matches()
@@ -278,7 +281,7 @@ public class PrivatePatternFactoryTest {
             "FCBPC");
 
     assertEquals(6, PrivatePatternFactory.checkPattern9.apply(testPattern9));
-  };
+  }
 
   @Test
   public void RULE10_should_find_ZERO_matches()
@@ -292,7 +295,7 @@ public class PrivatePatternFactoryTest {
             "BCBBC");
 
     assertEquals(0, PrivatePatternFactory.checkPattern10.apply(testPattern10ZeroMatches));
-  };
+  }
 
   @Test
   public void RULE10_should_find_SIX_matches()
@@ -306,7 +309,7 @@ public class PrivatePatternFactoryTest {
             "BCBPC");
 
     assertEquals(6, PrivatePatternFactory.checkPattern10.apply(testPattern10));
-  };
+  }
 
   @Test
   public void RULE11_should_find_ZERO_matches()
@@ -320,7 +323,7 @@ public class PrivatePatternFactoryTest {
             "BCBBC");
 
     assertEquals(0, PrivatePatternFactory.checkPattern11.apply(testPattern11ZeroMatches));
-  };
+  }
 
   @Test
   public void RULE11_should_find_SIX_matches()
@@ -334,7 +337,7 @@ public class PrivatePatternFactoryTest {
             "BCBTC");
 
     assertEquals(6, PrivatePatternFactory.checkPattern11.apply(testPattern11));
-  };
+  }
 
   @Test
   public void RULE12_should_find_ZERO_matches()
@@ -349,7 +352,7 @@ public class PrivatePatternFactoryTest {
 
     assertEquals(0, PrivatePatternFactory.checkPattern12.apply(testPattern12ZeroMatches));
     ;
-  };
+  }
 
   @Test
   public void RULE12_should_find_SIX_matches()
@@ -363,7 +366,7 @@ public class PrivatePatternFactoryTest {
             "CCBPC");
 
     assertEquals(6, PrivatePatternFactory.checkPattern12.apply(testPattern12));
-  };
+  }
 
   @Test
   public void TEST_GET_RANDOM_PRIVATECARDS_no_duplicates()

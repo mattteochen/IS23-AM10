@@ -1,6 +1,5 @@
 package it.polimi.is23am10.playerconnector;
 
-import it.polimi.is23am10.command.AbstractCommand;
 import it.polimi.is23am10.game.Game;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
@@ -19,6 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
+@SuppressWarnings({"checkstyle:nonemptyatclausedescriptioncheck"})
 public class PlayerConnector {
 
   /**

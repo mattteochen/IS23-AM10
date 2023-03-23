@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
@@ -13,25 +14,26 @@ import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringE
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
-
 
 /**
  * Tests for Bookshelf class.
  */
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck", "checkstyle:variabledeclarationusagedistancecheck",
+    "checkstyle:operatorwrapcheck", "checkstyle:multiplevariabledeclarationscheck", "checkstyle:membernamecheck",
+    "checkstyle:nonemptyatclausedescriptioncheck" })
 public class BookshelfTest {
 
   /**
    * Testing empty constructor. It should set all tiles to empty.
+   *
    * @throws BookshelfGridColIndexOutOfBoundsException
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws NullIndexValueException
    */
   @Test
-  public void constructor_should_create_Bookshelf() 
+  public void constructor_should_create_Bookshelf()
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException {
 
@@ -67,7 +69,8 @@ public class BookshelfTest {
   @Test
   public void string_constructor_should_throw_WrongCharBookshelfStringException() {
 
-    // String should pass length check, being 30 char long, but contains invalid chars.
+    // String should pass length check, being 30 char long, but contains invalid
+    // chars.
     final String WRONG_CHAR_STRING = "ABCDEFABCDEFABCDEFABCDEFABCDEF";
 
     assertThrows(WrongCharBookshelfStringException.class, () -> new Bookshelf(WRONG_CHAR_STRING));
@@ -75,16 +78,16 @@ public class BookshelfTest {
 
   /**
    * Testing the string-based constructor. Green path.
+   *
    * @throws NullPointerException
    * @throws WrongLengthBookshelfStringException
    * @throws WrongCharBookshelfStringException
-
    * @throws BookshelfGridColIndexOutOfBoundsException
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws NullIndexValueException
    */
   @Test
-  public void string_constructor_should_create_Bookshelf() 
+  public void string_constructor_should_create_Bookshelf()
       throws NullPointerException, WrongLengthBookshelfStringException,
       WrongCharBookshelfStringException,
       BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
@@ -106,10 +109,10 @@ public class BookshelfTest {
   }
 
   /**
-   * Testing row boundaries in setBookshelfGridIndex
+   * Testing row boundaries in setBookshelfGridIndex.
    */
   @Test
-  public void setBookshelfGridIndex_should_throw_BookshelfGridRowIndexOutOfBoundsException(){
+  public void setBookshelfGridIndex_should_throw_BookshelfGridRowIndexOutOfBoundsException() {
 
     Bookshelf bs = new Bookshelf();
     final Integer INVALID_ROW = 99;
@@ -120,10 +123,10 @@ public class BookshelfTest {
   }
 
   /**
-   * Testing column boundaries in setBookshelfGridIndex
+   * Testing column boundaries in setBookshelfGridIndex.
    */
   @Test
-  public void setBookshelfGridIndex_should_throw_BookshelfGridColIndexOutOfBoundsException(){
+  public void setBookshelfGridIndex_should_throw_BookshelfGridColIndexOutOfBoundsException() {
 
     Bookshelf bs = new Bookshelf();
     final Integer VALID_ROW = 1;
@@ -134,10 +137,10 @@ public class BookshelfTest {
   }
 
   /**
-   * Testing column boundaries in setBookshelfGridIndex
+   * Testing column boundaries in setBookshelfGridIndex.
    */
   @Test
-  public void setBookshelfGridIndex_should_throw_NullTileException(){
+  public void setBookshelfGridIndex_should_throw_NullTileException() {
 
     Bookshelf bs = new Bookshelf();
     final Integer VALID_ROW = 1;
@@ -148,10 +151,10 @@ public class BookshelfTest {
   }
 
   /**
-   * Testing row boundaries in getBookShelfGridAt
+   * Testing row boundaries in getBookShelfGridAt.
    */
   @Test
-  public void getBookShelfGridAt_should_throw_BookshelfGridRowIndexOutOfBoundsException(){
+  public void getBookShelfGridAt_should_throw_BookshelfGridRowIndexOutOfBoundsException() {
 
     Bookshelf bs = new Bookshelf();
     final Integer INVALID_ROW = 99;
@@ -161,10 +164,10 @@ public class BookshelfTest {
   }
 
   /**
-   * Testing column boundaries in getBookShelfGridAt
+   * Testing column boundaries in getBookShelfGridAt.
    */
   @Test
-  public void getBookShelfGridAt_should_throw_BookshelfGridColIndexOutOfBoundsException(){
+  public void getBookShelfGridAt_should_throw_BookshelfGridColIndexOutOfBoundsException() {
 
     Bookshelf bs = new Bookshelf();
     final Integer VALID_ROW = 1;
@@ -175,15 +178,16 @@ public class BookshelfTest {
 
   /**
    * Testing setBookshelfGridIndex + getBookShelfGridAt green path.
+   *
    * @throws NullTileException
    * @throws NullIndexValueException
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws BookshelfGridColIndexOutOfBoundsException
    */
   @Test
-  public void getBookShelfGridAt_should_get_Tile() 
+  public void getBookShelfGridAt_should_get_Tile()
       throws BookshelfGridColIndexOutOfBoundsException,
-      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullTileException{
+      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullTileException {
 
     Bookshelf bs = new Bookshelf();
     final Integer VALID_ROW = 1;
@@ -195,5 +199,4 @@ public class BookshelfTest {
     assertNotNull(res);
     assertEquals(validTile, res);
   }
-
 }

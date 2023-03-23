@@ -84,6 +84,20 @@ public class Coordinates {
    *
    */
   @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Coordinates)) {
+      return false;
+    }
+
+    Coordinates coordinates = (Coordinates) obj;
+    return (coordinates.getCol() == col && coordinates.getRow() == row);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
   public int hashCode() {
     /*
      * A simple hashing function that gives me a unique number given two integers.

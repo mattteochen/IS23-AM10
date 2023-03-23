@@ -24,6 +24,7 @@ public class PrivatePattern<T> extends AbstractPattern<T> {
    *
    */
   @Override
+  @SuppressWarnings("unchecked")
   public boolean equals(Object obj) {
     if (!(obj instanceof PrivatePattern)) {
       return false;

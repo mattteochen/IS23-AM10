@@ -31,6 +31,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck" })
 class ServerControllerStateTest {
 
   @BeforeEach
@@ -44,7 +45,8 @@ class ServerControllerStateTest {
       throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullAssignedPatternException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
+      NullAssignedPatternException {
 
     ServerControllerState.addGameHandler(new GameHandler("Steve", 2));
 
@@ -67,10 +69,11 @@ class ServerControllerStateTest {
       throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullAssignedPatternException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
+      NullAssignedPatternException {
 
-    GameHandler handler = new GameHandler("Steve", 2);
-    GameHandler handler2 = new GameHandler("Luke", 2);
+    final GameHandler handler = new GameHandler("Steve", 2);
+    final GameHandler handler2 = new GameHandler("Luke", 2);
     ServerControllerState.addGameHandler(handler);
 
     assertEquals(1, ServerControllerState.getGamePools().size());
