@@ -244,7 +244,7 @@ public class Game {
   /**
    * Add a new player to the game. Position is randomly determined,
    * as position in players list is the order in the game.
-   * 
+   *
    * @param playerName The player's name.
    * @throws NullPlayerNamesException         The playerName variable is null.
    * @throws AlreadyInitiatedPatternException
@@ -268,7 +268,7 @@ public class Game {
   /**
    * Creates and adds a new player to the game. Position is randomly determined,
    * as position in players list is the order in the game.
-   * 
+   *
    * @param playerName The player's name.
    * @throws NullPlayerNamesException         The playerName variable is null.
    * @throws AlreadyInitiatedPatternException
@@ -349,7 +349,7 @@ public class Game {
 
   /**
    * The lastRound setter.
-   * 
+   *
    * @param lastRound A flag referencing if the game is in its last round of
    *                  rounds.
    *
@@ -432,7 +432,7 @@ public class Game {
 
   /**
    * A last round getter.
-   * 
+   *
    * @return A boolean values stating if the current game is still running or
    *         not.
    *
@@ -456,7 +456,7 @@ public class Game {
   /**
    * Method used to retrieve a player from the list
    * given its name.
-   * 
+   *
    * @param playerName The player name we are looking for.
    * @return Player matching provided name.
    * @throws PlayerNotFoundException
@@ -538,7 +538,7 @@ public class Game {
 
   /**
    * Function that allows the player to take a tile from the board
-   * 
+   *
    * @param coord coordinates of the tile.
    * @return the tile of the board the player wants to take.
    * @throws BoardGridColIndexOutOfBoundsException
@@ -552,7 +552,7 @@ public class Game {
 
   /**
    * Function that puts a tile inside the active player's bookshelf.
-   * 
+   *
    * @param t     Tile taken from the board.
    * @param coord Coordinates of the bookshelf.
    * @throws BookshelfGridColIndexOutOfBoundsException
@@ -567,6 +567,7 @@ public class Game {
 
   /**
    * Quick helper function to determine if the player is the last in turn.
+   *
    * @param playerToCheck
    * @return is playerToCheck the last one in turn
    */
@@ -596,6 +597,7 @@ public class Game {
    * Helper method to be passed to {@link Game#endGame()}
    * in order to determine the winner, according to game rules:
    * In case of score parity, last player in turn wins
+   *
    * @param p1 first player
    * @param p2 second player
    * @return player who should win between two
@@ -611,8 +613,7 @@ public class Game {
       Integer startingPos2 = players.indexOf(p2) - players.indexOf(firstPlayer); 
       startingPos2 = startingPos2 > 0 ? startingPos2 : startingPos2 + maxPlayers;
       return (startingPos1 > startingPos2 ? p1 : p2);
-    }
-    else{
+    } else{
       return (p1Score > p2Score ? p1 : p2);
     }
   }
@@ -634,7 +635,7 @@ public class Game {
    * find a correspondence between the coordinates of the taken tile of the board
    * and the coordinates of the player's bookshelf where he/she/they wants to put
    * the taken tile in.
-   * 
+   *
    * Note that I'm assuming all the params given to the method are valid since the
    * input validation will be implemented client side in the selection of those
    * coordinates.

@@ -2,7 +2,6 @@
 <Configuration status="WARN" xmlns:xi="http://www.w3.org/2001/XInclude">
     <Loggers>
         <Root level="OFF">
-            <AppenderRef ref="ConsoleAppender"/>
         </Root>
     </Loggers>
 </Configuration>
