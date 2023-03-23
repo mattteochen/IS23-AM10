@@ -204,6 +204,7 @@ public class GameTest {
   class ActivePlayerMoveTests {
 
     Game g;
+    Player p1,p2,p3;
 
     @BeforeEach
     void activePlayerMove_tests_setup()
@@ -212,11 +213,18 @@ public class GameTest {
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, 
         DuplicatePlayerNameException, AlreadyInitiatedPatternException,
         NullPlayerNamesException, NullMaxPlayerException, InvalidMaxPlayerException,
-        InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException, PlayerNotFoundException {
+        InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException, 
+        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException {
+      
       Integer dummyPlayerNum = 3;
       g = GameFactory.getNewGame("player1", dummyPlayerNum);
-      Player p2 = g.addPlayer("player2");
-      Player p3 = g.addPlayer("player3");
+      
+      p1 = g.getPlayerByName("player1");
+      p2 = PlayerFactory.getNewPlayer("player2", g.getPlayerNames());
+      p3 = PlayerFactory.getNewPlayer("player3", g.getPlayerNames());
+
+      // Using addPlayers() method I can force the play order
+      g.addPlayers(List.of(p2,p3));
       g.setFirstPlayer(p3);
       g.setActivePlayer(p2);
     }
@@ -248,7 +256,7 @@ public class GameTest {
        * so the active player changes
        */
       assertEquals(t.getType(),
-          g.getPlayerByName("player2")
+          p2
           .getBookshelf().getBookshelfGridAt(bsRow, bsCol).getType());
     }
 
