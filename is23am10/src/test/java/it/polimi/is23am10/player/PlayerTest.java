@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
@@ -29,13 +31,11 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.score.Score;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,18 +45,14 @@ import org.junit.jupiter.api.Test;
  * the Player class.
  */
 public class PlayerTest {
-  @BeforeEach
-  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
-    PlayerFactory.clearUsedPatternsList();
-  }
-
   @Test
   public void OVERRIDE_should_OVERRIDE()
       throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatternException, NullPlayerNamesException {
-    Player player = PlayerFactory.getNewPlayer("newPlayer", new ArrayList<>());
-    Player playerBrother = PlayerFactory.getNewPlayer("newPlayer", new ArrayList<>());
+      AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
+    Game game = new Game();
+    Player player = PlayerFactory.getNewPlayer("newPlayer", new ArrayList<>(), game);
+    Player playerBrother = PlayerFactory.getNewPlayer("newPlayer", new ArrayList<>(), game);
     Object outsideTheFamily = new Object();
     assertEquals(player.hashCode(), player.getPlayerID().hashCode() * player.getPlayerName().hashCode());
     assertEquals(player, playerBrother);
@@ -68,14 +64,16 @@ public class PlayerTest {
 
     ArrayList<String> players;
     Player p;
+    Game game;
 
     @BeforeEach
     void setPlayerID_tests_setup()
         throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-        AlreadyInitiatedPatternException, NullPlayerNamesException {
+        AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
+      game = new Game();
       players = new ArrayList<String>();
-      p = PlayerFactory.getNewPlayer("myNewPlayer", players);
+      p = PlayerFactory.getNewPlayer("myNewPlayer", players, game);
     }
 
     @Test
@@ -99,14 +97,16 @@ public class PlayerTest {
 
     ArrayList<String> players;
     Player p;
+    Game game;
 
     @BeforeEach
     void setScore_tests_setup()
         throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-        AlreadyInitiatedPatternException, NullPlayerNamesException {
+        AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
+      game = new Game();
       players = new ArrayList<String>();
-      p = PlayerFactory.getNewPlayer("myNewPlayer", players);
+      p = PlayerFactory.getNewPlayer("myNewPlayer", players, game);
     }
 
     @Test
@@ -130,14 +130,16 @@ public class PlayerTest {
 
     ArrayList<String> players;
     Player p;
+    Game game;
 
     @BeforeEach
     void setBookshelf_tests_setup()
         throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-        AlreadyInitiatedPatternException, NullPlayerNamesException {
+        AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
+      game = new Game();
       players = new ArrayList<String>();
-      p = PlayerFactory.getNewPlayer("myNewPlayer", players);
+      p = PlayerFactory.getNewPlayer("myNewPlayer", players, game);
     }
 
     @Test
@@ -161,14 +163,16 @@ public class PlayerTest {
 
     ArrayList<String> players;
     Player p;
+    Game game;
 
     @BeforeEach
     void setPrivateCard_tests_setup()
         throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-        AlreadyInitiatedPatternException, NullPlayerNamesException {
+        AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
+      game = new Game();
       players = new ArrayList<String>();
-      p = PlayerFactory.getNewPlayer("myNewPlayer", players);
+      p = PlayerFactory.getNewPlayer("myNewPlayer", players, game);
     }
 
     @Test
@@ -194,14 +198,16 @@ public class PlayerTest {
 
     ArrayList<String> players;
     Player p;
+    Game game;
 
     @BeforeEach
     void setScoreBlocks_tests_setup()
         throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-        AlreadyInitiatedPatternException, NullPlayerNamesException {
+        AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
+      game = new Game();
       players = new ArrayList<String>();
-      p = PlayerFactory.getNewPlayer("myNewPlayer", players);
+      p = PlayerFactory.getNewPlayer("myNewPlayer", players, game);
     }
 
     @Test
@@ -249,6 +255,7 @@ public class PlayerTest {
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws NullIndexValueException
    * @throws NullScoreBlockListException
+   * @throws NullAssignedPatternException
    */
   @Test
   public void updateScore_should_update_score()
@@ -259,14 +266,15 @@ public class PlayerTest {
       WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
       NotValidScoreBlockValueException,
       NullMatchedBlockCountException, NegativeMatchedBlockCountException, BookshelfGridColIndexOutOfBoundsException,
-      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullScoreBlockListException {
+      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullScoreBlockListException,
+      NullAssignedPatternException {
 
     // Desired matched blocks count in private card
     final Integer SIX = 6;
     // It comes from 18 bookshelf points + 6 scoreblocks + 12 private card points +
     // 1 extra point for ending the game first.
     final Integer THIRTHYSEVEN = 37;
-    Player p = PlayerFactory.getNewPlayer("myNewPlayer", new ArrayList<String>());
+    Player p = PlayerFactory.getNewPlayer("myNewPlayer", new ArrayList<String>(), new Game());
 
     p.setBookshelf(new Bookshelf(
         "PPPXX" +

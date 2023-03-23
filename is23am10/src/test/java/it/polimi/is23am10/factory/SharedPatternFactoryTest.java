@@ -8,7 +8,7 @@ import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
-import it.polimi.is23am10.game.exceptions.NullAssignedSharedPatternException;
+import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
@@ -26,16 +26,9 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class SharedPatternFactoryTest {
-
-  @BeforeEach
-  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
-    PlayerFactory.clearUsedPatternsList();
-  }
 
   @Test
   public void TWO_ADJACENTS_RULE_satisfied()
@@ -556,7 +549,7 @@ public class SharedPatternFactoryTest {
       throws AlreadyInitiatedPatternException, NullMaxPlayerException, InvalidMaxPlayerException,
       NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedSharedPatternException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException {
 
     Game game = GameFactory.getNewGame("firstPlayer", 4);
 

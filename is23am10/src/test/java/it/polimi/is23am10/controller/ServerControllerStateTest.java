@@ -4,12 +4,10 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
-import it.polimi.is23am10.factory.GameFactory;
-import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
-import it.polimi.is23am10.game.exceptions.NullAssignedSharedPatternException;
+import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
@@ -39,7 +37,6 @@ class ServerControllerStateTest {
   void setup() {
     ServerControllerState.getGamePools().clear();
     ServerControllerState.getPlayersPool().clear();
-    PlayerFactory.clearUsedPatternsList();
   }
 
   @Test
@@ -47,7 +44,7 @@ class ServerControllerStateTest {
       throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullAssignedSharedPatternException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullAssignedPatternException {
 
     ServerControllerState.addGameHandler(new GameHandler("Steve", 2));
 
@@ -70,7 +67,7 @@ class ServerControllerStateTest {
       throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullAssignedSharedPatternException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullAssignedPatternException {
 
     GameHandler handler = new GameHandler("Steve", 2);
     GameHandler handler2 = new GameHandler("Luke", 2);
@@ -116,7 +113,7 @@ class ServerControllerStateTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedSharedPatternException {
+      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedPatternException {
 
     GameHandler handler = new GameHandler("Steve", 2);
     PlayerConnector steve = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
@@ -142,7 +139,7 @@ class ServerControllerStateTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedSharedPatternException {
+      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedPatternException {
 
     GameHandler handler = new GameHandler("Steve", 2);
     GameHandler handler2 = new GameHandler("Bob", 2);

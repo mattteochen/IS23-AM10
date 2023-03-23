@@ -4,26 +4,19 @@ import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
-import it.polimi.is23am10.game.exceptions.NullAssignedSharedPatternException;
+import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
-import it.polimi.is23am10.items.bookshelf.Bookshelf;
-import it.polimi.is23am10.items.card.AbstractCard;
 import it.polimi.is23am10.items.card.SharedCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
-import it.polimi.is23am10.pattern.SharedPattern;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * The GameFactory class definition.
@@ -63,7 +56,7 @@ public final class GameFactory {
    * @throws NullPlayerNamesException
    * @throws InvalidNumOfPlayersException
    * @throws NullNumOfPlayersException
-   * @throws NullAssignedSharedPatternException
+   * @throws NullAssignedPatternException
    * 
    */
   public static Game getNewGame(String startingPlayerName, Integer maxPlayerNum)
@@ -72,7 +65,7 @@ public final class GameFactory {
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException,
-      NullAssignedSharedPatternException {
+      NullAssignedPatternException {
 
     Game game = new Game();
     SharedCard firstCard = new SharedCard(game.getAssignedSharedPatterns());
