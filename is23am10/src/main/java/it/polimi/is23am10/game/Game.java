@@ -187,7 +187,7 @@ public class Game {
    * @throws NullPlayerNameException
    *
    */
-  public void addPlayer(Player player)
+  private void addPlayer(Player player)
       throws NullPlayerNamesException {
     Random random = new Random(); //TODO: Replace with unique random object
     final Integer position = players.isEmpty() ? 0 : random.nextInt(players.size());
@@ -208,29 +208,38 @@ public class Game {
    * @throws NullPlayerBookshelfException
    * @throws NullPlayerIdException
    * @throws NullPlayerNameException
-   *
+   * @return instance of created player
    */
-  public Player addPlayer(String player)
+  public Player addPlayer(String playerName)
       throws NullPlayerNamesException, NullPlayerNameException, NullPlayerIdException, 
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, 
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException {
-    Player playerToAdd = PlayerFactory.getNewPlayer(player, getPlayerNames());
+    Player playerToAdd = PlayerFactory.getNewPlayer(playerName, getPlayerNames());
     addPlayer(playerToAdd);
     return playerToAdd;
   }
 
   /**
    * Function that adds multiple players to game
-   * @param players
+   * @param players list of players to add
    * @throws NullPlayerException
    * @throws InvalidPlayersNumberException
+   * @throws DuplicatePlayerNameException
    */
-  public void addPlayers(List<Player> players) throws NullPlayerException, InvalidPlayersNumberException{
+  public void addPlayers(List<Player> players) 
+      throws NullPlayerException, InvalidPlayersNumberException, DuplicatePlayerNameException{
+    
     if (players == null) {
       throw new NullPlayerException();
     }
     if ((players.size() + this.players.size()) != maxPlayers) {
       throw new InvalidPlayersNumberException();
+    }
+    for (Player newPlayer : players) {
+      if (PlayerFactory.isPlayerNameDuplicate(newPlayer.getPlayerName(), getPlayerNames())) {
+        throw new DuplicatePlayerNameException(
+            "[Class Game, method addPlayers]: The name " + newPlayer.getPlayerName() + " already exists");
+      }
     }
     this.players.addAll(players);
   }
@@ -395,9 +404,9 @@ public class Game {
   }
 
   /**
-   * activePlayer setter
+   * Method to set the active player (playing this turn)
    * 
-   * @param player
+   * @param player player to set as active
    */
   protected void setActivePlayer(Player player) {
     this.activePlayer = player;
@@ -487,7 +496,7 @@ public class Game {
   /**
    * Quick helper function to determine if the player is the last in turn.
    * @param playerToCheck
-   * @return
+   * @return is playerToCheck the last one in turn
    */
   private boolean isLastPlayer(Player playerToCheck){
     final Integer idxDiff = players.indexOf(playerToCheck) - players.indexOf(firstPlayer);
@@ -515,9 +524,9 @@ public class Game {
    * Helper method to be passed to {@link Game#endGame()}
    * in order to determine the winner, according to game rules:
    * In case of score parity, last player in turn wins
-   * @param p1
-   * @param p2
-   * @return
+   * @param p1 first player
+   * @param p2 second player
+   * @return player who should win between two
    */
   private Player decideWinner(Player p1, Player p2){
     final Integer p1Score = p1.getScore().getTotalScore();
