@@ -1,6 +1,7 @@
 package it.polimi.is23am10.game;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -56,6 +57,18 @@ public class GameTest {
     Game g = new Game();
     assertNotNull(g);
     assertNotNull(g.getGameId());
+  }
+
+  @Test
+  public void addNullSharedPattern_should_throw_NullAssignedPatternException() {
+    Game game = new Game();
+    assertThrows(NullAssignedPatternException.class, () -> game.addAssignedSharedPattern(null));
+  }
+
+  @Test
+  public void addNullPrivatePattern_should_throw_NullAssignedPatternException() {
+    Game game = new Game();
+    assertThrows(NullAssignedPatternException.class, () -> game.addAssignedPrivatePattern(null));
   }
 
   @Test
