@@ -11,6 +11,7 @@ import it.polimi.is23am10.controller.interfaces.ControllerConsumer;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
@@ -79,7 +80,7 @@ public class ServerControllerAction {
       } catch (NullNumOfPlayersException | NullPlayerNamesException | NullPlayerScoreBlocksException
           | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
           | NullPlayerIdException | NullPlayerNameException | NullMaxPlayerException
-          | AlreadyInitiatedPatternException e) {
+          | AlreadyInitiatedPatternException | NullAssignedPatternException e) {
         logger.error("{} Failed to initialize new game request {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       } catch (InvalidNumOfPlayersException | InvalidMaxPlayerException
@@ -150,7 +151,8 @@ public class ServerControllerAction {
         }
       } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
           | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
-          | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException e) {
+          | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
+          | NullAssignedPatternException e) {
         logger.error("{} Failed to add new player request to game {}",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
       } catch (DuplicatePlayerNameException e) {

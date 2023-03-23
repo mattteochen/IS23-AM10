@@ -5,6 +5,7 @@ import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullPlayerException;
 import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
@@ -13,6 +14,7 @@ import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsExc
 import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.NullTileException;
@@ -20,6 +22,8 @@ import it.polimi.is23am10.items.card.SharedCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.tile.Tile;
+import it.polimi.is23am10.pattern.PrivatePattern;
+import it.polimi.is23am10.pattern.SharedPattern;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -34,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -119,11 +125,75 @@ public class Game {
   private boolean lastRound;
 
   /**
+   * A cache to store already used shared patterns.
+   * 
+   */
+  private List<SharedPattern<Predicate<Bookshelf>>> assignedSharedPatterns;
+
+  /**
+   * A cache to store already used private patterns.
+   * 
+   */
+  private List<PrivatePattern<Function<Bookshelf, Integer>>> assignedPrivatePatterns;
+
+  /**
    * Constructor that assigns the only value that is
    * generated, immutable and not set by factory.
    */
   public Game() {
     gameId = UUID.randomUUID();
+    assignedSharedPatterns = new ArrayList<>();
+    assignedPrivatePatterns = new ArrayList<>();
+  }
+
+  /**
+   * Retrieve the already used {@link SharedPattern}s.
+   *
+   * @return The already assigned {@link SharedPattern}s.
+   *
+   */
+  public List<SharedPattern<Predicate<Bookshelf>>> getAssignedSharedPatterns() {
+    return assignedSharedPatterns;
+  }
+
+  /**
+   * Retrieve the already used {@link PrivatePattern}s.
+   *
+   * @return The already assigned {@link PrivatePattern}s.
+   *
+   */
+  public List<PrivatePattern<Function<Bookshelf, Integer>>> getAssignedPrivatePatterns() {
+    return assignedPrivatePatterns;
+  }
+
+  /**
+   * Add a new consumed {@link SharedPattern}.
+   *
+   * @param pattern The {@link SharedPattern} to be added.
+   * @throws NullAssignedPatternException
+   *
+   */
+  public void addAssignedSharedPattern(SharedPattern<Predicate<Bookshelf>> pattern)
+      throws NullAssignedPatternException {
+    if (pattern == null) {
+      throw new NullAssignedPatternException("shared");
+    }
+    assignedSharedPatterns.add(pattern);
+  }
+
+  /**
+   * Add a new consumed {@link PrivatePattern}.
+   *
+   * @param pattern The {@link PrivatePattern} to be added.
+   * @throws NullAssignedPatternException
+   *
+   */
+  public void addAssignedPrivatePattern(PrivatePattern<Function<Bookshelf, Integer>> pattern)
+      throws NullAssignedPatternException {
+    if (pattern == null) {
+      throw new NullAssignedPatternException("private");
+    }
+    assignedPrivatePatterns.add(pattern);
   }
 
   /**
@@ -184,6 +254,7 @@ public class Game {
    * @throws NullPlayerBookshelfException
    * @throws NullPlayerIdException
    * @throws NullPlayerNameException
+ * @throws NullAssignedPatternException
    *
    */
   public void addPlayer(String playerName)
@@ -191,15 +262,15 @@ public class Game {
       NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException {
-    players.add(PlayerFactory.getNewPlayer(playerName, getPlayerNames()));
+      NullPlayerNamesException, NullAssignedPatternException {
+    players.add(PlayerFactory.getNewPlayer(playerName, getPlayerNames(), this));
   }
 
   /**
    * gameBoard setter.
    *
-   * @throws InvalidNumOfPlayersException.
-   * @throws NullNumOfPlayersException.
+   * @throws InvalidNumOfPlayersException
+   * @throws NullNumOfPlayersException
    *
    */
   public void setGameBoard() throws InvalidNumOfPlayersException, NullNumOfPlayersException {

@@ -1,17 +1,18 @@
 package it.polimi.is23am10.game;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import it.polimi.is23am10.factory.GameFactory;
-import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullPlayerException;
 import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
@@ -51,12 +52,6 @@ import org.junit.jupiter.api.Test;
  */
 public class GameTest {
 
-  @BeforeEach
-  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
-    GameFactory.clearUsedPatternsList();
-    PlayerFactory.clearUsedPatternsList();
-  }
-
   @Test
   public void constructor_should_create_Game() {
     Game g = new Game();
@@ -65,11 +60,23 @@ public class GameTest {
   }
 
   @Test
+  public void addNullSharedPattern_should_throw_NullAssignedPatternException() {
+    Game game = new Game();
+    assertThrows(NullAssignedPatternException.class, () -> game.addAssignedSharedPattern(null));
+  }
+
+  @Test
+  public void addNullPrivatePattern_should_throw_NullAssignedPatternException() {
+    Game game = new Game();
+    assertThrows(NullAssignedPatternException.class, () -> game.addAssignedPrivatePattern(null));
+  }
+
+  @Test
   public void setFirstPlayer_should_set_first_player()
       throws NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatternException, NullPlayerNamesException {
+      AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
     Game g = new Game();
     Player dummyPlayer = new Player();
     dummyPlayer.setPlayerName("dummyPlayer");
@@ -85,7 +92,7 @@ public class GameTest {
       throws NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException {
+      AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException, NullAssignedPatternException {
     Game g = new Game();
     final String playerName = "dummyPlayer";
     g.addPlayer(playerName);
@@ -105,9 +112,7 @@ public class GameTest {
         NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
         DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
         NullMaxPlayerException, InvalidMaxPlayerException,
-        InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException, PlayerNotFoundException {
-          GameFactory.clearUsedPatternsList();
-          PlayerFactory.clearUsedPatternsList();
+        InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException, PlayerNotFoundException, NullAssignedPatternException {
       final Integer dummyPlayerNum = 3;
       g = GameFactory.getNewGame("player1", dummyPlayerNum);
       g.addPlayer("player2");
@@ -176,7 +181,7 @@ public class GameTest {
       NullNumOfPlayersException,
       BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
       NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
-      BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPointerException, PlayerNotFoundException {
+      BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPointerException, PlayerNotFoundException, NullAssignedPatternException {
     final Integer row = 2;
     final Integer col = 4;
     final Integer numMaxPlayers = 3;
@@ -200,7 +205,7 @@ public class GameTest {
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, 
         DuplicatePlayerNameException, AlreadyInitiatedPatternException,
         NullPlayerNamesException, NullMaxPlayerException, InvalidMaxPlayerException,
-        InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException, PlayerNotFoundException {
+        InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException, PlayerNotFoundException, NullAssignedPatternException {
       Integer dummyPlayerNum = 3;
       g = GameFactory.getNewGame("player1", dummyPlayerNum);
       g.addPlayer("player2");
