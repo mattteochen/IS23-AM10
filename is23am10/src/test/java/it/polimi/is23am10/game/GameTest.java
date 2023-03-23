@@ -8,10 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import it.polimi.is23am10.factory.GameFactory;
+import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.InvalidPlayersNumberException;
 import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullPlayerException;
@@ -42,6 +44,7 @@ import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -76,15 +79,16 @@ public class GameTest {
       throws NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
-    Game g = new Game();
-    Player dummyPlayer = new Player();
-    dummyPlayer.setPlayerName("dummyPlayer");
-    g.addPlayer(dummyPlayer.getPlayerName());
-    g.setFirstPlayer(dummyPlayer.getPlayerName());
+      AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException, 
+      NullMaxPlayerException, InvalidMaxPlayerException, InvalidNumOfPlayersException, 
+      NullNumOfPlayersException, NullAssignedPatternException {
+    
+    Game g = GameFactory.getNewGame("dummyPlayer", 4);
+    Player dummyPlayer = g.getPlayerByName("dummyPlayer");
+    g.setFirstPlayer(dummyPlayer);
 
     assertNotNull(g.getFirstPlayer());
-    assertEquals(g.getFirstPlayer().getPlayerName(), dummyPlayer.getPlayerName());
+    assertEquals(g.getFirstPlayer(), dummyPlayer);
   }
 
   @Test
@@ -105,6 +109,7 @@ public class GameTest {
   class NextTurnTests {
 
     Game g;
+    Player p1,p2,p3;
 
     @BeforeEach
     void setNextTurn_tests_setup() throws NullPlayerNameException, NullPlayerIdException,
@@ -112,13 +117,20 @@ public class GameTest {
         NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
         DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
         NullMaxPlayerException, InvalidMaxPlayerException,
-        InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException, PlayerNotFoundException, NullAssignedPatternException {
+        InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException,
+        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException {
+
       final Integer dummyPlayerNum = 3;
+
       g = GameFactory.getNewGame("player1", dummyPlayerNum);
-      g.addPlayer("player2");
-      g.addPlayer("player3");
-      g.setFirstPlayer("player2");
-      g.setActivePlayer(g.getPlayerByName("player2"));
+      p1 = g.getPlayerByName("player1");
+      p2 = PlayerFactory.getNewPlayer("player2", g.getPlayerNames(),g);
+      p3 = PlayerFactory.getNewPlayer("player3", g.getPlayerNames(),g);
+
+      // Using addPlayers() method I can force the play order
+      g.addPlayers(List.of(p2,p3));
+      g.setFirstPlayer(p2);
+      g.setActivePlayer(p2);
     }
 
     @Test
@@ -126,13 +138,13 @@ public class GameTest {
         throws NullPointerException, BookshelfGridColIndexOutOfBoundsException, 
         BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
         NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException, NullPlayerException {
-      assertEquals(g.getActivePlayer(), g.getPlayerByName("player2"));
+      assertEquals(g.getActivePlayer(), p2);
       g.nextTurn();
-      assertEquals(g.getActivePlayer(), g.getPlayerByName("player3"));
+      assertEquals(g.getActivePlayer(), p3);
       g.nextTurn();
-      assertEquals(g.getActivePlayer(), g.getPlayerByName("player1"));
+      assertEquals(g.getActivePlayer(), p1);
       g.nextTurn();
-      assertEquals(g.getActivePlayer(), g.getPlayerByName("player2"));
+      assertEquals(g.getActivePlayer(), p2);
     }
 
     @Test
@@ -141,9 +153,10 @@ public class GameTest {
         BookshelfGridColIndexOutOfBoundsException, 
         BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
         NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException, PlayerNotFoundException {
-      g.setWinnerPlayer(g.getPlayerByName("player1"));
+      
+      g.setActivePlayer(p1);
+      g.setWinnerPlayer(p1);
       g.setLastRound();
-      g.nextTurn();
       assertFalse(g.getEnded());
       g.nextTurn();
       assertTrue(g.getEnded());
@@ -197,6 +210,7 @@ public class GameTest {
   class ActivePlayerMoveTests {
 
     Game g;
+    Player p1,p2,p3;
 
     @BeforeEach
     void activePlayerMove_tests_setup()
@@ -205,13 +219,20 @@ public class GameTest {
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, 
         DuplicatePlayerNameException, AlreadyInitiatedPatternException,
         NullPlayerNamesException, NullMaxPlayerException, InvalidMaxPlayerException,
-        InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException, PlayerNotFoundException, NullAssignedPatternException {
+        InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException, 
+        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException {
+      
       Integer dummyPlayerNum = 3;
       g = GameFactory.getNewGame("player1", dummyPlayerNum);
-      g.addPlayer("player2");
-      g.addPlayer("player3");
-      g.setFirstPlayer("player2");
-      g.setActivePlayer(g.getPlayerByName("player2"));
+      
+      p1 = g.getPlayerByName("player1");
+      p2 = PlayerFactory.getNewPlayer("player2", g.getPlayerNames(),g);
+      p3 = PlayerFactory.getNewPlayer("player3", g.getPlayerNames(),g);
+
+      // Using addPlayers() method I can force the play order
+      g.addPlayers(List.of(p2,p3));
+      g.setFirstPlayer(p3);
+      g.setActivePlayer(p2);
     }
 
     @Test
@@ -241,7 +262,7 @@ public class GameTest {
        * so the active player changes
        */
       assertEquals(t.getType(),
-          g.getPlayerByName("player2")
+          p2
           .getBookshelf().getBookshelfGridAt(bsRow, bsCol).getType());
     }
 
@@ -259,7 +280,7 @@ public class GameTest {
           + "CCCCC" 
           + "TTTTT");
       g.getActivePlayer().setBookshelf(fullBookshelf);
-      g.checkWin();
+      g.checkEndGame();;
 
       // is ending immediately because winner is also first player of the game
       assertTrue(g.getEnded());
@@ -280,7 +301,7 @@ public class GameTest {
           + "CCCCC" 
           + "TTTTT");
       g.getActivePlayer().setBookshelf(fullBookshelf);
-      g.checkWin();
+      g.checkEndGame();
 
       assertFalse(g.getEnded());
       assertNull(g.getWinnerPlayer());

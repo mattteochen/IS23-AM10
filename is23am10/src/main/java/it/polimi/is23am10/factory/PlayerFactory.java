@@ -44,7 +44,7 @@ public class PlayerFactory {
    * @param playerNames Current game instance already available players names.
    * 
    */
-  private static boolean isPlayerNameDuplicate(String playerName, List<String> playerNames) {
+  public static boolean isPlayerNameDuplicate(String playerName, List<String> playerNames) {
     for (String name : playerNames) {
       if (name.equals(playerName)) {
         return true;
