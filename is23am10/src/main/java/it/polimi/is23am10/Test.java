@@ -6,4 +6,9 @@ public class Test {
 		String a = "d";
 		a += "4783743";
 	}
+
+	public void tt() {
+		String a = "d";
+		a += "4783743";
+	}
 }
