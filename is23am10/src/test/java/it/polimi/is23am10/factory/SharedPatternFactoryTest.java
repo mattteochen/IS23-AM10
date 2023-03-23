@@ -8,6 +8,7 @@ import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.NullAssignedSharedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
@@ -33,7 +34,6 @@ public class SharedPatternFactoryTest {
 
   @BeforeEach
   public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
-    GameFactory.clearUsedPatternsList();
     PlayerFactory.clearUsedPatternsList();
   }
 
@@ -556,7 +556,7 @@ public class SharedPatternFactoryTest {
       throws AlreadyInitiatedPatternException, NullMaxPlayerException, InvalidMaxPlayerException,
       NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedSharedPatternException {
 
     Game game = GameFactory.getNewGame("firstPlayer", 4);
 

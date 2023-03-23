@@ -18,6 +18,7 @@ import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.NullAssignedSharedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
@@ -48,7 +49,6 @@ class ServerControllerActionTest {
   @BeforeEach
   public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
     PlayerFactory.clearUsedPatternsList();
-    GameFactory.clearUsedPatternsList();
   }
 
   @Spy
@@ -185,7 +185,7 @@ class ServerControllerActionTest {
       NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException, NullAssignedSharedPatternException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
 
@@ -216,7 +216,7 @@ class ServerControllerActionTest {
       NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException, NullAssignedSharedPatternException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
 
@@ -246,7 +246,7 @@ class ServerControllerActionTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullBlockingQueueException {
+      NullBlockingQueueException, NullAssignedSharedPatternException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     GameHandler handler = new GameHandler("Max", 2);
@@ -268,7 +268,7 @@ class ServerControllerActionTest {
       NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException, NullAssignedSharedPatternException {
 
     Socket socket = new Socket();
     PlayerConnector steve = new PlayerConnector(socket, new LinkedBlockingQueue<>());
@@ -304,7 +304,7 @@ class ServerControllerActionTest {
       throws NullSocketConnectorException, NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullAssignedSharedPatternException {
     PlayerConnector steve = null;
 
     GameHandler handler = new GameHandler("Max", 2);

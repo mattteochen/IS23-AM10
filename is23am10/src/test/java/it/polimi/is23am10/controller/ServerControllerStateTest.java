@@ -9,6 +9,7 @@ import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.NullAssignedSharedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
@@ -39,7 +40,6 @@ class ServerControllerStateTest {
     ServerControllerState.getGamePools().clear();
     ServerControllerState.getPlayersPool().clear();
     PlayerFactory.clearUsedPatternsList();
-    GameFactory.clearUsedPatternsList();
   }
 
   @Test
@@ -47,7 +47,7 @@ class ServerControllerStateTest {
       throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullAssignedSharedPatternException {
 
     ServerControllerState.addGameHandler(new GameHandler("Steve", 2));
 
@@ -70,7 +70,7 @@ class ServerControllerStateTest {
       throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance, NullAssignedSharedPatternException {
 
     GameHandler handler = new GameHandler("Steve", 2);
     GameHandler handler2 = new GameHandler("Luke", 2);
@@ -116,7 +116,7 @@ class ServerControllerStateTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException {
+      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedSharedPatternException {
 
     GameHandler handler = new GameHandler("Steve", 2);
     PlayerConnector steve = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
@@ -142,7 +142,7 @@ class ServerControllerStateTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException {
+      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedSharedPatternException {
 
     GameHandler handler = new GameHandler("Steve", 2);
     GameHandler handler2 = new GameHandler("Bob", 2);

@@ -5,6 +5,7 @@ import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.NullAssignedSharedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullPlayerException;
 import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
@@ -13,6 +14,7 @@ import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsExc
 import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.NullTileException;
@@ -20,6 +22,7 @@ import it.polimi.is23am10.items.card.SharedCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.tile.Tile;
+import it.polimi.is23am10.pattern.SharedPattern;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -34,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -119,11 +123,44 @@ public class Game {
   private boolean lastRound;
 
   /**
+   * A cache to store already used shared patterns.
+   * 
+   */
+  private List<SharedPattern<Predicate<Bookshelf>>> assignedSharedPatterns;
+
+  /**
    * Constructor that assigns the only value that is
    * generated, immutable and not set by factory.
    */
   public Game() {
     gameId = UUID.randomUUID();
+    assignedSharedPatterns = new ArrayList<>();
+  }
+
+  /**
+   * Retrieve the already used {@link SharedPattern}.
+   *
+   * @return The already assigned {@link SharedPattern}s.
+   * @throws NullMaxPlayerException.
+   *
+   */
+  public List<SharedPattern<Predicate<Bookshelf>>> getAssignedSharedPatterns() {
+    return assignedSharedPatterns;
+  }
+
+  /**
+   * Retrieve the already used {@link SharedPattern}.
+   *
+   * @param pattern The {@link SharedPattern} to be added.
+   * @throws NullAssignedSharedPatternException
+   *
+   */
+  public void addAssignedSharedPattern(SharedPattern<Predicate<Bookshelf>> pattern)
+      throws NullAssignedSharedPatternException {
+    if (pattern == null) {
+      throw new NullAssignedSharedPatternException();
+    }
+    assignedSharedPatterns.add(pattern);
   }
 
   /**
