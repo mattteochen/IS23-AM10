@@ -5,6 +5,7 @@ import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.InvalidPlayersNumberException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullPlayerException;
 import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -162,17 +164,16 @@ public class Game {
    * @param playerName The first player's name.
    *
    */
-  public void setFirstPlayer(String playerName) {
+  public void setFirstPlayer(Player playerToSet) {
     players.stream()
-        .filter(player -> player.getPlayerName().equals(playerName))
+        .filter(player -> player.equals(playerToSet))
         .findFirst()
-        .ifPresent(player -> {
-          this.firstPlayer = player;
-        });
+        .ifPresent(player -> firstPlayer = player);
   }
 
   /**
-   * Add a new player to the game.
+   * Add a new player to the game. Position is randomly determined,
+   * as position in players list is the order in the game.
    * 
    * @param playerName The player's name.
    * @throws NullPlayerNamesException         The playerName variable is null.
@@ -186,13 +187,52 @@ public class Game {
    * @throws NullPlayerNameException
    *
    */
-  public void addPlayer(String playerName)
-      throws NullPlayerNameException, NullPlayerIdException,
-      NullPlayerBookshelfException, NullPlayerScoreException,
-      NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
-      DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException {
-    players.add(PlayerFactory.getNewPlayer(playerName, getPlayerNames()));
+  public void addPlayer(Player player)
+      throws NullPlayerNamesException {
+    Random random = new Random(); //TODO: Replace with unique random object
+    final Integer position = players.isEmpty() ? 0 : random.nextInt(players.size());
+    players.add(position, player);
+  }
+  
+  /**
+   * Creates and adds a new player to the game. Position is randomly determined,
+   * as position in players list is the order in the game.
+   * 
+   * @param playerName The player's name.
+   * @throws NullPlayerNamesException         The playerName variable is null.
+   * @throws AlreadyInitiatedPatternException
+   * @throws DuplicatePlayerNameException
+   * @throws NullPlayerScoreBlocksException
+   * @throws NullPlayerPrivateCardException
+   * @throws NullPlayerScoreException
+   * @throws NullPlayerBookshelfException
+   * @throws NullPlayerIdException
+   * @throws NullPlayerNameException
+   *
+   */
+  public Player addPlayer(String player)
+      throws NullPlayerNamesException, NullPlayerNameException, NullPlayerIdException, 
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, 
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException {
+    Player playerToAdd = PlayerFactory.getNewPlayer(player, getPlayerNames());
+    addPlayer(playerToAdd);
+    return playerToAdd;
+  }
+
+  /**
+   * Function that adds multiple players to game
+   * @param players
+   * @throws NullPlayerException
+   * @throws InvalidPlayersNumberException
+   */
+  public void addPlayers(List<Player> players) throws NullPlayerException, InvalidPlayersNumberException{
+    if (players == null) {
+      throw new NullPlayerException();
+    }
+    if ((players.size() + this.players.size()) != maxPlayers) {
+      throw new InvalidPlayersNumberException();
+    }
+    this.players.addAll(players);
   }
 
   /**
@@ -358,25 +398,17 @@ public class Game {
    * activePlayer setter
    * 
    * @param player
-   * @throws NullPointerException
    */
-  public void setActivePlayer(Player player) throws NullPointerException {
-    if (player == null) {
-      throw new NullPointerException("[Class Game, method setActivePlayer]");
-    }
+  protected void setActivePlayer(Player player) {
     this.activePlayer = player;
   }
 
   /**
-   * winnerPlayer setter
+   * winnerPlayer setter. To be called by {@link Game#endGame()} only
    * 
    * @param player
-   * @throws NullPointerException
    */
-  public void setWinnerPlayer(Player player) throws NullPlayerException {
-    if (player == null) {
-      throw new NullPlayerException();
-    }
+  protected void setWinnerPlayer(Player player) {
     this.winnerPlayer = player;
   }
 
@@ -413,15 +445,14 @@ public class Game {
   public void nextTurn()
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException {
-    checkWin();
+    
     activePlayer.updateScore();
-    gameBoard.refillIfNeeded();
-    int idxNextPlayer = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size();
-    if (lastRound && idxNextPlayer == players.indexOf(winnerPlayer)) {
-      setEnded(true);
-      return;
+    checkEndGame();
+    if(!(getEnded())) {
+      gameBoard.refillIfNeeded();
+      int nextPlayerIdx = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size();
+      setActivePlayer(players.get(nextPlayerIdx));
     }
-    setActivePlayer(players.get(idxNextPlayer));
   }
 
   /**
@@ -454,22 +485,63 @@ public class Game {
   }
 
   /**
-   * Function that checks if there's a winner and sets flags of lastRound and
-   * ended
-   * accordingly.
-   * 
-   * @throws NullPlayerException
+   * Quick helper function to determine if the player is the last in turn.
+   * @param playerToCheck
+   * @return
+   */
+  private boolean isLastPlayer(Player playerToCheck){
+    final Integer idxDiff = players.indexOf(playerToCheck) - players.indexOf(firstPlayer);
+    return (idxDiff == -1 || idxDiff == (maxPlayers-1));
+  }
+
+  /**
+   * Function that checks if there's a player who completed
+   * their bookshelf and sets flags accordingly.
    * 
    */
-  public void checkWin() throws NullPlayerException {
-    if (this.activePlayer.getBookshelf().isBookshelfFull()) {
-      setWinnerPlayer(activePlayer);
-      if (this.activePlayer.equals(this.firstPlayer)) {
-        setEnded(true);
-      } else {
-        setLastRound();
-      }
+  public void checkEndGame() {
+    if (activePlayer.getBookshelf().isBookshelfFull()) {
+      activePlayer.getScore().setExtraPoint();
+      // When one player completes their bookshelf, last turn starts
+      setLastRound();
     }
+    // Regardless of bookshelf, if last player and lastRound, end game
+    if (lastRound && isLastPlayer(activePlayer)) {
+      endGame();
+    }
+  }
+
+  /**
+   * Helper method to be passed to {@link Game#endGame()}
+   * in order to determine the winner, according to game rules:
+   * In case of score parity, last player in turn wins
+   * @param p1
+   * @param p2
+   * @return
+   */
+  private Player decideWinner(Player p1, Player p2){
+    final Integer p1Score = p1.getScore().getTotalScore();
+    final Integer p2Score = p2.getScore().getTotalScore();
+
+    if (p1Score.equals(p2Score)) {
+      final Integer startingPos1 = players.indexOf(p1) - players.indexOf(firstPlayer); 
+      final Integer startingPos2 = players.indexOf(p2) - players.indexOf(firstPlayer); 
+      return (startingPos1 > startingPos2 ? p1 : p2);
+    }
+    else{
+      return (p1Score > p2Score ? p1 : p2);
+    }
+  }
+
+  /**
+   * Helper method that sets the game as ended
+   * and declares the winner
+   */
+  private void endGame() {
+    setEnded(true);
+    players.stream()
+      .reduce(this::decideWinner)
+      .ifPresent(this::setWinnerPlayer);
   }
 
   /**
