@@ -524,8 +524,11 @@ public class Game {
     final Integer p2Score = p2.getScore().getTotalScore();
 
     if (p1Score.equals(p2Score)) {
-      final Integer startingPos1 = players.indexOf(p1) - players.indexOf(firstPlayer); 
-      final Integer startingPos2 = players.indexOf(p2) - players.indexOf(firstPlayer); 
+      // Positions relative to firstPlayer can be negative -> Modular arithmetics
+      Integer startingPos1 = players.indexOf(p1) - players.indexOf(firstPlayer);
+      startingPos1 = startingPos1 > 0 ? startingPos1 : startingPos1 + maxPlayers;
+      Integer startingPos2 = players.indexOf(p2) - players.indexOf(firstPlayer); 
+      startingPos2 = startingPos2 > 0 ? startingPos2 : startingPos2 + maxPlayers;
       return (startingPos1 > startingPos2 ? p1 : p2);
     }
     else{
