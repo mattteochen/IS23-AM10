@@ -32,7 +32,7 @@ public final class ServerDebugPrefixString {
   public static final String ADD_PLAYER_COMMAND_PREFIX = "ADD_PLAYER ->";
 
   /**
-   * {@link Opcode#ADD_PLAYER} prefix string.
+   * {@link Opcode#MOVE_TILES} prefix string.
    *
    */
   public static final String MOVE_TILES_COMMAND_PREFIX = "MOVE_TILES ->";

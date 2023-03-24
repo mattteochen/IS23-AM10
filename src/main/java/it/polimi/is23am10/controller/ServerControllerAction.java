@@ -174,6 +174,10 @@ public class ServerControllerAction {
     }
   };
 
+  /**
+   * The {@link Opcode#MOVE_TILES} command callback worker.
+   *
+   */
   protected final ControllerConsumer moveTilesConsumer = (playerConnector, command) -> {
     if (command instanceof MoveTilesCommand) {
       try {
