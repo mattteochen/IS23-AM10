@@ -28,6 +28,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck", "checkstyle:variabledeclarationusagedistancecheck",
+    "checkstyle:operatorwrapcheck" })
 public class SharedPatternFactoryTest {
 
   @Test
@@ -77,12 +80,12 @@ public class SharedPatternFactoryTest {
             "XXCXX" +
             "XXCXX");
 
-    assertTrue(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentMatching));
-    assertTrue(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentAllEqualsMatching));
-    assertFalse(SharedPatternFactory.checkTwoAdjacents.test(twoAdjacentNotMatching));
-    assertFalse(SharedPatternFactory.checkTwoAdjacents.test(withHorizontalOverlappingBookshelf));
-    assertFalse(SharedPatternFactory.checkTwoAdjacents.test(withVerticalOverlappingBookshelf));
-    assertFalse(SharedPatternFactory.checkTwoAdjacents.test(allNull));
+    assertTrue(SharedPatternFactory.checkTwoAdjacent.test(twoAdjacentMatching));
+    assertTrue(SharedPatternFactory.checkTwoAdjacent.test(twoAdjacentAllEqualsMatching));
+    assertFalse(SharedPatternFactory.checkTwoAdjacent.test(twoAdjacentNotMatching));
+    assertFalse(SharedPatternFactory.checkTwoAdjacent.test(withHorizontalOverlappingBookshelf));
+    assertFalse(SharedPatternFactory.checkTwoAdjacent.test(withVerticalOverlappingBookshelf));
+    assertFalse(SharedPatternFactory.checkTwoAdjacent.test(allNull));
   };
 
   @Test
@@ -154,11 +157,11 @@ public class SharedPatternFactoryTest {
             "XCCCX" +
             "XXCXX");
 
-    assertTrue(SharedPatternFactory.checkFourAdjacents.test(fourAdjacentsMatching));
-    assertFalse(SharedPatternFactory.checkFourAdjacents.test(fourAdjacentsNotMatching));
-    assertFalse(SharedPatternFactory.checkFourAdjacents.test(withHorizontalOverlappingBookshelf));
-    assertFalse(SharedPatternFactory.checkFourAdjacents.test(withVerticalOverlappingBookshelf));
-    assertFalse(SharedPatternFactory.checkFourAdjacents.test(allNull));
+    assertTrue(SharedPatternFactory.checkFourAdjacent.test(fourAdjacentsMatching));
+    assertFalse(SharedPatternFactory.checkFourAdjacent.test(fourAdjacentsNotMatching));
+    assertFalse(SharedPatternFactory.checkFourAdjacent.test(withHorizontalOverlappingBookshelf));
+    assertFalse(SharedPatternFactory.checkFourAdjacent.test(withVerticalOverlappingBookshelf));
+    assertFalse(SharedPatternFactory.checkFourAdjacent.test(allNull));
   };
 
   @Test

@@ -257,7 +257,7 @@ public class Board {
   }
 
   /**
-   * Support method that removes a tile 
+   * Support method that removes a tile
    * 
    * @param row row index of removed tile
    * @param col col index of removed tile
@@ -265,7 +265,8 @@ public class Board {
    * @throws BoardGridRowIndexOutOfBoundsException
    * @throws NullIndexValueException
    */
-  public void removeTileAt(Integer row, Integer col) throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException, NullIndexValueException{
+  public void removeTileAt(Integer row, Integer col)
+      throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException, NullIndexValueException {
     if (!IndexValidator.validColIndex(col, Board.BOARD_GRID_COLS)) {
       throw new BoardGridColIndexOutOfBoundsException(col);
     }
@@ -300,16 +301,15 @@ public class Board {
     return tile;
   }
 
-  public boolean isRefillNeeded(){
-    for (int i = 0; i < Board.BOARD_GRID_ROWS ; i++) {
-      for (int j = 0; j < Board.BOARD_GRID_COLS ; j++) {
-        if(boardGrid[i][j].getType() != TileType.EMPTY){
-          if((i > 0 &&  boardGrid[i-1][j].getType() != TileType.EMPTY) ||
-          (i < Board.BOARD_GRID_ROWS - 1 &&  boardGrid[i+1][j].getType() != TileType.EMPTY) ||
-          (j > 0 &&  boardGrid[i][j-1].getType() != TileType.EMPTY) ||
-          (j < Board.BOARD_GRID_COLS - 1 &&  boardGrid[i][j+1].getType() != TileType.EMPTY)){
-            return false;
-          }
+  public boolean isRefillNeeded() {
+    for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
+      for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
+        if (boardGrid[i][j].getType() != TileType.EMPTY
+            && ((i > 0 && boardGrid[i - 1][j].getType() != TileType.EMPTY) ||
+                (i < Board.BOARD_GRID_ROWS - 1 && boardGrid[i + 1][j].getType() != TileType.EMPTY) ||
+                (j > 0 && boardGrid[i][j - 1].getType() != TileType.EMPTY) ||
+                (j < Board.BOARD_GRID_COLS - 1 && boardGrid[i][j + 1].getType() != TileType.EMPTY))) {
+          return false;
         }
       }
     }
@@ -321,8 +321,8 @@ public class Board {
    * checks if the Board needs to be refilled
    * and proceeds if so.
    */
-  public void refillIfNeeded(){
-    if(isRefillNeeded()){
+  public void refillIfNeeded() {
+    if (isRefillNeeded()) {
       fillBoardGrid();
     }
   }

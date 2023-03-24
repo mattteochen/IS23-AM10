@@ -22,8 +22,10 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test class to check Player Factory work
- * and exceptions thrown
+ * and exceptions thrown.
  */
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck", "checkstyle:variabledeclarationusagedistancecheck" })
 public class PlayerFactoryTest {
 
   @Test
@@ -51,7 +53,8 @@ public class PlayerFactoryTest {
       AlreadyInitiatedPatternException, NullPlayerNamesException {
     ArrayList<String> players = new ArrayList<String>();
     players.add("myNewPlayer");
-    assertThrows(DuplicatePlayerNameException.class, () -> PlayerFactory.getNewPlayer("myNewPlayer", players, new Game()));
+    assertThrows(DuplicatePlayerNameException.class,
+        () -> PlayerFactory.getNewPlayer("myNewPlayer", players, new Game()));
   }
 
   @Test

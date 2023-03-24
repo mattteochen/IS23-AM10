@@ -80,7 +80,7 @@ public final class ServerControllerState {
       return;
     }
 
-    Optional<GameHandler> target = Optional.empty();
+    Optional<GameHandler> target;
 
     synchronized (gamePool) {
       target = gamePool.stream()
@@ -129,7 +129,7 @@ public final class ServerControllerState {
       return;
     }
 
-    Optional<PlayerConnector> target = Optional.empty();
+    Optional<PlayerConnector> target;
 
     synchronized (playersPool) {
       target = playersPool.stream()

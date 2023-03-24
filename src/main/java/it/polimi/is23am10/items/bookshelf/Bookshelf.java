@@ -9,7 +9,6 @@ import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.utils.IndexValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-
 import java.util.Map;
 
 /**
@@ -79,7 +78,7 @@ public class Bookshelf {
    * and builds and returns the matching bookshelf object.
    * 
    * @param bookshelfString A string that allows us to fill the bookshelfGrid with the
-   *                      correspondance between each char and the position in the
+   *                      correspondence between each char and the position in the
    *                      grid, there's a map to help us matching the char with
    *                      the {@link TileType}
    * @throws WrongLengthBookshelfStringException
@@ -106,7 +105,7 @@ public class Bookshelf {
      * Here we are filling the bookshelf inserting a Tile of the corresponding
      * TileType, using the mapping we implemented before.
      * To access the right char in each cycle we are using an index which maps the
-     * bidimensional array indexes into one single index.
+     * bi-dimensional array indexes into one single index.
      */
     for (int i = 0; i < BOOKSHELF_ROWS; i++) {
       for (int j = 0; j < BOOKSHELF_COLS; j++) {

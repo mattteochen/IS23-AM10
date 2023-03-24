@@ -28,6 +28,7 @@ public class AddPlayerCommand extends AbstractCommand {
    * An utility to be used during deserialization processes.
    * 
    */
+  @SuppressWarnings("unused")
   private final String className = this.getClass().getName();
 
   /**

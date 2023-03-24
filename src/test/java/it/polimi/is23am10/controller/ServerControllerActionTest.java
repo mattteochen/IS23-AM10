@@ -41,6 +41,8 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings({ "deprecation", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck",
+    "checkstyle:linelengthcheck" })
 class ServerControllerActionTest {
 
   @Spy

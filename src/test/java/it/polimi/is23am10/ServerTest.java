@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import it.polimi.is23am10.Server.ServerStatus;
 import it.polimi.is23am10.config.ServerConfigContext;
 import it.polimi.is23am10.config.ServerConfigDefault;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -27,6 +26,11 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings({ "deprecation", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck",
+    "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck", "checkstyle:variabledeclarationusagedistancecheck",
+    "checkstyle:operatorwrapcheck", "checkstyle:multiplevariabledeclarationscheck", "checkstyle:membernamecheck",
+    "checkstyle:nonemptyatclausedescriptioncheck", "checkstyle:typenamecheck" })
 class ServerTest {
 
   @Mock
@@ -58,7 +62,7 @@ class ServerTest {
     server.start(ctx);
     assertEquals(ServerStatus.STARTED, server.status());
 
-		verify(executorService, Mockito.times(1)).execute(any());
+    verify(executorService, Mockito.times(1)).execute(any());
   }
 
   @Test

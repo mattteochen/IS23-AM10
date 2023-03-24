@@ -4,23 +4,24 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-
-import org.junit.jupiter.api.Test;
-
 import it.polimi.is23am10.factory.PrivatePatternFactory;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.card.exceptions.NegativeMatchedBlockCountException;
 import it.polimi.is23am10.items.card.exceptions.NullMatchedBlockCountException;
 import it.polimi.is23am10.pattern.PrivatePattern;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import org.junit.jupiter.api.Test;
 
-public class PrivateCardTest {
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck", "checkstyle:variabledeclarationusagedistancecheck",
+    "checkstyle:operatorwrapcheck", "checkstyle:multiplevariabledeclarationscheck", "checkstyle:membernamecheck", "checkstyle:nonemptyatclausedescriptioncheck" })
+class PrivateCardTest {
   /**
    * Green path test for constructor.
-   * 
+   *
    * @throws AlreadyInitiatedPatternException
    */
   @Test
@@ -37,7 +38,7 @@ public class PrivateCardTest {
   /**
    * Testing setPattern throwing exception, when trying
    * to set a new pattern on an already instantiated one.
-   * 
+   *
    * @throws AlreadyInitiatedPatternException
    */
   @Test
@@ -51,7 +52,7 @@ public class PrivateCardTest {
   /**
    * Testing exception when setting a null number of
    * matched blocks.
-   * 
+   *
    * @throws AlreadyInitiatedPatternException
    */
   @Test
@@ -65,7 +66,7 @@ public class PrivateCardTest {
   /**
    * Testing exception when setting a negative number of
    * matched blocks.
-   * 
+   *
    * @throws AlreadyInitiatedPatternException
    */
   @Test

@@ -18,17 +18,19 @@ import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueExc
 import it.polimi.is23am10.pattern.PrivatePattern;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class ScoreTest {
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck", "checkstyle:variabledeclarationusagedistancecheck",
+    "checkstyle:operatorwrapcheck", "checkstyle:multiplevariabledeclarationscheck", "checkstyle:membernamecheck",
+    "checkstyle:nonemptyatclausedescriptioncheck", "checkstyle:typenamecheck" })
+class ScoreTest {
   @Test
   public void constructor_should_set_zeros() {
     Score s = new Score();
@@ -52,7 +54,7 @@ public class ScoreTest {
     /**
      * This test comes directly from the rulebook.
      * Check Rulebook - page 2 - Final count example.
-     * 
+     *
      * @throws WrongCharBookshelfStringException
      * @throws WrongLengthBookshelfStringException
      * @throws NullPointerException
@@ -84,7 +86,7 @@ public class ScoreTest {
     /**
      * This test checks that an empty bookshelf
      * returns a zero score.
-     * 
+     *
      * @throws NullPointerException
      * @throws WrongLengthBookshelfStringException
      * @throws WrongCharBookshelfStringException
@@ -111,7 +113,7 @@ public class ScoreTest {
     /**
      * This tests checks that groups bigger than {@link Score#MAX_GROUP_SIZE}
      * only count as {@link Score#MAX_GROUP_SIZE}-big groups.
-     * 
+     *
      * @throws NullPointerException
      * @throws WrongLengthBookshelfStringException
      * @throws WrongCharBookshelfStringException
@@ -146,7 +148,7 @@ public class ScoreTest {
     /**
      * This tests checks that groups smaller than {@link Score#MIN_GROUP_SIZE}
      * get ignored.
-     * 
+     *
      * @throws NullPointerException
      * @throws WrongLengthBookshelfStringException
      * @throws WrongCharBookshelfStringException
@@ -191,7 +193,7 @@ public class ScoreTest {
 
     /**
      * Test to check green path. Scoreblocks are present and valid
-     * 
+     *
      * @throws NotValidScoreBlockValueException
      * @throws NullScoreBlockListException
      */
@@ -213,7 +215,7 @@ public class ScoreTest {
     /**
      * Test to check that an empty list of scoreblocks
      * results in a zero-score.
-     * 
+     *
      * @throws NotValidScoreBlockValueException
      * @throws NullScoreBlockListException
      */
@@ -246,7 +248,7 @@ public class ScoreTest {
 
     /**
      * Test to check green path. Private
-     * 
+     *
      * @throws NotValidScoreBlockValueException
      * @throws NullScoreBlockListException
      * @throws AlreadyInitiatedPatternException

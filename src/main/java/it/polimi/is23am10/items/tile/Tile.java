@@ -68,17 +68,25 @@ public class Tile {
 
 
   /**
-   * The method that allows us to compare two Tiles.
+   * {@inheritDoc}}
    * 
-   * @param t The tile we want to have a comparison with.
-   * 
-   * @return True if the Tiles have the same type.
    */
-  public boolean equals(Tile t) throws NullPointerException {
-    if (t == null) {
-      throw new NullPointerException("[Class Tile, method equals]: Null pointer exception");
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Tile)) {
+      return false;
     }
-    return (getType() == t.getType());
+    Tile tile = (Tile) obj;
+    return tile.getType() == type;
+  }
+
+  /**
+   * {@inheritDoc}}
+   * 
+   */
+  @Override
+  public int hashCode() {
+    return type.toString().hashCode();
   }
 
   /**
@@ -88,9 +96,6 @@ public class Tile {
    * 
    */
   public boolean isEmpty() {
-    if (this.getType() == TileType.EMPTY) {
-      return true;
-    }
-    return false;
+    return (this.getType() == TileType.EMPTY);
   }
 }

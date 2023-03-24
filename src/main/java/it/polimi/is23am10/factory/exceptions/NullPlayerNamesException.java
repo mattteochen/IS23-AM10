@@ -2,7 +2,7 @@ package it.polimi.is23am10.factory.exceptions;
 
 /**
  * Custom exception to handle null player names when checking for duplicates
- * in Player Factory
+ * in Player Factory.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)

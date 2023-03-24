@@ -54,15 +54,18 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
+@SuppressWarnings({"checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck", "checkstyle:membernamecheck", "checkstyle:OuterTypeFilenameCheck"})
 class TestingPurposesClass {
   String s = "Before you marry a person, you should first make them use a computer with slow Internet to see who they really are";
 }
 
+@SuppressWarnings({"checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck"})
 class TestingPurposesClass2 {
   String className = "I never forget a face but in your case, I’ll be glad to make an exception";
 }
 
 @RunWith(MockitoJUnitRunner.class)
+@SuppressWarnings({"deprecation", "unchecked", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck"})
 class ServerControllerTest {
 
   @Mock
@@ -165,7 +168,7 @@ class ServerControllerTest {
       InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException {
     Socket mockSocket = Mockito.mock(Socket.class);
     Game game = GameFactory.getNewGame("Steve", 4);
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     playerConnector.addMessageToQueue(game);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);

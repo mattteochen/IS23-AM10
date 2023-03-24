@@ -33,6 +33,7 @@ import org.apache.logging.log4j.Logger;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
+@SuppressWarnings({"checkstyle:nonemptyatclausedescriptioncheck"})
 public final class ServerController implements Runnable {
 
   /**

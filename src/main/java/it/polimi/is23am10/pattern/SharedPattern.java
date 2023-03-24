@@ -1,9 +1,5 @@
 package it.polimi.is23am10.pattern;
 
-import java.util.function.Predicate;
-
-import it.polimi.is23am10.items.bookshelf.Bookshelf;
-
 /**
  * Shared pattern object.
  *
@@ -43,8 +39,9 @@ public class SharedPattern<T> extends AbstractPattern<T> {
    *
    */
   @Override
+  @SuppressWarnings("unchecked")
   public boolean equals(Object obj) {
-    if (!(obj instanceof SharedPattern )) {
+    if (!(obj instanceof SharedPattern)) {
       return false;
     }
     return this.rule == ((SharedPattern<T>) obj).getRule()

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import it.polimi.is23am10.command.AbstractCommand.Opcode;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck" })
 class StartGameCommandTest {
   @Test
   void EQUALS_should_COMPARE_CONTENT_EQUALITY() {
