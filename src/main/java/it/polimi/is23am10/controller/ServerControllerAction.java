@@ -3,6 +3,7 @@ package it.polimi.is23am10.controller;
 import it.polimi.is23am10.command.AbstractCommand;
 import it.polimi.is23am10.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.command.AddPlayerCommand;
+import it.polimi.is23am10.command.MoveTilesCommand;
 import it.polimi.is23am10.command.StartGameCommand;
 import it.polimi.is23am10.controller.exceptions.AddPlayerCommandSerializationErrorException;
 import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
@@ -173,6 +174,21 @@ public class ServerControllerAction {
     }
   };
 
+  protected final ControllerConsumer moveTilesConsumer = (playerConnector, command) -> {
+    if (command instanceof MoveTilesCommand) {
+      try {
+        GameHandler handler = ServerControllerState.getGameHandlerByUUID(((MoveTilesCommand) command).getGameId());
+        // I check that the player performing the action is the one actually set as active player
+        if (handler.getGame().getActivePlayer().getPlayerName().equals(playerConnector.getPlayerName())) {
+          // TODO: implement moves
+        }
+      } catch (NullGameHandlerInstance e) {
+        logger.error("{} Failed to get game handler from command {}",
+            ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX, e);
+      }
+    }
+  };
+
   /**
    * Update all the connected players game state by sending a {@link Game} message.
    *
@@ -192,7 +208,8 @@ public class ServerControllerAction {
    */
   private final Map<Opcode, ControllerConsumer> actions = Map.of(
       Opcode.START, startConsumer,
-      Opcode.ADD_PLAYER, addPlayerConsumer
+      Opcode.ADD_PLAYER, addPlayerConsumer,
+      Opcode.MOVE_TILES, moveTilesConsumer
     );
 
   /**
