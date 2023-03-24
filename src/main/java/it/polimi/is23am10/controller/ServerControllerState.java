@@ -149,6 +149,22 @@ public final class ServerControllerState {
     }
   }
 
+  public static GameHandler getGameHandlerByUUID(UUID gameId) throws NullGameHandlerInstance{
+    Optional<GameHandler> target;
+
+    synchronized (gamePool) {
+      target = gamePool.stream()
+        .filter(gh -> 
+            gh.getGame().getGameId().equals(gameId))
+        .findFirst();
+    }
+    if (target.isPresent()) {
+      return target.get();
+    } else {
+      throw new NullGameHandlerInstance();
+    }
+  }
+
   /**
    * Player pool getter.
    *
