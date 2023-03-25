@@ -17,6 +17,7 @@ public abstract class AbstractCommand {
   public enum Opcode {
     START,
     ADD_PLAYER,
+    MOVE_TILES,
     NULL
   }
 

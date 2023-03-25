@@ -3,6 +3,7 @@ package it.polimi.is23am10.controller;
 import it.polimi.is23am10.command.AbstractCommand;
 import it.polimi.is23am10.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.command.AddPlayerCommand;
+import it.polimi.is23am10.command.MoveTilesCommand;
 import it.polimi.is23am10.command.StartGameCommand;
 import it.polimi.is23am10.controller.exceptions.AddPlayerCommandSerializationErrorException;
 import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
@@ -115,40 +116,30 @@ public class ServerControllerAction {
         String playerName = ((AddPlayerCommand) command).getPlayerName();
         UUID gameId = ((AddPlayerCommand) command).getGameId();
 
-        Optional<GameHandler> optionalHandler = ServerControllerState.getGamePools()
-            .stream()
-            .filter(handler -> handler.getGame().getGameId().equals(gameId))
-            .findFirst();
+        final GameHandler gameHandler = ServerControllerState.getGameHandlerByUUID(gameId);
 
-        if (optionalHandler.isPresent()) {
-          final GameHandler gameHandler = optionalHandler.get();
+        // add the new player in the game model.
+        // note, it is essential that the the model is updated first
+        // to avoid wrong parameters in connectors if any exception
+        // will be thrown from the model.
+        gameHandler.getGame().addPlayer(playerName);
 
-          // add the new player in the game model.
-          // note, it is essential that the the model is updated first
-          // to avoid wrong parameters in connectors if any exception
-          // will be thrown from the model.
-          gameHandler.getGame().addPlayer(playerName);
+        // add the new player connector instance to the game's player pool.
+        gameHandler.addPlayerConnector(playerConnector);
 
-          // add the new player connector instance to the game's player pool.
-          gameHandler.addPlayerConnector(playerConnector);
+        // add the new player connector instance on the player pool.
+        ServerControllerState.addPlayerConnector(playerConnector);
 
-          // add the new player connector instance on the player pool.
-          ServerControllerState.addPlayerConnector(playerConnector);
+        // populate the connector with the game and player reference.
+        playerConnector.setGameId(gameId);
+        playerConnector.setPlayerName(playerName);
 
-          // populate the connector with the game and player reference.
-          playerConnector.setGameId(gameId);
-          playerConnector.setPlayerName(playerName);
-
-          logger.info("{} Added new player {} to game {}",
-              ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
-              playerName, gameId);
-              
-          // send the game model update to all the connected players
-          updateAllPlayers(gameHandler);
-        } else {
-          logger.error("{} Game id {} not found",
-              ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, gameId);
-        }
+        logger.info("{} Added new player {} to game {}",
+            ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
+            playerName, gameId);
+            
+        // send the game model update to all the connected players
+        updateAllPlayers(gameHandler);
       } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
           | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
           | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
@@ -165,11 +156,33 @@ public class ServerControllerAction {
       } catch (InterruptedException e) {
         logger.error("{} Failed to push update to all player connectors {}",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
+      } catch (NullGameHandlerInstance e) {
+        logger.error("{} Game handler not found {}",
+            ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
       }
     } else {
       logger.error("{} Failed to obtain deserialized ADD_PLAYER command",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX);
       throw new AddPlayerCommandSerializationErrorException(AddPlayerCommand.class.toString());
+    }
+  };
+
+  /**
+   * The {@link Opcode#MOVE_TILES} command callback worker.
+   *
+   */
+  protected final ControllerConsumer moveTilesConsumer = (playerConnector, command) -> {
+    if (command instanceof MoveTilesCommand) {
+      try {
+        GameHandler handler = ServerControllerState.getGameHandlerByUUID(((MoveTilesCommand) command).getGameId());
+        // I check that the player performing the action is the one actually set as active player
+        if (handler.getGame().getActivePlayer().getPlayerName().equals(playerConnector.getPlayerName())) {
+          // TODO: implement moves
+        }
+      } catch (NullGameHandlerInstance e) {
+        logger.error("{} Failed to get game handler from command {}",
+            ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX, e);
+      }
     }
   };
 
@@ -192,7 +205,8 @@ public class ServerControllerAction {
    */
   private final Map<Opcode, ControllerConsumer> actions = Map.of(
       Opcode.START, startConsumer,
-      Opcode.ADD_PLAYER, addPlayerConsumer
+      Opcode.ADD_PLAYER, addPlayerConsumer,
+      Opcode.MOVE_TILES, moveTilesConsumer
     );
 
   /**

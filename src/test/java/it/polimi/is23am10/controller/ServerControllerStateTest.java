@@ -2,6 +2,7 @@ package it.polimi.is23am10.controller;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
@@ -24,6 +25,7 @@ import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.net.Socket;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -169,5 +171,24 @@ class ServerControllerStateTest {
     ServerControllerState.removeGameHandlerById(handler.getGame().getGameId());
     assertEquals(1, ServerControllerState.getGamePools().size());
     assertEquals(1, ServerControllerState.getPlayersPool().size());
+  }
+
+  @Test
+  public void getGameHandlerByUUID_should_throw_NullGameHandlerInstance() {
+    assertThrows(NullGameHandlerInstance.class, () -> ServerControllerState.getGameHandlerByUUID(UUID.randomUUID()));
+  }
+
+  @Test
+  public void getGameHandlerByUUID_should_return_handler() 
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, 
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, 
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException, 
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, NullGameHandlerInstance {
+    
+    GameHandler handler = new GameHandler("Steve", 2);
+    ServerControllerState.addGameHandler(handler);
+    GameHandler returnedHandler = ServerControllerState.getGameHandlerByUUID(handler.getGame().getGameId()); 
+    assertNotNull(returnedHandler);
+    assertEquals(handler, returnedHandler);
   }
 }
