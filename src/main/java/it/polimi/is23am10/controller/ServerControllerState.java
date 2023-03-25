@@ -151,6 +151,7 @@ public final class ServerControllerState {
 
   /**
    * Finds a game handler in the gamepool by its game id.
+   * 
    * @param gameId the UUID to search for
    * @return the GameHandler, if found
    * @throws NullGameHandlerInstance

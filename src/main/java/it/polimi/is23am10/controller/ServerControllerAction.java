@@ -116,40 +116,30 @@ public class ServerControllerAction {
         String playerName = ((AddPlayerCommand) command).getPlayerName();
         UUID gameId = ((AddPlayerCommand) command).getGameId();
 
-        Optional<GameHandler> optionalHandler = ServerControllerState.getGamePools()
-            .stream()
-            .filter(handler -> handler.getGame().getGameId().equals(gameId))
-            .findFirst();
+        final GameHandler gameHandler = ServerControllerState.getGameHandlerByUUID(gameId);
 
-        if (optionalHandler.isPresent()) {
-          final GameHandler gameHandler = optionalHandler.get();
+        // add the new player in the game model.
+        // note, it is essential that the the model is updated first
+        // to avoid wrong parameters in connectors if any exception
+        // will be thrown from the model.
+        gameHandler.getGame().addPlayer(playerName);
 
-          // add the new player in the game model.
-          // note, it is essential that the the model is updated first
-          // to avoid wrong parameters in connectors if any exception
-          // will be thrown from the model.
-          gameHandler.getGame().addPlayer(playerName);
+        // add the new player connector instance to the game's player pool.
+        gameHandler.addPlayerConnector(playerConnector);
 
-          // add the new player connector instance to the game's player pool.
-          gameHandler.addPlayerConnector(playerConnector);
+        // add the new player connector instance on the player pool.
+        ServerControllerState.addPlayerConnector(playerConnector);
 
-          // add the new player connector instance on the player pool.
-          ServerControllerState.addPlayerConnector(playerConnector);
+        // populate the connector with the game and player reference.
+        playerConnector.setGameId(gameId);
+        playerConnector.setPlayerName(playerName);
 
-          // populate the connector with the game and player reference.
-          playerConnector.setGameId(gameId);
-          playerConnector.setPlayerName(playerName);
-
-          logger.info("{} Added new player {} to game {}",
-              ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
-              playerName, gameId);
-              
-          // send the game model update to all the connected players
-          updateAllPlayers(gameHandler);
-        } else {
-          logger.error("{} Game id {} not found",
-              ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, gameId);
-        }
+        logger.info("{} Added new player {} to game {}",
+            ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
+            playerName, gameId);
+            
+        // send the game model update to all the connected players
+        updateAllPlayers(gameHandler);
       } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
           | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
           | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
@@ -165,6 +155,9 @@ public class ServerControllerAction {
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
       } catch (InterruptedException e) {
         logger.error("{} Failed to push update to all player connectors {}",
+            ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
+      } catch (NullGameHandlerInstance e) {
+        logger.error("{} Game handler not found {}",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
       }
     } else {

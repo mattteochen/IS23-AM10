@@ -17,6 +17,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import it.polimi.is23am10.command.AddPlayerCommand;
+import it.polimi.is23am10.command.MoveTilesCommand;
 import it.polimi.is23am10.command.StartGameCommand;
 import it.polimi.is23am10.factory.GameFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
@@ -41,6 +42,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -192,6 +194,20 @@ class ServerControllerTest {
     when(playerConnector.getConnector()).thenReturn(mockSocket);
     when(mockSocket.getInputStream()).thenReturn(inputStream);
     assertEquals(cmd, (AddPlayerCommand) controller.buildCommand());
+  }
+
+  @Test
+  void MOVE_TILES_PLAYER_COMMAND_should_BUILD_MOVE_TILES_COMMAND()
+      throws JsonIOException, JsonSyntaxException, IOException {
+    Socket mockSocket = Mockito.mock(Socket.class);
+    MoveTilesCommand cmd = new MoveTilesCommand(UUID.randomUUID(), new HashMap<>());
+    Gson gson = new Gson();
+    String json = gson.toJson(cmd);
+    ByteArrayInputStream inputStream = new ByteArrayInputStream(json.getBytes());
+
+    when(playerConnector.getConnector()).thenReturn(mockSocket);
+    when(mockSocket.getInputStream()).thenReturn(inputStream);
+    assertEquals(cmd, (MoveTilesCommand) controller.buildCommand());
   }
 
   @Test
