@@ -86,18 +86,20 @@ public final class ServerController implements Runnable {
    */
   @Override
   public void run() {
-    while (playerConnector != null && playerConnector.getConnector().isConnected()) {
+    while (playerConnector != null) {
       try {
-        AbstractCommand command = buildCommand();
+        AbstractCommand command;
+        if (playerConnector.getConnector() != null && playerConnector.getConnector().isConnected()){
+          command = buildCommand();
+        } else {
+          command = playerConnector.getRmiConnector().getCommand();
+        }
         serverControllerAction.execute(playerConnector, command);
-        update();
+        //update();
       } catch (IOException e) {
         logger.error("Failed to retrieve socket payload", e);
       } catch (JsonIOException | JsonSyntaxException e) {
         logger.error("Failed to parse socket payload", e);
-      } catch (InterruptedException e) {
-        logger.error("Failed get response message from the queue", e);
-        // note, we are not raising the interrupted flag as we don't want to stop this thread.
       }
     }
   }

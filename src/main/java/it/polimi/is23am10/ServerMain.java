@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.Executors;
 
+
 /**
  * The server main class definition.
  *
@@ -24,9 +25,7 @@ public final class ServerMain {
     // TODO add args parser for CLI context loading if args is present
     ServerConfigContext ctx = new ServerConfigContext(ServerConfigDefault.SERVER_PORT,
         ServerConfigDefault.MAX_CLIENT_CONNECTION, ServerConfigDefault.KEEP_ALIVE);
-
-    Server server = new Server(new ServerSocket(ctx.getServerPort()),
-        Executors.newFixedThreadPool(ctx.getMaxConnections()));
+    Server server = new Server(Executors.newFixedThreadPool(ctx.getMaxConnections()));
     server.start(ctx);
   }
 }

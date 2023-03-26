@@ -3,6 +3,8 @@ package it.polimi.is23am10.playerconnector;
 import it.polimi.is23am10.game.Game;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
+import it.polimi.is23am10.rmi.MessengerService;
+
 import java.net.Socket;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,6 +47,8 @@ public class PlayerConnector {
    */
   private BlockingQueue<Game> msgQueue;
 
+  private MessengerService rmiConnector;
+
   /**
    * Constructor.
    *
@@ -64,6 +68,14 @@ public class PlayerConnector {
     }
     this.connector = connector;
     this.msgQueue = msgQueue;
+  }
+
+  public PlayerConnector(MessengerService rmiConnector, LinkedBlockingQueue<Game> msgQueue) throws NullBlockingQueueException{
+    if (msgQueue == null) {
+      throw new NullBlockingQueueException();
+    }
+    this.msgQueue = msgQueue;
+    this.rmiConnector = rmiConnector;
   }
 
   /**
@@ -94,6 +106,10 @@ public class PlayerConnector {
    */
   public synchronized String getPlayerName() {
     return playerName;
+  }
+
+  public synchronized MessengerService getRmiConnector(){
+    return rmiConnector;
   }
 
   /**
