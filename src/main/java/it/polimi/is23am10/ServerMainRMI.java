@@ -1,9 +1,8 @@
 package it.polimi.is23am10;
 
 import it.polimi.is23am10.config.ServerConfigDefault;
-import it.polimi.is23am10.controller.ServerControllerActionRMIImpl;
-import it.polimi.is23am10.controller.interfaces.IServerControllerActionRMI;
-
+import it.polimi.is23am10.controller.ServerControllerActionRmiImpl;
+import it.polimi.is23am10.controller.interfaces.IServerControllerActionRmi;
 import java.io.IOException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -24,9 +23,9 @@ public final class ServerMainRMI {
    *
    */
   public static void main(String[] args) throws IOException {
-    IServerControllerActionRMI server = new ServerControllerActionRMIImpl();
-    IServerControllerActionRMI stub = (IServerControllerActionRMI) UnicastRemoteObject.exportObject(server, 0);
+    IServerControllerActionRmi server = new ServerControllerActionRmiImpl();
+    IServerControllerActionRmi stub = (IServerControllerActionRmi) UnicastRemoteObject.exportObject(server, 0);
     Registry registry = LocateRegistry.createRegistry(ServerConfigDefault.SERVER_RMI_PORT);
-    registry.rebind("IServerControllerActionRMI", stub);
+    registry.rebind("IServerControllerActionRmi", stub);
   }
 }

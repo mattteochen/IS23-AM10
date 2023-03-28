@@ -89,7 +89,7 @@ public final class ServerController implements Runnable {
     while (playerConnector != null && playerConnector.getConnector().isConnected()) {
       try {
         AbstractCommand command = buildCommand();
-        serverControllerAction.execute(Optional.of(playerConnector), command);
+        serverControllerAction.execute(playerConnector, command);
         update();
       } catch (IOException e) {
         logger.error("Failed to retrieve socket payload", e);

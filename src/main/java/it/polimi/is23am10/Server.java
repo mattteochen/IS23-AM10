@@ -3,7 +3,7 @@ package it.polimi.is23am10;
 import it.polimi.is23am10.config.ServerConfigContext;
 import it.polimi.is23am10.controller.ServerController;
 import it.polimi.is23am10.controller.ServerControllerActionImpl;
-import it.polimi.is23am10.controller.interfaces.IServerControllerActionRMI;
+import it.polimi.is23am10.controller.interfaces.IServerControllerActionRmi;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
@@ -56,9 +56,9 @@ public class Server {
    */
   protected ExecutorService executorService;
 
-  protected IServerControllerActionRMI rmiServer;
+  protected IServerControllerActionRmi rmiServer;
 
-  protected IServerControllerActionRMI rmiStub;
+  protected IServerControllerActionRmi rmiStub;
 
   Registry rmiRegistry;
 
@@ -68,12 +68,12 @@ public class Server {
    * @throws RemoteException
    *
    */
-  public Server(ServerSocket serverSocket, ExecutorService executorService, IServerControllerActionRMI rmiServer,
+  public Server(ServerSocket serverSocket, ExecutorService executorService, IServerControllerActionRmi rmiServer,
       Registry rmiRegistry) throws RemoteException {
     this.executorService = executorService;
     this.serverSocket = serverSocket;
     this.rmiServer = rmiServer;
-    this.rmiStub = (IServerControllerActionRMI) UnicastRemoteObject.exportObject(this.rmiServer, 0);
+    this.rmiStub = (IServerControllerActionRmi) UnicastRemoteObject.exportObject(this.rmiServer, 0);
     this.rmiRegistry = rmiRegistry;
   }
 
@@ -90,7 +90,7 @@ public class Server {
     // https://www.youtube.com/watch?v=Jo6fKboqfMs&ab_channel=memesammler
 
     //start the rmi server
-    rmiRegistry.rebind("IServerControllerActionRMI", rmiStub);
+    rmiRegistry.rebind("IServerControllerActionRmi", rmiStub);
     //start the socket server
     while (!serverSocket.isClosed()) {
       try {

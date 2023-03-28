@@ -28,7 +28,6 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -92,7 +91,8 @@ public class ServerControllerActionImpl implements IServerControllerAction {
         logger.error("{} Failed the game instance creation {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       } catch (NullPlayerConnector e) {
-        //TODO: as we have a null connector, the model should expose something to remove the player.
+        // TODO: as we have a null connector, the model should expose something to
+        // remove the player.
         logger.error("{} Failed to add player connector {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       } catch (InterruptedException e) {
@@ -138,7 +138,7 @@ public class ServerControllerActionImpl implements IServerControllerAction {
         logger.info("{} Added new player {} to game {}",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
             playerName, gameId);
-            
+
         // send the game model update to all the connected players
         updateAllPlayers(gameHandler);
       } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
@@ -151,7 +151,8 @@ public class ServerControllerActionImpl implements IServerControllerAction {
         logger.error("{} Failed to add new player to game model",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
       } catch (NullPlayerConnector e) {
-        //TODO: as we have a null connector, the model should expose something to remove the player.
+        // TODO: as we have a null connector, the model should expose something to
+        // remove the player.
         logger.error("{} Failed to add player connector {}",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
       } catch (InterruptedException e) {
@@ -175,10 +176,13 @@ public class ServerControllerActionImpl implements IServerControllerAction {
   protected final ControllerConsumer moveTilesConsumer = (playerConnector, command) -> {
     if (command instanceof MoveTilesCommand) {
       try {
-        GameHandler handler = ServerControllerState.getGameHandlerByUUID(((MoveTilesCommand) command).getGameId());
-        // I check that the player performing the action is the one actually set as active player
-        //TODO: add command check to add another layer of security
-        if (handler.getGame().getActivePlayer().getPlayerName().equals(playerConnector.getPlayerName())) {
+        GameHandler handler =
+            ServerControllerState.getGameHandlerByUUID(((MoveTilesCommand) command).getGameId());
+        // I check that the player performing the action is the one actually set as
+        // active player
+        // TODO: add MoveTileCommand player name attribute check to add another layer of security
+        if (handler.getGame().getActivePlayer().getPlayerName().equals(
+            playerConnector.getPlayerName())) {
           // TODO: implement moves
         }
       } catch (NullGameHandlerInstance e) {
@@ -189,7 +193,8 @@ public class ServerControllerActionImpl implements IServerControllerAction {
   };
 
   /**
-   * Update all the connected players game state by sending a {@link Game} message.
+   * Update all the connected players game state by sending a {@link Game}
+   * message.
    *
    * @param handler The current game instance handler.
    * @throws InterruptedException
@@ -208,8 +213,7 @@ public class ServerControllerActionImpl implements IServerControllerAction {
   private final Map<Opcode, ControllerConsumer> actions = Map.of(
       Opcode.START, startConsumer,
       Opcode.ADD_PLAYER, addPlayerConsumer,
-      Opcode.MOVE_TILES, moveTilesConsumer
-    );
+      Opcode.MOVE_TILES, moveTilesConsumer);
 
   /**
    * Apply the callback to a specific {@link Opcode} received from a
@@ -219,10 +223,10 @@ public class ServerControllerActionImpl implements IServerControllerAction {
    * @param command   The deserialized command.
    *
    */
-  public void execute(Optional<PlayerConnector> connector, AbstractCommand command) {
-    if (command == null || !connector.isPresent()) {
+  public void execute(PlayerConnector connector, AbstractCommand command) {
+    if (command == null || connector == null) {
       return;
     }
-    actions.get(command.getOpcode()).accept(connector.get(), command);
+    actions.get(command.getOpcode()).accept(connector, command);
   }
 }

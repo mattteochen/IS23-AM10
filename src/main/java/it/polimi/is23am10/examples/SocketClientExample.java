@@ -3,7 +3,6 @@ package it.polimi.is23am10.examples;
 import com.google.gson.Gson;
 import it.polimi.is23am10.command.StartGameCommand;
 import it.polimi.is23am10.config.ServerConfigDefault;
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -19,9 +18,9 @@ import org.apache.logging.log4j.Logger;
  * This class implements an example of java socket client.
  * 
  * <p>
- *  How to use:
- *  - Start the socket server (ServerMain.java)
- *  - Start this main method
+ * How to use:
+ * - Start the socket server (ServerMain.java)
+ * - Start this main method
  * </p>
  *
  */
@@ -29,6 +28,7 @@ public class SocketClientExample {
 
   /**
    * Main method.
+   *
    * @throws InterruptedException
    *
    */
@@ -44,7 +44,7 @@ public class SocketClientExample {
     final Logger logger = LogManager.getLogger(SocketClientExample.class);
     StartGameCommand command = new StartGameCommand("Client", 4);
 
-    //create the json string
+    // create the json string
     String message = gson.toJson(command);
 
     // establish socket connection to server
@@ -56,12 +56,12 @@ public class SocketClientExample {
     printer.println(message);
 
     DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-    while(dataInputStream.available() == 0) {
+    while (dataInputStream.available() == 0) {
       Thread.sleep(10);
     }
 
     reader = new BufferedReader(
-          new InputStreamReader(dataInputStream));
+        new InputStreamReader(dataInputStream));
     String payload = null;
     if (reader.ready()) {
       payload = reader.readLine();

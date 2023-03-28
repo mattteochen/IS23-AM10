@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import it.polimi.is23am10.Server.ServerStatus;
 import it.polimi.is23am10.config.ServerConfigContext;
 import it.polimi.is23am10.config.ServerConfigDefault;
-import it.polimi.is23am10.controller.interfaces.IServerControllerActionRMI;
+import it.polimi.is23am10.controller.interfaces.IServerControllerActionRmi;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -43,10 +43,10 @@ class ServerTest {
   ExecutorService executorService;
 
   @Mock
-  IServerControllerActionRMI rmiServer;
+  IServerControllerActionRmi rmiServer;
 
   @Mock
-  IServerControllerActionRMI rmiStub;
+  IServerControllerActionRmi rmiStub;
 
   @Mock
   Registry rmiRegistry;

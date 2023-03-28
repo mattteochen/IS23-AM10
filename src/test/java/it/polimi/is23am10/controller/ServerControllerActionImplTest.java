@@ -31,7 +31,6 @@ import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.net.Socket;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,7 +62,7 @@ class ServerControllerActionImplTest {
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new StartGameCommand("player", 2);
 
-    serverControllerAction.execute(Optional.of(playerConnector), cmd);
+    serverControllerAction.execute(playerConnector, cmd);
     assertEquals(1, ServerControllerState.getGamePools().size());
   }
 
@@ -73,7 +72,7 @@ class ServerControllerActionImplTest {
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = null;
 
-    serverControllerAction.execute(Optional.of(playerConnector), cmd);
+    serverControllerAction.execute(playerConnector, cmd);
     assertEquals(0, ServerControllerState.getGamePools().size());
   }
 
