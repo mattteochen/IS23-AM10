@@ -1,7 +1,8 @@
-package it.polimi.is23am10.examples;
+package it.polimi.is23am10.clientexamples;
 
 import com.google.gson.Gson;
-import it.polimi.is23am10.command.StartGameCommand;
+
+import it.polimi.is23am10.command.AddPlayerCommand;
 import it.polimi.is23am10.config.ServerConfigDefault;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -11,25 +12,22 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * This class implements an example of java socket client.
- * 
- * <p>
- * How to use:
- * - Start the socket server (ServerMain.java)
- * - Start this main method
- * </p>
+ * This an example class.
  *
  */
-public class SocketClientExample {
+public class SocketClientAddPlayerExample {
 
   /**
    * Main method.
    *
    * @throws InterruptedException
+   * @throws IOException
    *
    */
   public static void main(String[] args)
@@ -41,8 +39,8 @@ public class SocketClientExample {
     PrintWriter printer;
     BufferedReader reader = null;
     Gson gson = new Gson();
-    final Logger logger = LogManager.getLogger(SocketClientExample.class);
-    StartGameCommand command = new StartGameCommand("Client", 4);
+    final Logger logger = LogManager.getLogger(SocketClientAddPlayerExample.class);
+    AddPlayerCommand command = new AddPlayerCommand("Alice", UUID.fromString(""));
 
     // create the json string
     String message = gson.toJson(command);
