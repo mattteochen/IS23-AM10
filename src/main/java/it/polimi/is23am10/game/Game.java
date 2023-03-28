@@ -149,6 +149,22 @@ public class Game {
     assignedPrivatePatterns = new ArrayList<>();
   }
 
+  public Game(Game toCopy) {
+    this.gameId = toCopy.gameId;
+    this.activePlayer = toCopy.activePlayer;
+    this.assignedPrivatePatterns = toCopy.assignedPrivatePatterns;
+    this.assignedSharedPatterns = toCopy.assignedSharedPatterns;
+    this.ended = toCopy.ended;
+    this.firstPlayer = toCopy.firstPlayer;
+    this.gameBoard = toCopy.gameBoard;
+    this.gameId = toCopy.gameId;
+    this.lastRound = toCopy.lastRound;
+    this.maxPlayers = toCopy.maxPlayers;
+    this.players = toCopy.players;
+    this.sharedCards = toCopy.sharedCards;
+    this.winnerPlayer = toCopy.winnerPlayer;
+  }
+
   /**
    * Retrieve the already used {@link SharedPattern}s.
    *
