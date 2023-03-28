@@ -41,6 +41,14 @@ public class PrivateCard
   }
 
   /**
+   * Empty constructor. To be used when obscuring private card
+   * of other players when sending game updates
+   */
+  public PrivateCard() {
+  }
+
+
+  /**
    * matchedBlocksCount setter.
    * 
    * @param matchedBlocksCount The value about how many matches the played has

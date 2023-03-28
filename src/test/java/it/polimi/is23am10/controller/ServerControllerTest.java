@@ -16,6 +16,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+
+import it.polimi.is23am10.chat.GameMessage;
+import it.polimi.is23am10.chat.exceptions.InvalidMessageTypeException;
 import it.polimi.is23am10.command.AddPlayerCommand;
 import it.polimi.is23am10.command.MoveTilesCommand;
 import it.polimi.is23am10.command.StartGameCommand;
@@ -95,7 +98,7 @@ class ServerControllerTest {
   }
 
   @Test
-  void RUN_should_START_CONTROLLER() throws JsonIOException, JsonSyntaxException, IOException, InterruptedException {
+  void RUN_should_START_CONTROLLER() throws JsonIOException, JsonSyntaxException, IOException, InterruptedException, InvalidMessageTypeException {
     Socket mockSocket = Mockito.mock(Socket.class);
     StartGameCommand cmd = new StartGameCommand("test", 2);
 
@@ -135,7 +138,7 @@ class ServerControllerTest {
 
   @Test
   void RUN_should_THROW_InterruptedException()
-      throws JsonIOException, JsonSyntaxException, IOException, InterruptedException {
+      throws JsonIOException, JsonSyntaxException, IOException, InterruptedException, InvalidMessageTypeException {
     Socket mockSocket = Mockito.mock(Socket.class);
     StartGameCommand cmd = new StartGameCommand("test", 2);
 
@@ -167,14 +170,15 @@ class ServerControllerTest {
       InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
       NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
-      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException {
+      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException, InvalidMessageTypeException {
     Socket mockSocket = Mockito.mock(Socket.class);
     Game game = GameFactory.getNewGame("Steve", 4);
     final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    playerConnector.addMessageToQueue(game);
+    GameMessage message = new GameMessage(game.getFirstPlayer(),game);
+    playerConnector.addMessageToQueue(message);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);
-    when(playerConnector.getMessageFromQueue()).thenReturn(Optional.of(game));
+    when(playerConnector.getMessageFromQueue()).thenReturn(Optional.of(message));
     when(mockSocket.getOutputStream()).thenReturn(outputStream);
     controller.update();
     verify(playerConnector, times(1)).getMessageFromQueue();

@@ -1,5 +1,6 @@
 package it.polimi.is23am10.gamehandler;
 
+import it.polimi.is23am10.chat.GameMessage;
 import it.polimi.is23am10.factory.GameFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
@@ -10,6 +11,7 @@ import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.items.card.PrivateCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -122,14 +124,20 @@ public class GameHandler {
    * Push a new game state to the message queue for each connected player.
    *
    * @throws InterruptedException
+   * @throws NullPlayerPrivateCardException
    *
    */
-  public void pushGameState() throws InterruptedException {
+  public void pushGameState() throws InterruptedException, NullPlayerPrivateCardException {
     // iterating over the Collections.synchronizedList requires synch.
     synchronized (playerConnectors) {
       for (PlayerConnector pc : playerConnectors) {
+        Game gameCopy = new Game(game);
+        gameCopy.getPlayers()
+        .stream()
+        .filter(p -> !p.equals(pc.getPlayer()))
+        .forEach(p -> p.obfuscatePrivateCard());
         // synch is performed by the blocking queue.
-        pc.addMessageToQueue(game);
+        pc.addMessageToQueue(new GameMessage(pc.getPlayer(), gameCopy));
       }
     }
   }

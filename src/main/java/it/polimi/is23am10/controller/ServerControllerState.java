@@ -3,6 +3,7 @@ package it.polimi.is23am10.controller;
 import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
+import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public final class ServerControllerState {
           .stream()
           // point of optimization, can be parallelized
           .forEach(connector ->
-              removePlayerByGameAndName(connector.getGameId(), connector.getPlayerName()));
+              removePlayerByGame(connector.getGameId(), connector.getPlayer()));
       gamePool.remove(targetHandler);
       logger.info("Removed game handler with id {}", id);
     }
@@ -120,12 +121,12 @@ public final class ServerControllerState {
    * This closes the socket connection.
    *
    * @param gameId     The game id reference.
-   * @param playerName The playerName.
+   * @param player The player to remove.
    * @throws IOException
    *
    */
-  public static final void removePlayerByGameAndName(UUID gameId, String playerName) {
-    if (gameId == null || playerName == null) {
+  public static final void removePlayerByGame(UUID gameId, Player player) {
+    if (gameId == null || player == null) {
       return;
     }
 
@@ -134,7 +135,7 @@ public final class ServerControllerState {
     synchronized (playersPool) {
       target = playersPool.stream()
           .filter(connector ->
-              connector.getGameId().equals(gameId) && connector.getPlayerName().equals(playerName))
+              connector.getGameId().equals(gameId) && connector.getPlayer().equals(player))
           .findFirst();
     }
     if (target.isPresent()) {
@@ -145,7 +146,7 @@ public final class ServerControllerState {
         logger.error("Failed to close socket connection", e);
       }
       playersPool.remove(targetConnector);
-      logger.info("Removed player connector from game {} with name {}", gameId, playerName);
+      logger.info("Removed player {} connector from game {}", player, gameId);
     }
   }
 

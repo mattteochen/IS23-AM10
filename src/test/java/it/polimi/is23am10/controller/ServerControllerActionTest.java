@@ -83,12 +83,12 @@ class ServerControllerActionTest {
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new StartGameCommand("Steve", 2);
 
-    assertEquals(null, playerConnector.getPlayerName());
+    assertEquals(null, playerConnector.getPlayer());
     assertEquals(null, playerConnector.getGameId());
 
     serverControllerAction.startConsumer.accept(playerConnector, cmd);
 
-    assertEquals("Steve", playerConnector.getPlayerName());
+    assertEquals("Steve", playerConnector.getPlayer().getPlayerName());
     assertEquals(1, ServerControllerState.getGamePools().size());
     assertEquals(1, ServerControllerState.getPlayersPool().size());
     assertEquals(
@@ -104,7 +104,7 @@ class ServerControllerActionTest {
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new StartGameCommand(null, 2);
 
-    assertEquals(null, playerConnector.getPlayerName());
+    assertEquals(null, playerConnector.getPlayer());
     assertEquals(null, playerConnector.getGameId());
 
     serverControllerAction.startConsumer.accept(playerConnector, cmd);
@@ -120,7 +120,7 @@ class ServerControllerActionTest {
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new StartGameCommand("Steve", null);
 
-    assertEquals(null, playerConnector.getPlayerName());
+    assertEquals(null, playerConnector.getPlayer());
     assertEquals(null, playerConnector.getGameId());
 
     serverControllerAction.startConsumer.accept(playerConnector, cmd);
@@ -136,7 +136,7 @@ class ServerControllerActionTest {
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new StartGameCommand("Steve", 56);
 
-    assertEquals(null, playerConnector.getPlayerName());
+    assertEquals(null, playerConnector.getPlayer());
     assertEquals(null, playerConnector.getGameId());
 
     serverControllerAction.startConsumer.accept(playerConnector, cmd);
@@ -189,14 +189,14 @@ class ServerControllerActionTest {
 
     AbstractCommand cmd = new AddPlayerCommand("Steve", handler.getGame().getGameId());
 
-    assertEquals(null, playerConnector.getPlayerName());
+    assertEquals(null, playerConnector.getPlayer());
     assertEquals(null, playerConnector.getGameId());
 
     final int oldPlayerConnectors = ServerControllerState.getPlayersPool().size();
 
     serverControllerAction.addPlayerConsumer.accept(playerConnector, cmd);
 
-    assertEquals("Steve", playerConnector.getPlayerName());
+    assertEquals("Steve", playerConnector.getPlayer().getPlayerName());
     assertEquals(handler.getGame().getGameId(), playerConnector.getGameId());
 
     assertEquals(oldPlayerConnectors + 1, ServerControllerState.getPlayersPool().size());
@@ -221,14 +221,14 @@ class ServerControllerActionTest {
 
     AbstractCommand cmd = new AddPlayerCommand("Steve", UUID.randomUUID());
 
-    assertEquals(null, playerConnector.getPlayerName());
+    assertEquals(null, playerConnector.getPlayer());
     assertEquals(null, playerConnector.getGameId());
 
     final int oldPlayerConnectors = ServerControllerState.getPlayersPool().size();
 
     serverControllerAction.addPlayerConsumer.accept(playerConnector, cmd);
 
-    assertEquals(null, playerConnector.getPlayerName());
+    assertEquals(null, playerConnector.getPlayer());
     assertEquals(null, playerConnector.getGameId());
 
     assertEquals(oldPlayerConnectors, ServerControllerState.getPlayersPool().size());
@@ -249,12 +249,12 @@ class ServerControllerActionTest {
     ServerControllerState.addGameHandler(handler);
     AbstractCommand cmd = new AddPlayerCommand(null, handler.getGame().getGameId());
 
-    assertEquals(null, playerConnector.getPlayerName());
+    assertEquals(null, playerConnector.getPlayer());
     assertEquals(null, playerConnector.getGameId());
 
     serverControllerAction.addPlayerConsumer.accept(playerConnector, cmd);
 
-    assertEquals(null, playerConnector.getPlayerName());
+    assertEquals(null, playerConnector.getPlayer());
     assertEquals(null, playerConnector.getGameId());
   }
 
@@ -275,14 +275,14 @@ class ServerControllerActionTest {
 
     AbstractCommand steveCmd = new AddPlayerCommand("Steve", handler.getGame().getGameId());
 
-    assertEquals(null, steve.getPlayerName());
+    assertEquals(null, steve.getPlayer());
     assertEquals(null, steve.getGameId());
 
     final int oldPlayerConnectors = ServerControllerState.getPlayersPool().size();
 
     serverControllerAction.addPlayerConsumer.accept(steve, steveCmd);
 
-    assertEquals("Steve", steve.getPlayerName());
+    assertEquals("Steve", steve.getPlayer().getPlayerName());
     assertEquals(handler.getGame().getGameId(), steve.getGameId());
 
     assertEquals(oldPlayerConnectors + 1, ServerControllerState.getPlayersPool().size());

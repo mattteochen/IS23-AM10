@@ -4,6 +4,8 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import it.polimi.is23am10.chat.AbstractMessage;
+import it.polimi.is23am10.chat.GameMessage;
 import it.polimi.is23am10.factory.GameFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
@@ -49,7 +51,8 @@ class PlayerConnectorTest {
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException {
     PlayerConnector connector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
-    Game message = GameFactory.getNewGame("Test", 2);
+    Game game = GameFactory.getNewGame("Test", 2);
+    GameMessage message = new GameMessage(game.getFirstPlayer(),game);
     connector.addMessageToQueue(message);
 
     assertEquals(1, connector.getMsgQueueSize());
@@ -62,10 +65,11 @@ class PlayerConnectorTest {
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException {
     PlayerConnector connector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
-    Game message = GameFactory.getNewGame("Test", 2);
+    Game game = GameFactory.getNewGame("Test", 2);
+    GameMessage message = new GameMessage(game.getFirstPlayer(),game);
     connector.addMessageToQueue(message);
 
-    Optional<Game> taken = connector.getMessageFromQueue();
+    Optional<AbstractMessage> taken = connector.getMessageFromQueue();
 
     assertEquals(taken.get(), message);
     assertEquals(0, connector.getMsgQueueSize());
@@ -76,7 +80,7 @@ class PlayerConnectorTest {
       throws NullSocketConnectorException, NullBlockingQueueException, InterruptedException {
     PlayerConnector connector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
 
-    Optional<Game> taken = connector.getMessageFromQueue();
+    Optional<AbstractMessage> taken = connector.getMessageFromQueue();
 
     assertFalse(taken.isPresent());
   }

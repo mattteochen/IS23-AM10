@@ -14,6 +14,7 @@ import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
@@ -70,7 +71,7 @@ public class ServerControllerAction {
 
         // populate the connector with the game and player reference.
         playerConnector.setGameId(gameHandler.getGame().getGameId());
-        playerConnector.setPlayerName(playerName);
+        playerConnector.setPlayer(gameHandler.getGame().getPlayerByName(playerName));
 
         logger.info("{} Started new game with id {} from {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX,
@@ -96,6 +97,9 @@ public class ServerControllerAction {
             ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       } catch (InterruptedException e) {
         logger.error("{} Failed to push update to all player connectors {}",
+            ServerDebugPrefixString.START_COMMAND_PREFIX, e);
+      } catch (PlayerNotFoundException e) {
+        logger.error("{} Player not found {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       }
     } else {
@@ -132,7 +136,7 @@ public class ServerControllerAction {
 
         // populate the connector with the game and player reference.
         playerConnector.setGameId(gameId);
-        playerConnector.setPlayerName(playerName);
+        playerConnector.setPlayer(gameHandler.getGame().getPlayerByName(playerName));
 
         logger.info("{} Added new player {} to game {}",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
@@ -159,6 +163,9 @@ public class ServerControllerAction {
       } catch (NullGameHandlerInstance e) {
         logger.error("{} Game handler not found {}",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
+      } catch (PlayerNotFoundException e) {
+        logger.error("{} Player not found {}",
+            ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
       }
     } else {
       logger.error("{} Failed to obtain deserialized ADD_PLAYER command",
@@ -176,7 +183,7 @@ public class ServerControllerAction {
       try {
         GameHandler handler = ServerControllerState.getGameHandlerByUUID(((MoveTilesCommand) command).getGameId());
         // I check that the player performing the action is the one actually set as active player
-        if (handler.getGame().getActivePlayer().getPlayerName().equals(playerConnector.getPlayerName())) {
+        if (handler.getGame().getActivePlayer().equals(playerConnector.getPlayer())) {
           // TODO: implement moves
         }
       } catch (NullGameHandlerInstance e) {
@@ -191,9 +198,10 @@ public class ServerControllerAction {
    *
    * @param handler The current game instance handler.
    * @throws InterruptedException
+   * @throws NullPlayerPrivateCardException
    *
    */
-  protected void updateAllPlayers(GameHandler handler) throws InterruptedException {
+  protected void updateAllPlayers(GameHandler handler) throws InterruptedException, NullPlayerPrivateCardException {
     if (handler != null) {
       handler.pushGameState();
     }

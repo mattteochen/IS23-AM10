@@ -1,6 +1,8 @@
 package it.polimi.is23am10.playerconnector;
 
+import it.polimi.is23am10.chat.AbstractMessage;
 import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.net.Socket;
@@ -22,10 +24,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class PlayerConnector {
 
   /**
-   * The player name inside a game session.
+   * The player inside a game session.
    *
    */
-  private String playerName;
+  private Player player;
 
   /**
    * The unique {@link Game} id reference.
@@ -43,7 +45,7 @@ public class PlayerConnector {
    * The connector message queue.
    *
    */
-  private BlockingQueue<Game> msgQueue;
+  private BlockingQueue<AbstractMessage> msgQueue;
 
   /**
    * Constructor.
@@ -54,7 +56,7 @@ public class PlayerConnector {
    * @throws NullBlockingQueueException
    *
    */
-  public PlayerConnector(Socket connector, LinkedBlockingQueue<Game> msgQueue)
+  public PlayerConnector(Socket connector, LinkedBlockingQueue<AbstractMessage> msgQueue)
       throws NullSocketConnectorException, NullBlockingQueueException {
     if (connector == null) {
       throw new NullSocketConnectorException();
@@ -87,13 +89,13 @@ public class PlayerConnector {
   }
 
   /**
-   * Getter for the associated player name.
+   * Getter for the associated player .
    *
-   * @return The player name as string.
+   * @return The player.
    *
    */
-  public synchronized String getPlayerName() {
-    return playerName;
+  public synchronized Player getPlayer() {
+    return player;
   }
 
   /**
@@ -104,7 +106,7 @@ public class PlayerConnector {
    * @throws InterruptedException
    *
    */
-  public Optional<Game> getMessageFromQueue() throws InterruptedException {
+  public Optional<AbstractMessage> getMessageFromQueue() throws InterruptedException {
     if (msgQueue.isEmpty()) {
       return Optional.empty();
     }
@@ -132,7 +134,7 @@ public class PlayerConnector {
    * @throws InterruptedException
    *
    */
-  public void addMessageToQueue(Game message) throws InterruptedException {
+  public void addMessageToQueue(AbstractMessage message) throws InterruptedException {
     if (message != null) {
       msgQueue.put(message);
     }
@@ -154,7 +156,7 @@ public class PlayerConnector {
    * @param playerName The player name to associate to the current player connector.
    *
    */
-  public synchronized void setPlayerName(String playerName) {
-    this.playerName = playerName;
+  public synchronized void setPlayer(Player player) {
+    this.player = player;
   }
 }

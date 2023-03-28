@@ -227,6 +227,10 @@ public class Player {
     score.setScoreBlockPoints(scoreBlocks);
   }
 
+  public void obfuscatePrivateCard() {
+    this.privateCard = new PrivateCard();
+  }
+
   /**
    * {@inheritDoc}
    * 

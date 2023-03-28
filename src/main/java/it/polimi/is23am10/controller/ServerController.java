@@ -9,6 +9,11 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+
+import it.polimi.is23am10.chat.AbstractMessage;
+import it.polimi.is23am10.chat.GameMessage;
+import it.polimi.is23am10.chat.AbstractMessage.MessageType;
+import it.polimi.is23am10.chat.exceptions.InvalidMessageTypeException;
 import it.polimi.is23am10.command.AbstractCommand;
 import it.polimi.is23am10.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.command.AddPlayerCommand;
@@ -98,6 +103,8 @@ public final class ServerController implements Runnable {
       } catch (InterruptedException e) {
         logger.error("Failed get response message from the queue", e);
         // note, we are not raising the interrupted flag as we don't want to stop this thread.
+      } catch (InvalidMessageTypeException e) {
+        logger.error("Invalid type of response message found in queue", e);
       }
     }
   }
@@ -107,16 +114,28 @@ public final class ServerController implements Runnable {
    *
    * @throws IOException
    * @throws InterruptedException
+   * @throws InvalidMessageTypeException
    * 
    */
-  protected void update() throws InterruptedException, IOException {
-    Optional<Game> message = playerConnector.getMessageFromQueue();
-    if (message.isPresent()) {
-      PrintWriter printer = new PrintWriter(
-          playerConnector.getConnector().getOutputStream(), true, StandardCharsets.UTF_8);
-      String jsonMessage = gson.toJson(message.get());
-      printer.println(jsonMessage);
-      logger.info("Update sent to client {}", jsonMessage);
+  protected void update() throws InterruptedException, IOException, InvalidMessageTypeException {
+    Optional<AbstractMessage> optMessage = playerConnector.getMessageFromQueue();
+    if (optMessage.isPresent()) {
+      AbstractMessage message = optMessage.get();
+      String stringMessage;
+      switch (message.getMessageType()) {
+        case GAME_SNAPSHOT:
+          GameMessage gameMessage = (GameMessage) message; 
+          PrintWriter printer = new PrintWriter(playerConnector.getConnector().getOutputStream(), true, StandardCharsets.UTF_8);
+          stringMessage = gameMessage.getMessage();
+          printer.println(stringMessage);
+          break;
+        case CHAT_MESSAGE:
+          stringMessage = message.getMessage();
+          break;
+        default:
+          throw new InvalidMessageTypeException();
+      }
+      logger.info("{} sent to client {}",message.getMessageType(), stringMessage);
     }
   }
 
