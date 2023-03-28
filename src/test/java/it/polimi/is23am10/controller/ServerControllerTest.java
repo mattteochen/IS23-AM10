@@ -74,7 +74,7 @@ class ServerControllerTest {
   PlayerConnector playerConnector;
 
   @Mock
-  ServerControllerAction serverControllerAction;
+  ServerControllerActionImpl serverControllerAction;
 
   @Spy
   @InjectMocks
@@ -90,7 +90,7 @@ class ServerControllerTest {
   void CONSTRUCTOR_should_BUILD_OBJECT() throws NullSocketConnectorException, NullBlockingQueueException {
     Socket socket = new Socket();
     ServerController testController = new ServerController(new PlayerConnector(socket, new LinkedBlockingQueue<>()),
-        new ServerControllerAction());
+        new ServerControllerActionImpl());
     assertNotNull(testController);
   }
 
@@ -200,7 +200,7 @@ class ServerControllerTest {
   void MOVE_TILES_PLAYER_COMMAND_should_BUILD_MOVE_TILES_COMMAND()
       throws JsonIOException, JsonSyntaxException, IOException {
     Socket mockSocket = Mockito.mock(Socket.class);
-    MoveTilesCommand cmd = new MoveTilesCommand(UUID.randomUUID(), new HashMap<>());
+    MoveTilesCommand cmd = new MoveTilesCommand("Steve", UUID.randomUUID(), new HashMap<>());
     Gson gson = new Gson();
     String json = gson.toJson(cmd);
     ByteArrayInputStream inputStream = new ByteArrayInputStream(json.getBytes());

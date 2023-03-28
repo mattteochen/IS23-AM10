@@ -2,10 +2,12 @@ package it.polimi.is23am10;
 
 import it.polimi.is23am10.config.ServerConfigContext;
 import it.polimi.is23am10.config.ServerConfigDefault;
+import it.polimi.is23am10.controller.ServerControllerActionRMIImpl;
+
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.rmi.registry.LocateRegistry;
 import java.util.concurrent.Executors;
-
 
 /**
  * The server main class definition.
@@ -23,9 +25,13 @@ public final class ServerMain {
    */
   public static void main(String[] args) throws IOException {
     // TODO add args parser for CLI context loading if args is present
-    ServerConfigContext ctx = new ServerConfigContext(ServerConfigDefault.SERVER_PORT,
+    ServerConfigContext ctx = new ServerConfigContext(ServerConfigDefault.SERVER_SOCKET_PORT,
+        ServerConfigDefault.SERVER_RMI_PORT,
         ServerConfigDefault.MAX_CLIENT_CONNECTION, ServerConfigDefault.KEEP_ALIVE);
-    Server server = new Server(Executors.newFixedThreadPool(ctx.getMaxConnections()));
+
+    Server server = new Server(new ServerSocket(ctx.getServerSocketPort()),
+        Executors.newFixedThreadPool(ctx.getMaxConnections()), new ServerControllerActionRMIImpl(),
+        LocateRegistry.createRegistry(ctx.getServerRmiPort()));
     server.start(ctx);
   }
 }

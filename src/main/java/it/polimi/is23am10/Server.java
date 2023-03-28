@@ -2,18 +2,15 @@ package it.polimi.is23am10;
 
 import it.polimi.is23am10.config.ServerConfigContext;
 import it.polimi.is23am10.controller.ServerController;
-import it.polimi.is23am10.controller.ServerControllerAction;
+import it.polimi.is23am10.controller.ServerControllerActionImpl;
+import it.polimi.is23am10.controller.interfaces.IServerControllerActionRMI;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
-import it.polimi.is23am10.rmi.MessengerService;
-import it.polimi.is23am10.rmi.MessengerServiceImpl;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ExecutorService;
@@ -59,61 +56,54 @@ public class Server {
    */
   protected ExecutorService executorService;
 
-  protected MessengerService rmiConnector;
+  protected IServerControllerActionRMI rmiServer;
+
+  protected IServerControllerActionRMI rmiStub;
+
+  Registry rmiRegistry;
 
   /**
    * Constructor.
+   * 
+   * @throws RemoteException
    *
    */
-  public Server(ServerSocket serverSocket, ExecutorService executorService) {
+  public Server(ServerSocket serverSocket, ExecutorService executorService, IServerControllerActionRMI rmiServer,
+      Registry rmiRegistry) throws RemoteException {
     this.executorService = executorService;
     this.serverSocket = serverSocket;
-  }
-
-  public Server(ExecutorService executorService) throws RemoteException{
-    this.executorService = executorService;
-    MessengerService server = new MessengerServiceImpl();
-    this.rmiConnector = (MessengerService) UnicastRemoteObject.exportObject((MessengerService) server, 0);
-
-    Registry registry = LocateRegistry.createRegistry(1099);
-    registry.rebind("MessengerService", this.rmiConnector);
+    this.rmiServer = rmiServer;
+    this.rmiStub = (IServerControllerActionRMI) UnicastRemoteObject.exportObject(this.rmiServer, 0);
+    this.rmiRegistry = rmiRegistry;
   }
 
   /**
    * Server entry point.
    * A new {@link ServerSocket} instance is spawned and in a
    * infinity loop listens for clients connections.
+   * 
+   * @throws RemoteException
    *
    */
-  public void start(ServerConfigContext ctx) {
+  public void start(ServerConfigContext ctx) throws RemoteException {
     logger.info("Starting Spurious Dragon, try to kill me...");
     // https://www.youtube.com/watch?v=Jo6fKboqfMs&ab_channel=memesammler
-    if (serverSocket != null) {
-      while (!serverSocket.isClosed()) {
-        try {
-          Socket client = serverSocket.accept();
-          client.setKeepAlive(ctx.getKeepAlive());
-          logger.info("Received new socket connection");
-          executorService.execute(new ServerController(
-              new PlayerConnector(client,
-                  new LinkedBlockingQueue<>()),
-              new ServerControllerAction()));
-        } catch (IOException | NullSocketConnectorException | NullBlockingQueueException e) {
-          logger.error("Failed to process connection", e);
-        }
+
+    //start the rmi server
+    rmiRegistry.rebind("IServerControllerActionRMI", rmiStub);
+    //start the socket server
+    while (!serverSocket.isClosed()) {
+      try {
+        Socket client = serverSocket.accept();
+        client.setKeepAlive(ctx.getKeepAlive());
+        logger.info("Received new connection");
+        executorService.execute(new ServerController(
+            new PlayerConnector(client,
+                new LinkedBlockingQueue<>()),
+            new ServerControllerActionImpl()));
+      } catch (IOException | NullSocketConnectorException | NullBlockingQueueException e) {
+        logger.error("Failed to process connection", e);
       }
-    }
-    else {
-      logger.info("Received new RMI connection");
-        try {
-          executorService.execute(new ServerController(
-              new PlayerConnector(rmiConnector,
-                  new LinkedBlockingQueue<>()),
-              new ServerControllerAction()));
-        } catch (NullBlockingQueueException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
     }
   }
 

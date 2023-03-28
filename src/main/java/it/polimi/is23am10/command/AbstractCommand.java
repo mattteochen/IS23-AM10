@@ -1,5 +1,7 @@
 package it.polimi.is23am10.command;
 
+import java.io.Serializable;
+
 /**
  * The abstract command class definition.
  *
@@ -8,7 +10,7 @@ package it.polimi.is23am10.command;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public abstract class AbstractCommand {
+public abstract class AbstractCommand implements Serializable {
 
   /**
    * Opcodes to communicate the action taken by a player.

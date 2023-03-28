@@ -65,7 +65,7 @@ public final class ServerController implements Runnable {
    * The action taker instance. This works on a given command {@link Opcode}.
    *
    */
-  protected ServerControllerAction serverControllerAction;
+  protected ServerControllerActionImpl serverControllerAction;
 
   /**
    * Constructor.
@@ -75,7 +75,7 @@ public final class ServerController implements Runnable {
    * @param serverControllerAction The server action taker instance.
    */
   public ServerController(PlayerConnector playerConnector,
-      ServerControllerAction serverControllerAction) {
+      ServerControllerActionImpl serverControllerAction) {
     this.playerConnector = playerConnector;
     this.serverControllerAction = serverControllerAction;
   }
@@ -86,20 +86,18 @@ public final class ServerController implements Runnable {
    */
   @Override
   public void run() {
-    while (playerConnector != null) {
+    while (playerConnector != null && playerConnector.getConnector().isConnected()) {
       try {
-        AbstractCommand command;
-        if (playerConnector.getConnector() != null && playerConnector.getConnector().isConnected()){
-          command = buildCommand();
-        } else {
-          command = playerConnector.getRmiConnector().getCommand();
-        }
-        serverControllerAction.execute(playerConnector, command);
-        //update();
+        AbstractCommand command = buildCommand();
+        serverControllerAction.execute(Optional.of(playerConnector), command);
+        update();
       } catch (IOException e) {
         logger.error("Failed to retrieve socket payload", e);
       } catch (JsonIOException | JsonSyntaxException e) {
         logger.error("Failed to parse socket payload", e);
+      } catch (InterruptedException e) {
+        logger.error("Failed get response message from the queue", e);
+        // note, we are not raising the interrupted flag as we don't want to stop this thread.
       }
     }
   }

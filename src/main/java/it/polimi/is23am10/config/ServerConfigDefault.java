@@ -20,10 +20,16 @@ public final class ServerConfigDefault {
   }
 
   /**
-   * The server config class definition.
+   * The socket tcp port.
    * 
    */
-  public static final int SERVER_PORT = 9001;
+  public static final int SERVER_SOCKET_PORT = 9001;
+
+  /**
+   * The RMI registry port.
+   * 
+   */
+  public static final int SERVER_RMI_PORT = 9002;
 
   /**
    * The max allowed connection for this server instance.

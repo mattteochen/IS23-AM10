@@ -31,6 +31,7 @@ import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.net.Socket;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,10 +44,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 @SuppressWarnings({ "deprecation", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck",
     "checkstyle:linelengthcheck" })
-class ServerControllerActionTest {
+class ServerControllerActionImplTest {
 
   @Spy
-  ServerControllerAction serverControllerAction = new ServerControllerAction();
+  ServerControllerActionImpl serverControllerAction = new ServerControllerActionImpl();
 
   @BeforeEach
   void setup() {
@@ -62,7 +63,7 @@ class ServerControllerActionTest {
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new StartGameCommand("player", 2);
 
-    serverControllerAction.execute(playerConnector, cmd);
+    serverControllerAction.execute(Optional.of(playerConnector), cmd);
     assertEquals(1, ServerControllerState.getGamePools().size());
   }
 
@@ -72,7 +73,7 @@ class ServerControllerActionTest {
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = null;
 
-    serverControllerAction.execute(playerConnector, cmd);
+    serverControllerAction.execute(Optional.of(playerConnector), cmd);
     assertEquals(0, ServerControllerState.getGamePools().size());
   }
 
