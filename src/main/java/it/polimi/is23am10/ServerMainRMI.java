@@ -9,7 +9,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 /**
- * The server main class definition.
+ * An example of RMI only server main.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -20,6 +20,8 @@ public final class ServerMainRMI {
 
   /**
    * The main method.
+   *
+   * @throws IOException
    *
    */
   public static void main(String[] args) throws IOException {

@@ -21,6 +21,8 @@ public final class ServerMain {
   /**
    * The main method.
    *
+   * @throws IOException
+   *
    */
   public static void main(String[] args) throws IOException {
     // TODO add args parser for CLI context loading if args is present

@@ -217,7 +217,7 @@ public class Game {
    * The maxPlayers setter.
    *
    * @param maxPlayers The value to be assigned.
-   * @throws NullMaxPlayerException     maxPlayers value is null.
+   * @throws NullMaxPlayerException
    * @throws InvalidMaxPlayerException.
    *
    */
@@ -232,7 +232,7 @@ public class Game {
   /**
    * The firstPlayer setter.
    *
-   * @param playerName The first player's name.
+   * @param playerToSet The first player's name.
    *
    */
   public void setFirstPlayer(Player playerToSet) {
@@ -247,7 +247,7 @@ public class Game {
    * as position in players list is the order in the game.
    *
    * @param playerName The player's name.
-   * @throws NullPlayerNamesException         The playerName variable is null.
+   * @throws NullPlayerNamesException
    * @throws AlreadyInitiatedPatternException
    * @throws DuplicatePlayerNameException
    * @throws NullPlayerScoreBlocksException
@@ -271,7 +271,8 @@ public class Game {
    * as position in players list is the order in the game.
    *
    * @param playerName The player's name.
-   * @throws NullPlayerNamesException         The playerName variable is null.
+   * @return The instance of created player.
+   * @throws NullPlayerNamesException
    * @throws AlreadyInitiatedPatternException
    * @throws DuplicatePlayerNameException
    * @throws NullPlayerScoreBlocksException
@@ -280,21 +281,22 @@ public class Game {
    * @throws NullPlayerBookshelfException
    * @throws NullPlayerIdException
    * @throws NullPlayerNameException
-   * @return instance of created player
    * @throws NullAssignedPatternException
    */
   public Player addPlayer(String playerName)
       throws NullPlayerNamesException, NullPlayerNameException, NullPlayerIdException, 
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, 
-      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullAssignedPatternException {
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException,
+      AlreadyInitiatedPatternException, NullAssignedPatternException {
     Player playerToAdd = PlayerFactory.getNewPlayer(playerName, getPlayerNames(), this);
     addPlayer(playerToAdd);
     return playerToAdd;
   }
 
   /**
-   * Function that adds multiple players to game
-   * @param players list of players to add
+   * Function that adds multiple players to game.
+   *
+   * @param players List of players to add.
    * @throws NullPlayerException
    * @throws InvalidPlayersNumberException
    * @throws DuplicatePlayerNameException
@@ -318,7 +320,7 @@ public class Game {
   }
 
   /**
-   * gameBoard setter.
+   * GameBoard setter.
    *
    * @throws InvalidNumOfPlayersException
    * @throws NullNumOfPlayersException
@@ -351,9 +353,6 @@ public class Game {
   /**
    * The lastRound setter.
    *
-   * @param lastRound A flag referencing if the game is in its last round of
-   *                  rounds.
-   *
    */
   public void setLastRound() {
     this.lastRound = true;
@@ -370,7 +369,7 @@ public class Game {
   }
 
   /**
-   * maxPlayer getter.
+   * MaxPlayer getter.
    *
    * @return The maximum number of players for the current game instance.
    *
@@ -462,7 +461,8 @@ public class Game {
    * @return Player matching provided name.
    * @throws PlayerNotFoundException
    */
-  public Player getPlayerByName(String playerName) throws NullPlayerNameException, PlayerNotFoundException {
+  public Player getPlayerByName(String playerName) throws
+      NullPlayerNameException, PlayerNotFoundException {
     if (playerName == null) {
       throw new NullPlayerNameException("[Class Game, method getPlayerByName]");
     }
@@ -477,36 +477,36 @@ public class Game {
   }
 
   /**
-   * Method to set the active player (playing this turn)
-   * 
-   * @param player player to set as active
+   * Method to set the active player (playing this turn).
+   *
+   * @param player Player to set as active
    */
   protected void setActivePlayer(Player player) {
     this.activePlayer = player;
   }
 
   /**
-   * winnerPlayer setter. To be called by {@link Game#endGame()} only
-   * 
-   * @param player
+   * WinnerPlayer setter. To be called by {@link Game#endGame()} only.
+   *
+   * @param player The winning player to set.
    */
   protected void setWinnerPlayer(Player player) {
     this.winnerPlayer = player;
   }
 
   /**
-   * activePlayer getter.
-   * 
-   * @return active player
+   * ActivePlayer getter.
+   *
+   * @return The active player.
    */
   public Player getActivePlayer() {
     return activePlayer;
   }
 
   /**
-   * winnerPlayer getter.
-   * 
-   * @return active player
+   * WinnerPlayer getter.
+   *
+   * @return The winning player.
    */
   public Player getWinnerPlayer() {
     return this.winnerPlayer;
@@ -514,7 +514,7 @@ public class Game {
 
   /**
    * Method that computes active player's Score, updates the view,
-   * checks if game is over and if not picks next player
+   * checks if game is over and if not picks next player.
    * 
    * @throws NullScoreBlockListException
    * @throws NullPlayerBookshelfException
@@ -530,7 +530,7 @@ public class Game {
     
     activePlayer.updateScore();
     checkEndGame();
-    if(!(getEnded())) {
+    if (!(getEnded())) {
       gameBoard.refillIfNeeded();
       int nextPlayerIdx = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size();
       setActivePlayer(players.get(nextPlayerIdx));
@@ -538,10 +538,10 @@ public class Game {
   }
 
   /**
-   * Function that allows the player to take a tile from the board
+   * Function that allows the player to take a tile from the board.
    *
-   * @param coord coordinates of the tile.
-   * @return the tile of the board the player wants to take.
+   * @param coord The coordinates of the tile.
+   * @return The tile of the board the player wants to take.
    * @throws BoardGridColIndexOutOfBoundsException
    * @throws BoardGridRowIndexOutOfBoundsException
    * @throws NullIndexValueException
@@ -569,8 +569,8 @@ public class Game {
   /**
    * Quick helper function to determine if the player is the last in turn.
    *
-   * @param playerToCheck
-   * @return is playerToCheck the last one in turn
+   * @param playerToCheck A reference player instance on which to operate the check.
+   * @return Is playerToCheck the last one in turn
    */
   private boolean isLastPlayer(Player playerToCheck){
     final Integer idxDiff = players.indexOf(playerToCheck) - players.indexOf(firstPlayer);
@@ -597,11 +597,11 @@ public class Game {
   /**
    * Helper method to be passed to {@link Game#endGame()}
    * in order to determine the winner, according to game rules:
-   * In case of score parity, last player in turn wins
+   * In case of score parity, last player in turn wins.
    *
-   * @param p1 first player
-   * @param p2 second player
-   * @return player who should win between two
+   * @param p1 First player
+   * @param p2 Second player
+   * @return Player who should win between two
    */
   private Player decideWinner(Player p1, Player p2){
     final Integer p1Score = p1.getScore().getTotalScore();
@@ -614,20 +614,20 @@ public class Game {
       Integer startingPos2 = players.indexOf(p2) - players.indexOf(firstPlayer); 
       startingPos2 = startingPos2 > 0 ? startingPos2 : startingPos2 + maxPlayers;
       return (startingPos1 > startingPos2 ? p1 : p2);
-    } else{
+    } else {
       return (p1Score > p2Score ? p1 : p2);
     }
   }
 
   /**
    * Helper method that sets the game as ended
-   * and declares the winner
+   * and declares the winner.
    */
   private void endGame() {
     setEnded(true);
     players.stream()
-      .reduce(this::decideWinner)
-      .ifPresent(this::setWinnerPlayer);
+        .reduce(this::decideWinner)
+        .ifPresent(this::setWinnerPlayer);
   }
 
   /**
@@ -640,8 +640,8 @@ public class Game {
    * Note that I'm assuming all the params given to the method are valid since the
    * input validation will be implemented client side in the selection of those
    * coordinates.
-   * 
-   * @param selectedCoordinates Map containing the coordinates of selected tiles
+   *
+   * @param selectedCoordinates Map containing the coordinates of selected tiles.
    *                            from board as key and the corresponding
    *                            coordinates of the active player bookshelf as
    *                            value.
@@ -670,5 +670,4 @@ public class Game {
     }
     nextTurn();
   }
-
 }

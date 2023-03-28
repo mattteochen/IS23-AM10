@@ -56,20 +56,36 @@ public class Server {
    */
   protected ExecutorService executorService;
 
+  /**
+   * RMI server instance.
+   *
+   */
   protected IServerControllerActionRmi rmiServer;
 
+  /**
+   * RMI stub instance.
+   *
+   */
   protected IServerControllerActionRmi rmiStub;
 
+  /**
+   * RMI registry instance.
+   *
+   */
   Registry rmiRegistry;
 
   /**
    * Constructor.
-   * 
+   *
+   * @param serverSocket The server socket reference of a newly connected client.
+   * @param executorService The built thread executor service.
+   * @param rmiServer An built instance of the implementing class.
+   * @param rmiRegistry A built instance of the RMI registry.
    * @throws RemoteException
    *
    */
-  public Server(ServerSocket serverSocket, ExecutorService executorService, IServerControllerActionRmi rmiServer,
-      Registry rmiRegistry) throws RemoteException {
+  public Server(ServerSocket serverSocket, ExecutorService executorService,
+      IServerControllerActionRmi rmiServer, Registry rmiRegistry) throws RemoteException {
     this.executorService = executorService;
     this.serverSocket = serverSocket;
     this.rmiServer = rmiServer;
@@ -81,7 +97,8 @@ public class Server {
    * Server entry point.
    * A new {@link ServerSocket} instance is spawned and in a
    * infinity loop listens for clients connections.
-   * 
+   *
+   * @param ctx An instance of the server configuration.
    * @throws RemoteException
    *
    */

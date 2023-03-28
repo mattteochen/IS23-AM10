@@ -41,7 +41,9 @@ public class MoveTilesCommand extends AbstractCommand {
 
   /**
    * Public constructor.
-   * 
+   *
+   * @param movingPlayer The player requesting the move action.
+   * @param gameId The game id reference.
    * @param moves The map of moves. See javadoc above.
    */
   public MoveTilesCommand(String movingPlayer, UUID gameId, Map<Coordinates, Coordinates> moves) {
