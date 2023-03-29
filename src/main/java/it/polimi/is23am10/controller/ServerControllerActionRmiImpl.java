@@ -9,7 +9,8 @@ import it.polimi.is23am10.controller.exceptions.AddPlayerCommandSerializationErr
 import it.polimi.is23am10.controller.exceptions.MoveTileCommandSerializationErrorException;
 import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.controller.exceptions.StartCommandSerializationErrorException;
-import it.polimi.is23am10.controller.interfaces.ControllerConsumerRMI;
+import it.polimi.is23am10.controller.interfaces.ControllerConsumer;
+import it.polimi.is23am10.controller.interfaces.ControllerConsumer;
 import it.polimi.is23am10.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.controller.interfaces.IServerControllerActionRmi;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
@@ -18,6 +19,7 @@ import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.gamehandler.GameHandler;
+import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
@@ -27,6 +29,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
+import it.polimi.is23am10.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import java.util.Map;
 import java.util.UUID;
@@ -51,112 +54,10 @@ public class ServerControllerActionRmiImpl implements
   private static final Logger logger = LogManager.getLogger(ServerControllerActionRmiImpl.class);
 
   /**
-   * The {@link Opcode#START} command callback worker.
-   *
-   */
-  protected final ControllerConsumerRMI startConsumer = (command) -> {
-    if (command instanceof StartGameCommand) {
-      try {
-        String playerName = ((StartGameCommand) command).getStartingPlayerName();
-        Integer maxPlayers = ((StartGameCommand) command).getMaxPlayers();
-        GameHandler gameHandler = new GameHandler(playerName, maxPlayers);
-
-        // add the new game handler instance on the game pool.
-        ServerControllerState.addGameHandler(gameHandler);
-
-        logger.info("{} Started new game with id {} from {}",
-            ServerDebugPrefixString.START_COMMAND_PREFIX,
-            gameHandler.getGame().getGameId(), playerName);
-
-      } catch (NullNumOfPlayersException | NullPlayerNamesException | NullPlayerScoreBlocksException
-          | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
-          | NullPlayerIdException | NullPlayerNameException | NullMaxPlayerException
-          | AlreadyInitiatedPatternException | NullAssignedPatternException e) {
-        logger.error("{} Failed to initialize new game request {}",
-            ServerDebugPrefixString.START_COMMAND_PREFIX, e);
-      } catch (InvalidNumOfPlayersException | InvalidMaxPlayerException
-          | DuplicatePlayerNameException e) {
-        logger.error("{} {}", ServerDebugPrefixString.START_COMMAND_PREFIX, e);
-      } catch (NullGameHandlerInstance e) {
-        logger.error("{} Failed the game instance creation {}",
-            ServerDebugPrefixString.START_COMMAND_PREFIX, e);
-      }
-    } else {
-      throw new StartCommandSerializationErrorException(StartGameCommand.class.toString());
-    }
-  };
-
-  /**
-   * The {@link Opcode#ADD_PLAYER} command callback worker.
-   *
-   */
-  protected final ControllerConsumerRMI addPlayerConsumer = (command) -> {
-    if (command instanceof AddPlayerCommand) {
-      try {
-        String playerName = ((AddPlayerCommand) command).getPlayerName();
-        UUID gameId = ((AddPlayerCommand) command).getGameId();
-
-        final GameHandler gameHandler = ServerControllerState.getGameHandlerByUUID(gameId);
-
-        // add the new player in the game model.
-        gameHandler.getGame().addPlayer(playerName);
-
-        logger.info("{} Added new player {} to game {}",
-            ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
-            playerName, gameId);
-      } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
-          | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
-          | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
-          | NullAssignedPatternException e) {
-        logger.error("{} Failed to add new player request to game {}",
-            ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
-      } catch (DuplicatePlayerNameException e) {
-        logger.error("{} Failed to add new player to game model",
-            ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
-      } catch (NullGameHandlerInstance e) {
-        logger.error("{} Game handler not found {}",
-            ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
-      }
-    } else {
-      logger.error("{} Failed to obtain deserialized ADD_PLAYER command",
-          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX);
-      throw new AddPlayerCommandSerializationErrorException(AddPlayerCommand.class.toString());
-    }
-  };
-
-  /**
-   * The {@link Opcode#MOVE_TILES} command callback worker.
-   *
-   */
-  protected final ControllerConsumerRMI moveTilesConsumer = (command) -> {
-    if (command instanceof MoveTilesCommand) {
-      try {
-        GameHandler handler = ServerControllerState.getGameHandlerByUUID(((MoveTilesCommand) command).getGameId());
-        // I check that the player performing the action is the one actually set as
-        // active player
-        if (handler.getGame().getActivePlayer().getPlayerName()
-            .equals(((MoveTilesCommand) command).getMovingPlayer())) {
-          // TODO: implement moves
-        }
-        logger.info("{} Operated Tile move for {} in game {}",
-            ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX, handler.getGame().getActivePlayer().getPlayerName(),
-            handler.getGame().getGameId());
-      } catch (NullGameHandlerInstance e) {
-        logger.error("{} Failed to get game handler from command {}",
-            ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX, e);
-      }
-    } else {
-      logger.error("{} Failed to obtain deserialized MOVE_TILES command",
-          ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX);
-      throw new MoveTileCommandSerializationErrorException(MoveTilesCommand.class.toString());
-    }
-  };
-
-  /**
    * A helper mapping to link a {@link Opcode} to the relative worker callback.
    *
    */
-  private final Map<Opcode, ControllerConsumerRMI> actions = Map.of(
+  private final Map<Opcode, ControllerConsumer> actions = Map.of(
       Opcode.START, startConsumer,
       Opcode.ADD_PLAYER, addPlayerConsumer,
       Opcode.MOVE_TILES, moveTilesConsumer);
@@ -170,10 +71,10 @@ public class ServerControllerActionRmiImpl implements
    *
    */
   @Override
-  public void execute(PlayerConnector connector, AbstractCommand command) {
-    if (command == null) {
+  public void execute(AbstractPlayerConnector connector, AbstractCommand command) {
+    if (command == null || connector == null) {
       return;
     }
-    actions.get(command.getOpcode()).accept(command);
+    actions.get(command.getOpcode()).accept(logger, connector, command);
   }
 }

@@ -39,11 +39,15 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @RunWith(MockitoJUnitRunner.class)
 @SuppressWarnings({ "deprecation", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck",
     "checkstyle:linelengthcheck" })
 class ServerControllerActionImplTest {
+
+  private final Logger logger = LogManager.getLogger(ServerControllerActionImplTest.class);
 
   @Spy
   ServerControllerActionImpl serverControllerAction = new ServerControllerActionImpl();
@@ -86,7 +90,7 @@ class ServerControllerActionImplTest {
     assertEquals(null, playerConnector.getPlayerName());
     assertEquals(null, playerConnector.getGameId());
 
-    serverControllerAction.startConsumer.accept(playerConnector, cmd);
+    serverControllerAction.startConsumer.accept(logger, playerConnector, cmd);
 
     assertEquals("Steve", playerConnector.getPlayerName());
     assertEquals(1, ServerControllerState.getGamePools().size());
@@ -107,7 +111,7 @@ class ServerControllerActionImplTest {
     assertEquals(null, playerConnector.getPlayerName());
     assertEquals(null, playerConnector.getGameId());
 
-    serverControllerAction.startConsumer.accept(playerConnector, cmd);
+    serverControllerAction.startConsumer.accept(logger, playerConnector, cmd);
 
     assertEquals(0, ServerControllerState.getGamePools().size());
     assertEquals(0, ServerControllerState.getPlayersPool().size());
@@ -123,7 +127,7 @@ class ServerControllerActionImplTest {
     assertEquals(null, playerConnector.getPlayerName());
     assertEquals(null, playerConnector.getGameId());
 
-    serverControllerAction.startConsumer.accept(playerConnector, cmd);
+    serverControllerAction.startConsumer.accept(logger, playerConnector, cmd);
 
     assertEquals(0, ServerControllerState.getGamePools().size());
     assertEquals(0, ServerControllerState.getPlayersPool().size());
@@ -139,7 +143,7 @@ class ServerControllerActionImplTest {
     assertEquals(null, playerConnector.getPlayerName());
     assertEquals(null, playerConnector.getGameId());
 
-    serverControllerAction.startConsumer.accept(playerConnector, cmd);
+    serverControllerAction.startConsumer.accept(logger, playerConnector, cmd);
 
     assertEquals(0, ServerControllerState.getGamePools().size());
     assertEquals(0, ServerControllerState.getPlayersPool().size());
@@ -150,7 +154,7 @@ class ServerControllerActionImplTest {
     PlayerConnector playerConnector = null;
     AbstractCommand cmd = new StartGameCommand("Steve", 2);
 
-    serverControllerAction.startConsumer.accept(playerConnector, cmd);
+    serverControllerAction.startConsumer.accept(logger, playerConnector, cmd);
 
     assertEquals(1, ServerControllerState.getGamePools().size());
     assertEquals(0, ServerControllerState.getPlayersPool().size());
@@ -171,7 +175,7 @@ class ServerControllerActionImplTest {
     AbstractCommand cmd = new Utils(Opcode.START);
 
     assertThrows(StartCommandSerializationErrorException.class,
-        () -> serverControllerAction.startConsumer.accept(playerConnector, cmd));
+        () -> serverControllerAction.startConsumer.accept(logger, playerConnector, cmd));
   }
 
   @Test
@@ -194,7 +198,7 @@ class ServerControllerActionImplTest {
 
     final int oldPlayerConnectors = ServerControllerState.getPlayersPool().size();
 
-    serverControllerAction.addPlayerConsumer.accept(playerConnector, cmd);
+    serverControllerAction.addPlayerConsumer.accept(logger, playerConnector, cmd);
 
     assertEquals("Steve", playerConnector.getPlayerName());
     assertEquals(handler.getGame().getGameId(), playerConnector.getGameId());
@@ -226,7 +230,7 @@ class ServerControllerActionImplTest {
 
     final int oldPlayerConnectors = ServerControllerState.getPlayersPool().size();
 
-    serverControllerAction.addPlayerConsumer.accept(playerConnector, cmd);
+    serverControllerAction.addPlayerConsumer.accept(logger, playerConnector, cmd);
 
     assertEquals(null, playerConnector.getPlayerName());
     assertEquals(null, playerConnector.getGameId());
@@ -252,7 +256,7 @@ class ServerControllerActionImplTest {
     assertEquals(null, playerConnector.getPlayerName());
     assertEquals(null, playerConnector.getGameId());
 
-    serverControllerAction.addPlayerConsumer.accept(playerConnector, cmd);
+    serverControllerAction.addPlayerConsumer.accept(logger, playerConnector, cmd);
 
     assertEquals(null, playerConnector.getPlayerName());
     assertEquals(null, playerConnector.getGameId());
@@ -280,7 +284,7 @@ class ServerControllerActionImplTest {
 
     final int oldPlayerConnectors = ServerControllerState.getPlayersPool().size();
 
-    serverControllerAction.addPlayerConsumer.accept(steve, steveCmd);
+    serverControllerAction.addPlayerConsumer.accept(logger, steve, steveCmd);
 
     assertEquals("Steve", steve.getPlayerName());
     assertEquals(handler.getGame().getGameId(), steve.getGameId());
@@ -291,7 +295,7 @@ class ServerControllerActionImplTest {
 
     PlayerConnector steveBrother = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand steveBrotherCmd = new AddPlayerCommand("Steve", handler.getGame().getGameId());
-    serverControllerAction.addPlayerConsumer.accept(steveBrother, steveBrotherCmd);
+    serverControllerAction.addPlayerConsumer.accept(logger, steveBrother, steveBrotherCmd);
     assertEquals(oldPlayerConnectors + 1, ServerControllerState.getPlayersPool().size());
     assertFalse(handler.getPlayerConnectors().contains(steveBrother));
   }
@@ -310,7 +314,7 @@ class ServerControllerActionImplTest {
 
     AbstractCommand steveCmd = new AddPlayerCommand("Steve", handler.getGame().getGameId());
 
-    serverControllerAction.addPlayerConsumer.accept(steve, steveCmd);
+    serverControllerAction.addPlayerConsumer.accept(logger, steve, steveCmd);
 
     assertFalse(handler.getPlayerConnectors().contains(steve));
   }
@@ -329,6 +333,6 @@ class ServerControllerActionImplTest {
     AbstractCommand cmd = new Utils(Opcode.START);
 
     assertThrows(AddPlayerCommandSerializationErrorException.class,
-        () -> serverControllerAction.addPlayerConsumer.accept(playerConnector, cmd));
+        () -> serverControllerAction.addPlayerConsumer.accept(logger, playerConnector, cmd));
   }
 }

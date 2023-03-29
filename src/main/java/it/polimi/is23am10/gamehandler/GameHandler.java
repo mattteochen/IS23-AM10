@@ -17,7 +17,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
-import it.polimi.is23am10.playerconnector.PlayerConnector;
+import it.polimi.is23am10.playerconnector.AbstractPlayerConnector;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +50,7 @@ public class GameHandler {
    * The connected players connectors.
    *
    */
-  private List<PlayerConnector> playerConnectors = Collections.synchronizedList(new ArrayList<>());
+  private List<AbstractPlayerConnector> playerConnectors = Collections.synchronizedList(new ArrayList<>());
 
   /**
    * Constructor.
@@ -93,24 +93,24 @@ public class GameHandler {
   }
 
   /**
-   * Getter for {@link PlayerConnector} list instance.
+   * Getter for {@link AbstractPlayerConnector} list instance.
    *
    * @return The current game instance containing the game state.
    *
    */
-  public synchronized List<PlayerConnector> getPlayerConnectors() {
+  public synchronized List<AbstractPlayerConnector> getPlayerConnectors() {
     return playerConnectors;
   }
 
   /**
    * Add a new player connector from socket server.
-   * Will accept a built instance of {@link PlayerConnector}
+   * Will accept a built instance of {@link AbstractPlayerConnector}
    *
    * @param playerConnector The connector to be added to the current game.
    * @throws NullPlayerConnector
    *
    */
-  public void addPlayerConnector(PlayerConnector playerConnector)
+  public void addPlayerConnector(AbstractPlayerConnector playerConnector)
       throws NullPlayerConnector {
     if (playerConnector == null) {
       throw new NullPlayerConnector();
@@ -127,7 +127,7 @@ public class GameHandler {
   public void pushGameState() throws InterruptedException {
     // iterating over the Collections.synchronizedList requires synch.
     synchronized (playerConnectors) {
-      for (PlayerConnector pc : playerConnectors) {
+      for (AbstractPlayerConnector pc : playerConnectors) {
         // synch is performed by the blocking queue.
         pc.addMessageToQueue(game);
       }

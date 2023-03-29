@@ -3,7 +3,9 @@ package it.polimi.is23am10.controller;
 import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
+import it.polimi.is23am10.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,10 +40,10 @@ public final class ServerControllerState {
   private static List<GameHandler> gamePool = Collections.synchronizedList(new ArrayList<>());
 
   /**
-   * Active players connected with their {@link PlayerConnector} instances.
+   * Active players connected with their {@link AbstractPlayerConnector} instances.
    *
    */
-  private static List<PlayerConnector> playersPool
+  private static List<AbstractPlayerConnector> playersPool
       = Collections.synchronizedList(new ArrayList<>());
 
   /**
@@ -107,7 +109,7 @@ public final class ServerControllerState {
    *
    */
   public static final void addPlayerConnector(
-      PlayerConnector playerConnector) throws NullPlayerConnector {
+      AbstractPlayerConnector playerConnector) throws NullPlayerConnector {
     if (playerConnector == null) {
       throw new NullPlayerConnector();
     }
@@ -129,7 +131,7 @@ public final class ServerControllerState {
       return;
     }
 
-    Optional<PlayerConnector> target;
+    Optional<AbstractPlayerConnector> target;
 
     synchronized (playersPool) {
       target = playersPool.stream()
@@ -138,11 +140,13 @@ public final class ServerControllerState {
           .findFirst();
     }
     if (target.isPresent()) {
-      PlayerConnector targetConnector = target.get();
-      try {
-        targetConnector.getConnector().close();
-      } catch (IOException e) {
-        logger.error("Failed to close socket connection", e);
+      AbstractPlayerConnector targetConnector = target.get();
+      if (targetConnector instanceof PlayerConnector) {
+        try {
+          ((PlayerConnector) targetConnector).getConnector().close();
+        } catch (IOException e) {
+          logger.error("Failed to close socket connection", e);
+        }
       }
       playersPool.remove(targetConnector);
       logger.info("Removed player connector from game {} with name {}", gameId, playerName);
@@ -178,7 +182,7 @@ public final class ServerControllerState {
    * @return The actively connected players.
    *
    */
-  public static synchronized List<PlayerConnector> getPlayersPool() {
+  public static synchronized List<AbstractPlayerConnector> getPlayersPool() {
     return playersPool;
   }
 
