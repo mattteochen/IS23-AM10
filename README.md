@@ -5,6 +5,28 @@ Progetto Ingegneria del Software 2023
 
 ![Coverage](.github/badges/jacoco.svg)
 
+## Implemented functionalities status
+| Functionality | Status | 
+| --- | --- |
+| Basic rules | :white_check_mark: |
+| Complete rules | :white_check_mark: |
+| Socket connection | :construction: |
+| RMI connection | :construction: |
+| CLI | :ballot_box_with_check: |
+| GUI | :ballot_box_with_check: |
+| Multiple games | :construction: |
+| Persistence | :x: |
+| Resilience | :x: |
+| Chat | :ballot_box_with_check: |
+
+### Legend
+| Symbol | Functionality status |
+| --- | --- |
+| :white_check_mark: | Completed |
+| :ballot_box_with_check: | On the watch, but not started yet | 
+| :construction: | Work in progress |
+| :x: | Not planned to be implemented |
+
 ## Setup
 *Note, development outside the docker container is not guaranteed to be working!*
 
@@ -33,25 +55,3 @@ To generate test coverage report launch JaCoCo with the following command from `
 mvn clean jacoco:prepare-agent install jacoco:report
 ```
 or use the button under "Favorites" in your Maven left-side panel.
-
-## Implemented functionalities status
-| Functionality | Status | 
-| --- | --- |
-| Basic rules | :white_check_mark: |
-| Complete rules | :white_check_mark: |
-| Socket connection | :construction: |
-| RMI connection | :construction: |
-| CLI | :ballot_box_with_check: |
-| GUI | :ballot_box_with_check: |
-| Multiple games | :construction: |
-| Persistence | :ballot_box_with_check: |
-| Resilience | :ballot_box_with_check: |
-| Chat | :x: |
-
-### Legend
-| Symbol | Functionality status |
-| --- | --- |
-| :white_check_mark: | Completed |
-| :ballot_box_with_check: | On the watch, but not started yet | 
-| :construction: | Work in progress |
-| :x: | Not planned to be implemented |
