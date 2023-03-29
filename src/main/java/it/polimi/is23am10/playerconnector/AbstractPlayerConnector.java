@@ -1,14 +1,12 @@
 package it.polimi.is23am10.playerconnector;
 
 import it.polimi.is23am10.game.Game;
-import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.stream.BaseStream;
-import java.util.stream.Stream;
 
 /**
  * The player connector class definition.
@@ -20,7 +18,7 @@ import java.util.stream.Stream;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 @SuppressWarnings({ "checkstyle:nonemptyatclausedescriptioncheck" })
-public abstract class AbstractPlayerConnector {
+public abstract class AbstractPlayerConnector implements Serializable {
 
   /**
    * The player name inside a game session.
@@ -137,5 +135,26 @@ public abstract class AbstractPlayerConnector {
    */
   public synchronized void setPlayerName(String playerName) {
     this.playerName = playerName;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  public boolean equals(Object obj) {
+    if (!(obj instanceof AbstractPlayerConnector)) {
+      return false;
+    }
+    AbstractPlayerConnector casted = (AbstractPlayerConnector) obj;
+    return casted.getPlayerName().equals(playerName)
+        && casted.getGameId().equals(gameId);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  public int hashCode() {
+    return playerName.hashCode() * gameId.hashCode();
   }
 }

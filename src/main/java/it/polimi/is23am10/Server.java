@@ -2,8 +2,8 @@ package it.polimi.is23am10;
 
 import it.polimi.is23am10.config.ServerConfigContext;
 import it.polimi.is23am10.controller.ServerController;
-import it.polimi.is23am10.controller.ServerControllerActionImpl;
-import it.polimi.is23am10.controller.interfaces.IServerControllerActionRmi;
+import it.polimi.is23am10.controller.ServerControllerAction;
+import it.polimi.is23am10.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
@@ -60,13 +60,13 @@ public class Server {
    * RMI server instance.
    *
    */
-  protected IServerControllerActionRmi rmiServer;
+  protected IServerControllerAction rmiServer;
 
   /**
    * RMI stub instance.
    *
    */
-  protected IServerControllerActionRmi rmiStub;
+  protected IServerControllerAction rmiStub;
 
   /**
    * RMI registry instance.
@@ -85,11 +85,11 @@ public class Server {
    *
    */
   public Server(ServerSocket serverSocket, ExecutorService executorService,
-      IServerControllerActionRmi rmiServer, Registry rmiRegistry) throws RemoteException {
+      IServerControllerAction rmiServer, Registry rmiRegistry) throws RemoteException {
     this.executorService = executorService;
     this.serverSocket = serverSocket;
     this.rmiServer = rmiServer;
-    this.rmiStub = (IServerControllerActionRmi) UnicastRemoteObject.exportObject(this.rmiServer, 0);
+    this.rmiStub = (IServerControllerAction) UnicastRemoteObject.exportObject(this.rmiServer, 0);
     this.rmiRegistry = rmiRegistry;
   }
 
@@ -107,7 +107,7 @@ public class Server {
     // https://www.youtube.com/watch?v=Jo6fKboqfMs&ab_channel=memesammler
 
     //start the rmi server
-    rmiRegistry.rebind("IServerControllerActionRmi", rmiStub);
+    rmiRegistry.rebind("IServerControllerAction", rmiStub);
     //start the socket server
     while (!serverSocket.isClosed()) {
       try {
@@ -117,7 +117,7 @@ public class Server {
         executorService.execute(new ServerController(
             new PlayerConnector(client,
                 new LinkedBlockingQueue<>()),
-            new ServerControllerActionImpl()));
+            new ServerControllerAction()));
       } catch (IOException | NullSocketConnectorException | NullBlockingQueueException e) {
         logger.error("Failed to process connection", e);
       }

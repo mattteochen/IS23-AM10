@@ -31,6 +31,7 @@ import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.net.Socket;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,12 +46,12 @@ import org.apache.logging.log4j.Logger;
 @RunWith(MockitoJUnitRunner.class)
 @SuppressWarnings({ "deprecation", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck",
     "checkstyle:linelengthcheck" })
-class ServerControllerActionImplTest {
+class ServerControllerActionTest {
 
-  private final Logger logger = LogManager.getLogger(ServerControllerActionImplTest.class);
+  private final Logger logger = LogManager.getLogger(ServerControllerActionTest.class);
 
   @Spy
-  ServerControllerActionImpl serverControllerAction = new ServerControllerActionImpl();
+  ServerControllerAction serverControllerAction = new ServerControllerAction();
 
   @BeforeEach
   void setup() {
@@ -95,9 +96,8 @@ class ServerControllerActionImplTest {
     assertEquals("Steve", playerConnector.getPlayerName());
     assertEquals(1, ServerControllerState.getGamePools().size());
     assertEquals(1, ServerControllerState.getPlayersPool().size());
-    assertEquals(
-        ServerControllerState.getGamePools().get(0).getGame().getGameId(),
-        playerConnector.getGameId());
+    Optional<GameHandler> search = ServerControllerState.getGamePools().stream().filter(g -> g.getGame().getGameId().equals(playerConnector.getGameId())).findFirst();
+    assertTrue(search.isPresent());
     assertEquals(1, playerConnector.getMsgQueueSize());
   }
 
@@ -156,7 +156,7 @@ class ServerControllerActionImplTest {
 
     serverControllerAction.startConsumer.accept(logger, playerConnector, cmd);
 
-    assertEquals(1, ServerControllerState.getGamePools().size());
+    assertEquals(0, ServerControllerState.getGamePools().size());
     assertEquals(0, ServerControllerState.getPlayersPool().size());
   }
 
@@ -297,7 +297,6 @@ class ServerControllerActionImplTest {
     AbstractCommand steveBrotherCmd = new AddPlayerCommand("Steve", handler.getGame().getGameId());
     serverControllerAction.addPlayerConsumer.accept(logger, steveBrother, steveBrotherCmd);
     assertEquals(oldPlayerConnectors + 1, ServerControllerState.getPlayersPool().size());
-    assertFalse(handler.getPlayerConnectors().contains(steveBrother));
   }
 
   @Test

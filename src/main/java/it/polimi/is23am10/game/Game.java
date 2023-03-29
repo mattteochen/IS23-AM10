@@ -34,6 +34,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ import java.util.stream.Collectors;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class Game {
+public class Game implements Serializable {
 
   /**
    * The minimum number of players in a game instance.
@@ -130,14 +131,13 @@ public class Game {
    * A cache to store already used shared patterns.
    * 
    */
-  private List<SharedPattern<Predicate<Bookshelf>>> assignedSharedPatterns;
+  private transient List<SharedPattern<Predicate<Bookshelf>>> assignedSharedPatterns;
 
   /**
    * A cache to store already used private patterns.
    * 
    */
-  private List<PrivatePattern<Function<Bookshelf, Integer>>> assignedPrivatePatterns;
-
+  private transient List<PrivatePattern<Function<Bookshelf, Integer>>> assignedPrivatePatterns;
 
   /**
    * Constructor that assigns the only value that is

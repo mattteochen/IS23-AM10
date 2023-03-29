@@ -18,9 +18,9 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.AbstractPlayerConnector;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,7 +50,8 @@ public class GameHandler {
    * The connected players connectors.
    *
    */
-  private List<AbstractPlayerConnector> playerConnectors = Collections.synchronizedList(new ArrayList<>());
+  private Set<AbstractPlayerConnector> playerConnectors =
+      Collections.synchronizedSet(new HashSet<>());
 
   /**
    * Constructor.
@@ -98,7 +99,7 @@ public class GameHandler {
    * @return The current game instance containing the game state.
    *
    */
-  public synchronized List<AbstractPlayerConnector> getPlayerConnectors() {
+  public synchronized Set<AbstractPlayerConnector> getPlayerConnectors() {
     return playerConnectors;
   }
 
@@ -132,5 +133,25 @@ public class GameHandler {
         pc.addMessageToQueue(game);
       }
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  public boolean equals(Object obj) {
+    if (!(obj instanceof GameHandler)) {
+      return false;
+    }
+    GameHandler casted = (GameHandler) obj;
+    return game.getGameId().equals(casted.getGame().getGameId());
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  public int hashCode() {
+    return game.getGameId().hashCode();
   }
 }

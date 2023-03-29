@@ -5,12 +5,11 @@ import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +24,7 @@ import org.apache.logging.log4j.Logger;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
+@SuppressWarnings({"checkstyle:abbreviationaswordinnamecheck"})
 public final class ServerControllerState {
 
   /**
@@ -37,14 +37,14 @@ public final class ServerControllerState {
    * Active {@link GameHandler} instances.
    *
    */
-  private static List<GameHandler> gamePool = Collections.synchronizedList(new ArrayList<>());
+  private static Set<GameHandler> gamePool = Collections.synchronizedSet(new HashSet<>());
 
   /**
    * Active players connected with their {@link AbstractPlayerConnector} instances.
    *
    */
-  private static List<AbstractPlayerConnector> playersPool
-      = Collections.synchronizedList(new ArrayList<>());
+  private static Set<AbstractPlayerConnector> playersPool
+      = Collections.synchronizedSet(new HashSet<>());
 
   /**
    * Private constructor.
@@ -141,7 +141,7 @@ public final class ServerControllerState {
     }
     if (target.isPresent()) {
       AbstractPlayerConnector targetConnector = target.get();
-      if (targetConnector instanceof PlayerConnector) {
+      if (targetConnector.getClass() == PlayerConnector.class) {
         try {
           ((PlayerConnector) targetConnector).getConnector().close();
         } catch (IOException e) {
@@ -154,8 +154,8 @@ public final class ServerControllerState {
   }
 
   /**
-   * Finds a game handler in the gamepool by its game id.
-   * 
+   * Finds a game handler in the game pool by its game id.
+   *
    * @param gameId the UUID to search for
    * @return the GameHandler, if found
    * @throws NullGameHandlerInstance
@@ -182,7 +182,7 @@ public final class ServerControllerState {
    * @return The actively connected players.
    *
    */
-  public static synchronized List<AbstractPlayerConnector> getPlayersPool() {
+  public static synchronized Set<AbstractPlayerConnector> getPlayersPool() {
     return playersPool;
   }
 
@@ -192,7 +192,7 @@ public final class ServerControllerState {
    * @return The actively started games instances.
    *
    */
-  public static synchronized List<GameHandler> getGamePools() {
+  public static synchronized Set<GameHandler> getGamePools() {
     return gamePool;
   }
 }

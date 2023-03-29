@@ -1,7 +1,7 @@
 package it.polimi.is23am10.controller.interfaces;
 
-import it.polimi.is23am10.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.command.AbstractCommand;
+import it.polimi.is23am10.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.command.AddPlayerCommand;
 import it.polimi.is23am10.command.MoveTilesCommand;
 import it.polimi.is23am10.command.StartGameCommand;
@@ -29,31 +29,29 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.AbstractPlayerConnector;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.UUID;
 
-public interface IServerControllerAction {
+/**
+ * The server controller action interface definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+@SuppressWarnings({ "checkstyle:abbreviationaswordinnamecheck" })
+public interface IServerControllerAction extends Remote {
   /**
    * Execute the client request.
    *
    * @param connector The connector to a player.
-   * @param commanD The command to be executed.
+   * @param command   The command to be executed.
+   * @throws RemoteException
    *
    */
-  void execute(AbstractPlayerConnector connector, AbstractCommand command);
-
-  /**
-   * Update all the connected players game state by sending a {@link Game}
-   * message.
-   *
-   * @param handler The current game instance handler.
-   * @throws InterruptedException
-   *
-   */
-  static void updateAllPlayers(GameHandler handler) throws InterruptedException {
-    if (handler != null) {
-      handler.pushGameState();
-    }
-  }
+  void execute(AbstractPlayerConnector connector, AbstractCommand command) throws RemoteException;
 
   /**
    * The {@link Opcode#START} command callback worker.
@@ -63,9 +61,17 @@ public interface IServerControllerAction {
   final ControllerConsumer startConsumer = (logger, playerConnector, command) -> {
     if (command instanceof StartGameCommand) {
       try {
+        if (playerConnector == null) {
+          throw new NullPlayerConnector();
+        }
+
         String playerName = ((StartGameCommand) command).getStartingPlayerName();
         Integer maxPlayers = ((StartGameCommand) command).getMaxPlayers();
         GameHandler gameHandler = new GameHandler(playerName, maxPlayers);
+
+        // populate the connector with the game and player reference.
+        playerConnector.setGameId(gameHandler.getGame().getGameId());
+        playerConnector.setPlayerName(playerName);
 
         // add the new game handler instance on the game pool.
         ServerControllerState.addGameHandler(gameHandler);
@@ -75,16 +81,12 @@ public interface IServerControllerAction {
         // add the new player connector to the game handler.
         gameHandler.addPlayerConnector(playerConnector);
 
-        // populate the connector with the game and player reference.
-        playerConnector.setGameId(gameHandler.getGame().getGameId());
-        playerConnector.setPlayerName(playerName);
-
         logger.info("{} Started new game with id {} from {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX,
             gameHandler.getGame().getGameId(), playerName);
 
         // send the game model update to all the connected players
-        updateAllPlayers(gameHandler);
+        gameHandler.pushGameState();
       } catch (NullNumOfPlayersException | NullPlayerNamesException | NullPlayerScoreBlocksException
           | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
           | NullPlayerIdException | NullPlayerNameException | NullMaxPlayerException
@@ -121,6 +123,10 @@ public interface IServerControllerAction {
   final ControllerConsumer addPlayerConsumer = (logger, playerConnector, command) -> {
     if (command instanceof AddPlayerCommand) {
       try {
+        if (playerConnector == null) {
+          throw new NullPlayerConnector();
+        }
+
         String playerName = ((AddPlayerCommand) command).getPlayerName();
         UUID gameId = ((AddPlayerCommand) command).getGameId();
 
@@ -132,22 +138,22 @@ public interface IServerControllerAction {
         // will be thrown from the model.
         gameHandler.getGame().addPlayer(playerName);
 
+        // populate the connector with the game and player reference.
+        playerConnector.setGameId(gameId);
+        playerConnector.setPlayerName(playerName);
+
         // add the new player connector instance to the game's player pool.
         gameHandler.addPlayerConnector(playerConnector);
 
         // add the new player connector instance on the player pool.
         ServerControllerState.addPlayerConnector(playerConnector);
 
-        // populate the connector with the game and player reference.
-        playerConnector.setGameId(gameId);
-        playerConnector.setPlayerName(playerName);
-
         logger.info("{} Added new player {} to game {}",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
             playerName, gameId);
 
         // send the game model update to all the connected players
-        updateAllPlayers(gameHandler);
+        gameHandler.pushGameState();
       } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
           | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
           | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
@@ -191,7 +197,8 @@ public interface IServerControllerAction {
           // TODO: implement moves
         }
         logger.info("{} Operated Tile move for {} in game {}",
-            ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX, handler.getGame().getActivePlayer().getPlayerName(),
+            ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
+            handler.getGame().getActivePlayer().getPlayerName(),
             handler.getGame().getGameId());
       } catch (NullGameHandlerInstance e) {
         logger.error("{} Failed to get game handler from command {}",

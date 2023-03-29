@@ -19,7 +19,6 @@ public class PlayerConnectorRmi extends AbstractPlayerConnector {
   /**
    * Constructor.
    *
-   *
    * @param msgQueue The message queue instance.
    * @throws NullBlockingQueueException
    *

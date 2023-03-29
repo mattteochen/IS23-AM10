@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Logger;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-@SuppressWarnings({"checkstyle:nonemptyatclausedescriptioncheck"})
+@SuppressWarnings({ "checkstyle:nonemptyatclausedescriptioncheck" })
 public final class ServerController implements Runnable {
 
   /**
@@ -65,7 +65,7 @@ public final class ServerController implements Runnable {
    * The action taker instance. This works on a given command {@link Opcode}.
    *
    */
-  protected ServerControllerActionImpl serverControllerAction;
+  protected ServerControllerAction serverControllerAction;
 
   /**
    * Constructor.
@@ -75,7 +75,7 @@ public final class ServerController implements Runnable {
    * @param serverControllerAction The server action taker instance.
    */
   public ServerController(PlayerConnector playerConnector,
-      ServerControllerActionImpl serverControllerAction) {
+      ServerControllerAction serverControllerAction) {
     this.playerConnector = playerConnector;
     this.serverControllerAction = serverControllerAction;
   }
@@ -97,13 +97,15 @@ public final class ServerController implements Runnable {
         logger.error("Failed to parse socket payload", e);
       } catch (InterruptedException e) {
         logger.error("Failed get response message from the queue", e);
-        // note, we are not raising the interrupted flag as we don't want to stop this thread.
+        // note, we are not raising the interrupted flag as we don't want to stop this
+        // thread.
       }
     }
   }
 
   /**
-   * Build the response message and sent it to the client when any game update is available.
+   * Build the response message and sent it to the client when any game update is
+   * available.
    *
    * @throws IOException
    * @throws InterruptedException
@@ -134,7 +136,7 @@ public final class ServerController implements Runnable {
   protected AbstractCommand buildCommand()
       throws IOException, JsonIOException, JsonSyntaxException {
     BufferedReader reader = new BufferedReader(
-          new InputStreamReader(playerConnector.getConnector().getInputStream()));
+        new InputStreamReader(playerConnector.getConnector().getInputStream()));
     String payload = null;
     if (reader.ready()) {
       payload = reader.readLine();

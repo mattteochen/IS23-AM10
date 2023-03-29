@@ -2,7 +2,7 @@ package it.polimi.is23am10;
 
 import it.polimi.is23am10.config.ServerConfigContext;
 import it.polimi.is23am10.config.ServerConfigDefault;
-import it.polimi.is23am10.controller.ServerControllerActionRmiImpl;
+import it.polimi.is23am10.controller.ServerControllerAction;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.rmi.registry.LocateRegistry;
@@ -31,7 +31,7 @@ public final class ServerMain {
         ServerConfigDefault.MAX_CLIENT_CONNECTION, ServerConfigDefault.KEEP_ALIVE);
 
     Server server = new Server(new ServerSocket(ctx.getServerSocketPort()),
-        Executors.newFixedThreadPool(ctx.getMaxConnections()), new ServerControllerActionRmiImpl(),
+        Executors.newFixedThreadPool(ctx.getMaxConnections()), new ServerControllerAction(),
         LocateRegistry.createRegistry(ctx.getServerRmiPort()));
     server.start(ctx);
   }

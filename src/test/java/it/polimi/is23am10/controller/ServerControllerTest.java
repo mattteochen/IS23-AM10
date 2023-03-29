@@ -74,7 +74,7 @@ class ServerControllerTest {
   PlayerConnector playerConnector;
 
   @Mock
-  ServerControllerActionImpl serverControllerAction;
+  ServerControllerAction serverControllerAction;
 
   @Spy
   @InjectMocks
@@ -90,7 +90,7 @@ class ServerControllerTest {
   void CONSTRUCTOR_should_BUILD_OBJECT() throws NullSocketConnectorException, NullBlockingQueueException {
     Socket socket = new Socket();
     ServerController testController = new ServerController(new PlayerConnector(socket, new LinkedBlockingQueue<>()),
-        new ServerControllerActionImpl());
+        new ServerControllerAction());
     assertNotNull(testController);
   }
 

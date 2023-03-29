@@ -3,7 +3,6 @@ package it.polimi.is23am10.playerconnector;
 import it.polimi.is23am10.game.Game;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
-
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -22,7 +21,7 @@ public class PlayerConnector extends AbstractPlayerConnector {
    * The socket connection reference.
    *
    */
-  private Socket connector;
+  private transient Socket connector;
 
   /**
    * Constructor.

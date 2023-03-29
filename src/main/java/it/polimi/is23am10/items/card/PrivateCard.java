@@ -18,7 +18,8 @@ import java.util.function.Function;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class PrivateCard
-    extends AbstractCard<Function<Bookshelf, Integer>, PrivatePattern<Function<Bookshelf, Integer>>> {
+    extends
+    AbstractCard<Function<Bookshelf, Integer>, PrivatePattern<Function<Bookshelf, Integer>>> {
 
   /**
    * A counter for the number of matched blocks in the {@link PrivatePattern}.

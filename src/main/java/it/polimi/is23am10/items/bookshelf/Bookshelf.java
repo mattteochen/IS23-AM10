@@ -9,6 +9,7 @@ import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.utils.IndexValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -19,11 +20,7 @@ import java.util.Map;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class Bookshelf {
-  /**
-   * These are the constants used inside the class bookshelf
-   */
-
+public class Bookshelf implements Serializable {
   /**
    * The bookshelf max rows value.
    */
@@ -35,12 +32,11 @@ public class Bookshelf {
   public static final int BOOKSHELF_COLS = 5;
 
   /**
-   * 
    * The support map to reference each {@link TileType} with a char.
    * Used for the constructor of Bookshelf made for tests.
    * 
    */
-  Map<String, TileType> tileMap = Map.of(
+  transient Map<String, TileType> tileMap = Map.of(
       "C", TileType.CAT,
       "B", TileType.BOOK,
       "G", TileType.GAME,

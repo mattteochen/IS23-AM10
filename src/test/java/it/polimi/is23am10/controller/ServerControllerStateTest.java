@@ -22,11 +22,15 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
+import it.polimi.is23am10.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.net.Socket;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import org.apache.logging.log4j.core.config.plugins.convert.TypeConverters.UuidConverter;
+import org.apache.logging.log4j.core.pattern.UuidPatternConverter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +57,21 @@ class ServerControllerStateTest {
     ServerControllerState.addGameHandler(new GameHandler("Steve", 2));
 
     assertEquals(1, ServerControllerState.getGamePools().size());
+  }
+
+  @Test
+  void ADD_GAME_HANDLER_should_NOT_HAVE_DUPLICATES()
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+      NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
+      NullAssignedPatternException {
+      
+    GameHandler handler = new GameHandler("Steve", 2);
+    ServerControllerState.addGameHandler(handler);
+    ServerControllerState.addGameHandler(handler);
+    ServerControllerState.addGameHandler(new GameHandler("Steve", 4));
+    assertEquals(2, ServerControllerState.getGamePools().size());
   }
 
   @Test
@@ -88,6 +107,23 @@ class ServerControllerStateTest {
   }
 
   @Test
+  void ADD_PLAYER_CONNECTOR_should_NOT_HAVE_DUPLICATES()
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+      NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
+      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException {
+
+    PlayerConnectorRmi playerConnector = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
+    playerConnector.setPlayerName("Steve");
+    playerConnector.setGameId(UUID.randomUUID());
+    ServerControllerState.addPlayerConnector(playerConnector);
+    assertEquals(1, ServerControllerState.getPlayersPool().size());
+    ServerControllerState.addPlayerConnector(playerConnector);
+    assertEquals(1, ServerControllerState.getPlayersPool().size());
+  }
+
+  @Test
   void ADD_PLAYER_CONNECTOR_should_THROW_NullGameHandlerInstance()
       throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
@@ -96,6 +132,8 @@ class ServerControllerStateTest {
       NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException {
 
     PlayerConnector playerConnector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    playerConnector.setPlayerName("Steve");
+    playerConnector.setGameId(UUID.randomUUID());
     ServerControllerState.addPlayerConnector(playerConnector);
     assertEquals(1, ServerControllerState.getPlayersPool().size());
   }
@@ -149,8 +187,14 @@ class ServerControllerStateTest {
     GameHandler handler = new GameHandler("Steve", 2);
     GameHandler handler2 = new GameHandler("Bob", 2);
     PlayerConnector steve = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    steve.setPlayerName("Steve");
+    steve.setGameId(UUID.randomUUID());
     PlayerConnector alice = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    alice.setPlayerName("Steve");
+    alice.setGameId(UUID.randomUUID());
     PlayerConnector bob = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    bob.setPlayerName("Steve");
+    bob.setGameId(UUID.randomUUID());
     handler.addPlayerConnector(steve);
     handler.addPlayerConnector(alice);
     handler2.addPlayerConnector(bob);

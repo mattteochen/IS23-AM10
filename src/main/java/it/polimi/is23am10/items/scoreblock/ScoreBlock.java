@@ -1,9 +1,9 @@
 package it.polimi.is23am10.items.scoreblock;
 
+import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
-
-import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 
 /**
  * ScoreBlock class definition.
@@ -13,7 +13,7 @@ import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueExc
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public final class ScoreBlock {
+public final class ScoreBlock implements Serializable {
 
   protected static final List<Integer> allowedScoreValues = Arrays.asList(2, 4, 6, 8);
 
