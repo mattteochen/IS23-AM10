@@ -47,19 +47,14 @@ public class ServerControllerActionRmiImpl implements
   /**
    * The logger, an instance of {@link Logger}.
    *
-   * TODO: investigate why this class scoped attributes borokes the server,
-   * already tried static and transient keywords. Another option is to use the
-   * logger instance of another class.
    */
-  // private static final transient Logger logger =
-  // LogManager.getLogger(ServerControllerActionRMIImpl.class);
+  private static final Logger logger = LogManager.getLogger(ServerControllerActionRmiImpl.class);
 
   /**
    * The {@link Opcode#START} command callback worker.
    *
    */
   protected final ControllerConsumerRMI startConsumer = (command) -> {
-    final Logger logger = LogManager.getLogger(ServerControllerActionRmiImpl.class);
     if (command instanceof StartGameCommand) {
       try {
         String playerName = ((StartGameCommand) command).getStartingPlayerName();
@@ -96,7 +91,6 @@ public class ServerControllerActionRmiImpl implements
    *
    */
   protected final ControllerConsumerRMI addPlayerConsumer = (command) -> {
-    final Logger logger = LogManager.getLogger(ServerControllerActionRmiImpl.class);
     if (command instanceof AddPlayerCommand) {
       try {
         String playerName = ((AddPlayerCommand) command).getPlayerName();
@@ -135,7 +129,6 @@ public class ServerControllerActionRmiImpl implements
    *
    */
   protected final ControllerConsumerRMI moveTilesConsumer = (command) -> {
-    final Logger logger = LogManager.getLogger(ServerControllerActionRmiImpl.class);
     if (command instanceof MoveTilesCommand) {
       try {
         GameHandler handler = ServerControllerState.getGameHandlerByUUID(((MoveTilesCommand) command).getGameId());
