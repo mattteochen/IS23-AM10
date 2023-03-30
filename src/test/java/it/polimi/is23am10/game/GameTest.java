@@ -42,7 +42,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-import main.java.it.polimi.is23am10.game.exceptions.FullGameException;
+import it.polimi.is23am10.game.exceptions.FullGameException;
 
 import java.util.HashMap;
 import java.util.List;

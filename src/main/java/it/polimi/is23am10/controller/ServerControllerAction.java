@@ -26,7 +26,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
-import main.java.it.polimi.is23am10.game.exceptions.FullGameException;
+import it.polimi.is23am10.game.exceptions.FullGameException;
 
 import java.util.Map;
 import java.util.Optional;

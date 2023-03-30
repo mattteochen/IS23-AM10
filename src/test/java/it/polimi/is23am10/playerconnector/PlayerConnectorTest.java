@@ -22,7 +22,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
-import main.java.it.polimi.is23am10.game.exceptions.FullGameException;
+import it.polimi.is23am10.game.exceptions.FullGameException;
 
 import java.net.Socket;
 import java.util.Optional;
