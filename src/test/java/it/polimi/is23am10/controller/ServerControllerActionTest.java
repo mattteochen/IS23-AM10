@@ -221,7 +221,7 @@ class ServerControllerActionTest {
     GameHandler handler = new GameHandler("Max", 2);
     ServerControllerState.addGameHandler(handler);
 
-    AbstractCommand cmd = new AddPlayerCommand("Steve", UUID.randomUUID());
+    AbstractCommand cmd = new AddPlayerCommand("Steve",UUID.randomUUID());
 
     assertEquals(null, playerConnector.getPlayerName());
     assertEquals(null, playerConnector.getGameId());
@@ -236,6 +236,45 @@ class ServerControllerActionTest {
     assertEquals(oldPlayerConnectors, ServerControllerState.getPlayersPool().size());
     assertFalse(handler.getPlayerConnectors().contains(playerConnector));
     assertFalse(handler.getGame().getPlayerNames().contains("Steve"));
+  }
+  
+  @Test
+  void ADD_PLAYER_CONSUMER_should_not_ADD_PLAYER_IF_GAME_IS_FULL()
+      throws NullSocketConnectorException, NullGameHandlerInstance,
+      NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
+      NullAssignedPatternException, FullGameException {
+    Socket socket = new Socket();
+    GameHandler handler = new GameHandler("Max", 2);
+    ServerControllerState.addGameHandler(handler);
+    
+    PlayerConnector steve = new PlayerConnector(socket, new LinkedBlockingQueue<>());
+    AbstractCommand steveCmd = new AddPlayerCommand("Steve",  handler.getGame().getGameId());
+
+    final int oldPlayerConnectors = ServerControllerState.getPlayersPool().size();
+
+    assertEquals(null, steve.getPlayerName());
+    assertEquals(null, steve.getGameId());
+
+    serverControllerAction.addPlayerConsumer.accept(steve, steveCmd);
+
+    assertEquals(oldPlayerConnectors+1, ServerControllerState.getPlayersPool().size());
+    assertTrue(handler.getPlayerConnectors().contains(steve));
+    assertTrue(handler.getGame().getPlayerNames().contains("Steve"));
+    
+    PlayerConnector alice = new PlayerConnector(socket, new LinkedBlockingQueue<>());
+    AbstractCommand aliceCmd = new AddPlayerCommand("Alice",  handler.getGame().getGameId());
+
+    assertEquals(null, alice.getPlayerName());
+    assertEquals(null, alice.getGameId());
+
+    serverControllerAction.addPlayerConsumer.accept(alice, aliceCmd);
+
+    assertEquals(oldPlayerConnectors+1, ServerControllerState.getPlayersPool().size());
+    assertFalse(handler.getPlayerConnectors().contains(alice));
+    assertFalse(handler.getGame().getPlayerNames().contains("Alice"));
   }
 
   @Test
