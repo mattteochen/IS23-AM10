@@ -1,4 +1,4 @@
-package main.java.it.polimi.is23am10.game.exceptions;
+package it.polimi.is23am10.game.exceptions;
 
 /**
  * The game reached its maximum number of players.
