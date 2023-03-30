@@ -140,7 +140,6 @@ public class Game {
    */
   private List<PrivatePattern<Function<Bookshelf, Integer>>> assignedPrivatePatterns;
 
-
   /**
    * Constructor that assigns the only value that is
    * generated, immutable and not set by factory.
@@ -258,16 +257,16 @@ public class Game {
    * @throws NullPlayerBookshelfException
    * @throws NullPlayerIdException
    * @throws NullPlayerNameException
- * @throws NullAssignedPatternException
+   * @throws NullAssignedPatternException
    *
    */
   private void addPlayer(Player player) {
-    //TODO: class level random is colliding with gson
+    // TODO: class level random is colliding with gson
     Random random = new Random();
     final Integer position = players.isEmpty() ? 0 : random.nextInt(players.size());
     players.add(position, player);
   }
-  
+
   /**
    * Creates and adds a new player to the game. Position is randomly determined,
    * as position in players list is the order in the game.
@@ -284,15 +283,17 @@ public class Game {
    * @throws NullPlayerNameException
    * @return instance of created player
    * @throws NullAssignedPatternException
+   * @throws FullGameException
    */
   public Player addPlayer(String playerName)
-      throws NullPlayerNamesException, NullPlayerNameException, NullPlayerIdException, 
-      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, 
+      throws NullPlayerNamesException, NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       FullGameException, NullAssignedPatternException {
-        if(getPlayers().size() == getMaxPlayer()){
-          throw new FullGameException(playerName + "could not be added, because the game reached its maximum number of players");
-        }
+    if (getPlayers().size() == getMaxPlayer()) {
+      throw new FullGameException(
+          playerName + "could not be added, because the game reached its maximum number of players");
+    }
     Player playerToAdd = PlayerFactory.getNewPlayer(playerName, getPlayerNames(), this);
     addPlayer(playerToAdd);
     return playerToAdd;
@@ -300,14 +301,15 @@ public class Game {
 
   /**
    * Function that adds multiple players to game
+   * 
    * @param players list of players to add
    * @throws NullPlayerException
    * @throws InvalidPlayersNumberException
    * @throws DuplicatePlayerNameException
    */
-  public void addPlayers(List<Player> players) 
-      throws NullPlayerException, InvalidPlayersNumberException, DuplicatePlayerNameException{
-    
+  public void addPlayers(List<Player> players)
+      throws NullPlayerException, InvalidPlayersNumberException, DuplicatePlayerNameException {
+
     if (players == null) {
       throw new NullPlayerException();
     }
@@ -533,10 +535,10 @@ public class Game {
   public void nextTurn()
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException {
-    
+
     activePlayer.updateScore();
     checkEndGame();
-    if(!(getEnded())) {
+    if (!(getEnded())) {
       gameBoard.refillIfNeeded();
       int nextPlayerIdx = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size();
       setActivePlayer(players.get(nextPlayerIdx));
@@ -578,9 +580,9 @@ public class Game {
    * @param playerToCheck
    * @return is playerToCheck the last one in turn
    */
-  private boolean isLastPlayer(Player playerToCheck){
+  private boolean isLastPlayer(Player playerToCheck) {
     final Integer idxDiff = players.indexOf(playerToCheck) - players.indexOf(firstPlayer);
-    return (idxDiff == -1 || idxDiff == (maxPlayers-1));
+    return (idxDiff == -1 || idxDiff == (maxPlayers - 1));
   }
 
   /**
@@ -609,7 +611,7 @@ public class Game {
    * @param p2 second player
    * @return player who should win between two
    */
-  private Player decideWinner(Player p1, Player p2){
+  private Player decideWinner(Player p1, Player p2) {
     final Integer p1Score = p1.getScore().getTotalScore();
     final Integer p2Score = p2.getScore().getTotalScore();
 
@@ -617,10 +619,10 @@ public class Game {
       // Positions relative to firstPlayer can be negative -> Modular arithmetics
       Integer startingPos1 = players.indexOf(p1) - players.indexOf(firstPlayer);
       startingPos1 = startingPos1 > 0 ? startingPos1 : startingPos1 + maxPlayers;
-      Integer startingPos2 = players.indexOf(p2) - players.indexOf(firstPlayer); 
+      Integer startingPos2 = players.indexOf(p2) - players.indexOf(firstPlayer);
       startingPos2 = startingPos2 > 0 ? startingPos2 : startingPos2 + maxPlayers;
       return (startingPos1 > startingPos2 ? p1 : p2);
-    } else{
+    } else {
       return (p1Score > p2Score ? p1 : p2);
     }
   }
@@ -632,8 +634,8 @@ public class Game {
   private void endGame() {
     setEnded(true);
     players.stream()
-      .reduce(this::decideWinner)
-      .ifPresent(this::setWinnerPlayer);
+        .reduce(this::decideWinner)
+        .ifPresent(this::setWinnerPlayer);
   }
 
   /**
