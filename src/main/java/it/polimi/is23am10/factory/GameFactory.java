@@ -16,6 +16,8 @@ import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
+import main.java.it.polimi.is23am10.game.exceptions.FullGameException;
+
 import java.util.Arrays;
 
 /**
@@ -66,7 +68,7 @@ public final class GameFactory {
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException,
-      NullAssignedPatternException {
+      NullAssignedPatternException,FullGameException {
 
     Game game = new Game();
     SharedCard firstCard = new SharedCard(game.getAssignedSharedPatterns());

@@ -26,6 +26,8 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
+import main.java.it.polimi.is23am10.game.exceptions.FullGameException;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -81,7 +83,7 @@ public class ServerControllerAction {
       } catch (NullNumOfPlayersException | NullPlayerNamesException | NullPlayerScoreBlocksException
           | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
           | NullPlayerIdException | NullPlayerNameException | NullMaxPlayerException
-          | AlreadyInitiatedPatternException | NullAssignedPatternException e) {
+          | AlreadyInitiatedPatternException | NullAssignedPatternException | FullGameException e) {
         logger.error("{} Failed to initialize new game request {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       } catch (InvalidNumOfPlayersException | InvalidMaxPlayerException
@@ -143,7 +145,7 @@ public class ServerControllerAction {
       } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
           | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
           | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
-          | NullAssignedPatternException e) {
+          | NullAssignedPatternException | FullGameException e) {
         logger.error("{} Failed to add new player request to game {}",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
       } catch (DuplicatePlayerNameException e) {
