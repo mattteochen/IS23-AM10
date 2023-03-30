@@ -79,6 +79,21 @@ public class GameTest {
   }
 
   @Test
+  public void addPlayer_should_throw_FullGameException_if_game_is_full() 
+    throws NullPlayerNameException, NullPlayerIdException,
+    NullPlayerBookshelfException, NullPlayerScoreException,
+    NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
+    AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException,
+    NullMaxPlayerException, InvalidMaxPlayerException, InvalidNumOfPlayersException,
+    NullNumOfPlayersException, NullAssignedPatternException, FullGameException  {
+    Game game = GameFactory.getNewGame("Optimus", 3);
+    game.addPlayer("Morrison");
+    game.addPlayer("Hendrix");
+    assertThrows(FullGameException.class, () -> game.addPlayer("Jason"));
+    assertFalse(game.getPlayerNames().contains("Jason"));
+  }
+  
+  @Test
   public void setFirstPlayer_should_set_first_player()
       throws NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException,
