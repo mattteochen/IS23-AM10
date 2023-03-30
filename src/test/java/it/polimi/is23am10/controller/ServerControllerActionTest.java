@@ -30,6 +30,8 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
+import main.java.it.polimi.is23am10.game.exceptions.FullGameException;
+
 import java.net.Socket;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -180,7 +182,7 @@ class ServerControllerActionTest {
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
-      NullAssignedPatternException {
+      NullAssignedPatternException, FullGameException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
 
@@ -212,7 +214,7 @@ class ServerControllerActionTest {
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
-      NullAssignedPatternException {
+      NullAssignedPatternException,FullGameException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
 
@@ -242,7 +244,7 @@ class ServerControllerActionTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullBlockingQueueException, NullAssignedPatternException {
+      NullBlockingQueueException, NullAssignedPatternException,FullGameException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     GameHandler handler = new GameHandler("Max", 2);
@@ -265,7 +267,7 @@ class ServerControllerActionTest {
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
-      NullAssignedPatternException {
+      NullAssignedPatternException,FullGameException {
 
     Socket socket = new Socket();
     PlayerConnector steve = new PlayerConnector(socket, new LinkedBlockingQueue<>());
@@ -302,7 +304,7 @@ class ServerControllerActionTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullAssignedPatternException {
+      NullAssignedPatternException,FullGameException {
     PlayerConnector steve = null;
 
     GameHandler handler = new GameHandler("Max", 2);
