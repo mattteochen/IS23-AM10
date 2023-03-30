@@ -34,6 +34,8 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import main.java.it.polimi.is23am10.game.exceptions.FullGameException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -286,7 +288,11 @@ public class Game {
   public Player addPlayer(String playerName)
       throws NullPlayerNamesException, NullPlayerNameException, NullPlayerIdException, 
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, 
-      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullAssignedPatternException {
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      FullGameException, NullAssignedPatternException {
+        if(getPlayers().size() == getMaxPlayer()){
+          throw new FullGameException(playerName + "could not be added, because the game reached its maximum number of players");
+        }
     Player playerToAdd = PlayerFactory.getNewPlayer(playerName, getPlayerNames(), this);
     addPlayer(playerToAdd);
     return playerToAdd;
