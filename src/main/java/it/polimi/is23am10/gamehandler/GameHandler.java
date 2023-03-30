@@ -20,6 +20,9 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
+import it.polimi.is23am10.virtualview.VirtualView;
+import it.polimi.is23am10.virtualview.VirtualPlayer;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -131,10 +134,10 @@ public class GameHandler {
     // iterating over the Collections.synchronizedList requires synch.
     synchronized (playerConnectors) {
       for (PlayerConnector pc : playerConnectors) {
-        Game gameCopy = new Game(game);
+        VirtualView gameCopy = new VirtualView(game);
         gameCopy.getPlayers()
         .stream()
-        .filter(p -> !p.equals(pc.getPlayer()))
+        .filter(p -> !p.getPlayerName().equals(pc.getPlayer().getPlayerName()))
         .forEach(p -> p.obfuscatePrivateCard());
         // synch is performed by the blocking queue.
         pc.addMessageToQueue(new GameMessage(pc.getPlayer(), gameCopy));

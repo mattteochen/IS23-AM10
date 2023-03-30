@@ -29,7 +29,7 @@ public abstract class AbstractMessage {
   public enum MessageType {
     GAME_SNAPSHOT,
     CHAT_MESSAGE
-  };
+  }
 
   protected MessageType msgType;
   
@@ -51,17 +51,5 @@ public abstract class AbstractMessage {
    */
   public Player getSender(){
     return sender;
-  }
-
-  /**
-   * Setter for the sending player.
-   * @param sender the sending player
-   * @throws NullPlayerException
-   */
-  public void setSender(Player sender) throws NullPlayerException {
-    if (sender == null) {
-      throw new NullPlayerException();
-    }
-    this.sender = sender;
   }
 }

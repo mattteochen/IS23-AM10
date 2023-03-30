@@ -41,6 +41,8 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
+import it.polimi.is23am10.virtualview.VirtualView;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -173,8 +175,9 @@ class ServerControllerTest {
       InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException, InvalidMessageTypeException {
     Socket mockSocket = Mockito.mock(Socket.class);
     Game game = GameFactory.getNewGame("Steve", 4);
+    VirtualView virtualView = new VirtualView(game);
     final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    GameMessage message = new GameMessage(game.getFirstPlayer(),game);
+    GameMessage message = new GameMessage(game.getFirstPlayer(),virtualView);
     playerConnector.addMessageToQueue(message);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);

@@ -437,18 +437,18 @@ public final class PrivatePatternFactory {
    * 
    */
   public static final List<PrivatePattern<Function<Bookshelf, Integer>>> patternsArray = List.of(
-      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern1)),
-      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern2)),
-      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern3)),
-      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern4)),
-      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern5)),
-      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern6)),
-      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern7)),
-      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern8)),
-      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern9)),
-      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern10)),
-      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern11)),
-      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern12)));
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern1, 1)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern2, 2)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern3, 3)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern4, 4)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern5, 5)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern6, 6)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern7, 7)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern8, 8)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern9, 9)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern10, 10)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern11, 11)),
+      (new PrivatePattern<Function<Bookshelf, Integer>>(checkPattern12, 12)));
 
   /**
    * Method used to get random PrivatePattern between the 12 possible.

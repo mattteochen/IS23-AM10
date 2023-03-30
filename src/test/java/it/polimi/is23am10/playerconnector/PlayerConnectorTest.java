@@ -24,6 +24,8 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
+import it.polimi.is23am10.virtualview.VirtualView;
+
 import java.net.Socket;
 import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -52,7 +54,8 @@ class PlayerConnectorTest {
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException {
     PlayerConnector connector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
     Game game = GameFactory.getNewGame("Test", 2);
-    GameMessage message = new GameMessage(game.getFirstPlayer(),game);
+    VirtualView virtualView = new VirtualView(game);
+    GameMessage message = new GameMessage(game.getFirstPlayer(),virtualView);
     connector.addMessageToQueue(message);
 
     assertEquals(1, connector.getMsgQueueSize());
@@ -66,7 +69,8 @@ class PlayerConnectorTest {
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException {
     PlayerConnector connector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
     Game game = GameFactory.getNewGame("Test", 2);
-    GameMessage message = new GameMessage(game.getFirstPlayer(),game);
+    VirtualView virtualView = new VirtualView(game);
+    GameMessage message = new GameMessage(game.getFirstPlayer(),virtualView);
     connector.addMessageToQueue(message);
 
     Optional<AbstractMessage> taken = connector.getMessageFromQueue();

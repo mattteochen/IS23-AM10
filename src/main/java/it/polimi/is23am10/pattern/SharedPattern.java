@@ -20,8 +20,8 @@ public class SharedPattern<T> extends AbstractPattern<T> {
    * The constructor of the class SharedPattern.
    *
    */
-  public SharedPattern(T rule, String description) {
-    super(rule);
+  public SharedPattern(T rule, String description, Integer cardIndex) {
+    super(rule, cardIndex);
     this.patternDescription = description;
   }
 

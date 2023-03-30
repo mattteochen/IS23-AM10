@@ -17,13 +17,20 @@ public abstract class AbstractPattern<T> {
   protected T rule;
 
   /**
+   * A 1-12 number to identify the card sprite in view
+   */
+  private Integer cardIndex;
+
+  /**
    * Constructor.
    * 
    * @param rule The rule assigned to the current pattern..
+   * @param cardIndex The card index associated
    * 
    */
-  protected AbstractPattern(T rule) {
+  protected AbstractPattern(T rule, Integer cardIndex) {
     this.rule = rule;
+    this.cardIndex = cardIndex;
   }
 
   /**
@@ -34,4 +41,14 @@ public abstract class AbstractPattern<T> {
   public T getRule() {
     return rule;
   }
+
+  /**
+   * CardIndex getter
+   * 
+   * @return The index
+   */
+  public Integer getIndex() {
+    return cardIndex;
+  }
+  
 }

@@ -157,7 +157,6 @@ public class Game {
     this.ended = toCopy.ended;
     this.firstPlayer = toCopy.firstPlayer;
     this.gameBoard = toCopy.gameBoard;
-    this.gameId = toCopy.gameId;
     this.lastRound = toCopy.lastRound;
     this.maxPlayers = toCopy.maxPlayers;
     this.players = toCopy.players;
