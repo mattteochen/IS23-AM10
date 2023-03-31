@@ -28,7 +28,7 @@ Progetto Ingegneria del Software 2023
 | :x: | Not planned to be implemented |
 
 ## Setup
-*Note, development outside the docker container is not guaranteed to be working!*
+Project works fine as a stand-alone Maven project. Can be opened in any IDE, but a Docker container with ready-to-code extensions is also provided. If you want to use it follow these instructions:
 
 - Open the project with VSCode Developer Docker [Container](https://code.visualstudio.com/docs/devcontainers/containers), hence build the container (for MacOS users `cmd+shift+p` and type "Build Container").
 - There are two options to run tests:
