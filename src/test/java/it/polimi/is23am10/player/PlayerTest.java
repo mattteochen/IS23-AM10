@@ -55,8 +55,8 @@ public class PlayerTest {
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
     Game game = new Game();
-    Player player = PlayerFactory.getNewPlayer("newPlayer", new ArrayList<>(), game);
-    Player playerBrother = PlayerFactory.getNewPlayer("newPlayer", new ArrayList<>(), game);
+    Player player = PlayerFactory.getNewPlayer("newPlayer", game);
+    Player playerBrother = PlayerFactory.getNewPlayer("newPlayer", game);
     Object outsideTheFamily = new Object();
     assertEquals(player.hashCode(), player.getPlayerID().hashCode() * player.getPlayerName().hashCode());
     assertEquals(player, playerBrother);
@@ -76,8 +76,7 @@ public class PlayerTest {
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
         AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
       game = new Game();
-      players = new ArrayList<String>();
-      p = PlayerFactory.getNewPlayer("myNewPlayer", players, game);
+      p = PlayerFactory.getNewPlayer("myNewPlayer", game);
     }
 
     @Test
@@ -109,8 +108,7 @@ public class PlayerTest {
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
         AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
       game = new Game();
-      players = new ArrayList<String>();
-      p = PlayerFactory.getNewPlayer("myNewPlayer", players, game);
+      p = PlayerFactory.getNewPlayer("myNewPlayer", game);
     }
 
     @Test
@@ -143,7 +141,7 @@ public class PlayerTest {
         AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
       game = new Game();
       players = new ArrayList<String>();
-      p = PlayerFactory.getNewPlayer("myNewPlayer", players, game);
+      p = PlayerFactory.getNewPlayer("myNewPlayer", game);
     }
 
     @Test
@@ -175,8 +173,7 @@ public class PlayerTest {
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
         AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
       game = new Game();
-      players = new ArrayList<String>();
-      p = PlayerFactory.getNewPlayer("myNewPlayer", players, game);
+      p = PlayerFactory.getNewPlayer("myNewPlayer", game);
     }
 
     @Test
@@ -210,8 +207,7 @@ public class PlayerTest {
         NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
         AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
       game = new Game();
-      players = new ArrayList<String>();
-      p = PlayerFactory.getNewPlayer("myNewPlayer", players, game);
+      p = PlayerFactory.getNewPlayer("myNewPlayer", game);
     }
 
     @Test
@@ -278,7 +274,7 @@ public class PlayerTest {
     // It comes from 18 bookshelf points + 6 scoreblocks + 12 private card points +
     // 1 extra point for ending the game first.
     final Integer THIRTHYSEVEN = 37;
-    Player p = PlayerFactory.getNewPlayer("myNewPlayer", new ArrayList<String>(), new Game());
+    Player p = PlayerFactory.getNewPlayer("myNewPlayer", new Game());
 
     p.setBookshelf(new Bookshelf(
         "PPPXX" +

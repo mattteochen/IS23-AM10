@@ -11,6 +11,7 @@ import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
@@ -123,13 +124,13 @@ class ServerControllerStateTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedPatternException, FullGameException {
+      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedPatternException, FullGameException, PlayerNotFoundException {
 
     GameHandler handler = new GameHandler("Steve", 2);
     PlayerConnector steve = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
-    steve.setPlayer(PlayerFactory.getNewPlayer("Steve", List.of(), handler.getGame()));
+    steve.setPlayer(handler.getGame().getPlayerByName("Steve"));
     PlayerConnector alice = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
-    alice.setPlayer(PlayerFactory.getNewPlayer("Alice", List.of(), handler.getGame()));
+    alice.setPlayer(PlayerFactory.getNewPlayer("Alice", handler.getGame()));
     steve.setGameId(handler.getGame().getGameId());
     steve.getPlayer().setPlayerName("Steve");
     alice.setGameId(handler.getGame().getGameId());
@@ -151,16 +152,16 @@ class ServerControllerStateTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedPatternException, FullGameException {
+      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedPatternException, FullGameException, PlayerNotFoundException {
 
     GameHandler handler = new GameHandler("Steve", 2);
     GameHandler handler2 = new GameHandler("Bob", 2);
     PlayerConnector steve = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
-    steve.setPlayer(PlayerFactory.getNewPlayer("Steve", List.of(), handler.getGame()));;
+    steve.setPlayer(handler.getGame().getPlayerByName("Steve"));
     PlayerConnector alice = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
-    alice.setPlayer(PlayerFactory.getNewPlayer("Alice", List.of(), handler.getGame()));
+    alice.setPlayer(PlayerFactory.getNewPlayer("Alice", handler.getGame()));
     PlayerConnector bob = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
-    bob.setPlayer(PlayerFactory.getNewPlayer("Bob", List.of(), handler2.getGame()));
+    bob.setPlayer(handler2.getGame().getPlayerByName("Bob"));
     handler.addPlayerConnector(steve);
     handler.addPlayerConnector(alice);
     handler2.addPlayerConnector(bob);

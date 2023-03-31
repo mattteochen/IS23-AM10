@@ -11,6 +11,7 @@ import it.polimi.is23am10.game.Game;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
@@ -49,7 +50,8 @@ public class GameFactoryTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, 
+      FullGameException, PlayerNotFoundException {
 
     Integer dummyPlayerNum = 4;
 
@@ -57,9 +59,7 @@ public class GameFactoryTest {
 
     List<String> expectedPLayedNames = Arrays.asList(dummyPlayerName);
 
-    List<String> emptyList = new ArrayList<>();
-
-    List<Player> expectedPlayers = Arrays.asList(PlayerFactory.getNewPlayer(dummyPlayerName, emptyList, g));
+    List<Player> expectedPlayers = Arrays.asList(g.getPlayerByName(dummyPlayerName));
 
     assertNull(g.getFirstPlayer());
     assertEquals(dummyPlayerNum, g.getMaxPlayer());

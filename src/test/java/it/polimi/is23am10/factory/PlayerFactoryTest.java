@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.game.exceptions.FullGameException;
 import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.player.Player;
@@ -35,7 +36,7 @@ public class PlayerFactoryTest {
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
     ArrayList<String> players = new ArrayList<String>();
-    Player p = PlayerFactory.getNewPlayer("myNewPlayer", players, new Game());
+    Player p = PlayerFactory.getNewPlayer("myNewPlayer", new Game());
 
     assertEquals("myNewPlayer", p.getPlayerName());
     assertEquals(UUID.nameUUIDFromBytes("myNewPlayer".getBytes()), p.getPlayerID());
@@ -50,19 +51,10 @@ public class PlayerFactoryTest {
       throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
       NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatternException, NullPlayerNamesException {
-    ArrayList<String> players = new ArrayList<String>();
-    players.add("myNewPlayer");
+      AlreadyInitiatedPatternException, NullPlayerNamesException, FullGameException, NullAssignedPatternException {
+    Game g = new Game();
+    g.addPlayer("myNewPlayer");
     assertThrows(DuplicatePlayerNameException.class,
-        () -> PlayerFactory.getNewPlayer("myNewPlayer", players, new Game()));
-  }
-
-  @Test
-  public void getNewPlayer_should_throw_NullPlayerNamesException()
-      throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
-      NullPlayerScoreException,
-      NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatternException, NullPlayerNamesException {
-    assertThrows(NullPlayerNamesException.class, () -> PlayerFactory.getNewPlayer("myPlayerName", null, new Game()));
+        () -> PlayerFactory.getNewPlayer("myNewPlayer", g));
   }
 }

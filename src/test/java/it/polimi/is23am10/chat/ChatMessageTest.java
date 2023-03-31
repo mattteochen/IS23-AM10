@@ -33,8 +33,8 @@ public class ChatMessageTest {
     NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException, 
     DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
     
-    final Player sp = PlayerFactory.getNewPlayer("sender",List.of() ,new Game());
-    final Player rp = PlayerFactory.getNewPlayer("receiver",List.of() ,new Game());
+    final Player sp = PlayerFactory.getNewPlayer("sender", new Game());
+    final Player rp = PlayerFactory.getNewPlayer("receiver", new Game());
     final String chatMessage = "prova123";
 
     final ChatMessage cm1 = new ChatMessage(sp, chatMessage);

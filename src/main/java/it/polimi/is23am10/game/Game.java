@@ -312,7 +312,7 @@ public class Game {
       throw new FullGameException(
           playerName + "could not be added, because the game reached its maximum number of players");
     }
-    Player playerToAdd = PlayerFactory.getNewPlayer(playerName, getPlayerNames(), this);
+    Player playerToAdd = PlayerFactory.getNewPlayer(playerName, this);
     addPlayer(playerToAdd);
     return playerToAdd;
   }
