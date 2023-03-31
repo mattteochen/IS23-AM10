@@ -27,6 +27,9 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.virtualview.VirtualView;
 
+/**
+ * Tests for the game message class
+ */
 public class GameMessageTest {
   @Test
   public void constructor_should_create_GameMessage() 

@@ -26,6 +26,9 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 
+/**
+ * Tests for virtual view class.
+ */
 public class VirtualViewTest {
   @Test
   public void constructor_should_create_VirtualView() 

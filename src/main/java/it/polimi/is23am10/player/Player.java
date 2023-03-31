@@ -228,10 +228,6 @@ public class Player implements Serializable {
     score.setScoreBlockPoints(scoreBlocks);
   }
 
-  public void obfuscatePrivateCard() {
-    this.privateCard = new PrivateCard();
-  }
-
   /**
    * {@inheritDoc}
    * 

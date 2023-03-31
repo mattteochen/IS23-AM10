@@ -150,6 +150,10 @@ public class Game implements Serializable {
     assignedPrivatePatterns = new ArrayList<>();
   }
 
+  /**
+   * Copy constructor. Generates another Game instance.
+   * @param toCopy original game
+   */
   public Game(Game toCopy) {
     this.gameId = toCopy.gameId;
     this.activePlayer = toCopy.activePlayer;
