@@ -17,9 +17,11 @@ import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.game.exceptions.FullGameException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
@@ -38,11 +40,12 @@ public class GameMessageTest {
     throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
     NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException, 
     AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException, NullMaxPlayerException,
-    InvalidMaxPlayerException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+    InvalidMaxPlayerException, InvalidNumOfPlayersException, NullNumOfPlayersException, FullGameException, PlayerNotFoundException {
     
     final Game game = GameFactory.getNewGame("sender", 4);
+    game.assignPlayers();
     final VirtualView virtualView = new VirtualView(game);
-    final Player sp = PlayerFactory.getNewPlayer("sender",List.of(), game);
+    final Player sp = game.getPlayerByName("sender");
     final GameMessage gm = new GameMessage(sp, virtualView);
     final String chatMessage = gm.gson.toJson(virtualView);
 
@@ -58,6 +61,6 @@ public class GameMessageTest {
     assertEquals(sp, gm.getSender());
 
     assertNotNull(gm.getGame());
-    assertEquals(game, gm.getGame());
+    assertEquals(virtualView, gm.getGame());
   }
 }

@@ -255,7 +255,7 @@ class ServerControllerActionTest {
 
     final int oldPlayerConnectors = ServerControllerState.getPlayersPool().size();
 
-    assertEquals(null, steve.getPlayerName());
+    assertEquals(null, steve.getPlayer());
     assertEquals(null, steve.getGameId());
 
     serverControllerAction.addPlayerConsumer.accept(steve, steveCmd);
@@ -267,7 +267,7 @@ class ServerControllerActionTest {
     PlayerConnector alice = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     AbstractCommand aliceCmd = new AddPlayerCommand("Alice",  handler.getGame().getGameId());
 
-    assertEquals(null, alice.getPlayerName());
+    assertEquals(null, alice.getPlayer());
     assertEquals(null, alice.getGameId());
 
     serverControllerAction.addPlayerConsumer.accept(alice, aliceCmd);
