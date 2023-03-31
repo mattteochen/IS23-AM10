@@ -12,6 +12,7 @@ public class ServerConfigContext {
    */
   private Integer serverSocketPort;
 
+
   /**
    * The server rmi port.
    * 
