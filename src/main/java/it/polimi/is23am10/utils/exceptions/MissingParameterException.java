@@ -8,8 +8,8 @@ package it.polimi.is23am10.utils.exceptions;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class MissingParameter extends Exception {
-  public MissingParameter(String arg) {
+public class MissingParameterException extends Exception {
+  public MissingParameterException(String arg) {
     super("The argument" + arg  + "is missing the parameter");
   }
 }

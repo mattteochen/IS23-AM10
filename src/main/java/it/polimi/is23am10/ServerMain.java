@@ -3,7 +3,7 @@ package it.polimi.is23am10;
 import it.polimi.is23am10.config.ServerConfigContext;
 import it.polimi.is23am10.utils.ArgParser;
 import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
-import it.polimi.is23am10.utils.exceptions.MissingParameter;
+import it.polimi.is23am10.utils.exceptions.MissingParameterException;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -21,11 +21,11 @@ public final class ServerMain {
 
   /**
    * The main method.
-   * @throws MissingParameter
+   * @throws MissingParameterException
    * @throws InvalidArgumentException
    *
    */
-  public static void main(String[] args) throws IOException, InvalidArgumentException, MissingParameter {
+  public static void main(String[] args) throws IOException, InvalidArgumentException, MissingParameterException {
     ArgParser.parse(args);
     ServerConfigContext ctx = new ServerConfigContext();
 

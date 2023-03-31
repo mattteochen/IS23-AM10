@@ -9,7 +9,7 @@ package it.polimi.is23am10.utils.exceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class InvalidArgumentException extends Exception {
-  public InvalidArgumentException() {
-    super("The provided argument is not valid");
+  public InvalidArgumentException(String arg) {
+    super("The provided argument is not valid" + arg);
   }
 }
