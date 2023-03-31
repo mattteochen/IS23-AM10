@@ -95,7 +95,7 @@ public class MoveValidator {
     int minCol = Arrays.stream(cols).min().getAsInt();
     int maxCol = Arrays.stream(cols).max().getAsInt();
 
-    return (maxRow - minRow == 0 && maxCol - minCol == 0);
+    return (maxRow - minRow == 0 || maxCol - minCol == 0);
   }
 
   /**
@@ -176,14 +176,24 @@ public class MoveValidator {
     for (Coordinates coord : selectedTiles.keySet()) {
       int row = coord.getRow();
       int col = coord.getCol();
-      if (gameBoard.getTileAt(row, col + 1).isEmpty()
-          || gameBoard.getTileAt(row, col - 1).isEmpty()
-          || gameBoard.getTileAt(row + 1, col).isEmpty()
-          || gameBoard.getTileAt(row - 1, col).isEmpty()) {
-        return true;
+      int freeSides = 0;
+      if (gameBoard.getTileAt(row, col + 1).isEmpty()) {
+        freeSides++;
+      }
+      if (gameBoard.getTileAt(row, col - 1).isEmpty()) {
+        freeSides++;
+      }
+      if (gameBoard.getTileAt(row + 1, col).isEmpty()) {
+        freeSides++;
+      }
+      if (gameBoard.getTileAt(row - 1, col).isEmpty()) {
+        freeSides++;
+      }
+      if (freeSides == 0) {
+        return false;
       }
     }
-    return false;
+    return true;
   }
 
   /**
@@ -209,7 +219,7 @@ public class MoveValidator {
    * @throws BoardGridColIndexOutOfBoundsException
    * @throws NullIndexValueException
    */
-  public static boolean areTileNotCorner(Board gameBoard,
+  private static boolean areTileNotCorner(Board gameBoard,
       Map<Coordinates, Coordinates> selectedCoordinates)
       throws BoardGridRowIndexOutOfBoundsException,
       BoardGridColIndexOutOfBoundsException, NullIndexValueException {
