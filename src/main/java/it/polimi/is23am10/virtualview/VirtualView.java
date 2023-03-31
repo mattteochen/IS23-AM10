@@ -32,22 +32,59 @@ public final class VirtualView {
   private VirtualPlayer winnerPlayer;
 
   private Board gameBoard;
-
   /**
    * 1-12 number referencing the shared cards to show
    * //TODO: add matching reference in PrivatePattern
    */
   private List<Integer> sharedCardsIndexes;
-
+  
   private boolean ended;
 
   private boolean lastRound;
+  
+  public UUID getGameId() {
+    return gameId;
+  }
+
+  public Integer getMaxPlayers() {
+    return maxPlayers;
+  }
+
+  public VirtualPlayer getActivePlayer() {
+    return activePlayer;
+  }
+
+  public VirtualPlayer getFirstPlayer() {
+    return firstPlayer;
+  }
+
+  public VirtualPlayer getWinnerPlayer() {
+    return winnerPlayer;
+  }
+
+  public Board getGameBoard() {
+    return gameBoard;
+  }
+
+  public List<Integer> getSharedCardsIndexes() {
+    return sharedCardsIndexes;
+  }
+
+  public boolean isEnded() {
+    return ended;
+  }
+
+  public boolean isLastRound() {
+    return lastRound;
+  }
+
+
 
   public VirtualView(Game g) {
     this.gameId = g.getGameId();
-    this.activePlayer = new VirtualPlayer(g.getActivePlayer());
+    this.activePlayer = g.getActivePlayer() == null ? null : new VirtualPlayer(g.getActivePlayer());
     this.ended = g.getEnded();
-    this.firstPlayer = new VirtualPlayer(g.getFirstPlayer());
+    this.firstPlayer = g.getFirstPlayer() == null ? null : new VirtualPlayer(g.getFirstPlayer());
     this.gameBoard = g.getGameBoard();
     this.lastRound = g.isLastRound();
     this.maxPlayers = g.getMaxPlayer();
@@ -64,5 +101,17 @@ public final class VirtualView {
 
   public List<VirtualPlayer> getPlayers() {
     return players;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof VirtualView)) {
+      return false;
+    }
+
+    VirtualView view = (VirtualView) obj;
+    return (
+      gameId.equals(view.getGameId())
+    );
   }
 }

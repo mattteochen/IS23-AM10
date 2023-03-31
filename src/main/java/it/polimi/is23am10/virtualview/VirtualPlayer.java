@@ -31,12 +31,30 @@ public class VirtualPlayer {
    */
   private Integer privateCardIndex;
 
+  public UUID getPlayerId() {
+    return playerId;
+  }
+
+  public Score getScore() {
+    return score;
+  }
+
+  public Bookshelf getBookshelf() {
+    return bookshelf;
+  }
+
+  public Integer getPrivateCardIndex() {
+    return privateCardIndex;
+  }
+
   public VirtualPlayer(Player p) {
-    this.playerId = p.getPlayerID();
-    this.playerName = p.getPlayerName();
-    this.score = p.getScore();
-    this.bookshelf = p.getBookshelf();
-    this.privateCardIndex = p.getPrivateCard().getPattern().getIndex();
+    if (p != null) {
+      this.playerId = p.getPlayerID();
+      this.playerName = p.getPlayerName();
+      this.score = p.getScore();
+      this.bookshelf = p.getBookshelf();
+      this.privateCardIndex = p.getPrivateCard().getPattern().getIndex();
+    }
   }
 
   public String getPlayerName() {
@@ -45,5 +63,16 @@ public class VirtualPlayer {
 
   public void obfuscatePrivateCard() {
     privateCardIndex = 0;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof VirtualPlayer)) {
+      return false;
+    }
+
+    VirtualPlayer player = (VirtualPlayer) obj;
+    return (playerId.equals(player.getPlayerId())
+        && playerName.equals(player.getPlayerName()));
   }
 }
