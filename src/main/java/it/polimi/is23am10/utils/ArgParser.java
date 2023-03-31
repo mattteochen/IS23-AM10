@@ -1,6 +1,6 @@
 package it.polimi.is23am10.utils;
 
-import it.polimi.is23am10.config.ServerConfigDefault;
+import it.polimi.is23am10.config.ServerConfig;
 import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
 import it.polimi.is23am10.utils.exceptions.MissingParameterException;
 
@@ -33,7 +33,7 @@ public class ArgParser {
       switch (args[i]) {
         case "--port":
           if (i + 1 < args.length) {
-            ServerConfigDefault.setServerPort(Integer.parseInt(args[i + 1]));
+            ServerConfig.setServerPort(Integer.parseInt(args[i + 1]));
             i++;
           }
           else
@@ -41,7 +41,7 @@ public class ArgParser {
           break;
         case "--max-connections":
           if (i + 1 < args.length){
-            ServerConfigDefault.setMaxConnections(Integer.parseInt(args[i + 1]));
+            ServerConfig.setMaxConnections(Integer.parseInt(args[i + 1]));
             i++;
           }
           else
@@ -49,7 +49,7 @@ public class ArgParser {
           break;
         case "--keep-alive":
           if (i + 1 < args.length){
-            ServerConfigDefault.setKeepAlive(Boolean.parseBoolean(args[i + 1]));
+            ServerConfig.setKeepAlive(Boolean.parseBoolean(args[i + 1]));
             i++;
           }
           else

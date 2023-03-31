@@ -47,9 +47,9 @@ public class ServerConfigContext {
    * 
    */
   public ServerConfigContext() {
-    this.serverPort = ServerConfigDefault.getServerPort();
-    this.maxConnection = ServerConfigDefault.getMaxConnections();
-    this.keepAlive = ServerConfigDefault.getKeepAlive();
+    this.serverPort = ServerConfig.getServerPort();
+    this.maxConnection = ServerConfig.getMaxConnections();
+    this.keepAlive = ServerConfig.getKeepAlive();
   }
 
   /**

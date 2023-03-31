@@ -9,13 +9,13 @@ package it.polimi.is23am10.config;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public final class ServerConfigDefault {
+public final class ServerConfig {
 
   /**
    * Private constructor.
    * 
    */
-  private ServerConfigDefault() {
+  private ServerConfig() {
 
   }
 

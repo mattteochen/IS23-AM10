@@ -4,7 +4,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import it.polimi.is23am10.config.ServerConfigContext;
-import it.polimi.is23am10.config.ServerConfigDefault;
+import it.polimi.is23am10.config.ServerConfig;
 import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
 import it.polimi.is23am10.utils.exceptions.MissingParameterException;
 import org.junit.jupiter.api.Test;
@@ -23,12 +23,12 @@ public class ArgParserTest {
         "--port", serverPort
     };
     ArgParser.parse(mockCommand);
-    assertEquals(Integer.parseInt(serverPort), ServerConfigDefault.getServerPort());
+    assertEquals(Integer.parseInt(serverPort), ServerConfig.getServerPort());
 
     ServerConfigContext ctx = new ServerConfigContext();
     assertEquals(Integer.parseInt(serverPort), ctx.getServerPort());  
-    assertEquals(ServerConfigDefault.getKeepAlive(), ctx.getKeepAlive());
-    assertEquals(ServerConfigDefault.getMaxConnections(), ctx.getMaxConnections());
+    assertEquals(ServerConfig.getKeepAlive(), ctx.getKeepAlive());
+    assertEquals(ServerConfig.getMaxConnections(), ctx.getMaxConnections());
   }
 
   @Test
@@ -49,12 +49,12 @@ public class ArgParserTest {
         "--max-connections", serverMaxConnections
     };
     ArgParser.parse(mockCommand);
-    assertEquals(Integer.parseInt(serverMaxConnections), ServerConfigDefault.getMaxConnections());
+    assertEquals(Integer.parseInt(serverMaxConnections), ServerConfig.getMaxConnections());
 
     ServerConfigContext ctx = new ServerConfigContext();
     assertEquals(Integer.parseInt(serverMaxConnections), ctx.getMaxConnections());
-    assertEquals(ServerConfigDefault.getKeepAlive(), ctx.getKeepAlive());
-    assertEquals(ServerConfigDefault.getServerPort(), ctx.getServerPort());
+    assertEquals(ServerConfig.getKeepAlive(), ctx.getKeepAlive());
+    assertEquals(ServerConfig.getServerPort(), ctx.getServerPort());
   }
 
   @Test
@@ -75,12 +75,12 @@ public class ArgParserTest {
         "--keep-alive", serverKeepAlive
     };
     ArgParser.parse(mockCommand);
-    assertEquals(Boolean.parseBoolean(serverKeepAlive), ServerConfigDefault.getKeepAlive());
+    assertEquals(Boolean.parseBoolean(serverKeepAlive), ServerConfig.getKeepAlive());
 
     ServerConfigContext ctx = new ServerConfigContext();
     assertEquals(Boolean.parseBoolean(serverKeepAlive), ctx.getKeepAlive());
-    assertEquals(ServerConfigDefault.getMaxConnections(), ctx.getMaxConnections());
-    assertEquals(ServerConfigDefault.getServerPort(), ctx.getServerPort());
+    assertEquals(ServerConfig.getMaxConnections(), ctx.getMaxConnections());
+    assertEquals(ServerConfig.getServerPort(), ctx.getServerPort());
   }
 
   @Test
