@@ -35,7 +35,6 @@ public class PlayerFactoryTest {
       NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException {
-    ArrayList<String> players = new ArrayList<String>();
     Player p = PlayerFactory.getNewPlayer("myNewPlayer", new Game());
 
     assertEquals("myNewPlayer", p.getPlayerName());

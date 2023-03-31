@@ -1,6 +1,6 @@
 package it.polimi.is23am10.playerconnector;
 
-import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.chat.AbstractMessage;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -23,7 +23,7 @@ public class PlayerConnectorRmi extends AbstractPlayerConnector {
    * @throws NullBlockingQueueException
    *
    */
-  public PlayerConnectorRmi(LinkedBlockingQueue<Game> msgQueue)
+  public PlayerConnectorRmi(LinkedBlockingQueue<AbstractMessage> msgQueue)
       throws NullSocketConnectorException, NullBlockingQueueException {
     super(msgQueue);
   }

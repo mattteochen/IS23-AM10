@@ -1,6 +1,5 @@
 package it.polimi.is23am10.chat;
 
-import it.polimi.is23am10.game.exceptions.NullPlayerException;
 import it.polimi.is23am10.player.Player;
 
 /**

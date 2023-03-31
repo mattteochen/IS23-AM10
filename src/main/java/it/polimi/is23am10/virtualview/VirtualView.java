@@ -1,6 +1,5 @@
 package it.polimi.is23am10.virtualview;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -166,7 +165,7 @@ public final class VirtualView {
     this.maxPlayers = g.getMaxPlayer();
     this.players = g.getPlayers()
       .stream()
-      .map(p -> new VirtualPlayer(p))
+      .map(VirtualPlayer::new)
       .collect(Collectors.toList());
     this.sharedCardsIndexes = g.getSharedCard()
       .stream()
