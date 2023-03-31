@@ -72,7 +72,7 @@ public final class ServerConfig {
    * 
    */
   public static void setServerPort(Integer p) throws InvalidPortNumberException {
-    if(p < MIN_PORT_NUMBER || p > MAX_CONNECTIONS_NUMBER){
+    if(p < MIN_PORT_NUMBER || p > MAX_PORT_NUMBER){
       throw new InvalidPortNumberException();
     }
     serverPort = p;

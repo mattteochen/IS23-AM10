@@ -15,9 +15,9 @@ import it.polimi.is23am10.utils.exceptions.MissingParameterException;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class ArgParser {
-  
+
   /**
-   * Private constructor of argument parser. 
+   * Private constructor of argument parser.
    */
   private ArgParser() {
   }
@@ -26,39 +26,41 @@ public class ArgParser {
    * Argument parser method that checks commands.
    *
    * @param args arguments passed through cli.
-   * @throws InvalidArgumentException
-   * @throws MissingParameterException
-   * @throws InvalidPortNumberException
-   * @throws NumberFormatException
+   * @throws InvalidArgumentException for invalid command.
+   * @throws MissingParameterException for missing param.
+   * @throws InvalidPortNumberException if port not in bounds.
+   * @throws NumberFormatException if int not found.
    * @throws InvalidMaxConnectionsNumberException
    * 
    */
-  public static void parse(String[] args) throws InvalidArgumentException, MissingParameterException, NumberFormatException, InvalidPortNumberException, InvalidMaxConnectionsNumberException {
+  public static void parse(String[] args)
+      throws InvalidArgumentException, MissingParameterException, NumberFormatException,
+      InvalidPortNumberException, InvalidMaxConnectionsNumberException {
     for (int i = 0; i < args.length; i++) {
       switch (args[i]) {
         case "--port":
           if (i + 1 < args.length) {
             ServerConfig.setServerPort(Integer.parseInt(args[i + 1]));
             i++;
-          }
-          else
+          } else {
             throw new MissingParameterException(args[i]);
+          }
           break;
         case "--max-connections":
-          if (i + 1 < args.length){
+          if (i + 1 < args.length) {
             ServerConfig.setMaxConnections(Integer.parseInt(args[i + 1]));
             i++;
-          }
-          else
+          } else {
             throw new MissingParameterException(args[i]);
+          }
           break;
         case "--keep-alive":
-          if (i + 1 < args.length){
+          if (i + 1 < args.length) {
             ServerConfig.setKeepAlive(Boolean.parseBoolean(args[i + 1]));
             i++;
-          }
-          else
+          } else {
             throw new MissingParameterException(args[i]);
+          }
           break;
         default:
           throw new InvalidArgumentException(args[i]);
