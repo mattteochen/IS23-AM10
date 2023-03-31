@@ -1,6 +1,8 @@
 package it.polimi.is23am10.utils;
 
 import it.polimi.is23am10.config.ServerConfig;
+import it.polimi.is23am10.config.exceptions.InvalidMaxConnectionsNumberException;
+import it.polimi.is23am10.config.exceptions.InvalidPortNumberException;
 import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
 import it.polimi.is23am10.utils.exceptions.MissingParameterException;
 
@@ -26,9 +28,12 @@ public class ArgParser {
    * @param args arguments passed through cli.
    * @throws InvalidArgumentException
    * @throws MissingParameterException
+   * @throws InvalidPortNumberException
+   * @throws NumberFormatException
+   * @throws InvalidMaxConnectionsNumberException
    * 
    */
-  public static void parse(String[] args) throws InvalidArgumentException, MissingParameterException {
+  public static void parse(String[] args) throws InvalidArgumentException, MissingParameterException, NumberFormatException, InvalidPortNumberException, InvalidMaxConnectionsNumberException {
     for (int i = 0; i < args.length; i++) {
       switch (args[i]) {
         case "--port":

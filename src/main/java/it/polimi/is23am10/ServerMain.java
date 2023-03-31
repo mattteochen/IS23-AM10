@@ -1,6 +1,8 @@
 package it.polimi.is23am10;
 
 import it.polimi.is23am10.config.ServerConfigContext;
+import it.polimi.is23am10.config.exceptions.InvalidMaxConnectionsNumberException;
+import it.polimi.is23am10.config.exceptions.InvalidPortNumberException;
 import it.polimi.is23am10.utils.ArgParser;
 import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
 import it.polimi.is23am10.utils.exceptions.MissingParameterException;
@@ -23,9 +25,12 @@ public final class ServerMain {
    * The main method.
    * @throws MissingParameterException
    * @throws InvalidArgumentException
+   * @throws InvalidMaxConnectionsNumberException
+   * @throws InvalidPortNumberException
+   * @throws NumberFormatException
    *
    */
-  public static void main(String[] args) throws IOException, InvalidArgumentException, MissingParameterException {
+  public static void main(String[] args) throws IOException, InvalidArgumentException, MissingParameterException, NumberFormatException, InvalidPortNumberException, InvalidMaxConnectionsNumberException {
     ArgParser.parse(args);
     ServerConfigContext ctx = new ServerConfigContext();
 

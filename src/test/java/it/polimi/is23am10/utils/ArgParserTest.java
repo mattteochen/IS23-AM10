@@ -4,6 +4,8 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import it.polimi.is23am10.config.ServerConfigContext;
+import it.polimi.is23am10.config.exceptions.InvalidMaxConnectionsNumberException;
+import it.polimi.is23am10.config.exceptions.InvalidPortNumberException;
 import it.polimi.is23am10.config.ServerConfig;
 import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
 import it.polimi.is23am10.utils.exceptions.MissingParameterException;
@@ -17,7 +19,8 @@ public class ArgParserTest {
 
   @Test
   void set_port_argument_should_set_server_port() 
-      throws InvalidArgumentException, MissingParameterException {
+      throws InvalidArgumentException, MissingParameterException, NumberFormatException,
+      InvalidPortNumberException, InvalidMaxConnectionsNumberException {
     final String serverPort = "8888";
     final String[] mockCommand = {
         "--port", serverPort
@@ -43,7 +46,8 @@ public class ArgParserTest {
 
   @Test
   void set_max_connections_argument_should_set_max_connections() 
-      throws InvalidArgumentException, MissingParameterException {
+      throws InvalidArgumentException, MissingParameterException, NumberFormatException,
+      InvalidPortNumberException, InvalidMaxConnectionsNumberException {
     final String serverMaxConnections = "7";
     final String[] mockCommand = {
         "--max-connections", serverMaxConnections
@@ -69,7 +73,8 @@ public class ArgParserTest {
 
   @Test
   void set_keep_alive_should_set_keep_alive() 
-      throws InvalidArgumentException, MissingParameterException {
+      throws InvalidArgumentException, MissingParameterException, NumberFormatException,
+      InvalidPortNumberException, InvalidMaxConnectionsNumberException {
     final String serverKeepAlive = "false";
     final String[] mockCommand = {
         "--keep-alive", serverKeepAlive

@@ -1,5 +1,8 @@
 package it.polimi.is23am10.config;
 
+import it.polimi.is23am10.config.exceptions.InvalidMaxConnectionsNumberException;
+import it.polimi.is23am10.config.exceptions.InvalidPortNumberException;
+
 /**
  * The server default config class definition.
  * All the default configuration for the server reside here.
@@ -18,6 +21,30 @@ public final class ServerConfig {
   private ServerConfig() {
 
   }
+
+  /**
+   * The lower bound of port numbers.
+   * 
+   */
+  public static final Integer MIN_PORT_NUMBER = 1024;
+
+  /**
+   * The upper bound of port numbers.
+   * 
+   */
+  public static final Integer MAX_PORT_NUMBER = 65535;
+
+  /**
+   * The lower bound of connection numbers.
+   * 
+   */
+  public static final Integer MIN_CONNECTIONS_NUMBER = 0;
+
+  /**
+   * The upper bound of connection numbers.
+   * 
+   */
+  public static final Integer MAX_CONNECTIONS_NUMBER = 10;
 
   /**
    * The server config server port.
@@ -40,19 +67,27 @@ public final class ServerConfig {
 
   /**
    * Server port setter.
+   * @throws InvalidPortNumberException
    *
    * 
    */
-  public static void setServerPort(Integer p) {
+  public static void setServerPort(Integer p) throws InvalidPortNumberException {
+    if(p < MIN_PORT_NUMBER || p > MAX_CONNECTIONS_NUMBER){
+      throw new InvalidPortNumberException();
+    }
     serverPort = p;
   }
 
   /**
    * Max connections setter.
+   * @throws InvalidMaxConnectionsNumberException
    *
    * 
    */
-  public static void setMaxConnections(Integer maxConn) {
+  public static void setMaxConnections(Integer maxConn) throws InvalidMaxConnectionsNumberException {
+    if(maxConn < MIN_CONNECTIONS_NUMBER || maxConn > MAX_CONNECTIONS_NUMBER){
+      throw new InvalidMaxConnectionsNumberException();
+    }
     maxConnection = maxConn;
   }
 
