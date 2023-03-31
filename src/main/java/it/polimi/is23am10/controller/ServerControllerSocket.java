@@ -35,13 +35,13 @@ import org.apache.logging.log4j.Logger;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 @SuppressWarnings({ "checkstyle:nonemptyatclausedescriptioncheck" })
-public final class ServerController implements Runnable {
+public final class ServerControllerSocket implements Runnable {
 
   /**
    * The logger, an instance of {@link Logger}.
    *
    */
-  protected Logger logger = LogManager.getLogger(ServerController.class);
+  protected Logger logger = LogManager.getLogger(ServerControllerSocket.class);
 
   /**
    * The single client connection instance of type {@link PlayerConnector}.
@@ -74,7 +74,7 @@ public final class ServerController implements Runnable {
    *                               with the low level socket instance.
    * @param serverControllerAction The server action taker instance.
    */
-  public ServerController(PlayerConnector playerConnector,
+  public ServerControllerSocket(PlayerConnector playerConnector,
       ServerControllerAction serverControllerAction) {
     this.playerConnector = playerConnector;
     this.serverControllerAction = serverControllerAction;

@@ -39,7 +39,6 @@ import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.game.exceptions.FullGameException;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -70,7 +69,7 @@ class TestingPurposesClass2 {
 
 @RunWith(MockitoJUnitRunner.class)
 @SuppressWarnings({"deprecation", "unchecked", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck"})
-class ServerControllerTest {
+class ServerControllerSocketTest {
 
   @Mock
   PlayerConnector playerConnector;
@@ -80,7 +79,7 @@ class ServerControllerTest {
 
   @Spy
   @InjectMocks
-  ServerController controller;
+  ServerControllerSocket controller;
 
   @BeforeEach
   void setup() {
@@ -91,7 +90,7 @@ class ServerControllerTest {
   @Test
   void CONSTRUCTOR_should_BUILD_OBJECT() throws NullSocketConnectorException, NullBlockingQueueException {
     Socket socket = new Socket();
-    ServerController testController = new ServerController(new PlayerConnector(socket, new LinkedBlockingQueue<>()),
+    ServerControllerSocket testController = new ServerControllerSocket(new PlayerConnector(socket, new LinkedBlockingQueue<>()),
         new ServerControllerAction());
     assertNotNull(testController);
   }

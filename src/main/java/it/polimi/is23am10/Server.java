@@ -1,7 +1,7 @@
 package it.polimi.is23am10;
 
 import it.polimi.is23am10.config.ServerConfigContext;
-import it.polimi.is23am10.controller.ServerController;
+import it.polimi.is23am10.controller.ServerControllerSocket;
 import it.polimi.is23am10.controller.ServerControllerAction;
 import it.polimi.is23am10.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
@@ -114,7 +114,7 @@ public class Server {
         Socket client = serverSocket.accept();
         client.setKeepAlive(ctx.getKeepAlive());
         logger.info("Received new connection");
-        executorService.execute(new ServerController(
+        executorService.execute(new ServerControllerSocket(
             new PlayerConnector(client,
                 new LinkedBlockingQueue<>()),
             new ServerControllerAction()));
