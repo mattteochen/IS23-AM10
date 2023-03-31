@@ -11,14 +11,14 @@ public class ServerConfigContext {
    * The server port.
    * 
    */
-  private int serverPort;
+  private Integer serverPort;
 
   /**
    * The max allowed connection for this server instance.
    * This is a momentary max value.
    * 
    */
-  private int maxConnection;
+  private Integer maxConnection;
 
   /**
    * The socket SO_KEEPALIVE flag.
@@ -34,10 +34,22 @@ public class ServerConfigContext {
    * @param keepAlive      The socket keep alive flag.
    * 
    */
-  public ServerConfigContext(int serverPort, int maxConnections, boolean keepAlive) {
+  public ServerConfigContext(Integer serverPort, Integer maxConnections, boolean keepAlive) {
     this.serverPort = serverPort;
     this.maxConnection = maxConnections;
     this.keepAlive = keepAlive;
+  }
+
+
+  /**
+   * Constructor with default values.
+   *
+   * 
+   */
+  public ServerConfigContext() {
+    this.serverPort = ServerConfigDefault.getServerPort();
+    this.maxConnection = ServerConfigDefault.getMaxConnections();
+    this.keepAlive = ServerConfigDefault.getKeepAlive();
   }
 
   /**
@@ -46,7 +58,7 @@ public class ServerConfigContext {
    * @return The instantiated server port.
    * 
    */
-  public int getServerPort() {
+  public Integer getServerPort() {
     return serverPort;
   }
 
@@ -56,7 +68,7 @@ public class ServerConfigContext {
    * @return The maximum allowed connections.
    * 
    */
-  public int getMaxConnections() {
+  public Integer getMaxConnections() {
     return maxConnection;
   }
 

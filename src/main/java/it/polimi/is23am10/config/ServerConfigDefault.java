@@ -23,18 +23,76 @@ public final class ServerConfigDefault {
    * The server config class definition.
    * 
    */
-  public static final int SERVER_PORT = 9001;
+  private static Integer serverPort = 9001;
 
   /**
    * The max allowed connection for this server instance.
    * This is a momentary max value.
    * 
    */
-  public static final int MAX_CLIENT_CONNECTION = 8;
+  private static Integer maxConnection = 8;
 
   /**
    * The socket SO_KEEPALIVE flag.
    * 
    */
-  public static final boolean KEEP_ALIVE = true;
+  private static boolean keepAlive = true;
+
+    /**
+   * Server port setter.
+   *
+   * 
+   */
+  public static void setServerPort(Integer p) {
+    serverPort = p;
+  }
+
+  /**
+   * Max connections setter.
+   *
+   * 
+   */
+  public static void setMaxConnections(Integer maxConn) {
+    maxConnection = maxConn;
+  }
+
+  /**
+   * Keep alive setter.
+   *
+   * 
+   */
+  public static void setKeepAlive(boolean k) {
+    keepAlive = k;
+  }
+
+    /**
+   * Server port getter.
+   *
+   * @return The instantiated server port.
+   * 
+   */
+  public static Integer getServerPort() {
+    return serverPort;
+  }
+
+  /**
+   * Max connections getter.
+   *
+   * @return The maximum allowed connections.
+   * 
+   */
+  public static Integer getMaxConnections() {
+    return maxConnection;
+  }
+
+  /**
+   * Keep alive getter.
+   *
+   * @return The keep alive flag.
+   * 
+   */
+  public static boolean getKeepAlive() {
+    return keepAlive;
+  }
+
 }
