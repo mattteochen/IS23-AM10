@@ -1,5 +1,7 @@
 package it.polimi.is23am10.utils;
 
+import java.io.Serializable;
+
 /**
  * The Coordinate helper class definition.
  *
@@ -9,7 +11,7 @@ package it.polimi.is23am10.utils;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  * 
  */
-public class Coordinates {
+public class Coordinates implements Serializable {
 
   /**
    * The row index of the coordinates.

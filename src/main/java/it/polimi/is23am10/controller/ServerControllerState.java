@@ -3,12 +3,13 @@ package it.polimi.is23am10.controller;
 import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
+import it.polimi.is23am10.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +24,7 @@ import org.apache.logging.log4j.Logger;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
+@SuppressWarnings({ "checkstyle:abbreviationaswordinnamecheck" })
 public final class ServerControllerState {
 
   /**
@@ -35,14 +37,15 @@ public final class ServerControllerState {
    * Active {@link GameHandler} instances.
    *
    */
-  private static List<GameHandler> gamePool = Collections.synchronizedList(new ArrayList<>());
+  private static Set<GameHandler> gamePool = Collections.synchronizedSet(new HashSet<>());
 
   /**
-   * Active players connected with their {@link PlayerConnector} instances.
+   * Active players connected with their {@link AbstractPlayerConnector}
+   * instances.
    *
    */
-  private static List<PlayerConnector> playersPool
-      = Collections.synchronizedList(new ArrayList<>());
+  private static Set<AbstractPlayerConnector> playersPool =
+      Collections.synchronizedSet(new HashSet<>());
 
   /**
    * Private constructor.
@@ -92,8 +95,9 @@ public final class ServerControllerState {
       targetHandler.getPlayerConnectors()
           .stream()
           // point of optimization, can be parallelized
-          .forEach(connector ->
-              removePlayerByGameAndName(connector.getGameId(), connector.getPlayerName()));
+          .forEach(
+              connector -> removePlayerByGameAndName(
+                  connector.getGameId(), connector.getPlayer().getPlayerName()));
       gamePool.remove(targetHandler);
       logger.info("Removed game handler with id {}", id);
     }
@@ -107,7 +111,7 @@ public final class ServerControllerState {
    *
    */
   public static final void addPlayerConnector(
-      PlayerConnector playerConnector) throws NullPlayerConnector {
+      AbstractPlayerConnector playerConnector) throws NullPlayerConnector {
     if (playerConnector == null) {
       throw new NullPlayerConnector();
     }
@@ -129,20 +133,22 @@ public final class ServerControllerState {
       return;
     }
 
-    Optional<PlayerConnector> target;
+    Optional<AbstractPlayerConnector> target;
 
     synchronized (playersPool) {
       target = playersPool.stream()
-          .filter(connector ->
-              connector.getGameId().equals(gameId) && connector.getPlayerName().equals(playerName))
+          .filter(connector -> connector.getGameId().equals(gameId)
+              && connector.getPlayer().getPlayerName().equals(playerName))
           .findFirst();
     }
     if (target.isPresent()) {
-      PlayerConnector targetConnector = target.get();
-      try {
-        targetConnector.getConnector().close();
-      } catch (IOException e) {
-        logger.error("Failed to close socket connection", e);
+      AbstractPlayerConnector targetConnector = target.get();
+      if (targetConnector.getClass() == PlayerConnector.class) {
+        try {
+          ((PlayerConnector) targetConnector).getConnector().close();
+        } catch (IOException e) {
+          logger.error("Failed to close socket connection", e);
+        }
       }
       playersPool.remove(targetConnector);
       logger.info("Removed player connector from game {} with name {}", gameId, playerName);
@@ -150,20 +156,19 @@ public final class ServerControllerState {
   }
 
   /**
-   * Finds a game handler in the gamepool by its game id.
-   * 
+   * Finds a game handler in the game pool by its game id.
+   *
    * @param gameId the UUID to search for
    * @return the GameHandler, if found
    * @throws NullGameHandlerInstance
    */
-  public static GameHandler getGameHandlerByUUID(UUID gameId) throws NullGameHandlerInstance{
+  public static GameHandler getGameHandlerByUUID(UUID gameId) throws NullGameHandlerInstance {
     Optional<GameHandler> target;
 
     synchronized (gamePool) {
       target = gamePool.stream()
-        .filter(gh -> 
-            gh.getGame().getGameId().equals(gameId))
-        .findFirst();
+          .filter(gh -> gh.getGame().getGameId().equals(gameId))
+          .findFirst();
     }
     if (target.isPresent()) {
       return target.get();
@@ -178,7 +183,7 @@ public final class ServerControllerState {
    * @return The actively connected players.
    *
    */
-  public static synchronized List<PlayerConnector> getPlayersPool() {
+  public static synchronized Set<AbstractPlayerConnector> getPlayersPool() {
     return playersPool;
   }
 
@@ -188,7 +193,7 @@ public final class ServerControllerState {
    * @return The actively started games instances.
    *
    */
-  public static synchronized List<GameHandler> getGamePools() {
+  public static synchronized Set<GameHandler> getGamePools() {
     return gamePool;
   }
 }

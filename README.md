@@ -5,8 +5,30 @@ Progetto Ingegneria del Software 2023
 
 ![Coverage](.github/badges/jacoco.svg)
 
+## Implemented functionalities status
+| Functionality | Status | 
+| --- | --- |
+| Basic rules | :white_check_mark: |
+| Complete rules | :white_check_mark: |
+| Socket connection | :construction: |
+| RMI connection | :construction: |
+| CLI | :ballot_box_with_check: |
+| GUI | :ballot_box_with_check: |
+| Multiple games | :construction: |
+| Persistence | :x: |
+| Resilience | :x: |
+| Chat | :ballot_box_with_check: |
+
+### Legend
+| Symbol | Functionality status |
+| --- | --- |
+| :white_check_mark: | Completed |
+| :ballot_box_with_check: | On the watch, but not started yet | 
+| :construction: | Work in progress |
+| :x: | Not planned to be implemented |
+
 ## Setup
-*Note, development outside the docker container is not guaranteed to be working!*
+Project works fine as a stand-alone Maven project. Can be opened in any IDE, but a Docker container with ready-to-code extensions is also provided. If you want to use it follow these instructions:
 
 - Open the project with VSCode Developer Docker [Container](https://code.visualstudio.com/docs/devcontainers/containers), hence build the container (for MacOS users `cmd+shift+p` and type "Build Container").
 - There are two options to run tests:

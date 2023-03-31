@@ -8,7 +8,7 @@ import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.utils.IndexValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class Board {
+public class Board implements Serializable {
 
   /**
    * The allowed player values.
