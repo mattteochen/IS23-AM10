@@ -42,6 +42,8 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import it.polimi.is23am10.game.exceptions.FullGameException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,13 +79,28 @@ public class GameTest {
   }
 
   @Test
+  public void addPlayer_should_throw_FullGameException_if_game_is_full() 
+    throws NullPlayerNameException, NullPlayerIdException,
+    NullPlayerBookshelfException, NullPlayerScoreException,
+    NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
+    AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException,
+    NullMaxPlayerException, InvalidMaxPlayerException, InvalidNumOfPlayersException,
+    NullNumOfPlayersException, NullAssignedPatternException, FullGameException  {
+    Game game = GameFactory.getNewGame("Optimus", 3);
+    game.addPlayer("Morrison");
+    game.addPlayer("Hendrix");
+    assertThrows(FullGameException.class, () -> game.addPlayer("Jason"));
+    assertFalse(game.getPlayerNames().contains("Jason"));
+  }
+  
+  @Test
   public void setFirstPlayer_should_set_first_player()
       throws NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException,
       NullMaxPlayerException, InvalidMaxPlayerException, InvalidNumOfPlayersException,
-      NullNumOfPlayersException, NullAssignedPatternException {
+      NullNumOfPlayersException, NullAssignedPatternException, FullGameException {
 
     Game g = GameFactory.getNewGame("dummyPlayer", 4);
     Player dummyPlayer = g.getPlayerByName("dummyPlayer");
@@ -99,7 +116,7 @@ public class GameTest {
       NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException,
-      NullAssignedPatternException {
+      NullAssignedPatternException, FullGameException {
     Game g = new Game();
     final String playerName = "dummyPlayer";
     g.addPlayer(playerName);
@@ -121,7 +138,7 @@ public class GameTest {
         DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
         NullMaxPlayerException, InvalidMaxPlayerException,
         InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException,
-        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException {
+        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException, FullGameException {
 
       final Integer dummyPlayerNum = 3;
 
@@ -199,7 +216,7 @@ public class GameTest {
       BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
       NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPointerException, PlayerNotFoundException,
-      NullAssignedPatternException {
+      NullAssignedPatternException, FullGameException {
     final Integer row = 2;
     final Integer col = 4;
     final Integer numMaxPlayers = 3;
@@ -225,7 +242,7 @@ public class GameTest {
         DuplicatePlayerNameException, AlreadyInitiatedPatternException,
         NullPlayerNamesException, NullMaxPlayerException, InvalidMaxPlayerException,
         InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException,
-        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException {
+        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException,FullGameException {
 
       Integer dummyPlayerNum = 3;
       g = GameFactory.getNewGame("player1", dummyPlayerNum);

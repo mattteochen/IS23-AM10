@@ -4,6 +4,7 @@ import it.polimi.is23am10.factory.GameFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.game.exceptions.FullGameException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
@@ -72,6 +73,7 @@ public class GameHandler {
    * @throws InvalidMaxPlayerException
    * @throws NullMaxPlayerException
    * @throws NullAssignedPatternException
+   * @throws FullGameException
    *
    */
   public GameHandler(String firstPlayerName, Integer maxPlayersNum)
@@ -79,7 +81,7 @@ public class GameHandler {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException,
-      NullNumOfPlayersException, NullAssignedPatternException {
+      NullNumOfPlayersException, NullAssignedPatternException, FullGameException {
     this.game = GameFactory.getNewGame(firstPlayerName, maxPlayersNum);
   }
 

@@ -3,6 +3,7 @@ package it.polimi.is23am10.game;
 import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.game.exceptions.FullGameException;
 import it.polimi.is23am10.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.InvalidPlayersNumberException;
@@ -256,16 +257,16 @@ public class Game implements Serializable {
    * @throws NullPlayerBookshelfException
    * @throws NullPlayerIdException
    * @throws NullPlayerNameException
- * @throws NullAssignedPatternException
+   * @throws NullAssignedPatternException
    *
    */
   private void addPlayer(Player player) {
-    //TODO: class level random is colliding with gson
+    // TODO: class level random is colliding with gson
     Random random = new Random();
     final Integer position = players.isEmpty() ? 0 : random.nextInt(players.size());
     players.add(position, player);
   }
-  
+
   /**
    * Creates and adds a new player to the game. Position is randomly determined,
    * as position in players list is the order in the game.
@@ -282,12 +283,17 @@ public class Game implements Serializable {
    * @throws NullPlayerIdException
    * @throws NullPlayerNameException
    * @throws NullAssignedPatternException
+   * @throws FullGameException
    */
   public Player addPlayer(String playerName)
-      throws NullPlayerNamesException, NullPlayerNameException, NullPlayerIdException, 
-      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, 
-      NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatternException, NullAssignedPatternException {
+      throws NullPlayerNamesException, NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      FullGameException, NullAssignedPatternException {
+    if (getPlayers().size() == getMaxPlayer()) {
+      throw new FullGameException(
+          playerName + "could not be added, because the game reached its maximum number of players");
+    }
     Player playerToAdd = PlayerFactory.getNewPlayer(playerName, getPlayerNames(), this);
     addPlayer(playerToAdd);
     return playerToAdd;
@@ -301,9 +307,9 @@ public class Game implements Serializable {
    * @throws InvalidPlayersNumberException
    * @throws DuplicatePlayerNameException
    */
-  public void addPlayers(List<Player> players) 
-      throws NullPlayerException, InvalidPlayersNumberException, DuplicatePlayerNameException{
-    
+  public void addPlayers(List<Player> players)
+      throws NullPlayerException, InvalidPlayersNumberException, DuplicatePlayerNameException {
+
     if (players == null) {
       throw new NullPlayerException();
     }
@@ -515,7 +521,7 @@ public class Game implements Serializable {
   /**
    * Method that computes active player's Score, updates the view,
    * checks if game is over and if not picks next player.
-   * 
+   *
    * @throws NullScoreBlockListException
    * @throws NullPlayerBookshelfException
    * @throws NullIndexValueException
@@ -527,7 +533,7 @@ public class Game implements Serializable {
   public void nextTurn()
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException {
-    
+
     activePlayer.updateScore();
     checkEndGame();
     if (!(getEnded())) {
@@ -547,7 +553,8 @@ public class Game implements Serializable {
    * @throws NullIndexValueException
    */
   public Tile takeTileAction(Coordinates coord)
-      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
+      NullIndexValueException {
     return gameBoard.takeTileAt(coord.getRow(), coord.getCol());
   }
 
@@ -561,8 +568,9 @@ public class Game implements Serializable {
    * @throws NullIndexValueException
    * @throws NullTileException
    */
-  public void putTileAction(Tile t, Coordinates coord) throws BookshelfGridColIndexOutOfBoundsException,
-      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullTileException {
+  public void putTileAction(Tile t, Coordinates coord) throws
+      BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+      NullIndexValueException, NullTileException {
     activePlayer.getBookshelf().setBookshelfGridIndex(coord.getRow(), coord.getCol(), t);
   }
 
@@ -572,9 +580,9 @@ public class Game implements Serializable {
    * @param playerToCheck A reference player instance on which to operate the check.
    * @return Is playerToCheck the last one in turn
    */
-  private boolean isLastPlayer(Player playerToCheck){
+  private boolean isLastPlayer(Player playerToCheck) {
     final Integer idxDiff = players.indexOf(playerToCheck) - players.indexOf(firstPlayer);
-    return (idxDiff == -1 || idxDiff == (maxPlayers-1));
+    return (idxDiff == -1 || idxDiff == (maxPlayers - 1));
   }
 
   /**
@@ -603,7 +611,7 @@ public class Game implements Serializable {
    * @param p2 Second player
    * @return Player who should win between two
    */
-  private Player decideWinner(Player p1, Player p2){
+  private Player decideWinner(Player p1, Player p2) {
     final Integer p1Score = p1.getScore().getTotalScore();
     final Integer p2Score = p2.getScore().getTotalScore();
 
@@ -611,7 +619,7 @@ public class Game implements Serializable {
       // Positions relative to firstPlayer can be negative -> Modular arithmetics
       Integer startingPos1 = players.indexOf(p1) - players.indexOf(firstPlayer);
       startingPos1 = startingPos1 > 0 ? startingPos1 : startingPos1 + maxPlayers;
-      Integer startingPos2 = players.indexOf(p2) - players.indexOf(firstPlayer); 
+      Integer startingPos2 = players.indexOf(p2) - players.indexOf(firstPlayer);
       startingPos2 = startingPos2 > 0 ? startingPos2 : startingPos2 + maxPlayers;
       return (startingPos1 > startingPos2 ? p1 : p2);
     } else {
@@ -637,9 +645,11 @@ public class Game implements Serializable {
    * and the coordinates of the player's bookshelf where he/she/they wants to put
    * the taken tile in.
    *
+   * <p>
    * Note that I'm assuming all the params given to the method are valid since the
    * input validation will be implemented client side in the selection of those
    * coordinates.
+   * </p>
    *
    * @param selectedCoordinates Map containing the coordinates of selected tiles.
    *                            from board as key and the corresponding

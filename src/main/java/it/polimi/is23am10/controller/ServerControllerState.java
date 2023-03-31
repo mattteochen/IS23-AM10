@@ -160,7 +160,7 @@ public final class ServerControllerState {
    * @return the GameHandler, if found
    * @throws NullGameHandlerInstance
    */
-  public static GameHandler getGameHandlerByUUID(UUID gameId) throws NullGameHandlerInstance{
+  public static GameHandler getGameHandlerByUUID(UUID gameId) throws NullGameHandlerInstance {
     Optional<GameHandler> target;
 
     synchronized (gamePool) {

@@ -14,6 +14,7 @@ import it.polimi.is23am10.controller.exceptions.StartCommandSerializationErrorEx
 import it.polimi.is23am10.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.game.exceptions.FullGameException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
@@ -94,7 +95,7 @@ public interface IServerControllerAction extends Remote {
         logger.error("{} Failed to initialize new game request {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       } catch (InvalidNumOfPlayersException | InvalidMaxPlayerException
-          | DuplicatePlayerNameException e) {
+          | DuplicatePlayerNameException | FullGameException e) {
         logger.error("{} {}", ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       } catch (NullGameHandlerInstance e) {
         logger.error("{} Failed the game instance creation {}",
@@ -160,7 +161,7 @@ public interface IServerControllerAction extends Remote {
           | NullAssignedPatternException e) {
         logger.error("{} Failed to add new player request to game {}",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
-      } catch (DuplicatePlayerNameException e) {
+      } catch (DuplicatePlayerNameException | FullGameException e) {
         logger.error("{} Failed to add new player to game model",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
       } catch (NullPlayerConnector e) {
@@ -189,7 +190,8 @@ public interface IServerControllerAction extends Remote {
   final ControllerConsumer moveTilesConsumer = (logger, playerConnector, command) -> {
     if (command instanceof MoveTilesCommand) {
       try {
-        GameHandler handler = ServerControllerState.getGameHandlerByUUID(((MoveTilesCommand) command).getGameId());
+        GameHandler handler = 
+            ServerControllerState.getGameHandlerByUUID(((MoveTilesCommand) command).getGameId());
         // I check that the player performing the action is the one actually set as
         // active player
         if (handler.getGame().getActivePlayer().getPlayerName()
