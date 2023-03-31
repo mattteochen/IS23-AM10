@@ -16,6 +16,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.score.Score;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ import java.util.UUID;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class Player {
+public class Player implements Serializable {
 
   /**
    * A randomly generated {@link UUID} id.

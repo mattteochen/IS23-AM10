@@ -10,7 +10,7 @@ import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +25,7 @@ import java.util.Map;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 
-public final class Score {
+public final class Score implements Serializable {
   /**
    * Integer referencing the extra point given to the first player
    * to complete their bookshelf.

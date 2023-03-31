@@ -1,9 +1,8 @@
 package it.polimi.is23am10.command;
 
+import it.polimi.is23am10.utils.Coordinates;
 import java.util.Map;
 import java.util.UUID;
-
-import it.polimi.is23am10.utils.Coordinates;
 
 /**
  * The move tiles command class definition.
@@ -14,6 +13,11 @@ import it.polimi.is23am10.utils.Coordinates;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class MoveTilesCommand extends AbstractCommand {
+
+  /**
+   * The player who calls the operation.
+   */
+  private String movingPlayer;
 
   /**
    * Map that associates the position of a picked tile
@@ -37,30 +41,40 @@ public class MoveTilesCommand extends AbstractCommand {
 
   /**
    * Public constructor.
-   * 
+   *
+   * @param movingPlayer The player requesting the move action.
+   * @param gameId The game id reference.
    * @param moves The map of moves. See javadoc above.
    */
-  public MoveTilesCommand(UUID gameId, Map<Coordinates, Coordinates> moves) {
+  public MoveTilesCommand(String movingPlayer, UUID gameId, Map<Coordinates, Coordinates> moves) {
     super(Opcode.MOVE_TILES);
+    this.movingPlayer = movingPlayer;
     this.gameId = gameId;
     this.moves = moves;
   }
 
   /**
+   * Moving player getter.
+   */
+  public String getMovingPlayer() {
+    return movingPlayer;
+  }
+
+  /**
    * GameId getter.
    */
-  public UUID getGameId(){
+  public UUID getGameId() {
     return gameId;
   }
 
   /**
    * Moves map getter.
    */
-  public Map<Coordinates,Coordinates> getMoves(){
+  public Map<Coordinates, Coordinates> getMoves() {
     return moves;
   }
 
-    /**
+  /**
    * {@inheritDoc}
    *
    */
@@ -73,6 +87,7 @@ public class MoveTilesCommand extends AbstractCommand {
     MoveTilesCommand casted = (MoveTilesCommand) obj;
 
     return (opcode == casted.getOpcode()
+        && movingPlayer.equals(casted.getMovingPlayer())
         && gameId.equals(casted.getGameId())
         && moves.equals(casted.getMoves()));
   }
@@ -83,7 +98,6 @@ public class MoveTilesCommand extends AbstractCommand {
    */
   @Override
   public int hashCode() {
-    return gameId.hashCode() * moves.hashCode();
+    return movingPlayer.hashCode() * gameId.hashCode() * moves.hashCode();
   }
-  
 }
