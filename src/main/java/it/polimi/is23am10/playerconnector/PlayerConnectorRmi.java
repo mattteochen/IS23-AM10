@@ -1,9 +1,8 @@
 package it.polimi.is23am10.playerconnector;
 
-import it.polimi.is23am10.chat.AbstractMessage;
+import it.polimi.is23am10.game.Game;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
-import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -16,39 +15,16 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 @SuppressWarnings({ "checkstyle:nonemptyatclausedescriptioncheck" })
-public class PlayerConnector extends AbstractPlayerConnector {
-  /**
-   * The socket connection reference.
-   *
-   */
-  private transient Socket connector;
-
+public class PlayerConnectorRmi extends AbstractPlayerConnector {
   /**
    * Constructor.
    *
-   *
-   * @param connector The {@link Socket} instance linked to a player client.
-   * @param msgQueue  The message queue instance.
-   * @throws NullSocketConnectorException
+   * @param msgQueue The message queue instance.
    * @throws NullBlockingQueueException
    *
    */
-  public PlayerConnector(Socket connector, LinkedBlockingQueue<AbstractMessage> msgQueue)
+  public PlayerConnectorRmi(LinkedBlockingQueue<Game> msgQueue)
       throws NullSocketConnectorException, NullBlockingQueueException {
     super(msgQueue);
-    if (connector == null) {
-      throw new NullSocketConnectorException();
-    }
-    this.connector = connector;
-  }
-
-  /**
-   * Getter for {@link Socket}, the low level connector.
-   *
-   * @return The socket connector.
-   *
-   */
-  public synchronized Socket getConnector() {
-    return connector;
   }
 }

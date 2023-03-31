@@ -1,6 +1,5 @@
 package it.polimi.is23am10.config;
 
-
 /**
  * The server config context class definition.
  * 
@@ -8,10 +7,16 @@ package it.polimi.is23am10.config;
 public class ServerConfigContext {
 
   /**
-   * The server port.
+   * The server socket port.
    * 
    */
-  private int serverPort;
+  private int serverSocketPort;
+
+  /**
+   * The server rmi port.
+   * 
+   */
+  private int serverRmiPort;
 
   /**
    * The max allowed connection for this server instance.
@@ -34,20 +39,31 @@ public class ServerConfigContext {
    * @param keepAlive      The socket keep alive flag.
    * 
    */
-  public ServerConfigContext(int serverPort, int maxConnections, boolean keepAlive) {
-    this.serverPort = serverPort;
+  public ServerConfigContext(int serverSocketPort, int serverRmiPort, int maxConnections, boolean keepAlive) {
+    this.serverSocketPort = serverSocketPort;
+    this.serverRmiPort = serverRmiPort;
     this.maxConnection = maxConnections;
     this.keepAlive = keepAlive;
   }
 
   /**
-   * Server port getter.
+   * Server socket port getter.
    *
-   * @return The instantiated server port.
+   * @return The instantiated server socket port.
    * 
    */
-  public int getServerPort() {
-    return serverPort;
+  public int getServerSocketPort() {
+    return serverSocketPort;
+  }
+
+  /**
+   * Server rmi port getter.
+   *
+   * @return The instantiated server rmi port.
+   * 
+   */
+  public int getServerRmiPort() {
+    return serverRmiPort;
   }
 
   /**

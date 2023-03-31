@@ -1,7 +1,8 @@
 package it.polimi.is23am10.controller.interfaces;
 
 import it.polimi.is23am10.command.AbstractCommand;
-import it.polimi.is23am10.playerconnector.PlayerConnector;
+import it.polimi.is23am10.playerconnector.AbstractPlayerConnector;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Custom functional interface definition for the controller consumer.
@@ -13,6 +14,6 @@ import it.polimi.is23am10.playerconnector.PlayerConnector;
  */
 @FunctionalInterface
 public interface ControllerConsumer {
-  void accept(PlayerConnector connector, AbstractCommand command);
+  void accept(Logger logger, AbstractPlayerConnector connector, AbstractCommand command);
 }
 

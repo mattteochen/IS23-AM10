@@ -5,6 +5,7 @@ import it.polimi.is23am10.factory.GameFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.game.exceptions.FullGameException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
@@ -18,13 +19,12 @@ import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
-import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.virtualview.VirtualView;
-import it.polimi.is23am10.game.exceptions.FullGameException;
 
-import java.util.ArrayList;
+import it.polimi.is23am10.playerconnector.AbstractPlayerConnector;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,7 +54,8 @@ public class GameHandler {
    * The connected players connectors.
    *
    */
-  private List<PlayerConnector> playerConnectors = Collections.synchronizedList(new ArrayList<>());
+  private Set<AbstractPlayerConnector> playerConnectors =
+      Collections.synchronizedSet(new HashSet<>());
 
   /**
    * Constructor.
@@ -83,7 +84,7 @@ public class GameHandler {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException,
-      NullNumOfPlayersException, NullAssignedPatternException,FullGameException {
+      NullNumOfPlayersException, NullAssignedPatternException, FullGameException {
     this.game = GameFactory.getNewGame(firstPlayerName, maxPlayersNum);
   }
 
@@ -98,24 +99,24 @@ public class GameHandler {
   }
 
   /**
-   * Getter for {@link PlayerConnector} list instance.
+   * Getter for {@link AbstractPlayerConnector} list instance.
    *
    * @return The current game instance containing the game state.
    *
    */
-  public synchronized List<PlayerConnector> getPlayerConnectors() {
+  public synchronized Set<AbstractPlayerConnector> getPlayerConnectors() {
     return playerConnectors;
   }
 
   /**
    * Add a new player connector from socket server.
-   * Will accept a built instance of {@link PlayerConnector}
+   * Will accept a built instance of {@link AbstractPlayerConnector}
    *
    * @param playerConnector The connector to be added to the current game.
    * @throws NullPlayerConnector
    *
    */
-  public void addPlayerConnector(PlayerConnector playerConnector)
+  public void addPlayerConnector(AbstractPlayerConnector playerConnector)
       throws NullPlayerConnector {
     if (playerConnector == null) {
       throw new NullPlayerConnector();
@@ -132,7 +133,7 @@ public class GameHandler {
   public void pushGameState() throws InterruptedException {
     // iterating over the Collections.synchronizedList requires synch.
     synchronized (playerConnectors) {
-      for (PlayerConnector pc : playerConnectors) {
+      for (AbstractPlayerConnector pc : playerConnectors) {
         VirtualView gameCopy = new VirtualView(game);
         gameCopy.getPlayers()
         .stream()
@@ -142,5 +143,25 @@ public class GameHandler {
         pc.addMessageToQueue(new GameMessage(pc.getPlayer(), gameCopy));
       }
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  public boolean equals(Object obj) {
+    if (!(obj instanceof GameHandler)) {
+      return false;
+    }
+    GameHandler casted = (GameHandler) obj;
+    return game.getGameId().equals(casted.getGame().getGameId());
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  public int hashCode() {
+    return game.getGameId().hashCode();
   }
 }
