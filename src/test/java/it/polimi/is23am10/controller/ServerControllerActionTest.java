@@ -30,6 +30,8 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
+import it.polimi.is23am10.game.exceptions.FullGameException;
+
 import java.net.Socket;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -180,7 +182,7 @@ class ServerControllerActionTest {
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
-      NullAssignedPatternException {
+      NullAssignedPatternException, FullGameException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
 
@@ -212,14 +214,14 @@ class ServerControllerActionTest {
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
-      NullAssignedPatternException {
+      NullAssignedPatternException,FullGameException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
 
     GameHandler handler = new GameHandler("Max", 2);
     ServerControllerState.addGameHandler(handler);
 
-    AbstractCommand cmd = new AddPlayerCommand("Steve", UUID.randomUUID());
+    AbstractCommand cmd = new AddPlayerCommand("Steve",UUID.randomUUID());
 
     assertEquals(null, playerConnector.getPlayer());
     assertEquals(null, playerConnector.getGameId());
@@ -235,6 +237,45 @@ class ServerControllerActionTest {
     assertFalse(handler.getPlayerConnectors().contains(playerConnector));
     assertFalse(handler.getGame().getPlayerNames().contains("Steve"));
   }
+  
+  @Test
+  void ADD_PLAYER_CONSUMER_should_not_ADD_PLAYER_IF_GAME_IS_FULL()
+      throws NullSocketConnectorException, NullGameHandlerInstance,
+      NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
+      NullAssignedPatternException, FullGameException {
+    Socket socket = new Socket();
+    GameHandler handler = new GameHandler("Max", 2);
+    ServerControllerState.addGameHandler(handler);
+    
+    PlayerConnector steve = new PlayerConnector(socket, new LinkedBlockingQueue<>());
+    AbstractCommand steveCmd = new AddPlayerCommand("Steve",  handler.getGame().getGameId());
+
+    final int oldPlayerConnectors = ServerControllerState.getPlayersPool().size();
+
+    assertEquals(null, steve.getPlayerName());
+    assertEquals(null, steve.getGameId());
+
+    serverControllerAction.addPlayerConsumer.accept(steve, steveCmd);
+
+    assertEquals(oldPlayerConnectors+1, ServerControllerState.getPlayersPool().size());
+    assertTrue(handler.getPlayerConnectors().contains(steve));
+    assertTrue(handler.getGame().getPlayerNames().contains("Steve"));
+    
+    PlayerConnector alice = new PlayerConnector(socket, new LinkedBlockingQueue<>());
+    AbstractCommand aliceCmd = new AddPlayerCommand("Alice",  handler.getGame().getGameId());
+
+    assertEquals(null, alice.getPlayerName());
+    assertEquals(null, alice.getGameId());
+
+    serverControllerAction.addPlayerConsumer.accept(alice, aliceCmd);
+
+    assertEquals(oldPlayerConnectors+1, ServerControllerState.getPlayersPool().size());
+    assertFalse(handler.getPlayerConnectors().contains(alice));
+    assertFalse(handler.getGame().getPlayerNames().contains("Alice"));
+  }
 
   @Test
   void ADD_PLAYER_CONSUMER_should_THROW_nullPlayerValue()
@@ -242,7 +283,7 @@ class ServerControllerActionTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullBlockingQueueException, NullAssignedPatternException {
+      NullBlockingQueueException, NullAssignedPatternException,FullGameException {
     Socket socket = new Socket();
     PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
     GameHandler handler = new GameHandler("Max", 2);
@@ -265,7 +306,7 @@ class ServerControllerActionTest {
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
-      NullAssignedPatternException {
+      NullAssignedPatternException,FullGameException {
 
     Socket socket = new Socket();
     PlayerConnector steve = new PlayerConnector(socket, new LinkedBlockingQueue<>());
@@ -302,7 +343,7 @@ class ServerControllerActionTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullAssignedPatternException {
+      NullAssignedPatternException,FullGameException {
     PlayerConnector steve = null;
 
     GameHandler handler = new GameHandler("Max", 2);

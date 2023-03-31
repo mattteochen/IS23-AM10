@@ -11,7 +11,6 @@ import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
-import it.polimi.is23am10.items.card.PrivateCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -21,7 +20,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.virtualview.VirtualView;
-import it.polimi.is23am10.virtualview.VirtualPlayer;
+import it.polimi.is23am10.game.exceptions.FullGameException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,6 +75,7 @@ public class GameHandler {
    * @throws InvalidMaxPlayerException
    * @throws NullMaxPlayerException
    * @throws NullAssignedPatternException
+   * @throws FullGameException
    *
    */
   public GameHandler(String firstPlayerName, Integer maxPlayersNum)
@@ -83,7 +83,7 @@ public class GameHandler {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException,
-      NullNumOfPlayersException, NullAssignedPatternException {
+      NullNumOfPlayersException, NullAssignedPatternException,FullGameException {
     this.game = GameFactory.getNewGame(firstPlayerName, maxPlayersNum);
   }
 
@@ -127,10 +127,9 @@ public class GameHandler {
    * Push a new game state to the message queue for each connected player.
    *
    * @throws InterruptedException
-   * @throws NullPlayerPrivateCardException
    *
    */
-  public void pushGameState() throws InterruptedException, NullPlayerPrivateCardException {
+  public void pushGameState() throws InterruptedException {
     // iterating over the Collections.synchronizedList requires synch.
     synchronized (playerConnectors) {
       for (PlayerConnector pc : playerConnectors) {

@@ -25,6 +25,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.virtualview.VirtualView;
+import it.polimi.is23am10.game.exceptions.FullGameException;
 
 import java.net.Socket;
 import java.util.Optional;
@@ -51,7 +52,7 @@ class PlayerConnectorTest {
       NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException {
     PlayerConnector connector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
     Game game = GameFactory.getNewGame("Test", 2);
     VirtualView virtualView = new VirtualView(game);
@@ -66,7 +67,7 @@ class PlayerConnectorTest {
       NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException {
     PlayerConnector connector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
     Game game = GameFactory.getNewGame("Test", 2);
     VirtualView virtualView = new VirtualView(game);
