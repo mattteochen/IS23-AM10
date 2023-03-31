@@ -43,8 +43,8 @@ class ServerTest {
   @InjectMocks
   Server server;
 
-  ServerConfigContext ctx = new ServerConfigContext(ServerConfigDefault.SERVER_PORT,
-      ServerConfigDefault.MAX_CLIENT_CONNECTION, ServerConfigDefault.KEEP_ALIVE);
+  ServerConfigContext ctx = new ServerConfigContext(ServerConfigDefault.getServerPort(),
+      ServerConfigDefault.getMaxConnections(), ServerConfigDefault.getKeepAlive());
 
   @BeforeEach
   public void setup() {

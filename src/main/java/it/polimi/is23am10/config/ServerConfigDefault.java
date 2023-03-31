@@ -38,7 +38,7 @@ public final class ServerConfigDefault {
    */
   private static boolean keepAlive = true;
 
-    /**
+  /**
    * Server port setter.
    *
    * 
@@ -94,5 +94,4 @@ public final class ServerConfigDefault {
   public static boolean getKeepAlive() {
     return keepAlive;
   }
-
 }
