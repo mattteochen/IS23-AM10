@@ -48,7 +48,7 @@ public class SocketClientExample {
     String message = gson.toJson(command);
 
     // establish socket connection to server
-    socket = new Socket(host.getHostName(), ServerConfigDefault.SERVER_PORT);
+    socket = new Socket(host.getHostName(), ServerConfigDefault.getServerPort());
 
     // write to socket using PrintWriter.
     printer = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_8);
