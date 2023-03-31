@@ -20,7 +20,7 @@ public final class ServerConfigDefault {
   }
 
   /**
-   * The server config class definition.
+   * The server config server port.
    * 
    */
   private static Integer serverPort = 9001;
@@ -65,7 +65,7 @@ public final class ServerConfigDefault {
     keepAlive = k;
   }
 
-    /**
+  /**
    * Server port getter.
    *
    * @return The instantiated server port.

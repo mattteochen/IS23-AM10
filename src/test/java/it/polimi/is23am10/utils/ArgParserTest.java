@@ -32,7 +32,7 @@ public class ArgParserTest {
   }
 
   @Test
-  void missing_port_argument_should_throw_missing_parameter() 
+  void missing_port_argument_should_throw_missing_parameter_exception() 
       throws InvalidArgumentException, MissingParameterException {
     final String[] mockCommand = {
         "--port"
@@ -58,7 +58,7 @@ public class ArgParserTest {
   }
 
   @Test
-  void missing_max_connections_argument_should_throw_missing_parameter() 
+  void missing_max_connections_argument_should_throw_missing_parameter_exception() 
       throws InvalidArgumentException, MissingParameterException {
     final String[] mockCommand = {
         "--max-connections"
@@ -84,13 +84,23 @@ public class ArgParserTest {
   }
 
   @Test
-  void missing_keep_alive_argument_should_throw_missing_parameter() 
+  void missing_keep_alive_argument_should_throw_missing_parameter_exception() 
       throws InvalidArgumentException, MissingParameterException {
     final String[] mockCommand = {
         "--keep-alive"
     };
 
     assertThrows(MissingParameterException.class, () -> ArgParser.parse(mockCommand));
+  }
+
+  @Test
+  void invalid_argument_should_throw_invalid_argument_exception() 
+      throws InvalidArgumentException, MissingParameterException {
+    final String[] mockCommand = {
+        "--optimus-prime"
+    };
+
+    assertThrows(InvalidArgumentException.class, () -> ArgParser.parse(mockCommand));
   }
 
 }
