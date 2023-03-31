@@ -280,6 +280,9 @@ public class Game {
     Random random = new Random();
     final Integer position = players.isEmpty() ? 0 : random.nextInt(players.size());
     players.add(position, player);
+    if (players.size() == maxPlayers) {
+      assignPlayers();
+    }
   }
 
   /**
@@ -640,6 +643,20 @@ public class Game {
     } else {
       return (p1Score > p2Score ? p1 : p2);
     }
+  }
+
+  /**
+   * Method that is called when all players joined
+   * the game and the first one should be picked.
+   * Can be used in tests to force starting a game before 
+   * the players threshold is met.
+   */
+  public void assignPlayers() {
+    // TODO: class level random is colliding with gson
+    Random random = new Random();
+    Player choosenFirstPlayer = players.get(random.nextInt(players.size()));
+    activePlayer = choosenFirstPlayer;
+    firstPlayer = choosenFirstPlayer;
   }
 
   /**
