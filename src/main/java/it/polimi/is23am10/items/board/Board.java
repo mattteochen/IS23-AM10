@@ -326,4 +326,17 @@ public class Board {
       fillBoardGrid();
     }
   }
+
+  /**
+   * Method used to generate a custom scenario for the game board.
+   *
+   * @param tileGrid A 2D arrays of tiles.
+   */
+  public void setBoardGrid(Tile[][] tileGrid) {
+    for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
+      for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
+        boardGrid[i][j] = tileGrid[i][j];
+      }
+    }
+  }
 }
