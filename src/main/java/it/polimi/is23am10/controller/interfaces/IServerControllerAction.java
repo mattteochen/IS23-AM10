@@ -18,11 +18,13 @@ import it.polimi.is23am10.game.exceptions.FullGameException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
@@ -66,13 +68,14 @@ public interface IServerControllerAction extends Remote {
           throw new NullPlayerConnector();
         }
 
-        String playerName = ((StartGameCommand) command).getStartingPlayerName();
-        Integer maxPlayers = ((StartGameCommand) command).getMaxPlayers();
+        final String playerName = ((StartGameCommand) command).getStartingPlayerName();
+        final Integer maxPlayers = ((StartGameCommand) command).getMaxPlayers();
         GameHandler gameHandler = new GameHandler(playerName, maxPlayers);
+        final Player playerRef = gameHandler.getGame().getPlayerByName(playerName);
 
         // populate the connector with the game and player reference.
         playerConnector.setGameId(gameHandler.getGame().getGameId());
-        playerConnector.setPlayerName(playerName);
+        playerConnector.setPlayer(playerRef);
 
         // add the new game handler instance on the game pool.
         ServerControllerState.addGameHandler(gameHandler);
@@ -91,7 +94,8 @@ public interface IServerControllerAction extends Remote {
       } catch (NullNumOfPlayersException | NullPlayerNamesException | NullPlayerScoreBlocksException
           | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
           | NullPlayerIdException | NullPlayerNameException | NullMaxPlayerException
-          | AlreadyInitiatedPatternException | NullAssignedPatternException e) {
+          | AlreadyInitiatedPatternException | NullAssignedPatternException
+          | PlayerNotFoundException e) {
         logger.error("{} Failed to initialize new game request {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       } catch (InvalidNumOfPlayersException | InvalidMaxPlayerException
@@ -128,9 +132,8 @@ public interface IServerControllerAction extends Remote {
           throw new NullPlayerConnector();
         }
 
-        String playerName = ((AddPlayerCommand) command).getPlayerName();
-        UUID gameId = ((AddPlayerCommand) command).getGameId();
-
+        final String playerName = ((AddPlayerCommand) command).getPlayerName();
+        final UUID gameId = ((AddPlayerCommand) command).getGameId();
         final GameHandler gameHandler = ServerControllerState.getGameHandlerByUUID(gameId);
 
         // add the new player in the game model.
@@ -139,9 +142,11 @@ public interface IServerControllerAction extends Remote {
         // will be thrown from the model.
         gameHandler.getGame().addPlayer(playerName);
 
+        final Player playerRef = gameHandler.getGame().getPlayerByName(playerName);
+
         // populate the connector with the game and player reference.
         playerConnector.setGameId(gameId);
-        playerConnector.setPlayerName(playerName);
+        playerConnector.setPlayer(playerRef);
 
         // add the new player connector instance to the game's player pool.
         gameHandler.addPlayerConnector(playerConnector);
@@ -158,7 +163,7 @@ public interface IServerControllerAction extends Remote {
       } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
           | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
           | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
-          | NullAssignedPatternException e) {
+          | NullAssignedPatternException | PlayerNotFoundException e) {
         logger.error("{} Failed to add new player request to game {}",
             ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
       } catch (DuplicatePlayerNameException | FullGameException e) {
@@ -194,8 +199,8 @@ public interface IServerControllerAction extends Remote {
             ServerControllerState.getGameHandlerByUUID(((MoveTilesCommand) command).getGameId());
         // I check that the player performing the action is the one actually set as
         // active player
-        if (handler.getGame().getActivePlayer().getPlayerName()
-            .equals(((MoveTilesCommand) command).getMovingPlayer())) {
+        if (handler.getGame().getActivePlayer().equals(
+            playerConnector.getPlayer())) {
           // TODO: implement moves
         }
         logger.info("{} Operated Tile move for {} in game {}",

@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Logger;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-@SuppressWarnings({"checkstyle:abbreviationaswordinnamecheck"})
+@SuppressWarnings({ "checkstyle:abbreviationaswordinnamecheck" })
 public final class ServerControllerState {
 
   /**
@@ -40,11 +40,12 @@ public final class ServerControllerState {
   private static Set<GameHandler> gamePool = Collections.synchronizedSet(new HashSet<>());
 
   /**
-   * Active players connected with their {@link AbstractPlayerConnector} instances.
+   * Active players connected with their {@link AbstractPlayerConnector}
+   * instances.
    *
    */
-  private static Set<AbstractPlayerConnector> playersPool
-      = Collections.synchronizedSet(new HashSet<>());
+  private static Set<AbstractPlayerConnector> playersPool =
+      Collections.synchronizedSet(new HashSet<>());
 
   /**
    * Private constructor.
@@ -94,8 +95,9 @@ public final class ServerControllerState {
       targetHandler.getPlayerConnectors()
           .stream()
           // point of optimization, can be parallelized
-          .forEach(connector ->
-              removePlayerByGameAndName(connector.getGameId(), connector.getPlayerName()));
+          .forEach(
+              connector -> removePlayerByGameAndName(
+                  connector.getGameId(), connector.getPlayer().getPlayerName()));
       gamePool.remove(targetHandler);
       logger.info("Removed game handler with id {}", id);
     }
@@ -135,8 +137,8 @@ public final class ServerControllerState {
 
     synchronized (playersPool) {
       target = playersPool.stream()
-          .filter(connector ->
-              connector.getGameId().equals(gameId) && connector.getPlayerName().equals(playerName))
+          .filter(connector -> connector.getGameId().equals(gameId)
+              && connector.getPlayer().getPlayerName().equals(playerName))
           .findFirst();
     }
     if (target.isPresent()) {
@@ -165,9 +167,8 @@ public final class ServerControllerState {
 
     synchronized (gamePool) {
       target = gamePool.stream()
-        .filter(gh -> 
-            gh.getGame().getGameId().equals(gameId))
-        .findFirst();
+          .filter(gh -> gh.getGame().getGameId().equals(gameId))
+          .findFirst();
     }
     if (target.isPresent()) {
       return target.get();

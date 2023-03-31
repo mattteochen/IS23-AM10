@@ -1,6 +1,7 @@
 package it.polimi.is23am10.playerconnector;
 
 import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import java.io.Serializable;
 import java.util.Optional;
@@ -21,10 +22,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 public abstract class AbstractPlayerConnector implements Serializable {
 
   /**
-   * The player name inside a game session.
+   * The player inside a game session.
    *
    */
-  protected String playerName;
+  protected Player player;
 
   /**
    * The unique {@link Game} id reference.
@@ -65,13 +66,13 @@ public abstract class AbstractPlayerConnector implements Serializable {
   }
 
   /**
-   * Getter for the associated player name.
+   * Getter for the associated player.
    *
-   * @return The player name as string.
+   * @return The player reference.
    *
    */
-  public synchronized String getPlayerName() {
-    return playerName;
+  public synchronized Player getPlayer() {
+    return player;
   }
 
   /**
@@ -127,14 +128,13 @@ public abstract class AbstractPlayerConnector implements Serializable {
   }
 
   /**
-   * Setter for the player name.
+   * Setter for the player reference.
    *
-   * @param playerName The player name to associate to the current player
-   *                   connector.
+   * @param player The player to associate to the current player connector.
    *
    */
-  public synchronized void setPlayerName(String playerName) {
-    this.playerName = playerName;
+  public synchronized void setPlayer(Player player) {
+    this.player = player;
   }
 
   /**
@@ -146,7 +146,7 @@ public abstract class AbstractPlayerConnector implements Serializable {
       return false;
     }
     AbstractPlayerConnector casted = (AbstractPlayerConnector) obj;
-    return casted.getPlayerName().equals(playerName)
+    return casted.getPlayer().equals(player)
         && casted.getGameId().equals(gameId);
   }
 
@@ -155,6 +155,6 @@ public abstract class AbstractPlayerConnector implements Serializable {
    *
    */
   public int hashCode() {
-    return playerName.hashCode() * gameId.hashCode();
+    return player.hashCode() * gameId.hashCode();
   }
 }
