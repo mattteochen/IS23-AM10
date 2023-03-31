@@ -24,7 +24,7 @@ import it.polimi.is23am10.utils.exceptions.TilesInDiagonalException;
 import it.polimi.is23am10.utils.exceptions.TilesWithoutOneFreeSideException;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
@@ -64,7 +64,7 @@ public class MoveValidatorTest {
         { new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
             new Tile(TileType.CAT), new Tile(TileType.CAT),
             new Tile(TileType.PLANT), new Tile(TileType.TROPHY),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
+            new Tile(TileType.CAT), new Tile(TileType.EMPTY),
             new Tile(TileType.EMPTY) },
         { new Tile(TileType.EMPTY), new Tile(TileType.GAME),
             new Tile(TileType.BOOK), new Tile(TileType.FRAME),
@@ -111,10 +111,14 @@ public class MoveValidatorTest {
 
     final Coordinates boardCoord1 = new Coordinates(2, 3);
     final Coordinates boardCoord2 = new Coordinates(2, 4);
-    final Coordinates bsCoord1 = new Coordinates(2, 2);
-    final Coordinates bsCoord2 = new Coordinates(2, 0);
+    final Coordinates boardCoord3 = new Coordinates(2, 5);
+    final Coordinates bsCoord1 = new Coordinates(4, 0);
+    final Coordinates bsCoord2 = new Coordinates(3, 0);
+    final Coordinates bsCoord3 = new Coordinates(2, 0);
     selectedCoordinates.put(boardCoord1, bsCoord1);
     selectedCoordinates.put(boardCoord2, bsCoord2);
+    selectedCoordinates.put(boardCoord3, bsCoord3);
+
 
     assertTrue(MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
   }
@@ -148,9 +152,15 @@ public class MoveValidatorTest {
   public void testIsValidMoveOnBoard_invalidMove_TilesWithoutOneFreeSideException() {
     Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
 
-    final Coordinates boardCoord1 = new Coordinates(4, 3);
-    final Coordinates bsCoord1 = new Coordinates(0, 0);
+    final Coordinates boardCoord1 = new Coordinates(2, 3);
+    final Coordinates boardCoord2 = new Coordinates(3, 3);
+    final Coordinates boardCoord3 = new Coordinates(4, 3);
+    final Coordinates bsCoord1 = new Coordinates(4, 0);
+    final Coordinates bsCoord2 = new Coordinates(3, 0);
+    final Coordinates bsCoord3 = new Coordinates(2, 0);
     selectedCoordinates.put(boardCoord1, bsCoord1);
+    selectedCoordinates.put(boardCoord2, bsCoord2);
+    selectedCoordinates.put(boardCoord3, bsCoord3);
 
     assertThrows(TilesWithoutOneFreeSideException.class,
         () -> MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
@@ -160,6 +170,16 @@ public class MoveValidatorTest {
   public void testIsValidMoveOnBoard_invalidMove_TilesInCornerException() {
     Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
 
+    final Coordinates boardCoord1 = new Coordinates(2, 2);
+    final Coordinates boardCoord2 = new Coordinates(2, 3);
+    final Coordinates boardCoord3 = new Coordinates(2, 4);
+    final Coordinates bsCoord1 = new Coordinates(4, 0);
+    final Coordinates bsCoord2 = new Coordinates(3, 0);
+    final Coordinates bsCoord3 = new Coordinates(2, 0);
+    selectedCoordinates.put(boardCoord1, bsCoord1);
+    selectedCoordinates.put(boardCoord2, bsCoord2);
+    selectedCoordinates.put(boardCoord3, bsCoord3);
+
     assertThrows(TilesInCornerException.class,
         () -> MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
   }
@@ -167,6 +187,13 @@ public class MoveValidatorTest {
   @Test
   public void testIsValidMoveOnBoard_invalidMove_TilesInDiagonalException() {
     Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
+
+    final Coordinates boardCoord1 = new Coordinates(7, 4);
+    final Coordinates boardCoord2 = new Coordinates(6, 5);
+    final Coordinates bsCoord1 = new Coordinates(4, 0);
+    final Coordinates bsCoord2 = new Coordinates(3, 0);
+    selectedCoordinates.put(boardCoord1, bsCoord1);
+    selectedCoordinates.put(boardCoord2, bsCoord2);
 
     assertThrows(TilesInDiagonalException.class,
         () -> MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
@@ -179,9 +206,9 @@ public class MoveValidatorTest {
       NullIndexValueException {
     Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
 
-    final Coordinates boardCoord1 = new Coordinates(1, 1);
-    final Coordinates boardCoord2 = new Coordinates(1, 1);
-    final Coordinates boardCoord3 = new Coordinates(1, 1);
+    final Coordinates boardCoord1 = new Coordinates(2, 3);
+    final Coordinates boardCoord2 = new Coordinates(2, 4);
+    final Coordinates boardCoord3 = new Coordinates(2, 5);
     final Coordinates bsCoord1 = new Coordinates(1, 0);
     final Coordinates bsCoord2 = new Coordinates(2, 0);
     final Coordinates bsCoord3 = new Coordinates(3, 0);
@@ -196,9 +223,9 @@ public class MoveValidatorTest {
   public void testIsValidMoveOnBookshelf_invalidMove_NotEnoughSlotsException() {
     Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
 
-    final Coordinates boardCoord1 = new Coordinates(1, 1);
-    final Coordinates boardCoord2 = new Coordinates(1, 1);
-    final Coordinates boardCoord3 = new Coordinates(1, 1);
+    final Coordinates boardCoord1 = new Coordinates(2, 3);
+    final Coordinates boardCoord2 = new Coordinates(2, 4);
+    final Coordinates boardCoord3 = new Coordinates(2, 5);
     final Coordinates bsCoord1 = new Coordinates(1, 3);
     final Coordinates bsCoord2 = new Coordinates(2, 3);
     final Coordinates bsCoord3 = new Coordinates(3, 3);
@@ -208,215 +235,5 @@ public class MoveValidatorTest {
 
     assertThrows(NotEnoughSlotsException.class,
         () -> MoveValidator.isValidMoveOnBookshelf(bookshelf, selectedCoordinates));
-  }
-
-  @Test
-  public void testTilesNotDiagonal_true()
-      throws BoardGridRowIndexOutOfBoundsException,
-      BoardGridColIndexOutOfBoundsException, NullIndexValueException,
-      MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
-      TilesInCornerException, TilesInDiagonalException {
-    Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
-
-    final Coordinates boardCoord1 = new Coordinates(1, 1);
-    final Coordinates boardCoord2 = new Coordinates(1, 1);
-    final Coordinates boardCoord3 = new Coordinates(1, 1);
-    final Coordinates bsCoord1 = new Coordinates(1, 2);
-    final Coordinates bsCoord2 = new Coordinates(2, 0);
-    final Coordinates bsCoord3 = new Coordinates(3, 0);
-    selectedCoordinates.put(boardCoord1, bsCoord1);
-    selectedCoordinates.put(boardCoord2, bsCoord2);
-    selectedCoordinates.put(boardCoord3, bsCoord3);
-
-    assertTrue(MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
-  }
-
-  @Test
-  public void testTilesNotDiagonal_false()
-      throws BoardGridRowIndexOutOfBoundsException,
-      BoardGridColIndexOutOfBoundsException, NullIndexValueException,
-      MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
-      TilesInCornerException, TilesInDiagonalException {
-    Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
-
-    final Coordinates boardCoord1 = new Coordinates(0, 1);
-    final Coordinates boardCoord2 = new Coordinates(1, 1);
-    final Coordinates boardCoord3 = new Coordinates(2, 1);
-    final Coordinates bsCoord1 = new Coordinates(1, 2);
-    final Coordinates bsCoord2 = new Coordinates(2, 0);
-    final Coordinates bsCoord3 = new Coordinates(3, 0);
-    selectedCoordinates.put(boardCoord1, bsCoord1);
-    selectedCoordinates.put(boardCoord2, bsCoord2);
-    selectedCoordinates.put(boardCoord3, bsCoord3);
-
-    assertFalse(MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
-  }
-
-  @Test
-  public void testHasEnoughFreeSlotsInColumn_true()
-      throws BoardGridRowIndexOutOfBoundsException,
-      BoardGridColIndexOutOfBoundsException, NullIndexValueException,
-      MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
-      TilesInCornerException, TilesInDiagonalException {
-    Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
-
-    final Coordinates boardCoord1 = new Coordinates(1, 1);
-    final Coordinates boardCoord2 = new Coordinates(1, 1);
-    final Coordinates boardCoord3 = new Coordinates(1, 1);
-    final Coordinates bsCoord1 = new Coordinates(1, 2);
-    final Coordinates bsCoord2 = new Coordinates(2, 0);
-    final Coordinates bsCoord3 = new Coordinates(3, 0);
-    selectedCoordinates.put(boardCoord1, bsCoord1);
-    selectedCoordinates.put(boardCoord2, bsCoord2);
-    selectedCoordinates.put(boardCoord3, bsCoord3);
-
-    assertTrue(MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
-  }
-
-  @Test
-  public void testHasEnoughFreeSlotsInColumn_false()
-      throws BoardGridRowIndexOutOfBoundsException,
-      BoardGridColIndexOutOfBoundsException, NullIndexValueException,
-      MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
-      TilesInCornerException, TilesInDiagonalException {
-    Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
-
-    final Coordinates boardCoord1 = new Coordinates(1, 1);
-    final Coordinates boardCoord2 = new Coordinates(1, 1);
-    final Coordinates boardCoord3 = new Coordinates(1, 1);
-    final Coordinates bsCoord1 = new Coordinates(1, 2);
-    final Coordinates bsCoord2 = new Coordinates(2, 0);
-    final Coordinates bsCoord3 = new Coordinates(3, 0);
-    selectedCoordinates.put(boardCoord1, bsCoord1);
-    selectedCoordinates.put(boardCoord2, bsCoord2);
-    selectedCoordinates.put(boardCoord3, bsCoord3);
-
-    assertFalse(MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
-  }
-
-  @Test
-  public void testHasOneFreeSide_true()
-      throws BoardGridRowIndexOutOfBoundsException,
-      BoardGridColIndexOutOfBoundsException, NullIndexValueException,
-      MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
-      TilesInCornerException, TilesInDiagonalException {
-    Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
-
-    final Coordinates boardCoord1 = new Coordinates(1, 1);
-    final Coordinates boardCoord2 = new Coordinates(1, 1);
-    final Coordinates boardCoord3 = new Coordinates(1, 1);
-    final Coordinates bsCoord1 = new Coordinates(1, 2);
-    final Coordinates bsCoord2 = new Coordinates(2, 0);
-    final Coordinates bsCoord3 = new Coordinates(3, 0);
-    selectedCoordinates.put(boardCoord1, bsCoord1);
-    selectedCoordinates.put(boardCoord2, bsCoord2);
-    selectedCoordinates.put(boardCoord3, bsCoord3);
-
-    assertTrue(MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
-  }
-
-  @Test
-  public void testHasOneFreeSide_false()
-      throws BoardGridRowIndexOutOfBoundsException,
-      BoardGridColIndexOutOfBoundsException, NullIndexValueException,
-      MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
-      TilesInCornerException, TilesInDiagonalException {
-    Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
-
-    final Coordinates boardCoord1 = new Coordinates(1, 1);
-    final Coordinates boardCoord2 = new Coordinates(1, 1);
-    final Coordinates boardCoord3 = new Coordinates(1, 1);
-    final Coordinates bsCoord1 = new Coordinates(1, 2);
-    final Coordinates bsCoord2 = new Coordinates(2, 0);
-    final Coordinates bsCoord3 = new Coordinates(3, 0);
-    selectedCoordinates.put(boardCoord1, bsCoord1);
-    selectedCoordinates.put(boardCoord2, bsCoord2);
-    selectedCoordinates.put(boardCoord3, bsCoord3);
-
-    assertFalse(MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
-  }
-
-  @Test
-  public void testMovesAccepted_true()
-      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
-      NullIndexValueException, MovesNotLessThanThreeException,
-      TilesWithoutOneFreeSideException, TilesInCornerException,
-      TilesInDiagonalException {
-    Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
-
-    final Coordinates boardCoord1 = new Coordinates(1, 1);
-    final Coordinates boardCoord2 = new Coordinates(1, 1);
-    final Coordinates boardCoord3 = new Coordinates(1, 1);
-    final Coordinates bsCoord1 = new Coordinates(1, 2);
-    final Coordinates bsCoord2 = new Coordinates(2, 0);
-    final Coordinates bsCoord3 = new Coordinates(3, 0);
-    selectedCoordinates.put(boardCoord1, bsCoord1);
-    selectedCoordinates.put(boardCoord2, bsCoord2);
-    selectedCoordinates.put(boardCoord3, bsCoord3);
-
-    assertTrue(MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
-  }
-
-  @Test
-  public void testMovesAccepted_false()
-      throws BoardGridRowIndexOutOfBoundsException,
-      BoardGridColIndexOutOfBoundsException, NullIndexValueException,
-      MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
-      TilesInCornerException, TilesInDiagonalException {
-    Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
-
-    final Coordinates boardCoord1 = new Coordinates(1, 1);
-    final Coordinates boardCoord2 = new Coordinates(1, 1);
-    final Coordinates boardCoord3 = new Coordinates(1, 1);
-    final Coordinates bsCoord1 = new Coordinates(1, 2);
-    final Coordinates bsCoord2 = new Coordinates(2, 0);
-    final Coordinates bsCoord3 = new Coordinates(3, 0);
-    selectedCoordinates.put(boardCoord1, bsCoord1);
-    selectedCoordinates.put(boardCoord2, bsCoord2);
-    selectedCoordinates.put(boardCoord3, bsCoord3);
-
-    assertFalse(MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
-  }
-
-  @Test
-  public void testAreTilesNotCorner_true()
-      throws BoardGridRowIndexOutOfBoundsException,
-      BoardGridColIndexOutOfBoundsException, NullIndexValueException,
-      MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
-      TilesInCornerException, TilesInDiagonalException {
-    Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
-
-    final Coordinates boardCoord1 = new Coordinates(1, 1);
-    final Coordinates boardCoord2 = new Coordinates(1, 1);
-    final Coordinates boardCoord3 = new Coordinates(1, 1);
-    final Coordinates bsCoord1 = new Coordinates(1, 2);
-    final Coordinates bsCoord2 = new Coordinates(2, 0);
-    final Coordinates bsCoord3 = new Coordinates(3, 0);
-    selectedCoordinates.put(boardCoord1, bsCoord1);
-    selectedCoordinates.put(boardCoord2, bsCoord2);
-    selectedCoordinates.put(boardCoord3, bsCoord3);
-
-    assertTrue(MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
-  }
-
-  @Test
-  public void testAreTilesNotCorner_false()
-      throws BoardGridRowIndexOutOfBoundsException,
-      BoardGridColIndexOutOfBoundsException, NullIndexValueException,
-      MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
-      TilesInCornerException, TilesInDiagonalException {
-    Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
-
-    final Coordinates boardCoord1 = new Coordinates(1, 1);
-    final Coordinates boardCoord2 = new Coordinates(1, 1);
-    final Coordinates boardCoord3 = new Coordinates(1, 1);
-    final Coordinates bsCoord1 = new Coordinates(1, 2);
-    final Coordinates bsCoord2 = new Coordinates(2, 0);
-    final Coordinates bsCoord3 = new Coordinates(3, 0);
-    selectedCoordinates.put(boardCoord1, bsCoord1);
-    selectedCoordinates.put(boardCoord2, bsCoord2);
-    selectedCoordinates.put(boardCoord3, bsCoord3);
-
-    assertFalse(MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
   }
 }
