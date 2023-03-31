@@ -24,13 +24,16 @@ public abstract class AbstractMessage {
   protected Player sender;
 
   /**
-   * Type of message sent.
+   * Enum for type of message sent.
    */
   public enum MessageType {
     GAME_SNAPSHOT,
     CHAT_MESSAGE
   }
 
+  /**
+   * Type of message sent.
+   */
   protected MessageType msgType;
   
   /**
@@ -41,6 +44,10 @@ public abstract class AbstractMessage {
     return message;
   }
 
+  /**
+   * Getter for message type
+   * @return message type
+   */
   public MessageType getMessageType() {
     return msgType;
   }

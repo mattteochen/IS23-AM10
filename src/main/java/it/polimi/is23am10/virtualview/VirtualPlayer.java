@@ -17,36 +17,35 @@ import it.polimi.is23am10.score.Score;
  */
 public class VirtualPlayer {
 
+  /**
+   * Unique player identifier
+   */
   private UUID playerId;
 
+  /**
+   * Player's game name
+   */
   private String playerName;
 
+  /**
+   * Player's score
+   */
   private Score score;
 
+  /**
+   * Player's bookshelf with its tiles
+   */
   private Bookshelf bookshelf;
 
   /**
    * 1-12 number referencing the private card to show
-   * //TODO: add matching reference in PrivatePattern
    */
   private Integer privateCardIndex;
-
-  public UUID getPlayerId() {
-    return playerId;
-  }
-
-  public Score getScore() {
-    return score;
-  }
-
-  public Bookshelf getBookshelf() {
-    return bookshelf;
-  }
-
-  public Integer getPrivateCardIndex() {
-    return privateCardIndex;
-  }
-
+  
+  /**
+   * Public constructor. Builds VirtualPlayer out of {@link Player}
+   * @param p instance of {@link Player} to "virtualize"
+   */
   public VirtualPlayer(Player p) {
     if (p != null) {
       this.playerId = p.getPlayerID();
@@ -57,14 +56,58 @@ public class VirtualPlayer {
     }
   }
 
+  /**
+   * Getter for player id
+   * @return player id
+   */
+  public UUID getPlayerId() {
+    return playerId;
+  }
+
+  /**
+   * Getter for score
+   * @return score
+   */
+  public Score getScore() {
+    return score;
+  }
+
+  /**
+   * Getter for bookshelf
+   * @return bookshelf
+   */
+  public Bookshelf getBookshelf() {
+    return bookshelf;
+  }
+
+  /**
+   * Getter for private card index
+   * @return private card index
+   */
+  public Integer getPrivateCardIndex() {
+    return privateCardIndex;
+  }
+
+  /**
+   * Getter for player name
+   * @return player name
+   */
   public String getPlayerName() {
     return playerName;
   }
 
+  /**
+   * Void method used when pushing state
+   * to all players, in order to keep secret
+   * each player's card to other players
+   */
   public void obfuscatePrivateCard() {
     privateCardIndex = 0;
   }
 
+  /**
+   * Equals method overriding default one
+   */
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof VirtualPlayer)) {
