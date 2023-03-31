@@ -1,5 +1,6 @@
 package it.polimi.is23am10.items.tile;
 
+import java.io.Serializable;
 
 /**
  * The tile class definition.
@@ -9,7 +10,7 @@ package it.polimi.is23am10.items.tile;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class Tile {
+public class Tile implements Serializable {
 
   /**
    * An enumeration about the available tile types.

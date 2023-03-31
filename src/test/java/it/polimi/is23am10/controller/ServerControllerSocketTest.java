@@ -38,6 +38,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
+import it.polimi.is23am10.game.exceptions.FullGameException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -68,7 +69,7 @@ class TestingPurposesClass2 {
 
 @RunWith(MockitoJUnitRunner.class)
 @SuppressWarnings({"deprecation", "unchecked", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck"})
-class ServerControllerTest {
+class ServerControllerSocketTest {
 
   @Mock
   PlayerConnector playerConnector;
@@ -78,7 +79,7 @@ class ServerControllerTest {
 
   @Spy
   @InjectMocks
-  ServerController controller;
+  ServerControllerSocket controller;
 
   @BeforeEach
   void setup() {
@@ -89,7 +90,7 @@ class ServerControllerTest {
   @Test
   void CONSTRUCTOR_should_BUILD_OBJECT() throws NullSocketConnectorException, NullBlockingQueueException {
     Socket socket = new Socket();
-    ServerController testController = new ServerController(new PlayerConnector(socket, new LinkedBlockingQueue<>()),
+    ServerControllerSocket testController = new ServerControllerSocket(new PlayerConnector(socket, new LinkedBlockingQueue<>()),
         new ServerControllerAction());
     assertNotNull(testController);
   }
@@ -167,7 +168,7 @@ class ServerControllerTest {
       InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
       NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
-      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException {
+      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException,FullGameException {
     Socket mockSocket = Mockito.mock(Socket.class);
     Game game = GameFactory.getNewGame("Steve", 4);
     final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -200,7 +201,7 @@ class ServerControllerTest {
   void MOVE_TILES_PLAYER_COMMAND_should_BUILD_MOVE_TILES_COMMAND()
       throws JsonIOException, JsonSyntaxException, IOException {
     Socket mockSocket = Mockito.mock(Socket.class);
-    MoveTilesCommand cmd = new MoveTilesCommand(UUID.randomUUID(), new HashMap<>());
+    MoveTilesCommand cmd = new MoveTilesCommand("Steve", UUID.randomUUID(), new HashMap<>());
     Gson gson = new Gson();
     String json = gson.toJson(cmd);
     ByteArrayInputStream inputStream = new ByteArrayInputStream(json.getBytes());

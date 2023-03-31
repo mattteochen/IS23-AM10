@@ -6,9 +6,10 @@ import it.polimi.is23am10.config.exceptions.InvalidPortNumberException;
 import it.polimi.is23am10.utils.ArgParser;
 import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
 import it.polimi.is23am10.utils.exceptions.MissingParameterException;
-
+import it.polimi.is23am10.controller.ServerControllerAction;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.rmi.registry.LocateRegistry;
 import java.util.concurrent.Executors;
 
 /**
@@ -29,13 +30,18 @@ public final class ServerMain {
    * @throws InvalidPortNumberException
    * @throws NumberFormatException
    *
+   * @throws IOException
+   *
    */
-  public static void main(String[] args) throws IOException, InvalidArgumentException, MissingParameterException, NumberFormatException, InvalidPortNumberException, InvalidMaxConnectionsNumberException {
+  public static void main(String[] args) throws IOException, InvalidArgumentException, 
+      MissingParameterException, NumberFormatException, InvalidPortNumberException, 
+      InvalidMaxConnectionsNumberException {
     ArgParser.parse(args);
     ServerConfigContext ctx = new ServerConfigContext();
 
-    Server server = new Server(new ServerSocket(ctx.getServerPort()),
-        Executors.newFixedThreadPool(ctx.getMaxConnections()));
+    Server server = new Server(new ServerSocket(ctx.getServerSocketPort()),
+        Executors.newFixedThreadPool(ctx.getMaxConnections()), new ServerControllerAction(),
+        LocateRegistry.createRegistry(ctx.getServerRmiPort()));
     server.start(ctx);
   }
 }

@@ -2,6 +2,7 @@ package it.polimi.is23am10.items.card;
 
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.pattern.AbstractPattern;
+import java.io.Serializable;
 
 /**
  * Abstract card object.
@@ -14,13 +15,13 @@ import it.polimi.is23am10.pattern.AbstractPattern;
  * @param T The type of the assigned
  *          {@link AbstractPattern}.
  */
-public abstract class AbstractCard<R, T extends AbstractPattern<R>> {
+public abstract class AbstractCard<R, T extends AbstractPattern<R>> implements Serializable {
 
   /**
    * The pattern instance.
    * Its type must extends {@link AbstractPattern}
    */
-  private T pattern;
+  private transient T pattern;
 
   /**
    * Pattern setter.

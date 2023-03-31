@@ -3,6 +3,7 @@ package it.polimi.is23am10.game;
 import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.game.exceptions.FullGameException;
 import it.polimi.is23am10.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.InvalidPlayersNumberException;
@@ -34,6 +35,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +54,7 @@ import java.util.stream.Collectors;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class Game {
+public class Game implements Serializable {
 
   /**
    * The minimum number of players in a game instance.
@@ -130,14 +132,13 @@ public class Game {
    * A cache to store already used shared patterns.
    * 
    */
-  private List<SharedPattern<Predicate<Bookshelf>>> assignedSharedPatterns;
+  private transient List<SharedPattern<Predicate<Bookshelf>>> assignedSharedPatterns;
 
   /**
    * A cache to store already used private patterns.
    * 
    */
-  private List<PrivatePattern<Function<Bookshelf, Integer>>> assignedPrivatePatterns;
-
+  private transient List<PrivatePattern<Function<Bookshelf, Integer>>> assignedPrivatePatterns;
 
   /**
    * Constructor that assigns the only value that is
@@ -217,7 +218,7 @@ public class Game {
    * The maxPlayers setter.
    *
    * @param maxPlayers The value to be assigned.
-   * @throws NullMaxPlayerException     maxPlayers value is null.
+   * @throws NullMaxPlayerException
    * @throws InvalidMaxPlayerException.
    *
    */
@@ -232,7 +233,7 @@ public class Game {
   /**
    * The firstPlayer setter.
    *
-   * @param playerName The first player's name.
+   * @param playerToSet The first player's name.
    *
    */
   public void setFirstPlayer(Player playerToSet) {
@@ -247,7 +248,7 @@ public class Game {
    * as position in players list is the order in the game.
    *
    * @param playerName The player's name.
-   * @throws NullPlayerNamesException         The playerName variable is null.
+   * @throws NullPlayerNamesException
    * @throws AlreadyInitiatedPatternException
    * @throws DuplicatePlayerNameException
    * @throws NullPlayerScoreBlocksException
@@ -256,22 +257,23 @@ public class Game {
    * @throws NullPlayerBookshelfException
    * @throws NullPlayerIdException
    * @throws NullPlayerNameException
- * @throws NullAssignedPatternException
+   * @throws NullAssignedPatternException
    *
    */
   private void addPlayer(Player player) {
-    //TODO: class level random is colliding with gson
+    // TODO: class level random is colliding with gson
     Random random = new Random();
     final Integer position = players.isEmpty() ? 0 : random.nextInt(players.size());
     players.add(position, player);
   }
-  
+
   /**
    * Creates and adds a new player to the game. Position is randomly determined,
    * as position in players list is the order in the game.
    *
    * @param playerName The player's name.
-   * @throws NullPlayerNamesException         The playerName variable is null.
+   * @return The instance of created player.
+   * @throws NullPlayerNamesException
    * @throws AlreadyInitiatedPatternException
    * @throws DuplicatePlayerNameException
    * @throws NullPlayerScoreBlocksException
@@ -280,28 +282,34 @@ public class Game {
    * @throws NullPlayerBookshelfException
    * @throws NullPlayerIdException
    * @throws NullPlayerNameException
-   * @return instance of created player
    * @throws NullAssignedPatternException
+   * @throws FullGameException
    */
   public Player addPlayer(String playerName)
-      throws NullPlayerNamesException, NullPlayerNameException, NullPlayerIdException, 
-      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, 
-      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullAssignedPatternException {
+      throws NullPlayerNamesException, NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      FullGameException, NullAssignedPatternException {
+    if (getPlayers().size() == getMaxPlayer()) {
+      throw new FullGameException(
+          playerName + "could not be added, because the game reached its maximum number of players");
+    }
     Player playerToAdd = PlayerFactory.getNewPlayer(playerName, getPlayerNames(), this);
     addPlayer(playerToAdd);
     return playerToAdd;
   }
 
   /**
-   * Function that adds multiple players to game
-   * @param players list of players to add
+   * Function that adds multiple players to game.
+   *
+   * @param players List of players to add.
    * @throws NullPlayerException
    * @throws InvalidPlayersNumberException
    * @throws DuplicatePlayerNameException
    */
-  public void addPlayers(List<Player> players) 
-      throws NullPlayerException, InvalidPlayersNumberException, DuplicatePlayerNameException{
-    
+  public void addPlayers(List<Player> players)
+      throws NullPlayerException, InvalidPlayersNumberException, DuplicatePlayerNameException {
+
     if (players == null) {
       throw new NullPlayerException();
     }
@@ -318,7 +326,7 @@ public class Game {
   }
 
   /**
-   * gameBoard setter.
+   * GameBoard setter.
    *
    * @throws InvalidNumOfPlayersException
    * @throws NullNumOfPlayersException
@@ -351,9 +359,6 @@ public class Game {
   /**
    * The lastRound setter.
    *
-   * @param lastRound A flag referencing if the game is in its last round of
-   *                  rounds.
-   *
    */
   public void setLastRound() {
     this.lastRound = true;
@@ -370,7 +375,7 @@ public class Game {
   }
 
   /**
-   * maxPlayer getter.
+   * MaxPlayer getter.
    *
    * @return The maximum number of players for the current game instance.
    *
@@ -462,7 +467,8 @@ public class Game {
    * @return Player matching provided name.
    * @throws PlayerNotFoundException
    */
-  public Player getPlayerByName(String playerName) throws NullPlayerNameException, PlayerNotFoundException {
+  public Player getPlayerByName(String playerName) throws
+      NullPlayerNameException, PlayerNotFoundException {
     if (playerName == null) {
       throw new NullPlayerNameException("[Class Game, method getPlayerByName]");
     }
@@ -477,36 +483,36 @@ public class Game {
   }
 
   /**
-   * Method to set the active player (playing this turn)
-   * 
-   * @param player player to set as active
+   * Method to set the active player (playing this turn).
+   *
+   * @param player Player to set as active
    */
   protected void setActivePlayer(Player player) {
     this.activePlayer = player;
   }
 
   /**
-   * winnerPlayer setter. To be called by {@link Game#endGame()} only
-   * 
-   * @param player
+   * WinnerPlayer setter. To be called by {@link Game#endGame()} only.
+   *
+   * @param player The winning player to set.
    */
   protected void setWinnerPlayer(Player player) {
     this.winnerPlayer = player;
   }
 
   /**
-   * activePlayer getter.
-   * 
-   * @return active player
+   * ActivePlayer getter.
+   *
+   * @return The active player.
    */
   public Player getActivePlayer() {
     return activePlayer;
   }
 
   /**
-   * winnerPlayer getter.
-   * 
-   * @return active player
+   * WinnerPlayer getter.
+   *
+   * @return The winning player.
    */
   public Player getWinnerPlayer() {
     return this.winnerPlayer;
@@ -514,8 +520,8 @@ public class Game {
 
   /**
    * Method that computes active player's Score, updates the view,
-   * checks if game is over and if not picks next player
-   * 
+   * checks if game is over and if not picks next player.
+   *
    * @throws NullScoreBlockListException
    * @throws NullPlayerBookshelfException
    * @throws NullIndexValueException
@@ -527,10 +533,10 @@ public class Game {
   public void nextTurn()
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException {
-    
+
     activePlayer.updateScore();
     checkEndGame();
-    if(!(getEnded())) {
+    if (!(getEnded())) {
       gameBoard.refillIfNeeded();
       int nextPlayerIdx = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size();
       setActivePlayer(players.get(nextPlayerIdx));
@@ -538,16 +544,17 @@ public class Game {
   }
 
   /**
-   * Function that allows the player to take a tile from the board
+   * Function that allows the player to take a tile from the board.
    *
-   * @param coord coordinates of the tile.
-   * @return the tile of the board the player wants to take.
+   * @param coord The coordinates of the tile.
+   * @return The tile of the board the player wants to take.
    * @throws BoardGridColIndexOutOfBoundsException
    * @throws BoardGridRowIndexOutOfBoundsException
    * @throws NullIndexValueException
    */
   public Tile takeTileAction(Coordinates coord)
-      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
+      NullIndexValueException {
     return gameBoard.takeTileAt(coord.getRow(), coord.getCol());
   }
 
@@ -561,20 +568,21 @@ public class Game {
    * @throws NullIndexValueException
    * @throws NullTileException
    */
-  public void putTileAction(Tile t, Coordinates coord) throws BookshelfGridColIndexOutOfBoundsException,
-      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullTileException {
+  public void putTileAction(Tile t, Coordinates coord) throws
+      BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+      NullIndexValueException, NullTileException {
     activePlayer.getBookshelf().setBookshelfGridIndex(coord.getRow(), coord.getCol(), t);
   }
 
   /**
    * Quick helper function to determine if the player is the last in turn.
    *
-   * @param playerToCheck
-   * @return is playerToCheck the last one in turn
+   * @param playerToCheck A reference player instance on which to operate the check.
+   * @return Is playerToCheck the last one in turn
    */
-  private boolean isLastPlayer(Player playerToCheck){
+  private boolean isLastPlayer(Player playerToCheck) {
     final Integer idxDiff = players.indexOf(playerToCheck) - players.indexOf(firstPlayer);
-    return (idxDiff == -1 || idxDiff == (maxPlayers-1));
+    return (idxDiff == -1 || idxDiff == (maxPlayers - 1));
   }
 
   /**
@@ -597,13 +605,13 @@ public class Game {
   /**
    * Helper method to be passed to {@link Game#endGame()}
    * in order to determine the winner, according to game rules:
-   * In case of score parity, last player in turn wins
+   * In case of score parity, last player in turn wins.
    *
-   * @param p1 first player
-   * @param p2 second player
-   * @return player who should win between two
+   * @param p1 First player
+   * @param p2 Second player
+   * @return Player who should win between two
    */
-  private Player decideWinner(Player p1, Player p2){
+  private Player decideWinner(Player p1, Player p2) {
     final Integer p1Score = p1.getScore().getTotalScore();
     final Integer p2Score = p2.getScore().getTotalScore();
 
@@ -611,23 +619,23 @@ public class Game {
       // Positions relative to firstPlayer can be negative -> Modular arithmetics
       Integer startingPos1 = players.indexOf(p1) - players.indexOf(firstPlayer);
       startingPos1 = startingPos1 > 0 ? startingPos1 : startingPos1 + maxPlayers;
-      Integer startingPos2 = players.indexOf(p2) - players.indexOf(firstPlayer); 
+      Integer startingPos2 = players.indexOf(p2) - players.indexOf(firstPlayer);
       startingPos2 = startingPos2 > 0 ? startingPos2 : startingPos2 + maxPlayers;
       return (startingPos1 > startingPos2 ? p1 : p2);
-    } else{
+    } else {
       return (p1Score > p2Score ? p1 : p2);
     }
   }
 
   /**
    * Helper method that sets the game as ended
-   * and declares the winner
+   * and declares the winner.
    */
   private void endGame() {
     setEnded(true);
     players.stream()
-      .reduce(this::decideWinner)
-      .ifPresent(this::setWinnerPlayer);
+        .reduce(this::decideWinner)
+        .ifPresent(this::setWinnerPlayer);
   }
 
   /**
@@ -637,11 +645,13 @@ public class Game {
    * and the coordinates of the player's bookshelf where he/she/they wants to put
    * the taken tile in.
    *
+   * <p>
    * Note that I'm assuming all the params given to the method are valid since the
    * input validation will be implemented client side in the selection of those
    * coordinates.
-   * 
-   * @param selectedCoordinates Map containing the coordinates of selected tiles
+   * </p>
+   *
+   * @param selectedCoordinates Map containing the coordinates of selected tiles.
    *                            from board as key and the corresponding
    *                            coordinates of the active player bookshelf as
    *                            value.
@@ -670,5 +680,4 @@ public class Game {
     }
     nextTurn();
   }
-
 }

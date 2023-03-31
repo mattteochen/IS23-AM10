@@ -11,9 +11,11 @@ import static org.mockito.Mockito.when;
 import it.polimi.is23am10.Server.ServerStatus;
 import it.polimi.is23am10.config.ServerConfigContext;
 import it.polimi.is23am10.config.ServerConfig;
+import it.polimi.is23am10.controller.interfaces.IServerControllerAction;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.registry.Registry;
 import java.util.concurrent.ExecutorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,11 +41,21 @@ class ServerTest {
   @Mock
   ExecutorService executorService;
 
+  @Mock
+  IServerControllerAction rmiServer;
+
+  @Mock
+  IServerControllerAction rmiStub;
+
+  @Mock
+  Registry rmiRegistry;
+
   @Spy
   @InjectMocks
   Server server;
 
-  ServerConfigContext ctx = new ServerConfigContext(ServerConfig.getServerPort(),
+  ServerConfigContext ctx = new ServerConfigContext(ServerConfig.getServerSocketPort(),
+      ServerConfig.getServerRmiPort(),
       ServerConfig.getMaxConnections(), ServerConfig.getKeepAlive());
 
   @BeforeEach

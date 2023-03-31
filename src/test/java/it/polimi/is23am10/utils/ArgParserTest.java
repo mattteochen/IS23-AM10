@@ -17,18 +17,35 @@ import org.junit.jupiter.api.Test;
 public class ArgParserTest {
 
   @Test
-  void set_port_argument_should_set_server_port()
+  void set_socket_port_argument_should_set_server_port()
       throws InvalidArgumentException, MissingParameterException, NumberFormatException,
       InvalidPortNumberException, InvalidMaxConnectionsNumberException {
     final String serverPort = "8888";
     final String[] mockCommand = {
-        "--port", serverPort
+        "--socket-port", serverPort
     };
     ArgParser.parse(mockCommand);
-    assertEquals(Integer.parseInt(serverPort), ServerConfig.getServerPort());
+    assertEquals(Integer.parseInt(serverPort), ServerConfig.getServerSocketPort());
 
     ServerConfigContext ctx = new ServerConfigContext();
-    assertEquals(Integer.parseInt(serverPort), ctx.getServerPort());
+    assertEquals(Integer.parseInt(serverPort), ctx.getServerSocketPort());
+    assertEquals(ServerConfig.getKeepAlive(), ctx.getKeepAlive());
+    assertEquals(ServerConfig.getMaxConnections(), ctx.getMaxConnections());
+  }
+
+  @Test
+  void set_rmi_port_argument_should_set_server_port()
+      throws InvalidArgumentException, MissingParameterException, NumberFormatException,
+      InvalidPortNumberException, InvalidMaxConnectionsNumberException {
+    final String serverPort = "8888";
+    final String[] mockCommand = {
+        "--rmi-port", serverPort
+    };
+    ArgParser.parse(mockCommand);
+    assertEquals(Integer.parseInt(serverPort), ServerConfig.getServerRmiPort());
+
+    ServerConfigContext ctx = new ServerConfigContext();
+    assertEquals(Integer.parseInt(serverPort), ctx.getServerRmiPort());
     assertEquals(ServerConfig.getKeepAlive(), ctx.getKeepAlive());
     assertEquals(ServerConfig.getMaxConnections(), ctx.getMaxConnections());
   }
@@ -37,7 +54,7 @@ public class ArgParserTest {
   void missing_port_argument_should_throw_missing_parameter_exception()
       throws InvalidArgumentException, MissingParameterException {
     final String[] mockCommand = {
-        "--port"
+        "--socket-port"
     };
 
     assertThrows(MissingParameterException.class, () -> ArgParser.parse(mockCommand));
@@ -57,7 +74,7 @@ public class ArgParserTest {
     ServerConfigContext ctx = new ServerConfigContext();
     assertEquals(Integer.parseInt(serverMaxConnections), ctx.getMaxConnections());
     assertEquals(ServerConfig.getKeepAlive(), ctx.getKeepAlive());
-    assertEquals(ServerConfig.getServerPort(), ctx.getServerPort());
+    assertEquals(ServerConfig.getServerSocketPort(), ctx.getServerSocketPort());
   }
 
   @Test
@@ -84,7 +101,7 @@ public class ArgParserTest {
     ServerConfigContext ctx = new ServerConfigContext();
     assertEquals(Boolean.parseBoolean(serverKeepAlive), ctx.getKeepAlive());
     assertEquals(ServerConfig.getMaxConnections(), ctx.getMaxConnections());
-    assertEquals(ServerConfig.getServerPort(), ctx.getServerPort());
+    assertEquals(ServerConfig.getServerSocketPort(), ctx.getServerSocketPort());
   }
 
   @Test
@@ -112,7 +129,7 @@ public class ArgParserTest {
       throws InvalidArgumentException, MissingParameterException {
     final String serverPort = "700";
     final String[] mockCommand = {
-        "--port", serverPort
+        "--socket-port", serverPort
     };
 
     assertThrows(InvalidPortNumberException.class, () -> ArgParser.parse(mockCommand));
@@ -123,7 +140,7 @@ public class ArgParserTest {
       throws InvalidArgumentException, MissingParameterException {
     final String serverPort = "70000";
     final String[] mockCommand = {
-        "--port", serverPort
+        "--socket-port", serverPort
     };
 
     assertThrows(InvalidPortNumberException.class, () -> ArgParser.parse(mockCommand));

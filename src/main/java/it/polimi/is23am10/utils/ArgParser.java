@@ -38,9 +38,17 @@ public class ArgParser {
       InvalidPortNumberException, InvalidMaxConnectionsNumberException {
     for (int i = 0; i < args.length; i++) {
       switch (args[i]) {
-        case "--port":
+        case "--socket-port":
           if (i + 1 < args.length) {
-            ServerConfig.setServerPort(Integer.parseInt(args[i + 1]));
+            ServerConfig.setServerSocketPort(Integer.parseInt(args[i + 1]));
+            i++;
+          } else {
+            throw new MissingParameterException(args[i]);
+          }
+          break;
+        case "--rmi-port":
+          if (i + 1 < args.length) {
+            ServerConfig.setServerRmiPort(Integer.parseInt(args[i + 1]));
             i++;
           } else {
             throw new MissingParameterException(args[i]);

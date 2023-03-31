@@ -1,6 +1,5 @@
 package it.polimi.is23am10.config;
 
-
 /**
  * The server config context class definition.
  * 
@@ -8,10 +7,16 @@ package it.polimi.is23am10.config;
 public class ServerConfigContext {
 
   /**
-   * The server port.
+   * The server socket port.
    * 
    */
-  private Integer serverPort;
+  private Integer serverSocketPort;
+
+  /**
+   * The server rmi port.
+   * 
+   */
+  private Integer serverRmiPort;
 
   /**
    * The max allowed connection for this server instance.
@@ -29,13 +34,15 @@ public class ServerConfigContext {
   /**
    * Constructor.
    *
-   * @param serverPort     The server port number.
+   * @param serverSocketPort     The server port number.
    * @param maxConnections The maximum allowed connections.
    * @param keepAlive      The socket keep alive flag.
    * 
    */
-  public ServerConfigContext(Integer serverPort, Integer maxConnections, boolean keepAlive) {
-    this.serverPort = serverPort;
+  public ServerConfigContext(Integer serverSocketPort, Integer serverRmiPort,
+      Integer maxConnections, boolean keepAlive) {
+    this.serverSocketPort = serverSocketPort;
+    this.serverRmiPort = serverRmiPort;
     this.maxConnection = maxConnections;
     this.keepAlive = keepAlive;
   }
@@ -47,19 +54,30 @@ public class ServerConfigContext {
    * 
    */
   public ServerConfigContext() {
-    this.serverPort = ServerConfig.getServerPort();
+    this.serverSocketPort = ServerConfig.getServerSocketPort();
+    this.serverRmiPort = ServerConfig.getServerRmiPort();
     this.maxConnection = ServerConfig.getMaxConnections();
     this.keepAlive = ServerConfig.getKeepAlive();
   }
 
   /**
-   * Server port getter.
+   * Server socket port getter.
    *
-   * @return The instantiated server port.
+   * @return The instantiated server socket port.
    * 
    */
-  public Integer getServerPort() {
-    return serverPort;
+  public Integer getServerSocketPort() {
+    return serverSocketPort;
+  }
+
+  /**
+   * Server rmi port getter.
+   *
+   * @return The instantiated server rmi port.
+   * 
+   */
+  public Integer getServerRmiPort() {
+    return serverRmiPort;
   }
 
   /**

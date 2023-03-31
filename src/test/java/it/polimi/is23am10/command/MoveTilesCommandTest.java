@@ -32,9 +32,9 @@ class MoveTilesCommandTest {
     Map<Coordinates, Coordinates> coordMap1_duplicate = new HashMap<>();
     Map<Coordinates, Coordinates> coordMap2 = new HashMap<>();
 
-    final MoveTilesCommand item1 = new MoveTilesCommand(id1, coordMap1);
-    final MoveTilesCommand item1_duplicate = new MoveTilesCommand(id1_duplicate, coordMap1_duplicate);
-    final MoveTilesCommand item2 = new MoveTilesCommand(id2, coordMap2);
+    final MoveTilesCommand item1 = new MoveTilesCommand("Steve", id1, coordMap1);
+    final MoveTilesCommand item1_duplicate = new MoveTilesCommand("Steve", id1_duplicate, coordMap1_duplicate);
+    final MoveTilesCommand item2 = new MoveTilesCommand("Alice", id2, coordMap2);
     final Utils anotherCommand = new Utils(Opcode.NULL);
 
     assertNotNull(item1);
@@ -48,8 +48,8 @@ class MoveTilesCommandTest {
   void HASH_CODE_should_GIVE_CUSTOM_HASH_CODE() {
     UUID id1 = UUID.randomUUID();
     Map<Coordinates, Coordinates> coordMap1 = new HashMap<>();
-    final MoveTilesCommand item1 = new MoveTilesCommand(id1, coordMap1);
+    final MoveTilesCommand item1 = new MoveTilesCommand("Player", id1, coordMap1);
 
-    assertEquals(item1.hashCode(), item1.getGameId().hashCode() * item1.getMoves().hashCode());
+    assertEquals(item1.hashCode(), "Player".hashCode() * item1.getGameId().hashCode() * item1.getMoves().hashCode());
   }
 }

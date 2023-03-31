@@ -50,7 +50,13 @@ public final class ServerConfig {
    * The server config server port.
    * 
    */
-  private static Integer serverPort = 9001;
+  private static Integer serverSocketPort = 9001;
+
+  /**
+   * The server config rmi port.
+   * 
+   */
+  private static Integer serverRmiPort = 9002;
 
   /**
    * The max allowed connection for this server instance.
@@ -71,11 +77,24 @@ public final class ServerConfig {
    *
    * 
    */
-  public static void setServerPort(Integer p) throws InvalidPortNumberException {
+  public static void setServerSocketPort(Integer p) throws InvalidPortNumberException {
     if(p < MIN_PORT_NUMBER || p > MAX_PORT_NUMBER){
       throw new InvalidPortNumberException();
     }
-    serverPort = p;
+    serverSocketPort = p;
+  }
+
+  /**
+   * Server port setter.
+   * @throws InvalidPortNumberException
+   *
+   * 
+   */
+  public static void setServerRmiPort(Integer p) throws InvalidPortNumberException {
+    if(p < MIN_PORT_NUMBER || p > MAX_PORT_NUMBER){
+      throw new InvalidPortNumberException();
+    }
+    serverRmiPort = p;
   }
 
   /**
@@ -106,8 +125,18 @@ public final class ServerConfig {
    * @return The instantiated server port.
    * 
    */
-  public static Integer getServerPort() {
-    return serverPort;
+  public static Integer getServerSocketPort() {
+    return serverSocketPort;
+  }
+
+  /**
+   * Server port getter.
+   *
+   * @return The instantiated server port.
+   * 
+   */
+  public static Integer getServerRmiPort() {
+    return serverRmiPort;
   }
 
   /**
