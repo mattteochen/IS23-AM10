@@ -3,8 +3,11 @@ package it.polimi.is23am10.virtualview;
 import java.util.UUID;
 
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.score.Score;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 /**
  * A virtual view with the state of a player, downscoped
@@ -45,13 +48,16 @@ public final class VirtualPlayer {
   /**
    * Public constructor. Builds VirtualPlayer out of {@link Player}
    * @param p instance of {@link Player} to "virtualize"
+   * @throws NullIndexValueException
+   * @throws BookshelfGridRowIndexOutOfBoundsException
+   * @throws BookshelfGridColIndexOutOfBoundsException
    */
   public VirtualPlayer(Player p) {
     if (p != null) {
       this.playerId = p.getPlayerID();
       this.playerName = p.getPlayerName();
-      this.score = p.getScore();
-      this.bookshelf = p.getBookshelf();
+      this.score = new Score(p.getScore());
+      this.bookshelf = new Bookshelf(p.getBookshelf());
       this.privateCardIndex = p.getPrivateCard().getPattern().getIndex();
     }
   }

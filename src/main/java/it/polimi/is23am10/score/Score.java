@@ -105,6 +105,18 @@ public final class Score implements Serializable {
   }
 
   /**
+   * Copy constructor to generate another copy of same Score.
+   * 
+   * @param toCopy score to copy
+   */
+  public Score(Score toCopy) {
+    bookshelfPoints = toCopy.getBookshelfPoints();
+    extraPoint = toCopy.getExtraPoint();
+    scoreBlockPoints = toCopy.getScoreBlockPoints();
+    privatePoints = toCopy.getPrivatePoints();
+  }
+
+  /**
    * extraPoint setter. Value can be only set to 1.
    * 
    */

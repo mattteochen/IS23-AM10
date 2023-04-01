@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 
 import it.polimi.is23am10.game.Game;
 import it.polimi.is23am10.items.board.Board;
+import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 /**
  * A virtual view with the state of the game, downscoped
@@ -160,12 +163,12 @@ public final class VirtualView {
     this.activePlayer = g.getActivePlayer() == null ? null : new VirtualPlayer(g.getActivePlayer());
     this.ended = g.getEnded();
     this.firstPlayer = g.getFirstPlayer() == null ? null : new VirtualPlayer(g.getFirstPlayer());
-    this.gameBoard = g.getGameBoard();
+    this.gameBoard = new Board(g.getGameBoard());
     this.lastRound = g.isLastRound();
     this.maxPlayers = g.getMaxPlayer();
     this.players = g.getPlayers()
       .stream()
-      .map(VirtualPlayer::new)
+      .map(p -> new VirtualPlayer(p))
       .collect(Collectors.toList());
     this.sharedCardsIndexes = g.getSharedCard()
       .stream()

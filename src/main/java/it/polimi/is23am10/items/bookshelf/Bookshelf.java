@@ -69,6 +69,24 @@ public class Bookshelf implements Serializable {
   }
 
   /**
+   * Copy constructor of Bookshelf.
+   * 
+   * @param toCopy original instance
+   */
+  public Bookshelf(Bookshelf toCopy) {
+    bookshelfGrid = new Tile[BOOKSHELF_ROWS][BOOKSHELF_COLS];
+    for (int i = 0; i < BOOKSHELF_ROWS; i++) {
+      for (int j = 0; j < BOOKSHELF_COLS; j++) {
+        try {
+          bookshelfGrid[i][j] = new Tile(toCopy.getBookshelfGridAt(i, j).getType());
+        } catch (Exception e) {
+          bookshelfGrid[i][j] = new Tile(TileType.EMPTY);
+        }
+      }
+    }
+  }
+
+  /**
    * This constructor takes a 30 char long string containing the content
    * of a bookshelf, with each tile associated to a letter, as shown below
    * and builds and returns the matching bookshelf object.

@@ -132,6 +132,26 @@ public class Board implements Serializable {
   }
 
   /**
+   * Copy constructor for Board.
+   * 
+   * @param toCopy board to copy
+   */
+  public Board(Board toCopy) {
+    numOfPlayers = toCopy.numOfPlayers;
+    boardGrid = new Tile[BOARD_GRID_ROWS][BOARD_GRID_COLS];
+    for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
+      for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
+        try {
+          boardGrid[i][j] = new Tile(toCopy.getTileAt(i, j));
+        } catch (Exception e) {
+          boardGrid[i][j] = new Tile(TileType.EMPTY);
+        }
+      }
+    }
+    tileSack = toCopy.tileSack.stream().map(Tile::new).collect(Collectors.toList());
+  }
+
+  /**
    * Validate the number of players.
    * 
    * @throws NullNumOfPlayersException.
