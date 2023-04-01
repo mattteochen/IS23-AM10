@@ -2,7 +2,7 @@ package it.polimi.is23am10.clientexamples;
 
 import it.polimi.is23am10.command.AbstractCommand;
 import it.polimi.is23am10.command.StartGameCommand;
-import it.polimi.is23am10.config.ServerConfigDefault;
+import it.polimi.is23am10.config.ServerConfig;
 import it.polimi.is23am10.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
@@ -33,7 +33,7 @@ public class RMIClientAddGameExample {
    */
   public static void main(String[] args) throws RemoteException, NotBoundException, NullSocketConnectorException, NullBlockingQueueException {
     final Logger logger = LogManager.getLogger(RMIClientAddGameExample.class);
-    Registry registry = LocateRegistry.getRegistry(ServerConfigDefault.SERVER_RMI_PORT);
+    Registry registry = LocateRegistry.getRegistry(ServerConfig.getServerRmiPort());
     IServerControllerAction server =
         (IServerControllerAction) registry.lookup("IServerControllerAction");
     AbstractCommand command = new StartGameCommand("Steve", 4);

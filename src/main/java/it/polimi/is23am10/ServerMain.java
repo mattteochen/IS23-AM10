@@ -1,7 +1,11 @@
 package it.polimi.is23am10;
 
 import it.polimi.is23am10.config.ServerConfigContext;
-import it.polimi.is23am10.config.ServerConfigDefault;
+import it.polimi.is23am10.config.exceptions.InvalidMaxConnectionsNumberException;
+import it.polimi.is23am10.config.exceptions.InvalidPortNumberException;
+import it.polimi.is23am10.utils.ArgParser;
+import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
+import it.polimi.is23am10.utils.exceptions.MissingParameterException;
 import it.polimi.is23am10.controller.ServerControllerAction;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -20,15 +24,22 @@ public final class ServerMain {
 
   /**
    * The main method.
+   * @throws MissingParameterException
+   * @throws InvalidArgumentException
+   * @throws InvalidMaxConnectionsNumberException
+   * @throws InvalidPortNumberException
+   * @throws NumberFormatException
+   *
+   * @throws IOException
    *
    * @throws IOException
    *
    */
-  public static void main(String[] args) throws IOException {
-    // TODO add args parser for CLI context loading if args is present
-    ServerConfigContext ctx = new ServerConfigContext(ServerConfigDefault.SERVER_SOCKET_PORT,
-        ServerConfigDefault.SERVER_RMI_PORT,
-        ServerConfigDefault.MAX_CLIENT_CONNECTION, ServerConfigDefault.KEEP_ALIVE);
+  public static void main(String[] args) throws IOException, InvalidArgumentException, 
+      MissingParameterException, NumberFormatException, InvalidPortNumberException, 
+      InvalidMaxConnectionsNumberException {
+    ArgParser.parse(args);
+    ServerConfigContext ctx = new ServerConfigContext();
 
     Server server = new Server(new ServerSocket(ctx.getServerSocketPort()),
         Executors.newFixedThreadPool(ctx.getMaxConnections()), new ServerControllerAction(),
