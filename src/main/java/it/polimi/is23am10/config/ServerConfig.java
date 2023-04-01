@@ -4,8 +4,9 @@ import it.polimi.is23am10.config.exceptions.InvalidMaxConnectionsNumberException
 import it.polimi.is23am10.config.exceptions.InvalidPortNumberException;
 
 /**
- * The server default config class definition.
- * All the default configuration for the server reside here.
+ * The server config class definition.
+ * If not set otherwise all the configuration parameters for the server
+ * are set to default values here.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -73,12 +74,12 @@ public final class ServerConfig {
 
   /**
    * Server port setter.
-   * @throws InvalidPortNumberException
    *
-   * 
+   * @param p port number.
+   * @throws InvalidPortNumberException invalid port number.
    */
   public static void setServerSocketPort(Integer p) throws InvalidPortNumberException {
-    if(p < MIN_PORT_NUMBER || p > MAX_PORT_NUMBER){
+    if (p < MIN_PORT_NUMBER || p > MAX_PORT_NUMBER) {
       throw new InvalidPortNumberException();
     }
     serverSocketPort = p;
@@ -86,12 +87,12 @@ public final class ServerConfig {
 
   /**
    * Server port setter.
-   * @throws InvalidPortNumberException
    *
-   * 
+   * @param p port number.
+   * @throws InvalidPortNumberException invalid port number.
    */
   public static void setServerRmiPort(Integer p) throws InvalidPortNumberException {
-    if(p < MIN_PORT_NUMBER || p > MAX_PORT_NUMBER){
+    if (p < MIN_PORT_NUMBER || p > MAX_PORT_NUMBER) {
       throw new InvalidPortNumberException();
     }
     serverRmiPort = p;
@@ -99,12 +100,13 @@ public final class ServerConfig {
 
   /**
    * Max connections setter.
-   * @throws InvalidMaxConnectionsNumberException
    *
-   * 
+   * @param maxConn number of max connections.
+   * @throws InvalidMaxConnectionsNumberException invalid number of maxConn.
    */
-  public static void setMaxConnections(Integer maxConn) throws InvalidMaxConnectionsNumberException {
-    if(maxConn < MIN_CONNECTIONS_NUMBER || maxConn > MAX_CONNECTIONS_NUMBER){
+  public static void setMaxConnections(Integer maxConn) 
+      throws InvalidMaxConnectionsNumberException {
+    if (maxConn < MIN_CONNECTIONS_NUMBER || maxConn > MAX_CONNECTIONS_NUMBER){
       throw new InvalidMaxConnectionsNumberException();
     }
     maxConnection = maxConn;
@@ -113,6 +115,7 @@ public final class ServerConfig {
   /**
    * Keep alive setter.
    *
+   * @param k keep alive status.
    * 
    */
   public static void setKeepAlive(boolean k) {

@@ -23,55 +23,77 @@ public class ArgParser {
   }
 
   /**
+   * The socket port cli command.
+   */
+  public static final String SOCKET_PORT_CLI_COMMAND = "--socket-port";
+
+  /**
+   * The rmi port cli command.
+   */
+  public static final String RMI_PORT_CLI_COMMAND = "--rmi-port";
+
+  /**
+   * The max connections cli command.
+   */
+  public static final String MAX_CONNECTIONS_CLI_COMMAND = "--max-connections";
+
+  /**
+   * The keep alive cli command.
+   */
+  public static final String KEEP_ALIVE_CLI_COMMAND = "--keep-alive";
+
+  /**
    * Argument parser method that checks commands.
    *
    * @param args arguments passed through cli.
-   * @throws InvalidArgumentException for invalid command.
-   * @throws MissingParameterException for missing param.
-   * @throws InvalidPortNumberException if port not in bounds.
-   * @throws NumberFormatException if int not found.
+   * @throws InvalidArgumentException             for invalid command.
+   * @throws MissingParameterException            for missing param.
+   * @throws InvalidPortNumberException           if port not in bounds.
+   * @throws NumberFormatException                if int not found.
    * @throws InvalidMaxConnectionsNumberException
    * 
    */
   public static void parse(String[] args)
       throws InvalidArgumentException, MissingParameterException, NumberFormatException,
       InvalidPortNumberException, InvalidMaxConnectionsNumberException {
-    for (int i = 0; i < args.length; i++) {
-      switch (args[i]) {
-        case "--socket-port":
-          if (i + 1 < args.length) {
-            ServerConfig.setServerSocketPort(Integer.parseInt(args[i + 1]));
-            i++;
-          } else {
-            throw new MissingParameterException(args[i]);
-          }
-          break;
-        case "--rmi-port":
-          if (i + 1 < args.length) {
-            ServerConfig.setServerRmiPort(Integer.parseInt(args[i + 1]));
-            i++;
-          } else {
-            throw new MissingParameterException(args[i]);
-          }
-          break;
-        case "--max-connections":
-          if (i + 1 < args.length) {
-            ServerConfig.setMaxConnections(Integer.parseInt(args[i + 1]));
-            i++;
-          } else {
-            throw new MissingParameterException(args[i]);
-          }
-          break;
-        case "--keep-alive":
-          if (i + 1 < args.length) {
-            ServerConfig.setKeepAlive(Boolean.parseBoolean(args[i + 1]));
-            i++;
-          } else {
-            throw new MissingParameterException(args[i]);
-          }
-          break;
-        default:
-          throw new InvalidArgumentException(args[i]);
+    if (args != null) {
+      for (int i = 0; i < args.length; i++) {
+        switch (args[i]) {
+          case SOCKET_PORT_CLI_COMMAND:
+            if (i + 1 < args.length) {
+              ServerConfig.setServerSocketPort(Integer.parseInt(args[i + 1]));
+              i++;
+            } else {
+              throw new MissingParameterException(args[i]);
+            }
+            break;
+          case RMI_PORT_CLI_COMMAND:
+            if (i + 1 < args.length) {
+              ServerConfig.setServerRmiPort(Integer.parseInt(args[i + 1]));
+              i++;
+            } else {
+              throw new MissingParameterException(args[i]);
+            }
+            break;
+          case MAX_CONNECTIONS_CLI_COMMAND:
+            if (i + 1 < args.length) {
+              ServerConfig.setMaxConnections(Integer.parseInt(args[i + 1]));
+              i++;
+            } else {
+              throw new MissingParameterException(args[i]);
+            }
+            break;
+          case KEEP_ALIVE_CLI_COMMAND:
+            if (i + 1 < args.length) {
+              ServerConfig.setKeepAlive(Boolean.parseBoolean(args[i + 1]));
+              i++;
+            } else {
+              throw new MissingParameterException(args[i]);
+            }
+            break;
+          default:
+            throw new InvalidArgumentException(args[i]);
+        }
       }
     }
   }
