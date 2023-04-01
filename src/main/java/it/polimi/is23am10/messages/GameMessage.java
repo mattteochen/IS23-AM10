@@ -1,4 +1,4 @@
-package it.polimi.is23am10.chat;
+package it.polimi.is23am10.messages;
 
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.virtualview.VirtualView;
@@ -25,19 +25,19 @@ public final class GameMessage extends AbstractMessage {
   /**
    * Public constructor for virtualView message.
    * Game object is serialized into JSON and set as message.
-   * @param sender
-   * @param virtualView
+   * 
+   * @param virtualView virtual view to serialize
    */
-  public GameMessage(Player sender, VirtualView virtualView) {
+  public GameMessage(VirtualView virtualView) {
     msgType = MessageType.GAME_SNAPSHOT;
-    this.sender = sender; 
     message = gson.toJson(virtualView);
   }
 
   /**
    * Getter for virtualView instance. It deserializes it from
    * JSON message.
-   * @return
+   * 
+   * @return deserialized virtual view object
    */
   public VirtualView getGame() {
     return gson.fromJson(message, VirtualView.class);

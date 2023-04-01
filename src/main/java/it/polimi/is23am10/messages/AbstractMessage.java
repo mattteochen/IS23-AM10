@@ -1,4 +1,4 @@
-package it.polimi.is23am10.chat;
+package it.polimi.is23am10.messages;
 
 import it.polimi.is23am10.player.Player;
 
@@ -37,6 +37,7 @@ public abstract class AbstractMessage {
   
   /**
    * Getter for message.
+   * 
    * @return the string message
    */
   public String getMessage() {
@@ -44,7 +45,8 @@ public abstract class AbstractMessage {
   }
 
   /**
-   * Getter for message type
+   * Getter for message type.
+   * 
    * @return message type
    */
   public MessageType getMessageType() {
@@ -53,6 +55,7 @@ public abstract class AbstractMessage {
 
   /**
    * Getter for the sending player.
+   * 
    * @return the sending player
    */
   public Player getSender(){

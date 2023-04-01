@@ -17,8 +17,6 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
-import it.polimi.is23am10.chat.GameMessage;
-import it.polimi.is23am10.chat.exceptions.InvalidMessageTypeException;
 import it.polimi.is23am10.command.AddPlayerCommand;
 import it.polimi.is23am10.command.MoveTilesCommand;
 import it.polimi.is23am10.command.StartGameCommand;
@@ -32,6 +30,7 @@ import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.messages.GameMessage;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
@@ -100,7 +99,7 @@ class ServerControllerSocketTest {
   }
 
   @Test
-  void RUN_should_START_CONTROLLER() throws JsonIOException, JsonSyntaxException, IOException, InterruptedException, InvalidMessageTypeException {
+  void RUN_should_START_CONTROLLER() throws JsonIOException, JsonSyntaxException, IOException, InterruptedException {
     Socket mockSocket = Mockito.mock(Socket.class);
     StartGameCommand cmd = new StartGameCommand("test", 2);
 
@@ -140,7 +139,7 @@ class ServerControllerSocketTest {
 
   @Test
   void RUN_should_THROW_InterruptedException()
-      throws JsonIOException, JsonSyntaxException, IOException, InterruptedException, InvalidMessageTypeException {
+      throws JsonIOException, JsonSyntaxException, IOException, InterruptedException {
     Socket mockSocket = Mockito.mock(Socket.class);
     StartGameCommand cmd = new StartGameCommand("test", 2);
 
@@ -172,12 +171,12 @@ class ServerControllerSocketTest {
       InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
       NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
-      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException, InvalidMessageTypeException, FullGameException {
+      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException, FullGameException {
     Socket mockSocket = Mockito.mock(Socket.class);
     Game game = GameFactory.getNewGame("Steve", 4);
     VirtualView virtualView = new VirtualView(game);
     final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    GameMessage message = new GameMessage(game.getFirstPlayer(),virtualView);
+    GameMessage message = new GameMessage(virtualView);
     playerConnector.addMessageToQueue(message);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);

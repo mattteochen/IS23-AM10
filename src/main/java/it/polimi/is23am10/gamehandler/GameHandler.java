@@ -1,6 +1,5 @@
 package it.polimi.is23am10.gamehandler;
 
-import it.polimi.is23am10.chat.GameMessage;
 import it.polimi.is23am10.factory.GameFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
@@ -13,6 +12,7 @@ import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.messages.GameMessage;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
@@ -140,7 +140,7 @@ public class GameHandler {
         .filter(p -> !p.getPlayerName().equals(pc.getPlayer().getPlayerName()))
         .forEach(p -> p.obfuscatePrivateCard());
         // synch is performed by the blocking queue.
-        pc.addMessageToQueue(new GameMessage(pc.getPlayer(), gameCopy));
+        pc.addMessageToQueue(new GameMessage(gameCopy));
       }
     }
   }

@@ -4,8 +4,6 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import it.polimi.is23am10.chat.AbstractMessage;
-import it.polimi.is23am10.chat.GameMessage;
 import it.polimi.is23am10.factory.GameFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
@@ -16,6 +14,8 @@ import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.messages.AbstractMessage;
+import it.polimi.is23am10.messages.GameMessage;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
@@ -56,7 +56,7 @@ class PlayerConnectorTest {
     PlayerConnector connector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
     Game game = GameFactory.getNewGame("Test", 2);
     VirtualView virtualView = new VirtualView(game);
-    GameMessage message = new GameMessage(game.getFirstPlayer(),virtualView);
+    GameMessage message = new GameMessage(virtualView);
     connector.addMessageToQueue(message);
 
     assertEquals(1, connector.getMsgQueueSize());
@@ -71,7 +71,7 @@ class PlayerConnectorTest {
     PlayerConnector connector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
     Game game = GameFactory.getNewGame("Test", 2);
     VirtualView virtualView = new VirtualView(game);
-    GameMessage message = new GameMessage(game.getFirstPlayer(),virtualView);
+    GameMessage message = new GameMessage(virtualView);
     connector.addMessageToQueue(message);
 
     Optional<AbstractMessage> taken = connector.getMessageFromQueue();

@@ -1,11 +1,10 @@
-package it.polimi.is23am10.chat;
+package it.polimi.is23am10.messages;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
-import it.polimi.is23am10.chat.AbstractMessage.MessageType;
 import it.polimi.is23am10.factory.GameFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
@@ -18,6 +17,8 @@ import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.messages.GameMessage;
+import it.polimi.is23am10.messages.AbstractMessage.MessageType;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -42,7 +43,7 @@ public class GameMessageTest {
     game.assignPlayers();
     final VirtualView virtualView = new VirtualView(game);
     final Player sp = game.getPlayerByName("sender");
-    final GameMessage gm = new GameMessage(sp, virtualView);
+    final GameMessage gm = new GameMessage(virtualView);
     final String chatMessage = gm.gson.toJson(virtualView);
 
     assertNotNull(gm);
@@ -52,9 +53,6 @@ public class GameMessageTest {
 
     assertNotNull(gm.getMessageType()); 
     assertEquals(MessageType.GAME_SNAPSHOT, gm.getMessageType());
-
-    assertNotNull(gm.getSender()); 
-    assertEquals(sp, gm.getSender());
 
     assertNotNull(gm.getGame());
     assertEquals(virtualView, gm.getGame());

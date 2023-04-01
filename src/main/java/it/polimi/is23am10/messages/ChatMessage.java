@@ -1,4 +1,4 @@
-package it.polimi.is23am10.chat;
+package it.polimi.is23am10.messages;
 
 import it.polimi.is23am10.player.Player;
 
@@ -19,11 +19,12 @@ public final class ChatMessage extends AbstractMessage {
 
   /**
    * Public constructor for building a direct message.
+   * 
    * @param sender the player sending the message
    * @param chatMessage the actual message
    * @param receiver the player receiving the message
    */
-  public ChatMessage(Player sender, String chatMessage, Player receiver){
+  public ChatMessage(Player sender, String chatMessage, Player receiver) {
     msgType = MessageType.CHAT_MESSAGE;
     this.sender = sender;
     message = chatMessage;
@@ -32,6 +33,7 @@ public final class ChatMessage extends AbstractMessage {
 
   /**
    * Public constructor for building a broadcast message.
+   * 
    * @param sender the player sending the message
    * @param chatMessage the actual message
    */
@@ -42,7 +44,8 @@ public final class ChatMessage extends AbstractMessage {
   }
 
   /**
-   * Boolean to check if message is direct or broadcast
+   * Boolean to check if message is direct or broadcast.
+   * 
    * @return is the message broadcast?
    */
   public boolean isBroadcast() {
@@ -50,7 +53,8 @@ public final class ChatMessage extends AbstractMessage {
   }
 
   /**
-   * Getter for the receiving player
+   * Getter for the receiving player.
+   * 
    * @return the player instance
    */
   public Player getReceiver() {

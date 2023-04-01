@@ -1,4 +1,4 @@
-package it.polimi.is23am10.chat;
+package it.polimi.is23am10.messages;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -6,13 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
-import it.polimi.is23am10.chat.AbstractMessage.MessageType;
 import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.game.Game;
 import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.messages.ChatMessage;
+import it.polimi.is23am10.messages.AbstractMessage.MessageType;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;

@@ -1,7 +1,7 @@
 package it.polimi.is23am10.playerconnector;
 
-import it.polimi.is23am10.chat.AbstractMessage;
 import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.messages.AbstractMessage;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import java.io.Serializable;

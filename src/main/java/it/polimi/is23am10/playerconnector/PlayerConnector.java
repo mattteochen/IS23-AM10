@@ -1,6 +1,6 @@
 package it.polimi.is23am10.playerconnector;
 
-import it.polimi.is23am10.chat.AbstractMessage;
+import it.polimi.is23am10.messages.AbstractMessage;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.net.Socket;

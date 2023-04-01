@@ -10,11 +10,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
-import it.polimi.is23am10.chat.AbstractMessage;
-import it.polimi.is23am10.chat.GameMessage;
-import it.polimi.is23am10.chat.exceptions.InvalidMessageTypeException;
 import it.polimi.is23am10.command.AbstractCommand;
 import it.polimi.is23am10.command.AbstractCommand.Opcode;
+import it.polimi.is23am10.messages.AbstractMessage;
 import it.polimi.is23am10.command.AddPlayerCommand;
 import it.polimi.is23am10.command.MoveTilesCommand;
 import it.polimi.is23am10.command.StartGameCommand;
@@ -102,8 +100,6 @@ public final class ServerControllerSocket implements Runnable {
         logger.error("Failed get response message from the queue", e);
         // note, we are not raising the interrupted flag as we don't want to stop this
         // thread.
-      } catch (InvalidMessageTypeException e) {
-        logger.error("Invalid message type", e);
       }
     }
   }
@@ -117,25 +113,13 @@ public final class ServerControllerSocket implements Runnable {
    * @throws InvalidMessageTypeException
    * 
    */
-  protected void update() throws InterruptedException, IOException, InvalidMessageTypeException {
+  protected void update() throws InterruptedException, IOException {
     Optional<AbstractMessage> optMessage = playerConnector.getMessageFromQueue();
     if (optMessage.isPresent()) {
       AbstractMessage message = optMessage.get();
-      String stringMessage;
-      switch (message.getMessageType()) {
-        case GAME_SNAPSHOT:
-          GameMessage gameMessage = (GameMessage) message; 
-          PrintWriter printer = new PrintWriter(playerConnector.getConnector().getOutputStream(), true, StandardCharsets.UTF_8);
-          stringMessage = gameMessage.getMessage();
-          printer.println(stringMessage);
-          break;
-        case CHAT_MESSAGE:
-          stringMessage = message.getMessage();
-          break;
-        default:
-          throw new InvalidMessageTypeException();
-      }
-      logger.info("{} sent to client {}",message.getMessageType(), stringMessage);
+      PrintWriter printer = new PrintWriter(playerConnector.getConnector().getOutputStream(), true, StandardCharsets.UTF_8);
+      printer.println(message.getMessage());
+      logger.info("{} sent to client {}",message.getMessageType(), message.getMessage());
     }
   }
 
