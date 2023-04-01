@@ -140,6 +140,9 @@ public class Game implements Serializable {
    */
   private transient List<PrivatePattern<Function<Bookshelf, Integer>>> assignedPrivatePatterns;
 
+
+  private final transient Random random = new Random();
+
   /**
    * Constructor that assigns the only value that is
    * generated, immutable and not set by factory.
@@ -261,8 +264,6 @@ public class Game implements Serializable {
    *
    */
   private void addPlayer(Player player) {
-    // TODO: class level random is colliding with gson
-    Random random = new Random();
     final Integer position = players.isEmpty() ? 0 : random.nextInt(players.size());
     players.add(position, player);
     if (players.size() == maxPlayers) {
@@ -637,8 +638,6 @@ public class Game implements Serializable {
    * the players threshold is met.
    */
   public void assignPlayers() {
-    // TODO: class level random is colliding with gson
-    Random random = new Random();
     Player choosenFirstPlayer = players.get(random.nextInt(players.size()));
     activePlayer = choosenFirstPlayer;
     firstPlayer = choosenFirstPlayer;
