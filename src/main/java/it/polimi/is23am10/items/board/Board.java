@@ -346,4 +346,36 @@ public class Board implements Serializable {
       fillBoardGrid();
     }
   }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Board)) {
+      return false;
+    }
+    Board brd = (Board) obj;
+    if (numOfPlayers != brd.numOfPlayers) {
+      return false;
+    }
+    for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
+      for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
+        if ((boardGrid[i][j]).getType() != (brd.boardGrid[i][j]).getType()) {
+          return false;
+        }
+      }
+    }
+    return (tileSack.equals(brd.tileSack));
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public int hashCode() {
+    return numOfPlayers.hashCode() * boardGrid.hashCode() * tileSack.hashCode();
+  }
 }

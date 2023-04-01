@@ -203,4 +203,38 @@ public class Bookshelf implements Serializable {
     }
     return true;
   }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Bookshelf)) {
+      return false;
+    }
+    Bookshelf bs = (Bookshelf) obj;
+    for (int i = 0; i < BOOKSHELF_ROWS; i++) {
+      for (int j = 0; j < BOOKSHELF_COLS; j++) {
+        try {
+          if ((bookshelfGrid[i][j]).getType() != bs.getBookshelfGridAt(i, j).getType()) {
+            return false;
+          }
+        } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
+            | NullIndexValueException e) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public int hashCode() {
+    return bookshelfGrid.hashCode();
+  }
 }

@@ -286,4 +286,30 @@ public final class Score implements Serializable {
   public Integer getTotalScore() {
     return extraPoint + scoreBlockPoints + privatePoints + bookshelfPoints;
   }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Score)) {
+      return false;
+    }
+    Score sc = (Score) obj;
+    return (
+      extraPoint == sc.getExtraPoint() 
+      && scoreBlockPoints == sc.getScoreBlockPoints() 
+      && privatePoints == sc.getPrivatePoints()
+      && bookshelfPoints == sc.getBookshelfPoints());
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public int hashCode() {
+    return extraPoint.hashCode() * scoreBlockPoints.hashCode() * privatePoints.hashCode() * bookshelfPoints.hashCode();
+  }
 }
