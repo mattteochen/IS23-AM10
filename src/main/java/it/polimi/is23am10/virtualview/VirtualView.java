@@ -176,7 +176,7 @@ public final class VirtualView {
 
 
   /**
-   * Equals method overriding default one
+   * {@inheritDoc}
    */
   @Override
   public boolean equals(Object obj) {
@@ -188,5 +188,13 @@ public final class VirtualView {
     return (
       gameId.equals(view.getGameId())
     );
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int hashCode() {
+    return gameId.hashCode();
   }
 }

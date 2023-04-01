@@ -15,7 +15,7 @@ import it.polimi.is23am10.score.Score;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public class VirtualPlayer {
+public final class VirtualPlayer {
 
   /**
    * Unique player identifier
@@ -106,7 +106,7 @@ public class VirtualPlayer {
   }
 
   /**
-   * Equals method overriding default one
+   * {@inheritDoc}
    */
   @Override
   public boolean equals(Object obj) {
@@ -117,5 +117,13 @@ public class VirtualPlayer {
     VirtualPlayer player = (VirtualPlayer) obj;
     return (playerId.equals(player.getPlayerId())
         && playerName.equals(player.getPlayerName()));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int hashCode() {
+    return playerName.hashCode() * playerId.hashCode();
   }
 }
