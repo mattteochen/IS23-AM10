@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 import it.polimi.is23am10.Server.ServerStatus;
 import it.polimi.is23am10.config.ServerConfigContext;
-import it.polimi.is23am10.config.ServerConfigDefault;
+import it.polimi.is23am10.config.ServerConfig;
 import it.polimi.is23am10.controller.interfaces.IServerControllerAction;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -54,9 +54,9 @@ class ServerTest {
   @InjectMocks
   Server server;
 
-  ServerConfigContext ctx = new ServerConfigContext(ServerConfigDefault.SERVER_SOCKET_PORT,
-      ServerConfigDefault.SERVER_RMI_PORT,
-      ServerConfigDefault.MAX_CLIENT_CONNECTION, ServerConfigDefault.KEEP_ALIVE);
+  ServerConfigContext ctx = new ServerConfigContext(ServerConfig.getServerSocketPort(),
+      ServerConfig.getServerRmiPort(),
+      ServerConfig.getMaxConnections(), ServerConfig.getKeepAlive());
 
   @BeforeEach
   public void setup() {

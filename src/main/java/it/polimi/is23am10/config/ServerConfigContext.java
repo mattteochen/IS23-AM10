@@ -10,20 +10,21 @@ public class ServerConfigContext {
    * The server socket port.
    * 
    */
-  private int serverSocketPort;
+  private Integer serverSocketPort;
+
 
   /**
    * The server rmi port.
    * 
    */
-  private int serverRmiPort;
+  private Integer serverRmiPort;
 
   /**
    * The max allowed connection for this server instance.
    * This is a momentary max value.
    * 
    */
-  private int maxConnection;
+  private Integer maxConnection;
 
   /**
    * The socket SO_KEEPALIVE flag.
@@ -34,16 +35,30 @@ public class ServerConfigContext {
   /**
    * Constructor.
    *
-   * @param serverPort     The server port number.
+   * @param serverSocketPort     The server port number.
    * @param maxConnections The maximum allowed connections.
    * @param keepAlive      The socket keep alive flag.
    * 
    */
-  public ServerConfigContext(int serverSocketPort, int serverRmiPort, int maxConnections, boolean keepAlive) {
+  public ServerConfigContext(Integer serverSocketPort, Integer serverRmiPort,
+      Integer maxConnections, boolean keepAlive) {
     this.serverSocketPort = serverSocketPort;
     this.serverRmiPort = serverRmiPort;
     this.maxConnection = maxConnections;
     this.keepAlive = keepAlive;
+  }
+
+
+  /**
+   * Constructor with default values.
+   *
+   * 
+   */
+  public ServerConfigContext() {
+    this.serverSocketPort = ServerConfig.getServerSocketPort();
+    this.serverRmiPort = ServerConfig.getServerRmiPort();
+    this.maxConnection = ServerConfig.getMaxConnections();
+    this.keepAlive = ServerConfig.getKeepAlive();
   }
 
   /**
@@ -52,7 +67,7 @@ public class ServerConfigContext {
    * @return The instantiated server socket port.
    * 
    */
-  public int getServerSocketPort() {
+  public Integer getServerSocketPort() {
     return serverSocketPort;
   }
 
@@ -62,7 +77,7 @@ public class ServerConfigContext {
    * @return The instantiated server rmi port.
    * 
    */
-  public int getServerRmiPort() {
+  public Integer getServerRmiPort() {
     return serverRmiPort;
   }
 
@@ -72,7 +87,7 @@ public class ServerConfigContext {
    * @return The maximum allowed connections.
    * 
    */
-  public int getMaxConnections() {
+  public Integer getMaxConnections() {
     return maxConnection;
   }
 
