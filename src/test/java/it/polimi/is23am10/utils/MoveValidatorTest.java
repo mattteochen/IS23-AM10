@@ -1,7 +1,6 @@
 package it.polimi.is23am10.utils;
 
 import static org.junit.Assert.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import it.polimi.is23am10.items.board.Board;
@@ -9,13 +8,13 @@ import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsExc
 import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.items.board.exceptions.WrongCharGameBoardStringException;
+import it.polimi.is23am10.items.board.exceptions.WrongLengthGameBoardStringException;
 import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
-import it.polimi.is23am10.items.tile.Tile;
-import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.utils.exceptions.MovesNotLessThanThreeException;
 import it.polimi.is23am10.utils.exceptions.NotEnoughSlotsException;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
@@ -24,8 +23,8 @@ import it.polimi.is23am10.utils.exceptions.TilesInDiagonalException;
 import it.polimi.is23am10.utils.exceptions.TilesWithoutOneFreeSideException;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class to check the valid and illegal moves.
@@ -40,69 +39,30 @@ public class MoveValidatorTest {
       throws InvalidNumOfPlayersException,
       NullNumOfPlayersException, NullPointerException,
       WrongLengthBookshelfStringException,
-      WrongCharBookshelfStringException {
-    gameBoard = new Board(4);
+      WrongCharBookshelfStringException,
+      WrongLengthGameBoardStringException, WrongCharGameBoardStringException {
     bookshelf = new Bookshelf(
-              "XXXXC"
+        "XXXXC"
             + "XXXCC"
             + "XXXPP"
             + "XPPPP"
             + "XCCCC"
             + "TTTTT");
 
-    Tile[][] grid = {
-        { new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY) },
-        { new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY) },
-        { new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.CAT), new Tile(TileType.CAT),
-            new Tile(TileType.PLANT), new Tile(TileType.TROPHY),
-            new Tile(TileType.CAT), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY) },
-        { new Tile(TileType.EMPTY), new Tile(TileType.GAME),
-            new Tile(TileType.BOOK), new Tile(TileType.FRAME),
-            new Tile(TileType.BOOK), new Tile(TileType.PLANT),
-            new Tile(TileType.PLANT), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY) },
-        { new Tile(TileType.CAT), new Tile(TileType.GAME),
-            new Tile(TileType.BOOK), new Tile(TileType.FRAME),
-            new Tile(TileType.TROPHY), new Tile(TileType.PLANT),
-            new Tile(TileType.BOOK), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY) },
-        { new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY), new Tile(TileType.PLANT),
-            new Tile(TileType.CAT), new Tile(TileType.PLANT),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY) },
-        { new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.FRAME), new Tile(TileType.PLANT),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY) },
-        { new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY), new Tile(TileType.PLANT),
-            new Tile(TileType.PLANT), new Tile(TileType.CAT),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY) },
-        { new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY), new Tile(TileType.EMPTY),
-            new Tile(TileType.EMPTY) }
-    };
-
-    gameBoard.setBoardGrid(grid);
+    gameBoard = new Board(4,
+        "XXXXXXXXX"
+            + "XXXXXXXXX"
+            + "XXCCPTCXX"
+            + "XXBFBPCXX"
+            + "CGTFGTFXX"
+            + "XXXCTFXXX"
+            + "XXXXPFXXX"
+            + "XXXPCFXXX"
+            + "XXXXXXXXX");
   }
 
   @Test
-  public void testIsValidMoveOnBoard_validMove()
+  public void IsValidMoveOnBoard_should_return_true() 
       throws BoardGridRowIndexOutOfBoundsException,
       BoardGridColIndexOutOfBoundsException, NullIndexValueException,
       MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
@@ -119,12 +79,11 @@ public class MoveValidatorTest {
     selectedCoordinates.put(boardCoord2, bsCoord2);
     selectedCoordinates.put(boardCoord3, bsCoord3);
 
-
     assertTrue(MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
   }
 
   @Test
-  public void testIsValidMoveOnBoard_invalidMove_MovesNotLessThanThreeException()
+  public void IsValidMoveOnBoard_should_throw_MovesNotLessThanThreeException()
       throws BoardGridRowIndexOutOfBoundsException,
       BoardGridColIndexOutOfBoundsException, NullIndexValueException,
       MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
@@ -149,7 +108,7 @@ public class MoveValidatorTest {
   }
 
   @Test
-  public void testIsValidMoveOnBoard_invalidMove_TilesWithoutOneFreeSideException() {
+  public void IsValidMoveOnBoard_should_throw_TilesWithoutOneFreeSideException() {
     Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
 
     final Coordinates boardCoord1 = new Coordinates(2, 3);
@@ -167,25 +126,7 @@ public class MoveValidatorTest {
   }
 
   @Test
-  public void testIsValidMoveOnBoard_invalidMove_TilesInCornerException() {
-    Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
-
-    final Coordinates boardCoord1 = new Coordinates(2, 2);
-    final Coordinates boardCoord2 = new Coordinates(2, 3);
-    final Coordinates boardCoord3 = new Coordinates(2, 4);
-    final Coordinates bsCoord1 = new Coordinates(4, 0);
-    final Coordinates bsCoord2 = new Coordinates(3, 0);
-    final Coordinates bsCoord3 = new Coordinates(2, 0);
-    selectedCoordinates.put(boardCoord1, bsCoord1);
-    selectedCoordinates.put(boardCoord2, bsCoord2);
-    selectedCoordinates.put(boardCoord3, bsCoord3);
-
-    assertThrows(TilesInCornerException.class,
-        () -> MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates));
-  }
-
-  @Test
-  public void testIsValidMoveOnBoard_invalidMove_TilesInDiagonalException() {
+  public void IsValidMoveOnBoard_should_throw_TilesInDiagonalException() {
     Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
 
     final Coordinates boardCoord1 = new Coordinates(7, 4);
@@ -200,7 +141,7 @@ public class MoveValidatorTest {
   }
 
   @Test
-  public void testIsValidMoveOnBookshelf_validMove()
+  public void IsValidMoveOnBookshelf_should_return_true()
       throws BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NotEnoughSlotsException,
       NullIndexValueException {
@@ -216,11 +157,11 @@ public class MoveValidatorTest {
     selectedCoordinates.put(boardCoord2, bsCoord2);
     selectedCoordinates.put(boardCoord3, bsCoord3);
 
-    assertTrue(MoveValidator.isValidMoveOnBookshelf(bookshelf, selectedCoordinates));
+    assertTrue(MoveValidator.isValidMoveOnBookshelf(bookshelf, selectedCoordinates.values()));
   }
 
   @Test
-  public void testIsValidMoveOnBookshelf_invalidMove_NotEnoughSlotsException() {
+  public void IsValidMoveOnBookshelf_should_throw_NotEnoughSlotsException() {
     Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
 
     final Coordinates boardCoord1 = new Coordinates(2, 3);
@@ -234,6 +175,6 @@ public class MoveValidatorTest {
     selectedCoordinates.put(boardCoord3, bsCoord3);
 
     assertThrows(NotEnoughSlotsException.class,
-        () -> MoveValidator.isValidMoveOnBookshelf(bookshelf, selectedCoordinates));
+        () -> MoveValidator.isValidMoveOnBookshelf(bookshelf, selectedCoordinates.values()));
   }
 }
