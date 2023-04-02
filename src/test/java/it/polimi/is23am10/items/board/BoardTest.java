@@ -11,6 +11,8 @@ import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsExc
 import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.items.board.exceptions.WrongCharGameBoardStringException;
+import it.polimi.is23am10.items.board.exceptions.WrongLengthGameBoardStringException;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import org.junit.jupiter.api.Test;
@@ -244,5 +246,62 @@ class BoardTest {
     Board board = new Board(NUM_PLAYERS);
     assertThrows(BoardGridColIndexOutOfBoundsException.class,
         () -> board.getBlackMapAt(VALID_ROW, INVALID_COL));
+  }
+
+  @Test
+  public void construct_with_string_should_create_board() throws InvalidNumOfPlayersException,
+      NullNumOfPlayersException, WrongLengthGameBoardStringException,
+      WrongCharGameBoardStringException, BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
+      NullIndexValueException {
+    String str = "XXXXXXXXX"
+        + "XXXXXXXXX"
+        + "XXCCPTCXX"
+        + "XXBFBPCXX"
+        + "CGTFGTFXX"
+        + "XXXCTFXXX"
+        + "XXXXPFXXX"
+        + "XXXPCFXXX"
+        + "XXXXXXXXX";
+
+    final Integer NUM_PLAYERS = 4;
+
+    Board b = new Board(NUM_PLAYERS, str);
+
+    assertNotNull(b);
+    assertNotNull(b.getBoardGrid());
+  }
+
+  @Test
+  public void construct_with_string_should_throw_WrongLengthGameBoardStringException()
+      throws InvalidNumOfPlayersException, NullNumOfPlayersException, WrongLengthGameBoardStringException,
+      WrongCharGameBoardStringException {
+    String str = "XXXXXXXXXX"
+        + "XXXXXXXXXX"
+        + "XXCCPTCXXX"
+        + "XXBFBPCXXX"
+        + "CGTFGTFXXX"
+        + "XXXCTFXXXX"
+        + "XXXXPFXXXX"
+        + "XXXPCFXXXX"
+        + "XXXXXXXXXX";
+
+    assertThrows(WrongLengthGameBoardStringException.class, () -> new Board(4, str));
+  }
+
+  @Test
+  public void construct_with_string_should_throw_WrongCharGameBoardStringException()
+      throws InvalidNumOfPlayersException, NullNumOfPlayersException, WrongLengthGameBoardStringException,
+      WrongCharGameBoardStringException {
+    String str = "EEEEEEEEE"
+        + "EEEEEEEEE"
+        + "XXCCPTCXX"
+        + "XXBFBPCXX"
+        + "CGTFGTFXX"
+        + "XXXCTFXXX"
+        + "XXXXPFXXX"
+        + "XXXPCFXXX"
+        + "XXXXXXXXX";
+
+    assertThrows(WrongCharGameBoardStringException.class, () -> new Board(4, str));
   }
 }
