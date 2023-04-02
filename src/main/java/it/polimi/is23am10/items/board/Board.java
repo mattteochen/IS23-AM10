@@ -4,6 +4,8 @@ import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsExc
 import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.items.board.exceptions.WrongCharGameBoardStringException;
+import it.polimi.is23am10.items.board.exceptions.WrongLengthGameBoardStringException;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.utils.IndexValidator;
@@ -12,6 +14,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,6 +57,20 @@ public class Board implements Serializable {
    * 
    */
   private Integer numOfPlayers;
+
+  /**
+   * The support map to reference each {@link TileType} with a char.
+   * Used for the constructor of Bookshelf made for tests.
+   * 
+   */
+  transient Map<String, TileType> tileMap = Map.of(
+      "C", TileType.CAT,
+      "B", TileType.BOOK,
+      "G", TileType.GAME,
+      "F", TileType.FRAME,
+      "T", TileType.TROPHY,
+      "P", TileType.PLANT,
+      "X", TileType.EMPTY);
 
   /**
    * A fixed 2d array referencing the physical grid instance.
@@ -129,6 +146,57 @@ public class Board implements Serializable {
     createInitialTileSack();
 
     fillBoardGrid();
+  }
+
+  /**
+   * This constructor takes a 30 char long string containing the content
+   * of a game board, with each tile associated to a letter, as shown below
+   * and builds and returns the matching board object.
+   *
+   * @param numOfPlayers
+   * @param gameBoardString
+   * @throws InvalidNumOfPlayersException
+   * @throws NullNumOfPlayersException
+   * @throws WrongLengthGameBoardStringException
+   * @throws WrongCharGameBoardStringException
+   */
+  public Board(Integer numOfPlayers, String gameBoardString)
+      throws InvalidNumOfPlayersException, NullNumOfPlayersException,
+      WrongLengthGameBoardStringException,
+      WrongCharGameBoardStringException {
+    if (!validNumOfPlayers(numOfPlayers)) {
+      throw new InvalidNumOfPlayersException(numOfPlayers);
+    }
+    /**
+     * Save a reference about the current number of players.
+     * 
+     */
+    this.numOfPlayers = numOfPlayers;
+    this.boardGrid = new Tile[BOARD_GRID_ROWS][BOARD_GRID_COLS];
+
+    createInitialTileSack();
+
+    if (gameBoardString.length() != BOARD_GRID_COLS * BOARD_GRID_ROWS) {
+      throw new WrongLengthGameBoardStringException(
+          "[Class Board, method constructor]: Game Board string has incorrect length exception");
+    }
+    String[] tileChars = gameBoardString.split("");
+    for (String c : tileChars) {
+      if (!tileMap.containsKey(c)) {
+        throw new WrongCharGameBoardStringException(
+            "[Class Board, method constructor]: GameBoard string contains invalid char exception]");
+      }
+    }
+
+    for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
+      for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
+        if (blackMap[i][j] <= numOfPlayers) {
+          boardGrid[i][j] = new Tile(tileMap.get(tileChars[BOARD_GRID_COLS * i + j]));
+        } else {
+          boardGrid[i][j] = new Tile(TileType.EMPTY);
+        }
+      }
+    }
   }
 
   /**
@@ -324,19 +392,6 @@ public class Board implements Serializable {
   public void refillIfNeeded() {
     if (isRefillNeeded()) {
       fillBoardGrid();
-    }
-  }
-
-  /**
-   * Method used to generate a custom scenario for the game board.
-   *
-   * @param tileGrid A 2D arrays of tiles.
-   */
-  public void setBoardGrid(Tile[][] tileGrid) {
-    for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
-      for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
-        boardGrid[i][j] = tileGrid[i][j];
-      }
     }
   }
 }
