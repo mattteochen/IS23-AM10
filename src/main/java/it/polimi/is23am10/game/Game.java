@@ -34,7 +34,14 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.utils.Coordinates;
+import it.polimi.is23am10.utils.MoveValidator;
+import it.polimi.is23am10.utils.exceptions.MovesNotLessThanThreeException;
+import it.polimi.is23am10.utils.exceptions.NotEnoughSlotsException;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import it.polimi.is23am10.utils.exceptions.TilesInCornerException;
+import it.polimi.is23am10.utils.exceptions.TilesInDiagonalException;
+import it.polimi.is23am10.utils.exceptions.TilesWithoutOneFreeSideException;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -467,8 +474,7 @@ public class Game implements Serializable {
    * @return Player matching provided name.
    * @throws PlayerNotFoundException
    */
-  public Player getPlayerByName(String playerName) throws
-      NullPlayerNameException, PlayerNotFoundException {
+  public Player getPlayerByName(String playerName) throws NullPlayerNameException, PlayerNotFoundException {
     if (playerName == null) {
       throw new NullPlayerNameException("[Class Game, method getPlayerByName]");
     }
@@ -568,8 +574,8 @@ public class Game implements Serializable {
    * @throws NullIndexValueException
    * @throws NullTileException
    */
-  public void putTileAction(Tile t, Coordinates coord) throws
-      BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+  public void putTileAction(Tile t, Coordinates coord)
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException, NullTileException {
     activePlayer.getBookshelf().setBookshelfGridIndex(coord.getRow(), coord.getCol(), t);
   }
@@ -577,7 +583,8 @@ public class Game implements Serializable {
   /**
    * Quick helper function to determine if the player is the last in turn.
    *
-   * @param playerToCheck A reference player instance on which to operate the check.
+   * @param playerToCheck A reference player instance on which to operate the
+   *                      check.
    * @return Is playerToCheck the last one in turn
    */
   private boolean isLastPlayer(Player playerToCheck) {
@@ -665,13 +672,21 @@ public class Game implements Serializable {
    * @throws NullPointerException
    * @throws NullPlayerBookshelfException
    * @throws NullScoreBlockListException
+   * @throws TilesInDiagonalException
+   * @throws TilesInCornerException
+   * @throws TilesWithoutOneFreeSideException
+   * @throws MovesNotLessThanThreeException
+   * @throws NotEnoughSlotsException
    * @throws NullPlayerException
    */
   public void activePlayerMove(Map<Coordinates, Coordinates> selectedCoordinates)
       throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
       NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPlayerBookshelfException,
-      NullScoreBlockListException {
+      NullScoreBlockListException, MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
+      TilesInCornerException, TilesInDiagonalException, NotEnoughSlotsException {
+    MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates);
+    MoveValidator.isValidMoveOnBookshelf(activePlayer.getBookshelf(), selectedCoordinates.values());
     for (Map.Entry<Coordinates, Coordinates> entry : selectedCoordinates.entrySet()) {
       Coordinates boardCoord = entry.getKey();
       Coordinates bsCoord = entry.getValue();
