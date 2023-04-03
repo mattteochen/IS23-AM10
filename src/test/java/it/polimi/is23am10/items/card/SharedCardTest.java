@@ -34,7 +34,7 @@ class SharedCardTest {
 
     assertNotNull(sc);
     assertNotNull(sc.getPattern());
-    assertEquals(new ArrayList<>(), sc.getScoreBlocks());
+    assertEquals(List.of(new ScoreBlock(8), new ScoreBlock(4)), sc.getScoreBlocks());
   }
 
   /**

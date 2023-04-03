@@ -73,12 +73,12 @@ public final class GameFactory {
       NullAssignedPatternException,FullGameException, NotValidScoreBlockValueException {
 
     Game game = new Game();
+    game.setMaxPlayers(maxPlayerNum);
     SharedCard firstCard = new SharedCard(game.getAssignedSharedPatterns(), game.getMaxPlayer());
     game.addAssignedSharedPattern(firstCard.getPattern());
     SharedCard secondCard = new SharedCard(game.getAssignedSharedPatterns(), game.getMaxPlayer());
     game.addAssignedSharedPattern(secondCard.getPattern());
 
-    game.setMaxPlayers(maxPlayerNum);
     game.addPlayer(startingPlayerName);
     game.setGameBoard();
     game.setSharedCards(Arrays.asList(firstCard, secondCard));

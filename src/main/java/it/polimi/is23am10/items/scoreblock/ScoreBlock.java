@@ -46,4 +46,26 @@ public final class ScoreBlock implements Serializable {
   public Integer getScore() {
     return score;
   }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof ScoreBlock)) {
+      return false;
+    }
+    ScoreBlock sb = (ScoreBlock) obj;
+    return (score == sb.score);
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public int hashCode() {
+    return score.hashCode();
+  }
 }
