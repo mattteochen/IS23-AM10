@@ -38,8 +38,8 @@ import it.polimi.is23am10.utils.MoveValidator;
 import it.polimi.is23am10.utils.exceptions.MovesNotLessThanThreeException;
 import it.polimi.is23am10.utils.exceptions.NotEnoughSlotsException;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-import it.polimi.is23am10.utils.exceptions.TilesInCornerException;
 import it.polimi.is23am10.utils.exceptions.TilesInDiagonalException;
+import it.polimi.is23am10.utils.exceptions.TilesNotInTheSameColException;
 import it.polimi.is23am10.utils.exceptions.TilesWithoutOneFreeSideException;
 
 import java.io.Serializable;
@@ -677,6 +677,7 @@ public class Game implements Serializable {
    * @throws TilesWithoutOneFreeSideException
    * @throws MovesNotLessThanThreeException
    * @throws NotEnoughSlotsException
+   * @throws TilesNotInTheSameColException
    * @throws NullPlayerException
    */
   public void activePlayerMove(Map<Coordinates, Coordinates> selectedCoordinates)
@@ -684,8 +685,8 @@ public class Game implements Serializable {
       NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPlayerBookshelfException,
       NullScoreBlockListException, MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
-      TilesInCornerException, TilesInDiagonalException, NotEnoughSlotsException {
-    MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates);
+      TilesInDiagonalException, NotEnoughSlotsException, TilesNotInTheSameColException {
+    MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates.keySet());
     MoveValidator.isValidMoveOnBookshelf(activePlayer.getBookshelf(), selectedCoordinates.values());
     for (Map.Entry<Coordinates, Coordinates> entry : selectedCoordinates.entrySet()) {
       Coordinates boardCoord = entry.getKey();
