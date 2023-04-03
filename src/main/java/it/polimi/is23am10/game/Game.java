@@ -525,6 +525,19 @@ public class Game implements Serializable {
   }
 
   /**
+   * Method to assign the scoreBlocks.
+   * 
+   */
+  private void assignScoreBlocks(){
+    sharedCards.forEach(c -> {
+      if (!c.getCardWinners().contains(activePlayer)) {
+        c.addCardWinner(activePlayer);
+        activePlayer.addScoreBlock(c.getScoreBlocks().remove(0));
+      }
+    });
+  }
+
+  /**
    * Method that computes active player's Score, updates the view,
    * checks if game is over and if not picks next player.
    *
@@ -539,7 +552,7 @@ public class Game implements Serializable {
   public void nextTurn()
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException {
-
+    assignScoreBlocks();
     activePlayer.updateScore();
     checkEndGame();
     if (!(getEnded())) {

@@ -150,6 +150,15 @@ public class Player implements Serializable {
   }
 
   /**
+   * Method to add a scoreblock to the player.
+   * 
+   * @param scoreBlock The scoreblock to add.
+   */
+  public void addScoreBlock(ScoreBlock scoreBlock) {
+    scoreBlocks.add(scoreBlock);
+  }
+
+  /**
    * playerId getter.
    *
    * @return The player's id.
