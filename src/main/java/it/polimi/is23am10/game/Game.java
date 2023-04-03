@@ -140,7 +140,9 @@ public class Game implements Serializable {
    */
   private transient List<PrivatePattern<Function<Bookshelf, Integer>>> assignedPrivatePatterns;
 
-
+  /**
+   * Random object used to pick starting player and player positions.
+   */
   private final transient Random random = new Random();
 
   /**
