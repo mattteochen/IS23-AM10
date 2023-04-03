@@ -10,13 +10,12 @@ import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.utils.exceptions.MovesNotLessThanThreeException;
 import it.polimi.is23am10.utils.exceptions.NotEnoughSlotsException;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-import it.polimi.is23am10.utils.exceptions.TilesInCornerException;
 import it.polimi.is23am10.utils.exceptions.TilesInDiagonalException;
+import it.polimi.is23am10.utils.exceptions.TilesNotInTheSameColException;
 import it.polimi.is23am10.utils.exceptions.TilesWithoutOneFreeSideException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +37,8 @@ public final class MoveValidator {
    * Input validation for Player's move on board.
    *
    * @param gameBoard           The game board.
-   * @param selectedCoordinates Map of coordinates representing the selected
+   * @param selectedCoordinates Collection of coordinates representing the
+   *                            selected
    *                            moves.
    * @return True is the move is valid.
    * @throws BoardGridRowIndexOutOfBoundsException
@@ -50,14 +50,14 @@ public final class MoveValidator {
    * @throws TilesInDiagonalException
    */
   public static boolean isValidMoveOnBoard(Board gameBoard,
-      Map<Coordinates, Coordinates> selectedCoordinates)
+      Collection<Coordinates> selectedCoordinates)
       throws BoardGridRowIndexOutOfBoundsException,
       BoardGridColIndexOutOfBoundsException,
       NullIndexValueException, MovesNotLessThanThreeException,
-      TilesWithoutOneFreeSideException, TilesInCornerException,
+      TilesWithoutOneFreeSideException,
       TilesInDiagonalException {
 
-    if (!movesAccepted(selectedCoordinates)) {
+    if (!checkNumberOfMoves(selectedCoordinates)) {
       throw new MovesNotLessThanThreeException();
     }
     if (!tilesNotDiagonal(gameBoard, selectedCoordinates)) {
@@ -69,7 +69,8 @@ public final class MoveValidator {
   /**
    * Private method to check if the selected tiles are not disposed in diagonal.
    *
-   * @param selectedCoordinates Map of coordinates representing the selected
+   * @param selectedCoordinates Collection of coordinates representing the
+   *                            selected
    *                            moves.
    * @return True if the selected tiles are not in diagonal, false otherwise.
    * @throws TilesWithoutOneFreeSideException
@@ -78,13 +79,13 @@ public final class MoveValidator {
    * @throws BoardGridRowIndexOutOfBoundsException
    */
   private static boolean tilesNotDiagonal(Board gameBoard,
-      Map<Coordinates, Coordinates> selectedCoordinates)
+      Collection<Coordinates> selectedCoordinates)
       throws TilesWithoutOneFreeSideException, BoardGridRowIndexOutOfBoundsException,
       BoardGridColIndexOutOfBoundsException, NullIndexValueException {
     int[] rows = new int[selectedCoordinates.size()];
     int[] cols = new int[selectedCoordinates.size()];
     int i = 0;
-    for (Coordinates coord : selectedCoordinates.keySet()) {
+    for (Coordinates coord : selectedCoordinates) {
       if (!hasOneFreeSide(gameBoard, coord)) {
         throw new TilesWithoutOneFreeSideException();
       }
@@ -100,29 +101,46 @@ public final class MoveValidator {
   /**
    * Input validation for Player's move on the bookshelf.
    *
-   * @param selectedCoordinates Map of coordinates representing the selected
+   * @param selectedCoordinates Collection of coordinates representing the
+   *                            selected
    *                            moves.
    * @return True if the move is valid.
    * @throws NotEnoughSlotsException
    * @throws NullIndexValueException
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws BookshelfGridColIndexOutOfBoundsException
+   * @throws TilesNotInTheSameColException
    */
   public static boolean isValidMoveOnBookshelf(Bookshelf bookshelf,
       Collection<Coordinates> selectedCoordinates)
       throws NotEnoughSlotsException, BookshelfGridColIndexOutOfBoundsException,
-      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
+      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
+      TilesNotInTheSameColException {
     int colIndex = selectedCoordinates.iterator().next().getCol();
     int requestedSlots = selectedCoordinates.size();
-    if (hasEnoughFreeSlotsInColumn(bookshelf, colIndex, requestedSlots)) {
-      return (new HashSet<>(selectedCoordinates
-          .stream()
-          .map(Coordinates::getCol)
-          .collect(Collectors.toSet()))
-          .size() == 1);
+    if (selectedTilesInTheSameBookshelfCol(selectedCoordinates)) {
+      if (hasEnoughFreeSlotsInColumn(bookshelf, colIndex, requestedSlots)) {
+        return true;
+      } else {
+        throw new NotEnoughSlotsException();
+      }
     } else {
-      throw new NotEnoughSlotsException();
+      throw new TilesNotInTheSameColException();
     }
+  }
+
+  /**
+   * Checks if the coordinates on the bookshelf are on the same column.
+   *
+   * @param selectedCoordinates Collection of bookshelf coordinates.
+   * @return True if the tiles are entered on the same bs column.
+   */
+  private static boolean selectedTilesInTheSameBookshelfCol(Collection<Coordinates> bsMoves) {
+    return (new HashSet<>(bsMoves
+        .stream()
+        .map(Coordinates::getCol)
+        .collect(Collectors.toSet()))
+        .size() == 1);
   }
 
   /**
@@ -187,12 +205,13 @@ public final class MoveValidator {
   /**
    * Determines whether a set of selected coordinates is valid for a move.
    *
-   * @param selectedCoordinates Map of coordinates representing the selected
+   * @param selectedCoordinates Collection of coordinates representing the
+   *                            selected
    *                            moves.
    * @return True if the number of selected coordinates is less than or equal to
    *         3, false otherwise
    */
-  private static boolean movesAccepted(Map<Coordinates, Coordinates> selectedCoordinates) {
+  private static boolean checkNumberOfMoves(Collection<Coordinates> selectedCoordinates) {
     return selectedCoordinates.size() > 0 && selectedCoordinates.size() <= 3;
   }
 }

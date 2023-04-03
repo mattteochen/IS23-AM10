@@ -3,6 +3,7 @@ package it.polimi.is23am10.items.board;
 import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
+import it.polimi.is23am10.items.board.exceptions.NotEmptyTileInWrongPositionException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.WrongCharGameBoardStringException;
 import it.polimi.is23am10.items.board.exceptions.WrongLengthGameBoardStringException;
@@ -60,7 +61,7 @@ public class Board implements Serializable {
 
   /**
    * The support map to reference each {@link TileType} with a char.
-   * Used for the constructor of Bookshelf made for tests.
+   * Used for the constructor of Board made for tests.
    * 
    */
   transient Map<String, TileType> tileMap = Map.of(
@@ -136,10 +137,7 @@ public class Board implements Serializable {
     if (!validNumOfPlayers(numOfPlayers)) {
       throw new InvalidNumOfPlayersException(numOfPlayers);
     }
-    /**
-     * Save a reference about the current number of players.
-     * 
-     */
+
     this.numOfPlayers = numOfPlayers;
     this.boardGrid = new Tile[BOARD_GRID_ROWS][BOARD_GRID_COLS];
 
@@ -159,18 +157,16 @@ public class Board implements Serializable {
    * @throws NullNumOfPlayersException
    * @throws WrongLengthGameBoardStringException
    * @throws WrongCharGameBoardStringException
+   * @throws NotEmptyTileInWrongPositionException
    */
   public Board(Integer numOfPlayers, String gameBoardString)
       throws InvalidNumOfPlayersException, NullNumOfPlayersException,
       WrongLengthGameBoardStringException,
-      WrongCharGameBoardStringException {
+      WrongCharGameBoardStringException, NotEmptyTileInWrongPositionException {
     if (!validNumOfPlayers(numOfPlayers)) {
       throw new InvalidNumOfPlayersException(numOfPlayers);
     }
-    /**
-     * Save a reference about the current number of players.
-     * 
-     */
+
     this.numOfPlayers = numOfPlayers;
     this.boardGrid = new Tile[BOARD_GRID_ROWS][BOARD_GRID_COLS];
 
@@ -184,14 +180,19 @@ public class Board implements Serializable {
     for (String c : tileChars) {
       if (!tileMap.containsKey(c)) {
         throw new WrongCharGameBoardStringException(
-            "[Class Board, method constructor]: GameBoard string contains invalid char exception]");
+            "[Class Board, method constructor]: Game Board string contains invalid char exception]");
       }
     }
 
     for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
       for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
         if (blackMap[i][j] <= numOfPlayers) {
-          boardGrid[i][j] = new Tile(tileMap.get(tileChars[BOARD_GRID_COLS * i + j]));
+          Tile t = new Tile(tileMap.get(tileChars[BOARD_GRID_COLS * i + j]));
+          if (!t.isEmpty() & blackMap[i][j] <= numOfPlayers) {
+            throw new NotEmptyTileInWrongPositionException(
+                "[Class Board, method constructor]: Not empty tile in a not playable game board position");
+          }
+          boardGrid[i][j] = t;
         } else {
           boardGrid[i][j] = new Tile(TileType.EMPTY);
         }
