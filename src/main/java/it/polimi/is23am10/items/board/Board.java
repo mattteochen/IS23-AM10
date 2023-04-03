@@ -138,16 +138,7 @@ public class Board implements Serializable {
    */
   public Board(Board toCopy) {
     numOfPlayers = toCopy.numOfPlayers;
-    boardGrid = new Tile[BOARD_GRID_ROWS][BOARD_GRID_COLS];
-    for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
-      for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
-        try {
-          boardGrid[i][j] = new Tile(toCopy.getTileAt(i, j));
-        } catch (Exception e) {
-          boardGrid[i][j] = new Tile(TileType.EMPTY);
-        }
-      }
-    }
+    boardGrid = toCopy.boardGrid.clone();
     tileSack = toCopy.tileSack.stream().map(Tile::new).collect(Collectors.toList());
   }
 
@@ -360,14 +351,7 @@ public class Board implements Serializable {
     if (numOfPlayers != brd.numOfPlayers) {
       return false;
     }
-    for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
-      for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
-        if ((boardGrid[i][j]).getType() != (brd.boardGrid[i][j]).getType()) {
-          return false;
-        }
-      }
-    }
-    return (tileSack.equals(brd.tileSack));
+    return (Arrays.deepEquals(boardGrid, brd.boardGrid) && tileSack.equals(brd.tileSack));
   }
 
   /**

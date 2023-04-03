@@ -10,6 +10,7 @@ import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.utils.IndexValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -74,16 +75,7 @@ public class Bookshelf implements Serializable {
    * @param toCopy original instance
    */
   public Bookshelf(Bookshelf toCopy) {
-    bookshelfGrid = new Tile[BOOKSHELF_ROWS][BOOKSHELF_COLS];
-    for (int i = 0; i < BOOKSHELF_ROWS; i++) {
-      for (int j = 0; j < BOOKSHELF_COLS; j++) {
-        try {
-          bookshelfGrid[i][j] = new Tile(toCopy.getBookshelfGridAt(i, j).getType());
-        } catch (Exception e) {
-          bookshelfGrid[i][j] = new Tile(TileType.EMPTY);
-        }
-      }
-    }
+    bookshelfGrid = toCopy.bookshelfGrid.clone();
   }
 
   /**
@@ -214,19 +206,7 @@ public class Bookshelf implements Serializable {
       return false;
     }
     Bookshelf bs = (Bookshelf) obj;
-    for (int i = 0; i < BOOKSHELF_ROWS; i++) {
-      for (int j = 0; j < BOOKSHELF_COLS; j++) {
-        try {
-          if ((bookshelfGrid[i][j]).getType() != bs.getBookshelfGridAt(i, j).getType()) {
-            return false;
-          }
-        } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
-            | NullIndexValueException e) {
-          return false;
-        }
-      }
-    }
-    return true;
+    return(Arrays.deepEquals(bookshelfGrid, bs.bookshelfGrid));
   }
 
   /**
