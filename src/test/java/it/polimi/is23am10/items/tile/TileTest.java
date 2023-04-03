@@ -17,7 +17,8 @@ class TileTest {
    */
   @Test
   public void constructor_should_create_Tile() {
-    final Tile emptyTile = new Tile(null);
+    final TileType nullType = null;
+    final Tile emptyTile = new Tile(nullType);
     final Tile notEmptyTile = new Tile(TileType.BOOK);
 
     assertNotNull(emptyTile);

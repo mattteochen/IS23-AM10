@@ -14,6 +14,8 @@ import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.messages.AbstractMessage;
+import it.polimi.is23am10.messages.GameMessage;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
@@ -22,6 +24,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
+import it.polimi.is23am10.virtualview.VirtualView;
 import it.polimi.is23am10.game.exceptions.FullGameException;
 
 import java.net.Socket;
@@ -51,7 +54,9 @@ class PlayerConnectorTest {
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException {
     PlayerConnector connector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
-    Game message = GameFactory.getNewGame("Test", 2);
+    Game game = GameFactory.getNewGame("Test", 2);
+    VirtualView virtualView = new VirtualView(game);
+    GameMessage message = new GameMessage(virtualView);
     connector.addMessageToQueue(message);
 
     assertEquals(1, connector.getMsgQueueSize());
@@ -64,10 +69,12 @@ class PlayerConnectorTest {
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException {
     PlayerConnector connector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
-    Game message = GameFactory.getNewGame("Test", 2);
+    Game game = GameFactory.getNewGame("Test", 2);
+    VirtualView virtualView = new VirtualView(game);
+    GameMessage message = new GameMessage(virtualView);
     connector.addMessageToQueue(message);
 
-    Optional<Game> taken = connector.getMessageFromQueue();
+    Optional<AbstractMessage> taken = connector.getMessageFromQueue();
 
     assertEquals(taken.get(), message);
     assertEquals(0, connector.getMsgQueueSize());
@@ -78,7 +85,7 @@ class PlayerConnectorTest {
       throws NullSocketConnectorException, NullBlockingQueueException, InterruptedException {
     PlayerConnector connector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
 
-    Optional<Game> taken = connector.getMessageFromQueue();
+    Optional<AbstractMessage> taken = connector.getMessageFromQueue();
 
     assertFalse(taken.isPresent());
   }

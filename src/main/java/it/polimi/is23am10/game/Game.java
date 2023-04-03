@@ -141,6 +141,11 @@ public class Game implements Serializable {
   private transient List<PrivatePattern<Function<Bookshelf, Integer>>> assignedPrivatePatterns;
 
   /**
+   * Random object used to pick starting player and player positions.
+   */
+  private final transient Random random = new Random();
+
+  /**
    * Constructor that assigns the only value that is
    * generated, immutable and not set by factory.
    */
@@ -261,10 +266,11 @@ public class Game implements Serializable {
    *
    */
   private void addPlayer(Player player) {
-    // TODO: class level random is colliding with gson
-    Random random = new Random();
     final Integer position = players.isEmpty() ? 0 : random.nextInt(players.size());
     players.add(position, player);
+    if (players.size() == maxPlayers) {
+      assignPlayers();
+    }
   }
 
   /**
@@ -294,7 +300,7 @@ public class Game implements Serializable {
       throw new FullGameException(
           playerName + "could not be added, because the game reached its maximum number of players");
     }
-    Player playerToAdd = PlayerFactory.getNewPlayer(playerName, getPlayerNames(), this);
+    Player playerToAdd = PlayerFactory.getNewPlayer(playerName, this);
     addPlayer(playerToAdd);
     return playerToAdd;
   }
@@ -625,6 +631,18 @@ public class Game implements Serializable {
     } else {
       return (p1Score > p2Score ? p1 : p2);
     }
+  }
+
+  /**
+   * Method that is called when all players joined
+   * the game and the first one should be picked.
+   * Can be used in tests to force starting a game before 
+   * the players threshold is met.
+   */
+  public void assignPlayers() {
+    Player choosenFirstPlayer = players.get(random.nextInt(players.size()));
+    activePlayer = choosenFirstPlayer;
+    firstPlayer = choosenFirstPlayer;
   }
 
   /**

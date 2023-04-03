@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+
 import it.polimi.is23am10.command.AddPlayerCommand;
 import it.polimi.is23am10.command.MoveTilesCommand;
 import it.polimi.is23am10.command.StartGameCommand;
@@ -29,6 +30,7 @@ import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.messages.GameMessage;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
@@ -38,6 +40,7 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
+import it.polimi.is23am10.virtualview.VirtualView;
 import it.polimi.is23am10.game.exceptions.FullGameException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -168,14 +171,16 @@ class ServerControllerSocketTest {
       InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
       NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
-      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException,FullGameException {
+      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException, FullGameException {
     Socket mockSocket = Mockito.mock(Socket.class);
     Game game = GameFactory.getNewGame("Steve", 4);
+    VirtualView virtualView = new VirtualView(game);
     final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    playerConnector.addMessageToQueue(game);
+    GameMessage message = new GameMessage(virtualView);
+    playerConnector.addMessageToQueue(message);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);
-    when(playerConnector.getMessageFromQueue()).thenReturn(Optional.of(game));
+    when(playerConnector.getMessageFromQueue()).thenReturn(Optional.of(message));
     when(mockSocket.getOutputStream()).thenReturn(outputStream);
     controller.update();
     verify(playerConnector, times(1)).getMessageFromQueue();

@@ -1,6 +1,7 @@
 package it.polimi.is23am10.playerconnector;
 
 import it.polimi.is23am10.game.Game;
+import it.polimi.is23am10.messages.AbstractMessage;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import java.io.Serializable;
@@ -37,7 +38,7 @@ public abstract class AbstractPlayerConnector implements Serializable {
    * The connector message queue.
    *
    */
-  protected BlockingQueue<Game> msgQueue;
+  protected BlockingQueue<AbstractMessage> msgQueue;
 
   /**
    * Constructor.
@@ -47,7 +48,7 @@ public abstract class AbstractPlayerConnector implements Serializable {
    * @throws NullBlockingQueueException
    *
    */
-  protected AbstractPlayerConnector(LinkedBlockingQueue<Game> msgQueue)
+  protected AbstractPlayerConnector(LinkedBlockingQueue<AbstractMessage> msgQueue)
       throws NullBlockingQueueException {
     if (msgQueue == null) {
       throw new NullBlockingQueueException();
@@ -83,7 +84,7 @@ public abstract class AbstractPlayerConnector implements Serializable {
    * @throws InterruptedException
    *
    */
-  public Optional<Game> getMessageFromQueue() throws InterruptedException {
+  public Optional<AbstractMessage> getMessageFromQueue() throws InterruptedException {
     if (msgQueue.isEmpty()) {
       return Optional.empty();
     }
@@ -111,7 +112,7 @@ public abstract class AbstractPlayerConnector implements Serializable {
    * @throws InterruptedException
    *
    */
-  public void addMessageToQueue(Game message) throws InterruptedException {
+  public void addMessageToQueue(AbstractMessage message) throws InterruptedException {
     if (message != null) {
       msgQueue.put(message);
     }

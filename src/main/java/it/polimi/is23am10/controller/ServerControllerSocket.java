@@ -9,12 +9,13 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+
 import it.polimi.is23am10.command.AbstractCommand;
 import it.polimi.is23am10.command.AbstractCommand.Opcode;
+import it.polimi.is23am10.messages.AbstractMessage;
 import it.polimi.is23am10.command.AddPlayerCommand;
 import it.polimi.is23am10.command.MoveTilesCommand;
 import it.polimi.is23am10.command.StartGameCommand;
-import it.polimi.is23am10.game.Game;
 import it.polimi.is23am10.playerconnector.PlayerConnector;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -109,16 +110,16 @@ public final class ServerControllerSocket implements Runnable {
    *
    * @throws IOException
    * @throws InterruptedException
+   * @throws InvalidMessageTypeException
    * 
    */
   protected void update() throws InterruptedException, IOException {
-    Optional<Game> message = playerConnector.getMessageFromQueue();
-    if (message.isPresent()) {
-      PrintWriter printer = new PrintWriter(
-          playerConnector.getConnector().getOutputStream(), true, StandardCharsets.UTF_8);
-      String jsonMessage = gson.toJson(message.get());
-      printer.println(jsonMessage);
-      logger.info("Update sent to client {}", jsonMessage);
+    Optional<AbstractMessage> optMessage = playerConnector.getMessageFromQueue();
+    if (optMessage.isPresent()) {
+      AbstractMessage message = optMessage.get();
+      PrintWriter printer = new PrintWriter(playerConnector.getConnector().getOutputStream(), true, StandardCharsets.UTF_8);
+      printer.println(message.getMessage());
+      logger.info("{} sent to client {}",message.getMessageType(), message.getMessage());
     }
   }
 

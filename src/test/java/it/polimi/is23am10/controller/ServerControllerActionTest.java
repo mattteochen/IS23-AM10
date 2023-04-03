@@ -33,7 +33,6 @@ import it.polimi.is23am10.playerconnector.PlayerConnector;
 import it.polimi.is23am10.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.playerconnector.exceptions.NullSocketConnectorException;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -277,7 +276,7 @@ class ServerControllerActionTest {
     assertEquals(null, alice.getGameId());
 
     // assign alice params to avoid NPE
-    alice.setPlayer(PlayerFactory.getNewPlayer("Alice", new ArrayList<>(), handler.getGame()));
+    alice.setPlayer(PlayerFactory.getNewPlayer("Alice", handler.getGame()));
     alice.setGameId(handler.getGame().getGameId());
 
     serverControllerAction.addPlayerConsumer.accept(logger, alice, aliceCmd);

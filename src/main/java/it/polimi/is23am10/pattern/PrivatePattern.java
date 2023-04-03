@@ -14,9 +14,10 @@ public class PrivatePattern<T> extends AbstractPattern<T> {
    * The constructor of the class PrivatePattern.
    *
    * @param rule a function that takes a Bookshelf object and returns an Integer.
+   * @param cardIndex The card index associated
    */
-  public PrivatePattern(T rule) {
-    super(rule);
+  public PrivatePattern(T rule, Integer cardIndex) {
+    super(rule, cardIndex);
   }
 
   /**

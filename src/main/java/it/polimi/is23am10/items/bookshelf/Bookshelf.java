@@ -10,6 +10,7 @@ import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.utils.IndexValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -66,6 +67,15 @@ public class Bookshelf implements Serializable {
         bookshelfGrid[i][j] = new Tile(TileType.EMPTY);
       }
     }
+  }
+
+  /**
+   * Copy constructor of Bookshelf.
+   * 
+   * @param toCopy original instance
+   */
+  public Bookshelf(Bookshelf toCopy) {
+    bookshelfGrid = toCopy.bookshelfGrid.clone();
   }
 
   /**
@@ -184,5 +194,27 @@ public class Bookshelf implements Serializable {
       }
     }
     return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Bookshelf)) {
+      return false;
+    }
+    Bookshelf bs = (Bookshelf) obj;
+    return(Arrays.deepEquals(bookshelfGrid, bs.bookshelfGrid));
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public int hashCode() {
+    return bookshelfGrid.hashCode();
   }
 }

@@ -14,6 +14,7 @@ import it.polimi.is23am10.game.exceptions.FullGameException;
 import it.polimi.is23am10.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
@@ -124,7 +125,7 @@ class ServerControllerStateTest {
       NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedPatternException {
 
     PlayerConnectorRmi playerConnector = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
-    playerConnector.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame.getPlayerNames(), mockGame));
+    playerConnector.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame));
     playerConnector.setGameId(UUID.randomUUID());
     ServerControllerState.addPlayerConnector(playerConnector);
     assertEquals(1, ServerControllerState.getPlayersPool().size());
@@ -141,7 +142,7 @@ class ServerControllerStateTest {
       NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, FullGameException, NullAssignedPatternException {
 
     PlayerConnector playerConnector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
-    playerConnector.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame.getPlayerNames(), mockGame));
+    playerConnector.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame));
     playerConnector.setGameId(UUID.randomUUID());
     ServerControllerState.addPlayerConnector(playerConnector);
     assertEquals(1, ServerControllerState.getPlayersPool().size());
@@ -165,24 +166,25 @@ class ServerControllerStateTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedPatternException,
-      FullGameException {
+      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedPatternException, FullGameException, PlayerNotFoundException {
 
     GameHandler handler = new GameHandler("Steve", 2);
     PlayerConnector steve = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    steve.setPlayer(handler.getGame().getPlayerByName("Steve"));
     PlayerConnector alice = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    alice.setPlayer(PlayerFactory.getNewPlayer("Alice", handler.getGame()));
     steve.setGameId(handler.getGame().getGameId());
-    steve.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame.getPlayerNames(), mockGame));
+    steve.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame));
     alice.setGameId(handler.getGame().getGameId());
-    alice.setPlayer(PlayerFactory.getNewPlayer("Alice", mockGame.getPlayerNames(), mockGame));
+    alice.setPlayer(PlayerFactory.getNewPlayer("Alice", mockGame));
     ServerControllerState.addPlayerConnector(steve);
 
     assertEquals(1, ServerControllerState.getPlayersPool().size());
-    ServerControllerState.removePlayerByGameAndName(handler.getGame().getGameId(), alice.getPlayer().getPlayerName());
+    ServerControllerState.removePlayerByGame(handler.getGame().getGameId(), alice.getPlayer());
     assertEquals(1, ServerControllerState.getPlayersPool().size());
-    ServerControllerState.removePlayerByGameAndName(null, null);
+    ServerControllerState.removePlayerByGame(null, null);
     assertEquals(1, ServerControllerState.getPlayersPool().size());
-    ServerControllerState.removePlayerByGameAndName(handler.getGame().getGameId(), steve.getPlayer().getPlayerName());
+    ServerControllerState.removePlayerByGame(handler.getGame().getGameId(), steve.getPlayer());
     assertEquals(0, ServerControllerState.getPlayersPool().size());
   }
 
@@ -198,13 +200,13 @@ class ServerControllerStateTest {
     GameHandler handler = new GameHandler("Steve", 2);
     GameHandler handler2 = new GameHandler("Bob", 2);
     PlayerConnector steve = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
-    steve.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame.getPlayerNames(), mockGame));
+    steve.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame));
     steve.setGameId(UUID.randomUUID());
     PlayerConnector alice = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
-    alice.setPlayer(PlayerFactory.getNewPlayer("Alice", mockGame.getPlayerNames(), mockGame));
+    alice.setPlayer(PlayerFactory.getNewPlayer("Alice", mockGame));
     alice.setGameId(UUID.randomUUID());
     PlayerConnector bob = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
-    bob.setPlayer(PlayerFactory.getNewPlayer("Bob", mockGame.getPlayerNames(), mockGame));
+    bob.setPlayer(PlayerFactory.getNewPlayer("Bob", mockGame));
     bob.setGameId(UUID.randomUUID());
     handler.addPlayerConnector(steve);
     handler.addPlayerConnector(alice);

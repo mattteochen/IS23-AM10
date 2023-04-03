@@ -33,13 +33,22 @@ public class Tile implements Serializable {
   private TileType type;
 
   
-/**
+  /**
   * Constructor.
    * If the desired type has null value, an empty tile will be set.
    * 
    */
   public Tile(TileType type) {
     this.type = type == null ? TileType.EMPTY : type;
+  }
+
+  /**
+   * Copy constructor for Tile.
+   * 
+   * @param toCopy tile to copy
+   */
+  public Tile(Tile toCopy) {
+    type = toCopy.getType();
   }
 
   

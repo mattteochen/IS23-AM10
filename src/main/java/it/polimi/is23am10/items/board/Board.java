@@ -132,6 +132,17 @@ public class Board implements Serializable {
   }
 
   /**
+   * Copy constructor for Board.
+   * 
+   * @param toCopy board to copy
+   */
+  public Board(Board toCopy) {
+    numOfPlayers = toCopy.numOfPlayers;
+    boardGrid = toCopy.boardGrid.clone();
+    tileSack = toCopy.tileSack.stream().map(Tile::new).collect(Collectors.toList());
+  }
+
+  /**
    * Validate the number of players.
    * 
    * @throws NullNumOfPlayersException.
@@ -325,5 +336,30 @@ public class Board implements Serializable {
     if (isRefillNeeded()) {
       fillBoardGrid();
     }
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Board)) {
+      return false;
+    }
+    Board brd = (Board) obj;
+    if (numOfPlayers != brd.numOfPlayers) {
+      return false;
+    }
+    return (Arrays.deepEquals(boardGrid, brd.boardGrid) && tileSack.equals(brd.tileSack));
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public int hashCode() {
+    return numOfPlayers.hashCode() * boardGrid.hashCode() * tileSack.hashCode();
   }
 }

@@ -12,12 +12,15 @@ import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.messages.GameMessage;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
+import it.polimi.is23am10.virtualview.VirtualView;
+
 import it.polimi.is23am10.playerconnector.AbstractPlayerConnector;
 import java.util.Collections;
 import java.util.HashSet;
@@ -131,8 +134,13 @@ public class GameHandler {
     // iterating over the Collections.synchronizedList requires synch.
     synchronized (playerConnectors) {
       for (AbstractPlayerConnector pc : playerConnectors) {
+        VirtualView gameCopy = new VirtualView(game);
+        gameCopy.getPlayers()
+        .stream()
+        .filter(p -> !p.getPlayerName().equals(pc.getPlayer().getPlayerName()))
+        .forEach(p -> p.obfuscatePrivateCard());
         // synch is performed by the blocking queue.
-        pc.addMessageToQueue(game);
+        pc.addMessageToQueue(new GameMessage(gameCopy));
       }
     }
   }

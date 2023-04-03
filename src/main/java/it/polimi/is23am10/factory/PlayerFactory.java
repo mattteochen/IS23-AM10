@@ -60,7 +60,6 @@ public class PlayerFactory {
    * a game instance.
    *
    * @param playerName  The chosen player name.
-   * @param playerNames Current game instance already available players names.
    * @param game The game reference instance where the new player will be added.
    * @throws AlreadyInitiatedPatternException
    * @throws DuplicatePlayerNameException
@@ -74,11 +73,10 @@ public class PlayerFactory {
    * @throws NullAssignedPatternException
    * 
    */
-  public static Player getNewPlayer(String playerName, List<String> playerNames, Game game)
+  public static Player getNewPlayer(String playerName, Game game)
       throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
       NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
-      DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
-      NullAssignedPatternException {
+      DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullAssignedPatternException {
 
     // Consumer must handle this {@link DuplicatePlayerNameException}.
 
@@ -87,12 +85,7 @@ public class PlayerFactory {
           "[Class PlayerFactory, method getNewPlayer]: attribute playerName must not be null");
     }
 
-    if (playerNames == null) {
-      throw new NullPlayerNamesException(
-          "[Class PlayerFactory, method getNewPlayer]: attribute playerNames must not be null");
-    }
-
-    if (isPlayerNameDuplicate(playerName, playerNames)) {
+    if (isPlayerNameDuplicate(playerName, game.getPlayerNames())) {
       throw new DuplicatePlayerNameException(
           "[Class PlayerFactory, method getNewPlayer]: The name " + playerName + " already exists");
     }

@@ -144,8 +144,8 @@ public class GameTest {
 
       g = GameFactory.getNewGame("player1", dummyPlayerNum);
       p1 = g.getPlayerByName("player1");
-      p2 = PlayerFactory.getNewPlayer("player2", g.getPlayerNames(), g);
-      p3 = PlayerFactory.getNewPlayer("player3", g.getPlayerNames(), g);
+      p2 = PlayerFactory.getNewPlayer("player2", g);
+      p3 = PlayerFactory.getNewPlayer("player3", g);
 
       // Using addPlayers() method I can force the play order
       g.addPlayers(List.of(p2, p3));
@@ -248,8 +248,8 @@ public class GameTest {
       g = GameFactory.getNewGame("player1", dummyPlayerNum);
 
       p1 = g.getPlayerByName("player1");
-      p2 = PlayerFactory.getNewPlayer("player2", g.getPlayerNames(), g);
-      p3 = PlayerFactory.getNewPlayer("player3", g.getPlayerNames(), g);
+      p2 = PlayerFactory.getNewPlayer("player2", g);
+      p3 = PlayerFactory.getNewPlayer("player3", g);
 
       // Using addPlayers() method I can force the play order
       g.addPlayers(List.of(p2, p3));
