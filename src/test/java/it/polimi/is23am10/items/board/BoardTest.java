@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
+import it.polimi.is23am10.items.board.exceptions.NotEmptyTileInWrongPositionException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.WrongCharGameBoardStringException;
 import it.polimi.is23am10.items.board.exceptions.WrongLengthGameBoardStringException;
@@ -252,7 +253,7 @@ class BoardTest {
   public void construct_with_string_should_create_board() throws InvalidNumOfPlayersException,
       NullNumOfPlayersException, WrongLengthGameBoardStringException,
       WrongCharGameBoardStringException, BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
-      NullIndexValueException {
+      NullIndexValueException, NotEmptyTileInWrongPositionException {
     String str = "XXXXXXXXX"
         + "XXXXXXXXX"
         + "XXCCPTCXX"

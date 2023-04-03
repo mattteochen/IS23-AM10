@@ -44,8 +44,8 @@ import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.exceptions.MovesNotLessThanThreeException;
 import it.polimi.is23am10.utils.exceptions.NotEnoughSlotsException;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
-import it.polimi.is23am10.utils.exceptions.TilesInCornerException;
 import it.polimi.is23am10.utils.exceptions.TilesInDiagonalException;
+import it.polimi.is23am10.utils.exceptions.TilesNotInTheSameColException;
 import it.polimi.is23am10.utils.exceptions.TilesWithoutOneFreeSideException;
 import it.polimi.is23am10.game.exceptions.FullGameException;
 
@@ -271,8 +271,8 @@ public class GameTest {
         NullPointerException, InvalidBoardTileSelectionException, NullIndexValueException,
         NullTileException, NullPlayerBookshelfException,
         NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException, NullPlayerException,
-        MovesNotLessThanThreeException, TilesWithoutOneFreeSideException, TilesInCornerException,
-        TilesInDiagonalException, NotEnoughSlotsException {
+        MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
+        TilesInDiagonalException, NotEnoughSlotsException, TilesNotInTheSameColException {
       final Integer boardRow = 1;
       final Integer boardCol = 3;
       final Integer bsRow = 2;
