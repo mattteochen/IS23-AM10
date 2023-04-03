@@ -5,10 +5,13 @@ import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
+import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.pattern.SharedPattern;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Shared card object.
@@ -29,15 +32,28 @@ public class SharedCard extends AbstractCard<Predicate<Bookshelf>, SharedPattern
   private List<ScoreBlock> scoreBlocks;
 
   /**
+   * A map to get the correct list of scoreblocks
+   * by number of players playing.
+   */
+  private Map<Integer,List<Integer>> scoreBlocksMap = Map.of(
+    2, List.of(4,8),
+    3, List.of(4,6,8),
+    4, List.of(2,4,6,8)
+  );
+
+  /**
    * Constructor.
    *
    * @param usedPatterns is a list of SharedPattern used to store the already
    *                     used.
    * @throws AlreadyInitiatedPatternException
    */
-  public SharedCard(List<SharedPattern<Predicate<Bookshelf>>> usedSharedPatterns)
-      throws AlreadyInitiatedPatternException {
+  public SharedCard(List<SharedPattern<Predicate<Bookshelf>>> usedSharedPatterns, Integer numPlayers)
+      throws AlreadyInitiatedPatternException, NotValidScoreBlockValueException {
     scoreBlocks = new ArrayList<>();
+    for (Integer scoreBlockValue : scoreBlocksMap.get(numPlayers)) {
+        scoreBlocks.add(new ScoreBlock(scoreBlockValue));
+    }
     setPattern(SharedPatternFactory.getNotUsedPattern(usedSharedPatterns));
   }
 

@@ -10,6 +10,7 @@ import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.SharedCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
@@ -60,6 +61,7 @@ public final class GameFactory {
    * @throws InvalidNumOfPlayersException
    * @throws NullNumOfPlayersException
    * @throws NullAssignedPatternException
+   * @throws NotValidScoreBlockValueException
    * 
    */
   public static Game getNewGame(String startingPlayerName, Integer maxPlayerNum)
@@ -68,12 +70,12 @@ public final class GameFactory {
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException,
-      NullAssignedPatternException,FullGameException {
+      NullAssignedPatternException,FullGameException, NotValidScoreBlockValueException {
 
     Game game = new Game();
-    SharedCard firstCard = new SharedCard(game.getAssignedSharedPatterns());
+    SharedCard firstCard = new SharedCard(game.getAssignedSharedPatterns(), game.getMaxPlayer());
     game.addAssignedSharedPattern(firstCard.getPattern());
-    SharedCard secondCard = new SharedCard(game.getAssignedSharedPatterns());
+    SharedCard secondCard = new SharedCard(game.getAssignedSharedPatterns(), game.getMaxPlayer());
     game.addAssignedSharedPattern(secondCard.getPattern());
 
     game.setMaxPlayers(maxPlayerNum);

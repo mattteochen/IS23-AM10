@@ -16,6 +16,7 @@ import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.pattern.SharedPattern;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -554,7 +555,7 @@ public class SharedPatternFactoryTest {
       throws AlreadyInitiatedPatternException, NullMaxPlayerException, InvalidMaxPlayerException,
       NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException {
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException {
 
     Game game = GameFactory.getNewGame("firstPlayer", 4);
 

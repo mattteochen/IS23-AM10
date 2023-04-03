@@ -30,6 +30,7 @@ import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.messages.GameMessage;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -171,7 +172,7 @@ class ServerControllerSocketTest {
       InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
       NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
-      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException, FullGameException {
+      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException {
     Socket mockSocket = Mockito.mock(Socket.class);
     Game game = GameFactory.getNewGame("Steve", 4);
     VirtualView virtualView = new VirtualView(game);

@@ -19,6 +19,7 @@ import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.player.exceptions.NullPlayerNameException;
@@ -35,7 +36,7 @@ public class VirtualViewTest {
     throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, 
     NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException, 
     DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException, 
-    NullNumOfPlayersException, NullAssignedPatternException, FullGameException, PlayerNotFoundException {
+    NullNumOfPlayersException, NullAssignedPatternException, FullGameException, PlayerNotFoundException, NotValidScoreBlockValueException {
     
     Game g = GameFactory.getNewGame("test", 4);
     g.assignPlayers();

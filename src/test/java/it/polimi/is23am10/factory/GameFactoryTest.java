@@ -15,6 +15,7 @@ import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -50,7 +51,7 @@ public class GameFactoryTest {
       NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, 
-      FullGameException, PlayerNotFoundException {
+      FullGameException, PlayerNotFoundException, NotValidScoreBlockValueException {
 
     Integer dummyPlayerNum = 4;
 
