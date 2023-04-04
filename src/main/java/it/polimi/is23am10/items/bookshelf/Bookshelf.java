@@ -75,7 +75,9 @@ public class Bookshelf implements Serializable {
    * @param toCopy original instance
    */
   public Bookshelf(Bookshelf toCopy) {
-    bookshelfGrid = toCopy.bookshelfGrid.clone();
+    bookshelfGrid = Arrays.stream(toCopy.bookshelfGrid)
+        .map(Tile[]::clone)
+        .toArray(Tile[][]::new);
   }
 
   /**
