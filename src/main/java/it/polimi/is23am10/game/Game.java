@@ -35,10 +35,12 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.MoveValidator;
-import it.polimi.is23am10.utils.exceptions.MovesNotLessThanThreeException;
+import it.polimi.is23am10.utils.exceptions.AntiGravityTilesPositioningException;
+import it.polimi.is23am10.utils.exceptions.InvalidNumOfMovesException;
 import it.polimi.is23am10.utils.exceptions.NotEnoughSlotsException;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.TilesInDiagonalException;
+import it.polimi.is23am10.utils.exceptions.TilesNotAdjacentException;
 import it.polimi.is23am10.utils.exceptions.TilesNotInTheSameColException;
 import it.polimi.is23am10.utils.exceptions.TilesWithoutOneFreeSideException;
 
@@ -675,17 +677,21 @@ public class Game implements Serializable {
    * @throws TilesInDiagonalException
    * @throws TilesInCornerException
    * @throws TilesWithoutOneFreeSideException
-   * @throws MovesNotLessThanThreeException
+   * @throws InvalidNumOfMovesException
    * @throws NotEnoughSlotsException
    * @throws TilesNotInTheSameColException
+   * @throws TilesNotAdjacentException
+   * @throws AntiGravityTilesPositioningException
    * @throws NullPlayerException
    */
   public void activePlayerMove(Map<Coordinates, Coordinates> selectedCoordinates)
       throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
       NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPlayerBookshelfException,
-      NullScoreBlockListException, MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
-      TilesInDiagonalException, NotEnoughSlotsException, TilesNotInTheSameColException {
+      NullScoreBlockListException, InvalidNumOfMovesException, TilesWithoutOneFreeSideException,
+      TilesInDiagonalException, NotEnoughSlotsException,
+      TilesNotInTheSameColException, TilesNotAdjacentException, 
+      AntiGravityTilesPositioningException {
     MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates.keySet());
     MoveValidator.isValidMoveOnBookshelf(activePlayer.getBookshelf(), selectedCoordinates.values());
     for (Map.Entry<Coordinates, Coordinates> entry : selectedCoordinates.entrySet()) {
