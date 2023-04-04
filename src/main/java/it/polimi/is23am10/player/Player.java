@@ -5,6 +5,8 @@ import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.card.PrivateCard;
+import it.polimi.is23am10.items.card.exceptions.NegativeMatchedBlockCountException;
+import it.polimi.is23am10.items.card.exceptions.NullMatchedBlockCountException;
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.pattern.PrivatePattern;
@@ -228,12 +230,14 @@ public class Player implements Serializable {
    * @throws NullIndexValueException
    * @throws NullPlayerBookshelfException
    * @throws NullScoreBlockListException
+   * @throws NegativeMatchedBlockCountException
+   * @throws NullMatchedBlockCountException
    */
   public void updateScore() throws NullPointerException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException,
-      NullScoreBlockListException {
+      NullScoreBlockListException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
     score.setBookshelfPoints(bookshelf);
-    score.setPrivatePoints(privateCard);
+    score.setPrivatePoints(bookshelf, privateCard);
     score.setScoreBlockPoints(scoreBlocks);
   }
 

@@ -4,6 +4,8 @@ import it.polimi.is23am10.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.card.PrivateCard;
+import it.polimi.is23am10.items.card.exceptions.NegativeMatchedBlockCountException;
+import it.polimi.is23am10.items.card.exceptions.NullMatchedBlockCountException;
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.items.tile.Tile;
@@ -188,13 +190,16 @@ public final class Score implements Serializable {
    * privatePoints setter.
    * 
    * @param pc The private card to get points from.
+   * @throws NegativeMatchedBlockCountException
+   * @throws NullMatchedBlockCountException
    * @throws NullPointsException.
    * 
    */
-  public void setPrivatePoints(PrivateCard pc) throws NullPointerException {
+  public void setPrivatePoints(Bookshelf bs, PrivateCard pc) throws NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
     if (pc == null) {
       throw new NullPointerException("[Score:setPrivatePoints]");
     }
+    pc.setMatchedBlocksCount(pc.getPattern().getRule().apply(bs));
     privatePoints = privateCardPointsMap.get(pc.getMatchedBlocksCount());
   }
 

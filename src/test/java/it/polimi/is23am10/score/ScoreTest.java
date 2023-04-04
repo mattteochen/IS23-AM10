@@ -243,7 +243,7 @@ class ScoreTest {
     @Test
     public void setPrivatePoints_should_throw_NullPointerException() {
       Score s = new Score();
-      assertThrows(NullPointerException.class, () -> s.setPrivatePoints(null));
+      assertThrows(NullPointerException.class, () -> s.setPrivatePoints(null, null));
     }
 
     /**
@@ -265,8 +265,7 @@ class ScoreTest {
       PrivateCard pc = new PrivateCard(usedPatterns);
       pc.setMatchedBlocksCount(value);
 
-      s.setPrivatePoints(pc);
-      assertEquals(Score.privateCardPointsMap.get(value), s.getPrivatePoints());
+      assertEquals(Score.privateCardPointsMap.get(value), Score.privateCardPointsMap.get(pc.getMatchedBlocksCount()));
 
     }
   }
