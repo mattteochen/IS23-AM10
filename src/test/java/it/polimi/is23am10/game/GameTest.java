@@ -30,7 +30,10 @@ import it.polimi.is23am10.items.bookshelf.exceptions.NullTileException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.items.card.exceptions.NegativeMatchedBlockCountException;
+import it.polimi.is23am10.items.card.exceptions.NullMatchedBlockCountException;
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
+import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.player.Player;
@@ -85,7 +88,7 @@ public class GameTest {
     NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
     AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException,
     NullMaxPlayerException, InvalidMaxPlayerException, InvalidNumOfPlayersException,
-    NullNumOfPlayersException, NullAssignedPatternException, FullGameException  {
+    NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException  {
     Game game = GameFactory.getNewGame("Optimus", 3);
     game.addPlayer("Morrison");
     game.addPlayer("Hendrix");
@@ -100,7 +103,7 @@ public class GameTest {
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException,
       NullMaxPlayerException, InvalidMaxPlayerException, InvalidNumOfPlayersException,
-      NullNumOfPlayersException, NullAssignedPatternException, FullGameException {
+      NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException {
 
     Game g = GameFactory.getNewGame("dummyPlayer", 4);
     Player dummyPlayer = g.getPlayerByName("dummyPlayer");
@@ -138,7 +141,7 @@ public class GameTest {
         DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
         NullMaxPlayerException, InvalidMaxPlayerException,
         InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException,
-        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException, FullGameException {
+        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException {
 
       final Integer dummyPlayerNum = 3;
 
@@ -158,7 +161,7 @@ public class GameTest {
         throws NullPointerException, BookshelfGridColIndexOutOfBoundsException,
         BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
         NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException,
-        NullPlayerException {
+        NullPlayerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
       assertEquals(g.getActivePlayer(), p2);
       g.nextTurn();
       assertEquals(g.getActivePlayer(), p3);
@@ -173,7 +176,7 @@ public class GameTest {
         throws NullPlayerNameException,
         BookshelfGridColIndexOutOfBoundsException,
         BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
-        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException, PlayerNotFoundException {
+        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException, PlayerNotFoundException, NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
 
       g.setActivePlayer(p1);
       g.setWinnerPlayer(p1);
@@ -188,7 +191,7 @@ public class GameTest {
         throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
         NullIndexValueException, NullPointerException,
         BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException {
+        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
       // removing tiles as long as the board needs to be refilled
       for (int row = 0; row < Board.BOARD_GRID_ROWS; row++) {
         for (int col = 0; col < Board.BOARD_GRID_COLS; col++) {
@@ -216,7 +219,7 @@ public class GameTest {
       BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
       NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPointerException, PlayerNotFoundException,
-      NullAssignedPatternException, FullGameException {
+      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException {
     final Integer row = 2;
     final Integer col = 4;
     final Integer numMaxPlayers = 3;
@@ -242,7 +245,7 @@ public class GameTest {
         DuplicatePlayerNameException, AlreadyInitiatedPatternException,
         NullPlayerNamesException, NullMaxPlayerException, InvalidMaxPlayerException,
         InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException,
-        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException,FullGameException {
+        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException,FullGameException, NotValidScoreBlockValueException {
 
       Integer dummyPlayerNum = 3;
       g = GameFactory.getNewGame("player1", dummyPlayerNum);
@@ -263,7 +266,7 @@ public class GameTest {
         BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
         NullPointerException, InvalidBoardTileSelectionException, NullIndexValueException,
         NullTileException, NullPlayerBookshelfException,
-        NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException, NullPlayerException {
+        NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException, NullPlayerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
       final Integer boardRow = 4;
       final Integer boardCol = 3;
       final Integer bsRow = 2;

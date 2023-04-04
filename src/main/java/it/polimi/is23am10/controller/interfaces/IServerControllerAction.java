@@ -24,6 +24,7 @@ import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.player.exceptions.NullPlayerIdException;
@@ -95,7 +96,7 @@ public interface IServerControllerAction extends Remote {
           | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
           | NullPlayerIdException | NullPlayerNameException | NullMaxPlayerException
           | AlreadyInitiatedPatternException | NullAssignedPatternException
-          | PlayerNotFoundException e) {
+          | PlayerNotFoundException| NotValidScoreBlockValueException e) {
         logger.error("{} Failed to initialize new game request {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       } catch (InvalidNumOfPlayersException | InvalidMaxPlayerException

@@ -22,6 +22,8 @@ import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfB
 import it.polimi.is23am10.items.bookshelf.exceptions.NullTileException;
 import it.polimi.is23am10.items.card.SharedCard;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.items.card.exceptions.NegativeMatchedBlockCountException;
+import it.polimi.is23am10.items.card.exceptions.NullMatchedBlockCountException;
 import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.pattern.PrivatePattern;
@@ -525,6 +527,22 @@ public class Game implements Serializable {
   }
 
   /**
+   * Method to assign the scoreBlocks. For both shared cards
+   * their pattern is checked against activePlayer's BS.
+   * If pattern is satisfied AND player didn't get a scoreBlock
+   * from that card, the first available SB is given to the player.
+   * 
+   */
+  private void assignScoreBlocks(){
+    sharedCards.forEach(c -> {
+      if (c.getPattern().getRule().test(activePlayer.getBookshelf()) && !c.getCardWinners().contains(activePlayer)) {
+        c.addCardWinner(activePlayer);
+        activePlayer.addScoreBlock(c.getScoreBlocks().remove(0));
+      }
+    });
+  }
+
+  /**
    * Method that computes active player's Score, updates the view,
    * checks if game is over and if not picks next player.
    *
@@ -533,13 +551,16 @@ public class Game implements Serializable {
    * @throws NullIndexValueException
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws BookshelfGridColIndexOutOfBoundsException
+   * @throws NegativeMatchedBlockCountException
+   * @throws NullMatchedBlockCountException
    * @throws NullPointerException
    * @throws NullPlayerException
    */
   public void nextTurn()
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-      NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException {
-
+      NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException, NullPointerException, 
+      NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+    assignScoreBlocks();
     activePlayer.updateScore();
     checkEndGame();
     if (!(getEnded())) {
@@ -683,13 +704,15 @@ public class Game implements Serializable {
    * @throws NullPointerException
    * @throws NullPlayerBookshelfException
    * @throws NullScoreBlockListException
+   * @throws NegativeMatchedBlockCountException
+   * @throws NullMatchedBlockCountException
    * @throws NullPlayerException
    */
   public void activePlayerMove(Map<Coordinates, Coordinates> selectedCoordinates)
       throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
       NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPlayerBookshelfException,
-      NullScoreBlockListException {
+      NullScoreBlockListException, NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
     for (Map.Entry<Coordinates, Coordinates> entry : selectedCoordinates.entrySet()) {
       Coordinates boardCoord = entry.getKey();
       Coordinates bsCoord = entry.getValue();

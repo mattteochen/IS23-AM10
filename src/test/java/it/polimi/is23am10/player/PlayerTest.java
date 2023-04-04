@@ -269,11 +269,11 @@ public class PlayerTest {
       BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullScoreBlockListException,
       NullAssignedPatternException {
 
-    // Desired matched blocks count in private card
-    final Integer SIX = 6;
-    // It comes from 18 bookshelf points + 6 scoreblocks + 12 private card points +
-    // 1 extra point for ending the game first.
-    final Integer THIRTHYSEVEN = 37;
+    // It comes from 18 bookshelf points + 6 scoreblocks + 1 extra point for ending the game first.
+    // Private points not tested here as factory-dependent.
+    final Integer BS_POINTS = 18;
+    final Integer SB_POINTS = 6;
+    final Integer EG_POINTS = 1;
     Player p = PlayerFactory.getNewPlayer("myNewPlayer", new Game());
 
     p.setBookshelf(new Bookshelf(
@@ -290,12 +290,13 @@ public class PlayerTest {
 
     List<PrivatePattern<Function<Bookshelf, Integer>>> usedPatterns = new ArrayList<>();
     PrivateCard pc = new PrivateCard(usedPatterns);
-    pc.setMatchedBlocksCount(SIX);
     p.setPrivateCard(pc);
 
     p.getScore().setExtraPoint();
 
     p.updateScore();
-    assertEquals(THIRTHYSEVEN, p.getScore().getTotalScore());
+    assertEquals(BS_POINTS, p.getScore().getBookshelfPoints());
+    assertEquals(SB_POINTS, p.getScore().getScoreBlockPoints());
+    assertEquals(EG_POINTS, p.getScore().getExtraPoint());
   }
 }

@@ -17,6 +17,7 @@ import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.messages.GameMessage;
 import it.polimi.is23am10.messages.AbstractMessage.MessageType;
 import it.polimi.is23am10.player.Player;
@@ -37,7 +38,7 @@ public class GameMessageTest {
     throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
     NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException, 
     AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException, NullMaxPlayerException,
-    InvalidMaxPlayerException, InvalidNumOfPlayersException, NullNumOfPlayersException, FullGameException, PlayerNotFoundException {
+    InvalidMaxPlayerException, InvalidNumOfPlayersException, NullNumOfPlayersException, FullGameException, PlayerNotFoundException, NotValidScoreBlockValueException {
     
     final Game game = GameFactory.getNewGame("sender", 4);
     game.assignPlayers();
