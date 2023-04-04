@@ -11,6 +11,7 @@ import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsExc
 import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.items.tile.Tile;
 import it.polimi.is23am10.items.tile.Tile.TileType;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,27 @@ class BoardTest {
         }
       }
     }
+  }
+
+  @Test
+  public void copyConstructor_should_copy_Board()
+      throws InvalidNumOfPlayersException, NullNumOfPlayersException,
+      BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+    final Integer NUM_PLAYERS = 3;
+
+    Board original = new Board(NUM_PLAYERS);
+    
+    original.getBoardGrid()[0][0] = new Tile(TileType.CAT);
+    Board copied = new Board(original);
+    //assert array on different memory
+    assertNotEquals(original.getBoardGrid(), copied.getBoardGrid());
+    for (int i = 0; i < Board.BOARD_GRID_COLS; i++) {
+      //assert internal arrays on different memory
+      assertNotEquals(original.getBoardGrid()[i], copied.getBoardGrid()[i]);
+    }
+    copied.getBoardGrid()[0][0] = new Tile(TileType.PLANT);
+    //assert no changes reflected on original array
+    assertNotEquals(original.getBoardGrid()[0][0], copied.getBoardGrid()[0][0]);
   }
 
   @Test
