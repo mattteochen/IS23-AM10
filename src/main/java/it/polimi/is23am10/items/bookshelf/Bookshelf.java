@@ -196,6 +196,18 @@ public class Bookshelf implements Serializable {
     return true;
   }
 
+  public int getFreeRowsInCol(int column)
+      throws BookshelfGridColIndexOutOfBoundsException,
+      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
+    int res = 0;
+    for (int i=0; i<BOOKSHELF_ROWS; i++) {
+      if (getBookshelfGridAt(i, column).isEmpty()) {
+        res++;
+      }
+    }
+    return res;
+  }
+
   /**
    * {@inheritDoc}
    * 
