@@ -188,9 +188,9 @@ public class Board implements Serializable {
       for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
         if (blackMap[i][j] <= numOfPlayers) {
           Tile t = new Tile(tileMap.get(tileChars[BOARD_GRID_COLS * i + j]));
-          if (!t.isEmpty() && blackMap[i][j] == 9) {
+          if (!t.isEmpty() && blackMap[i][j] > numOfPlayers) {
             throw new NotEmptyTileInWrongPositionException(
-                "[Class Board, method constructor]: Not empty tile in a not playable game board position");
+                "[Class Board, method constructor]: Not empty tile in a unplayable game board position");
           }
           boardGrid[i][j] = t;
         } else {
