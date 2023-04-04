@@ -11,5 +11,39 @@
     "java.test.config": {
         
     },
-    "redhat.telemetry.enabled": false
+    "redhat.telemetry.enabled": false,
+    "maven.terminal.favorites": [
+        {
+            "command": "clean jacoco:prepare-agent install jacoco:report",
+            "debug": false
+        }
+    ],
+    "java.checkstyle.version": "10.9.1",
+    "cSpell.words": [
+        "abbreviationaswordinnamecheck",
+        "Alessandro",
+        "Amandonico",
+        "Buccoliero",
+        "Cavallero",
+        "checkstyle",
+        "Chen",
+        "curr",
+        "Francesco",
+        "gamehandler",
+        "Kaixi",
+        "linelengthcheck",
+        "Lorenzo",
+        "Matteo",
+        "membernamecheck",
+        "multiplevariabledeclarationscheck",
+        "nonemptyatclausedescriptioncheck",
+        "onetoplevelclasscheck",
+        "operatorwrapcheck",
+        "playerconnector",
+        "polimi",
+        "scoreblock",
+        "sharedexceptions",
+        "typenamecheck",
+        "variabledeclarationusagedistancecheck"
+    ]
 }
