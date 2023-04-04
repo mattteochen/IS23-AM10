@@ -83,15 +83,18 @@ public class Bookshelf implements Serializable {
    * of a bookshelf, with each tile associated to a letter, as shown below
    * and builds and returns the matching bookshelf object.
    * 
-   * @param bookshelfString A string that allows us to fill the bookshelfGrid with the
-   *                      correspondence between each char and the position in the
-   *                      grid, there's a map to help us matching the char with
-   *                      the {@link TileType}
+   * @param bookshelfString A string that allows us to fill the bookshelfGrid with
+   *                        the
+   *                        correspondence between each char and the position in
+   *                        the
+   *                        grid, there's a map to help us matching the char with
+   *                        the {@link TileType}
    * @throws WrongLengthBookshelfStringException
    * @throws WrongCharBookshelfStringException
    * @throws NullPointerException
    */
-  public Bookshelf(String bookshelfString) throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
+  public Bookshelf(String bookshelfString)
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
       NullPointerException {
 
     if (bookshelfString.length() != BOOKSHELF_SIZE) {
@@ -140,7 +143,7 @@ public class Bookshelf implements Serializable {
     if (!IndexValidator.validColIndex(col, Bookshelf.BOOKSHELF_COLS)) {
       throw new BookshelfGridColIndexOutOfBoundsException(col);
     }
-    if(tile == null){
+    if (tile == null) {
       throw new NullTileException("[Class Bookshelf, method SetBookshelfGridIndex]");
     }
     bookshelfGrid[row][col] = tile;
@@ -180,9 +183,8 @@ public class Bookshelf implements Serializable {
   }
 
   /**
-   * 
    * This function checks if player's bookshelf is full of tiles.
-   * 
+   *
    * @return True if bookshelf grid is full.
    */
   public boolean isBookshelfFull() {
@@ -196,11 +198,19 @@ public class Bookshelf implements Serializable {
     return true;
   }
 
+  /**
+   * Retrieve the number of {@link TileType#EMPTY} inside the bookshelf for a
+   * given column.
+   *
+   * @param column The column to be checked
+   * @return The number of {@link TileType#EMPTY}
+   * 
+   */
   public int getFreeRowsInCol(int column)
       throws BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
     int res = 0;
-    for (int i=0; i<BOOKSHELF_ROWS; i++) {
+    for (int i = 0; i < BOOKSHELF_ROWS; i++) {
       if (getBookshelfGridAt(i, column).isEmpty()) {
         res++;
       }
@@ -218,7 +228,7 @@ public class Bookshelf implements Serializable {
       return false;
     }
     Bookshelf bs = (Bookshelf) obj;
-    return(Arrays.deepEquals(bookshelfGrid, bs.bookshelfGrid));
+    return (Arrays.deepEquals(bookshelfGrid, bs.bookshelfGrid));
   }
 
   /**
