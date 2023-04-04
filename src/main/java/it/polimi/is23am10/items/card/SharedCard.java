@@ -102,6 +102,13 @@ public class SharedCard extends AbstractCard<Predicate<Bookshelf>, SharedPattern
     return cardWinners;
   }
 
+  /**
+   * Method used to add a player to the winner array.
+   * When a player is added it's not allowed to take
+   * another scoreblock from this card.
+   * 
+   * @param player the player to add to array
+   */
   public void addCardWinner(Player player) {
     cardWinners.add(player);
   }

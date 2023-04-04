@@ -527,7 +527,10 @@ public class Game implements Serializable {
   }
 
   /**
-   * Method to assign the scoreBlocks.
+   * Method to assign the scoreBlocks. For both shared cards
+   * their pattern is checked against activePlayer's BS.
+   * If pattern is satisfied AND player didn't get a scoreBlock
+   * from that card, the first available SB is given to the player.
    * 
    */
   private void assignScoreBlocks(){
