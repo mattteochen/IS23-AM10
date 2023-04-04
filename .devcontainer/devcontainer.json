@@ -3,22 +3,19 @@
 	"name": "Developer container",
 	// input Docker file
 	"dockerFile": "../Dockerfile",
+      
 	"customizations": {
-		"vscode": {
-			"settings": {
-				"terminal.integrated.defaultProfile.linux": "bash"
-			},
-			// vs code extensions
-			"extensions": [
-				"vscjava.vscode-java-pack",
-				"shengchen.vscode-checkstyle",
-				"SonarSource.sonarlint-vscode",
-				"github.vscode-pull-request-github",
-				"streetsidesoftware.code-spell-checker",
-				"redhat.vscode-xml",
-				"redhat.vscode-yaml",
-				"ryanluker.vscode-coverage-gutters"
-			]
-		}
+	    "vscode": {
+	    "settings": {
+			"terminal.integrated.defaultProfile.linux": "bash"
+	    },
+      
+	    // vs code extensions
+	    "extensions": [
+			"vscjava.vscode-java-pack",
+			"shengchen.vscode-checkstyle",
+			"SonarSource.sonarlint-vscode"
+		]
+	  }
 	}
 }
