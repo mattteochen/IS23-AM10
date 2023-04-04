@@ -5,6 +5,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
@@ -46,6 +47,32 @@ public class BookshelfTest {
         assertTrue(t.isEmpty());
       }
     }
+  }
+
+  /**
+   * Testing copy constructor.
+   *
+   * @throws BookshelfGridColIndexOutOfBoundsException
+   * @throws BookshelfGridRowIndexOutOfBoundsException
+   * @throws NullIndexValueException
+   * @throws NullTileException
+   */
+  @Test
+  public void copyConstructor_should_copy_Bookshelf()
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+      NullIndexValueException, NullTileException {
+
+    Bookshelf original = new Bookshelf();
+    Bookshelf copied = new Bookshelf(original);
+    //assert array on different memory
+    assertNotEquals(original.getBookshelfGrid(), copied.getBookshelfGrid());
+    for (int i = 0; i < Bookshelf.BOOKSHELF_ROWS; i++) {
+      //assert internal arrays on different memory
+      assertNotEquals(original.getBookshelfGrid()[i], copied.getBookshelfGrid()[i]);
+    }
+    copied.setBookshelfGridIndex(0, 0, new Tile(TileType.PLANT));
+    //assert no changes reflected on original array
+    assertNotEquals(original.getBookshelfGridAt(0, 0), copied.getBookshelfGridAt(0, 0));
   }
 
   /**

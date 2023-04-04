@@ -138,7 +138,9 @@ public class Board implements Serializable {
    */
   public Board(Board toCopy) {
     numOfPlayers = toCopy.numOfPlayers;
-    boardGrid = toCopy.boardGrid.clone();
+    boardGrid = Arrays.stream(toCopy.boardGrid)
+        .map(Tile[]::clone)
+        .toArray(Tile[][]::new);
     tileSack = toCopy.tileSack.stream().map(Tile::new).collect(Collectors.toList());
   }
 
