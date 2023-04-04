@@ -16,10 +16,12 @@ import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfB
 import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongCharBookshelfStringException;
 import it.polimi.is23am10.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
-import it.polimi.is23am10.utils.exceptions.MovesNotLessThanThreeException;
+import it.polimi.is23am10.utils.exceptions.AntiGravityTilesPositioningException;
+import it.polimi.is23am10.utils.exceptions.InvalidNumOfMovesException;
 import it.polimi.is23am10.utils.exceptions.NotEnoughSlotsException;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.TilesInDiagonalException;
+import it.polimi.is23am10.utils.exceptions.TilesNotAdjacentException;
 import it.polimi.is23am10.utils.exceptions.TilesNotInTheSameColException;
 import it.polimi.is23am10.utils.exceptions.TilesWithoutOneFreeSideException;
 import java.util.HashMap;
@@ -41,7 +43,7 @@ public class MoveValidatorTest {
       NullNumOfPlayersException, NullPointerException,
       WrongLengthBookshelfStringException,
       WrongCharBookshelfStringException,
-      WrongLengthGameBoardStringException, WrongCharGameBoardStringException, 
+      WrongLengthGameBoardStringException, WrongCharGameBoardStringException,
       NotEmptyTileInWrongPositionException {
     bookshelf = new Bookshelf(
         "XXXXC"
@@ -64,11 +66,11 @@ public class MoveValidatorTest {
   }
 
   @Test
-  public void IsValidMoveOnBoard_should_return_true() 
+  public void IsValidMoveOnBoard_should_return_true()
       throws BoardGridRowIndexOutOfBoundsException,
       BoardGridColIndexOutOfBoundsException, NullIndexValueException,
-      MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
-      TilesInDiagonalException {
+      InvalidNumOfMovesException, TilesWithoutOneFreeSideException,
+      TilesInDiagonalException, TilesNotAdjacentException {
     Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
 
     final Coordinates boardCoord1 = new Coordinates(2, 3);
@@ -88,7 +90,7 @@ public class MoveValidatorTest {
   public void IsValidMoveOnBoard_should_throw_MovesNotLessThanThreeException()
       throws BoardGridRowIndexOutOfBoundsException,
       BoardGridColIndexOutOfBoundsException, NullIndexValueException,
-      MovesNotLessThanThreeException, TilesWithoutOneFreeSideException,
+      InvalidNumOfMovesException, TilesWithoutOneFreeSideException,
       TilesInDiagonalException {
     Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
 
@@ -105,7 +107,7 @@ public class MoveValidatorTest {
     selectedCoordinates.put(boardCoord3, bsCoord3);
     selectedCoordinates.put(boardCoord4, bsCoord4);
 
-    assertThrows(MovesNotLessThanThreeException.class,
+    assertThrows(InvalidNumOfMovesException.class,
         () -> MoveValidator.isValidMoveOnBoard(gameBoard, selectedCoordinates.keySet()));
   }
 
@@ -146,7 +148,8 @@ public class MoveValidatorTest {
   public void IsValidMoveOnBookshelf_should_return_true()
       throws BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NotEnoughSlotsException,
-      NullIndexValueException, TilesNotInTheSameColException {
+      NullIndexValueException, TilesNotInTheSameColException,
+      TilesNotAdjacentException, AntiGravityTilesPositioningException {
     Map<Coordinates, Coordinates> selectedCoordinates = new HashMap<>();
 
     final Coordinates boardCoord1 = new Coordinates(2, 3);
