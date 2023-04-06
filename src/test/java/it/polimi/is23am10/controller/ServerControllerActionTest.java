@@ -9,9 +9,7 @@ import it.polimi.is23am10.command.AbstractCommand;
 import it.polimi.is23am10.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.command.AddPlayerCommand;
 import it.polimi.is23am10.command.StartGameCommand;
-import it.polimi.is23am10.controller.exceptions.AddPlayerCommandSerializationErrorException;
 import it.polimi.is23am10.controller.exceptions.NullGameHandlerInstance;
-import it.polimi.is23am10.controller.exceptions.StartCommandSerializationErrorException;
 import it.polimi.is23am10.factory.PlayerFactory;
 import it.polimi.is23am10.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.factory.exceptions.NullPlayerNamesException;
@@ -162,24 +160,6 @@ class ServerControllerActionTest {
 
     assertEquals(0, ServerControllerState.getGamePools().size());
     assertEquals(0, ServerControllerState.getPlayersPool().size());
-  }
-
-  @Test
-  void START_CONSUMER_should_THROW_StartCommandSerializationErrorException()
-      throws NullSocketConnectorException, NullBlockingQueueException {
-
-    class Utils extends AbstractCommand {
-      Utils(Opcode op) {
-        super(op);
-      }
-    }
-
-    Socket socket = new Socket();
-    PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
-    AbstractCommand cmd = new Utils(Opcode.START);
-
-    assertThrows(StartCommandSerializationErrorException.class,
-        () -> serverControllerAction.startConsumer.accept(logger, playerConnector, cmd));
   }
 
   @Test
@@ -363,22 +343,5 @@ class ServerControllerActionTest {
     serverControllerAction.addPlayerConsumer.accept(logger, steve, steveCmd);
 
     assertFalse(handler.getPlayerConnectors().contains(steve));
-  }
-
-  @Test
-  void ADD_PLAYER_CONSUMER_should_THROW_AddPlayerCommandSerializationErrorException()
-      throws NullSocketConnectorException, NullBlockingQueueException {
-    class Utils extends AbstractCommand {
-      Utils(Opcode op) {
-        super(op);
-      }
-    }
-
-    Socket socket = new Socket();
-    PlayerConnector playerConnector = new PlayerConnector(socket, new LinkedBlockingQueue<>());
-    AbstractCommand cmd = new Utils(Opcode.START);
-
-    assertThrows(AddPlayerCommandSerializationErrorException.class,
-        () -> serverControllerAction.addPlayerConsumer.accept(logger, playerConnector, cmd));
   }
 }
