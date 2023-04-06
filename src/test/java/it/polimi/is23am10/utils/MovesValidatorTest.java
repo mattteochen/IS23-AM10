@@ -32,7 +32,8 @@ class MovesValidatorTest {
 
   @BeforeEach
   void setup()
-      throws InvalidNumOfPlayersException, NullNumOfPlayersException, BookshelfGridColIndexOutOfBoundsException,
+      throws InvalidNumOfPlayersException, NullNumOfPlayersException,
+      BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullTileException {
     tile = new Tile(TileType.BOOK);
     emptyTile = new Tile(TileType.EMPTY);
@@ -51,7 +52,8 @@ class MovesValidatorTest {
       throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
       BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       WrongMovesNumberException,
-      WrongGameBoardPicksException, NullIndexValueException, WrongBookShelfPicksException, NullTileException {
+      WrongGameBoardPicksException, NullIndexValueException,
+      WrongBookShelfPicksException, NullTileException {
     Map<Coordinates, Coordinates> moves = new HashMap<>();
     moves.put(new Coordinates(4, 0), new Coordinates(5, 0));
     moves.put(new Coordinates(5, 0), new Coordinates(4, 0));
@@ -70,7 +72,8 @@ class MovesValidatorTest {
       throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
       BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       WrongMovesNumberException,
-      WrongGameBoardPicksException, NullIndexValueException, WrongBookShelfPicksException, NullTileException {
+      WrongGameBoardPicksException, NullIndexValueException,
+      WrongBookShelfPicksException, NullTileException {
     Map<Coordinates, Coordinates> moves = new HashMap<>();
     moves.put(new Coordinates(3, 0), new Coordinates(4, 0));
     moves.put(new Coordinates(4, 0), new Coordinates(5, 0));
@@ -86,7 +89,8 @@ class MovesValidatorTest {
       throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
       BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       WrongMovesNumberException,
-      WrongGameBoardPicksException, NullIndexValueException, WrongBookShelfPicksException, NullTileException {
+      WrongGameBoardPicksException, NullIndexValueException,
+      WrongBookShelfPicksException, NullTileException {
     Map<Coordinates, Coordinates> moves = new HashMap<>();
     // diagonal choices
     moves.put(new Coordinates(4, 0), new Coordinates(5, 0));
@@ -124,7 +128,8 @@ class MovesValidatorTest {
       throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
       BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       WrongMovesNumberException,
-      WrongGameBoardPicksException, NullIndexValueException, WrongBookShelfPicksException, NullTileException {
+      WrongGameBoardPicksException, NullIndexValueException,
+      WrongBookShelfPicksException, NullTileException {
     Map<Coordinates, Coordinates> moves = new HashMap<>();
     // diagonal choices
     moves.put(new Coordinates(4, 0), new Coordinates(5, 0));
