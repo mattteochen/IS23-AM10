@@ -21,9 +21,17 @@ import it.polimi.is23am10.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.gamehandler.GameHandler;
 import it.polimi.is23am10.gamehandler.exceptions.NullPlayerConnector;
+import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.items.bookshelf.exceptions.NullTileException;
 import it.polimi.is23am10.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.items.card.exceptions.NegativeMatchedBlockCountException;
+import it.polimi.is23am10.items.card.exceptions.NullMatchedBlockCountException;
+import it.polimi.is23am10.items.card.exceptions.NullScoreBlockListException;
 import it.polimi.is23am10.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.player.Player;
 import it.polimi.is23am10.player.exceptions.NullPlayerBookshelfException;
@@ -33,6 +41,11 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.playerconnector.AbstractPlayerConnector;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
+import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
+import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.UUID;
@@ -96,7 +109,7 @@ public interface IServerControllerAction extends Remote {
           | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
           | NullPlayerIdException | NullPlayerNameException | NullMaxPlayerException
           | AlreadyInitiatedPatternException | NullAssignedPatternException
-          | PlayerNotFoundException| NotValidScoreBlockValueException e) {
+          | PlayerNotFoundException | NotValidScoreBlockValueException e) {
         logger.error("{} Failed to initialize new game request {}",
             ServerDebugPrefixString.START_COMMAND_PREFIX, e);
       } catch (InvalidNumOfPlayersException | InvalidMaxPlayerException
@@ -196,13 +209,13 @@ public interface IServerControllerAction extends Remote {
   final ControllerConsumer moveTilesConsumer = (logger, playerConnector, command) -> {
     if (command instanceof MoveTilesCommand) {
       try {
-        GameHandler handler = 
-            ServerControllerState.getGameHandlerByUUID(((MoveTilesCommand) command).getGameId());
+        MoveTilesCommand mtCommand = (MoveTilesCommand) command;
+        GameHandler handler = ServerControllerState.getGameHandlerByUUID(mtCommand.getGameId());
         // I check that the player performing the action is the one actually set as
         // active player
-        if (handler.getGame().getActivePlayer().equals(
-            playerConnector.getPlayer())) {
-          // TODO: implement moves
+        if (handler.getGame().getActivePlayer().equals(playerConnector.getPlayer())) {
+          handler.getGame().activePlayerMove(mtCommand.getMoves());
+          handler.pushGameState();
         }
         logger.info("{} Operated Tile move for {} in game {}",
             ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
@@ -211,6 +224,16 @@ public interface IServerControllerAction extends Remote {
       } catch (NullGameHandlerInstance e) {
         logger.error("{} Failed to get game handler from command {}",
             ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX, e);
+      } catch (BoardGridColIndexOutOfBoundsException | BoardGridRowIndexOutOfBoundsException
+          | BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
+          | NullPointerException | NullIndexValueException | NullTileException | NullPlayerBookshelfException
+          | NullScoreBlockListException | NullMatchedBlockCountException | NegativeMatchedBlockCountException
+          | WrongMovesNumberException | WrongGameBoardPicksException | WrongBookShelfPicksException e) {
+        logger.warn("{} Failed to execute moves. Verify client move checks. {}",
+            ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX, e);
+      } catch (InterruptedException e) {
+        logger.error("{} Failed to push update to all player connectors {}",
+            ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX, e);
       }
     } else {
       logger.error("{} Failed to obtain deserialized MOVE_TILES command",
