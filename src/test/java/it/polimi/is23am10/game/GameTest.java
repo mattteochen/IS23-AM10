@@ -272,10 +272,10 @@ public class GameTest {
         NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException, NullPlayerException, 
         NullMatchedBlockCountException, NegativeMatchedBlockCountException, WrongMovesNumberException, 
         WrongGameBoardPicksException, WrongBookShelfPicksException {
-      final Integer boardRow = 4;
+      final Integer boardRow = 0;
       final Integer boardCol = 3;
-      final Integer bsRow = 2;
-      final Integer bsCol = 4;
+      final Integer bsRow = 5;
+      final Integer bsCol = 0;
       final Coordinates boardCoord = new Coordinates(boardRow, boardCol);
       final Coordinates bsCoord = new Coordinates(bsRow, bsCol);
       final Tile t = g.getGameBoard().getTileAt(boardRow, boardCol);
