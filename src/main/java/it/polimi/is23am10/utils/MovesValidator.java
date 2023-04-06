@@ -79,7 +79,7 @@ public class MovesValidator {
   /**
    * Checks if the values in the given list are adjacent to each other.
    *
-   * @param values the list of values to be checked
+   * @param values the list of values to be checked. Must be pre-sorted for this to work.
    * @return true if the values are adjacent, false otherwise
    */
   private static boolean areAdjacent(List<Integer> values) {
@@ -214,7 +214,7 @@ public class MovesValidator {
       throw new WrongGameBoardPicksException("Invalid pick movement, gap between chosen tiles");
     }
 
-    // perform allowance check, every tile must have an empty side
+    // perform checks, every tile must have an empty side
     for (Coordinates c : moves) {
       // handle empty tile picks
       if (board.getTileAt(c.getRow(), c.getCol()).isEmpty()) {
