@@ -36,7 +36,12 @@ import it.polimi.is23am10.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.utils.Coordinates;
+import it.polimi.is23am10.utils.MovesValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
+import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
+import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -706,13 +711,20 @@ public class Game implements Serializable {
    * @throws NullScoreBlockListException
    * @throws NegativeMatchedBlockCountException
    * @throws NullMatchedBlockCountException
+   * @throws WrongBookShelfPicksException
+   * @throws WrongGameBoardPicksException
+   * @throws WrongMovesNumberException
    * @throws NullPlayerException
    */
   public void activePlayerMove(Map<Coordinates, Coordinates> selectedCoordinates)
       throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
       NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPlayerBookshelfException,
-      NullScoreBlockListException, NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+      NullScoreBlockListException, NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException, 
+      WrongMovesNumberException, WrongGameBoardPicksException, WrongBookShelfPicksException {
+
+    MovesValidator.validateGameMoves(selectedCoordinates, activePlayer.getBookshelf(), gameBoard);
+    
     for (Map.Entry<Coordinates, Coordinates> entry : selectedCoordinates.entrySet()) {
       Coordinates boardCoord = entry.getKey();
       Coordinates bsCoord = entry.getValue();
