@@ -45,6 +45,9 @@ import it.polimi.is23am10.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
+import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
+import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
 import it.polimi.is23am10.game.exceptions.FullGameException;
 
 import java.util.HashMap;
@@ -266,7 +269,9 @@ public class GameTest {
         BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
         NullPointerException, InvalidBoardTileSelectionException, NullIndexValueException,
         NullTileException, NullPlayerBookshelfException,
-        NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException, NullPlayerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+        NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException, NullPlayerException, 
+        NullMatchedBlockCountException, NegativeMatchedBlockCountException, WrongMovesNumberException, 
+        WrongGameBoardPicksException, WrongBookShelfPicksException {
       final Integer boardRow = 4;
       final Integer boardCol = 3;
       final Integer bsRow = 2;
