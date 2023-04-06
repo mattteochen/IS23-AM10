@@ -10,10 +10,9 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -120,21 +119,19 @@ public class MovesValidator {
    *                                                   index is null
    */
   protected static void validateBookShelfPicks(
-      Map<Coordinates, Coordinates> moves, Bookshelf bookShelf)
+      Collection<Coordinates> moves, Bookshelf bookShelf)
       throws WrongBookShelfPicksException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
 
-    List<Coordinates> keys = new ArrayList<>(moves.keySet());
-
     // check different picked columns, they have to be 1
-    long columns = moves.values().stream().map(e -> e.getCol()).distinct().count();
+    long columns = moves.stream().map(e -> e.getCol()).distinct().count();
     if (columns > 1) {
       throw new WrongBookShelfPicksException(
           "Invalid bookshelf picks, selected " + columns + " columns. Only one allowed");
     }
 
     // we can safely get the first column value as they are all the same
-    final Integer columnValue = moves.get(keys.get(0)).getCol();
+    final Integer columnValue = moves.iterator().next().getCol();
     // check the empty rows inside the selected column
     if (bookShelf.getFreeRowsInCol(columnValue) < moves.size()) {
       throw new WrongBookShelfPicksException(
@@ -142,8 +139,11 @@ public class MovesValidator {
     }
 
     // check that the selected spots inside the bookshelf are adjacent
-    List<Integer> rowValues =
-        moves.values().stream().map(e -> e.getRow()).sorted().collect(Collectors.toList());
+    List<Integer> rowValues = moves
+        .stream()
+        .map(e -> e.getRow())
+        .sorted()
+        .collect(Collectors.toList());
     if (!areAdjacent(rowValues)) {
       throw new WrongBookShelfPicksException(
           "Invalid bookshelf picks, selected not sequential rows");
@@ -179,16 +179,17 @@ public class MovesValidator {
    *                                               in the moves
    */
   protected static void validateGameBoardPicks(
-      Map<Coordinates, Coordinates> moves, Board board)
+      Collection<Coordinates> moves, Board board)
       throws WrongGameBoardPicksException, BoardGridRowIndexOutOfBoundsException,
       BoardGridColIndexOutOfBoundsException, NullIndexValueException {
     // perform pick up check
-    final Set<Coordinates> keys = moves.keySet();
-    long rowCount = keys.stream()
+    long rowCount = moves
+        .stream()
         .map(c -> c.getRow())
         .distinct()
         .count();
-    long colCount = keys.stream()
+    long colCount = moves
+        .stream()
         .map(c -> c.getCol())
         .distinct()
         .count();
@@ -198,16 +199,23 @@ public class MovesValidator {
           + rowCount + "row selection and " + colCount + " column selection");
     }
 
-    List<Integer> rowValues =
-        keys.stream().map(e -> e.getRow()).sorted().collect(Collectors.toList());
-    List<Integer> colValues =
-        keys.stream().map(e -> e.getCol()).sorted().collect(Collectors.toList());
+    List<Integer> rowValues = moves
+        .stream()
+        .map(e -> e.getRow())
+        .sorted()
+        .collect(Collectors.toList());
+    List<Integer> colValues = moves
+        .stream()
+        .map(e -> e.getCol())
+        .sorted()
+        .collect(Collectors.toList());
+
     if (!areAdjacent(colValues) && !areAdjacent(rowValues)) {
       throw new WrongGameBoardPicksException("Invalid pick movement, gap between chosen tiles");
     }
 
     // perform allowance check, every tile must have an empty side
-    for (Coordinates c : keys) {
+    for (Coordinates c : moves) {
       // handle empty tile picks
       if (board.getTileAt(c.getRow(), c.getCol()).isEmpty()) {
         throw new WrongGameBoardPicksException("Invalid pick movement, empty tile");
@@ -265,7 +273,7 @@ public class MovesValidator {
       throw new WrongMovesNumberException();
     }
 
-    validateGameBoardPicks(moves, board);
-    validateBookShelfPicks(moves, bookshelf);
+    validateGameBoardPicks(moves.keySet(), board);
+    validateBookShelfPicks(moves.values(), bookshelf);
   }
 }
