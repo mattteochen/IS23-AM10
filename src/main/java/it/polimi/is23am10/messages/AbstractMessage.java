@@ -38,7 +38,7 @@ public abstract class AbstractMessage {
   
   /**
    * Getter for message.
-   * 
+   *
    * @return the string message
    */
   public String getMessage() {
@@ -47,7 +47,7 @@ public abstract class AbstractMessage {
 
   /**
    * Getter for message type.
-   * 
+   *
    * @return message type
    */
   public MessageType getMessageType() {
@@ -56,10 +56,10 @@ public abstract class AbstractMessage {
 
   /**
    * Getter for the sending player.
-   * 
+   *
    * @return the sending player
    */
-  public Player getSender(){
+  public Player getSender() {
     return sender;
   }
 }
