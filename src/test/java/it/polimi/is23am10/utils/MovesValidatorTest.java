@@ -2,17 +2,17 @@ package it.polimi.is23am10.utils;
 
 import static org.junit.Assert.assertThrows;
 
-import it.polimi.is23am10.items.board.Board;
-import it.polimi.is23am10.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
-import it.polimi.is23am10.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
-import it.polimi.is23am10.items.board.exceptions.InvalidNumOfPlayersException;
-import it.polimi.is23am10.items.board.exceptions.NullNumOfPlayersException;
-import it.polimi.is23am10.items.bookshelf.Bookshelf;
-import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
-import it.polimi.is23am10.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
-import it.polimi.is23am10.items.bookshelf.exceptions.NullTileException;
-import it.polimi.is23am10.items.tile.Tile;
-import it.polimi.is23am10.items.tile.Tile.TileType;
+import it.polimi.is23am10.server.model.items.board.Board;
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
+import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.NullTileException;
+import it.polimi.is23am10.server.model.items.tile.Tile;
+import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
