@@ -4,7 +4,7 @@ import it.polimi.is23am10.server.config.ServerConfigContext;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerSocket;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
-import it.polimi.is23am10.server.network.playerconnector.PlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 
@@ -116,7 +116,7 @@ public class Server {
         client.setKeepAlive(ctx.getKeepAlive());
         logger.info("Received new connection");
         executorService.execute(new ServerControllerSocket(
-            new PlayerConnector(client,
+            new PlayerConnectorSocket(client,
                 new LinkedBlockingQueue<>()),
             new ServerControllerAction()));
       } catch (IOException | NullSocketConnectorException | NullBlockingQueueException e) {

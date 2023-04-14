@@ -28,7 +28,7 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
-import it.polimi.is23am10.server.network.playerconnector.PlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
@@ -144,7 +144,7 @@ class ServerControllerStateTest {
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
       NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, FullGameException, NullAssignedPatternException {
 
-    PlayerConnector playerConnector = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(new Socket(), new LinkedBlockingQueue<>());
     playerConnector.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame));
     playerConnector.setGameId(UUID.randomUUID());
     ServerControllerState.addPlayerConnector(playerConnector);
@@ -172,9 +172,9 @@ class ServerControllerStateTest {
       NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedPatternException, FullGameException, PlayerNotFoundException, NotValidScoreBlockValueException {
 
     GameHandler handler = new GameHandler("Steve", 2);
-    PlayerConnector steve = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    PlayerConnectorSocket steve = new PlayerConnectorSocket(new Socket(), new LinkedBlockingQueue<>());
     steve.setPlayer(handler.getGame().getPlayerByName("Steve"));
-    PlayerConnector alice = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    PlayerConnectorSocket alice = new PlayerConnectorSocket(new Socket(), new LinkedBlockingQueue<>());
     alice.setPlayer(PlayerFactory.getNewPlayer("Alice", handler.getGame()));
     steve.setGameId(handler.getGame().getGameId());
     steve.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame));
@@ -202,13 +202,13 @@ class ServerControllerStateTest {
 
     GameHandler handler = new GameHandler("Steve", 2);
     GameHandler handler2 = new GameHandler("Bob", 2);
-    PlayerConnector steve = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    PlayerConnectorSocket steve = new PlayerConnectorSocket(new Socket(), new LinkedBlockingQueue<>());
     steve.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame));
     steve.setGameId(UUID.randomUUID());
-    PlayerConnector alice = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    PlayerConnectorSocket alice = new PlayerConnectorSocket(new Socket(), new LinkedBlockingQueue<>());
     alice.setPlayer(PlayerFactory.getNewPlayer("Alice", mockGame));
     alice.setGameId(UUID.randomUUID());
-    PlayerConnector bob = new PlayerConnector(new Socket(), new LinkedBlockingQueue<>());
+    PlayerConnectorSocket bob = new PlayerConnectorSocket(new Socket(), new LinkedBlockingQueue<>());
     bob.setPlayer(PlayerFactory.getNewPlayer("Bob", mockGame));
     bob.setGameId(UUID.randomUUID());
     handler.addPlayerConnector(steve);
