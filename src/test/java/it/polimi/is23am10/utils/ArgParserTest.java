@@ -3,10 +3,10 @@ package it.polimi.is23am10.utils;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import it.polimi.is23am10.config.ServerConfigContext;
-import it.polimi.is23am10.config.exceptions.InvalidMaxConnectionsNumberException;
-import it.polimi.is23am10.config.exceptions.InvalidPortNumberException;
-import it.polimi.is23am10.config.ServerConfig;
+import it.polimi.is23am10.server.config.ServerConfig;
+import it.polimi.is23am10.server.config.ServerConfigContext;
+import it.polimi.is23am10.server.config.exceptions.InvalidMaxConnectionsNumberException;
+import it.polimi.is23am10.server.config.exceptions.InvalidPortNumberException;
 import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
 import it.polimi.is23am10.utils.exceptions.MissingParameterException;
 import org.junit.jupiter.api.Test;

@@ -19,11 +19,6 @@ public final class ErrorTypeString {
 
   }
 
-  /**
-   * Default value, no errors to send.
-   *
-   */
-  public static final String ERROR_DEFAULT_VALUE = "No errors found";
 
   /**
    * Message error in initializing the game.
@@ -48,6 +43,17 @@ public final class ErrorTypeString {
    *
    */
   public static final String ERROR_INVALID_MOVE = "Failed to execute the move";
+
+  /**
+   * Message error in adding player connector.
+   */
+  public static final String ERROR_ADDING_CONNECTOR = "Failed to add player connector";
+
+  /**
+   * Message error in adding game handler.
+   *
+   */
+  public static final String ERROR_ADDING_HANDLER = "Failed to add game handler";
 
 
 
