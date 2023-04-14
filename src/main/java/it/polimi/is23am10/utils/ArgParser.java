@@ -40,7 +40,17 @@ public class ArgParser {
   /**
    * The keep alive cli command.
    */
-  public static final String KEEP_ALIVE_CLI_COMMAND = "--keep-alive";
+  public static final String KEEP_ALIVE_CLI_COMMAND = "--keep-alive";  
+
+  /**
+   * The is server command.
+   */
+  public static final String IS_SERVER_CLI_COMMAND = "--is-server";  
+
+  /**
+   * The show gui cli command.
+   */
+  public static final String SHOW_GUI_CLI_COMMAND = "--show-cli";  
 
   /**
    * Argument parser method that checks commands.
@@ -90,6 +100,12 @@ public class ArgParser {
             } else {
               throw new MissingParameterException(args[i]);
             }
+            break;
+          case IS_SERVER_CLI_COMMAND:
+            ServerConfig.setIsServer(true);
+            break;
+          case SHOW_GUI_CLI_COMMAND:
+            ServerConfig.setShowGUI(true);
             break;
           default:
             throw new InvalidArgumentException(args[i]);

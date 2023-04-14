@@ -73,6 +73,20 @@ public final class ServerConfig {
   private static boolean keepAlive = true;
 
   /**
+   * The kind of app to launch. If false launches a client.
+   * 
+   */
+  private static boolean isServer = false;
+
+  /**
+   * The interface to show if app is launched in Client mode.
+   * If false launches client in CLI mode.
+   * If {@link ServerConfigContext#isServer} is true this flag is ignored,
+   * as server mode only supports CLI as interface, and for logging purpose only.
+   */
+  private static boolean showGUI = false;
+
+  /**
    * Server port setter.
    *
    * @param p port number.
@@ -121,6 +135,26 @@ public final class ServerConfig {
   public static void setKeepAlive(boolean k) {
     keepAlive = k;
   }
+  
+  /**
+   * Keep alive setter.
+   *
+   * @param is launch server app
+   * 
+   */
+  public static void setIsServer(boolean is) {
+    isServer = is;
+  }
+
+  /**
+   * Keep alive setter.
+   *
+   * @param sg show GUI if client
+   * 
+   */
+  public static void setShowGUI(boolean sg) {
+    showGUI = sg;
+  }
 
   /**
    * Server port getter.
@@ -160,5 +194,25 @@ public final class ServerConfig {
    */
   public static boolean getKeepAlive() {
     return keepAlive;
+  }
+
+  /**
+   * Is server getter.
+   *
+   * @return The isServer flag.
+   * 
+   */
+  public static boolean getIsServer() {
+    return isServer;
+  }
+
+  /**
+   * Show GUI getter.
+   *
+   * @return The show GUI flag.
+   * 
+   */
+  public static boolean getShowGUI() {
+    return showGUI;
   }
 }

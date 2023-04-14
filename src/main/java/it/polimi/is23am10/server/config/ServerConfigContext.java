@@ -33,6 +33,20 @@ public class ServerConfigContext {
   private boolean keepAlive;
 
   /**
+   * The kind of app to launch. If false launches a client.
+   * 
+   */
+  private boolean isServer;
+
+  /**
+   * The interface to show if app is launched in Client mode.
+   * If false launches client in CLI mode.
+   * If {@link ServerConfigContext#isServer} is true this flag is ignored,
+   * as server mode only supports CLI as interface, and for logging purpose only.
+   */
+  private boolean showGUI;
+
+  /**
    * Constructor.
    *
    * @param serverSocketPort     The server port number.
@@ -41,11 +55,13 @@ public class ServerConfigContext {
    * 
    */
   public ServerConfigContext(Integer serverSocketPort, Integer serverRmiPort,
-      Integer maxConnections, boolean keepAlive) {
+      Integer maxConnections, boolean keepAlive, boolean isServer, boolean showGUI) {
     this.serverSocketPort = serverSocketPort;
     this.serverRmiPort = serverRmiPort;
     this.maxConnection = maxConnections;
     this.keepAlive = keepAlive;
+    this.isServer = isServer;
+    this.showGUI = showGUI;
   }
 
 
@@ -59,6 +75,8 @@ public class ServerConfigContext {
     this.serverRmiPort = ServerConfig.getServerRmiPort();
     this.maxConnection = ServerConfig.getMaxConnections();
     this.keepAlive = ServerConfig.getKeepAlive();
+    this.isServer = ServerConfig.getIsServer();
+    this.showGUI = ServerConfig.getShowGUI();
   }
 
   /**
@@ -99,5 +117,25 @@ public class ServerConfigContext {
    */
   public boolean getKeepAlive() {
     return keepAlive;
+  }
+
+  /**
+   * Is server getter.
+   *
+   * @return The isServer flag.
+   * 
+   */
+  public boolean getIsServer() {
+    return isServer;
+  }
+
+  /**
+   * Show GUI getter.
+   *
+   * @return The show GUI flag.
+   * 
+   */
+  public boolean getShowGUI() {
+    return showGUI;
   }
 }
