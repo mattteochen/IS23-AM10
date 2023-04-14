@@ -1,5 +1,7 @@
 package it.polimi.is23am10.server.config;
 
+import java.net.InetAddress;
+
 import it.polimi.is23am10.server.config.exceptions.InvalidMaxConnectionsNumberException;
 import it.polimi.is23am10.server.config.exceptions.InvalidPortNumberException;
 
@@ -86,6 +88,20 @@ public final class ServerConfig {
    */
   private static boolean showGUI = false;
 
+    /**
+   * The communication method to use if app is launched is Client Mode.
+   * If false launches client over Socket connection.
+   * If {@link ServerConfigContext#isServer} is true this flag is ignored,
+   * as server mode both receives RMI and socket connections
+   */
+  private static boolean useRMI = false;
+
+  /**
+   * The network address where the server is running.
+   * 
+   */
+  private static String serverAddress = "localhost";
+
   /**
    * Server port setter.
    *
@@ -147,13 +163,33 @@ public final class ServerConfig {
   }
 
   /**
-   * Keep alive setter.
+   * Show GUI setter.
    *
    * @param sg show GUI if client
    * 
    */
   public static void setShowGUI(boolean sg) {
     showGUI = sg;
+  }
+
+  /**
+   * Use RMI setter.
+   *
+   * @param rmi use RMI or not (socket).
+   * 
+   */
+  public static void setUseRMI(boolean rmi) {
+    useRMI = rmi;
+  }
+
+  /**
+   * Server address setter.
+   *
+   * @param address Server address.
+   * 
+   */
+  public static void setServerAddress(String address) {
+    serverAddress = address;
   }
 
   /**
@@ -214,5 +250,25 @@ public final class ServerConfig {
    */
   public static boolean getShowGUI() {
     return showGUI;
+  }
+  
+  /**
+   * Use RMI getter.
+   *
+   * @return The use RMI flag.
+   * 
+   */
+  public static boolean getUseRMI() {
+    return useRMI;
+  }
+
+  /**
+   * Server address getter.
+   *
+   * @return The server address.
+   * 
+   */
+  public static String getServerAddress() {
+    return serverAddress;
   }
 }

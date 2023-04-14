@@ -47,6 +47,20 @@ public class ServerConfigContext {
   private boolean showGUI;
 
   /**
+   * The communication method to use if app is launched is Client Mode.
+   * If false launches client over Socket connection.
+   * If {@link ServerConfigContext#isServer} is true this flag is ignored,
+   * as server mode both receives RMI and socket connections
+   */
+  private boolean useRMI;
+
+  /**
+   * The network address where the server is running.
+   * 
+   */
+  private String serverAddress;
+
+  /**
    * Constructor.
    *
    * @param serverSocketPort     The server port number.
@@ -55,13 +69,15 @@ public class ServerConfigContext {
    * 
    */
   public ServerConfigContext(Integer serverSocketPort, Integer serverRmiPort,
-      Integer maxConnections, boolean keepAlive, boolean isServer, boolean showGUI) {
+      Integer maxConnections, boolean keepAlive, boolean isServer, boolean showGUI, boolean useRMI, String serverAddress) {
     this.serverSocketPort = serverSocketPort;
     this.serverRmiPort = serverRmiPort;
     this.maxConnection = maxConnections;
     this.keepAlive = keepAlive;
     this.isServer = isServer;
     this.showGUI = showGUI;
+    this.useRMI = useRMI;
+    this.serverAddress = serverAddress;
   }
 
 
@@ -77,6 +93,8 @@ public class ServerConfigContext {
     this.keepAlive = ServerConfig.getKeepAlive();
     this.isServer = ServerConfig.getIsServer();
     this.showGUI = ServerConfig.getShowGUI();
+    this.useRMI = ServerConfig.getUseRMI();
+    this.serverAddress = ServerConfig.getServerAddress();
   }
 
   /**
@@ -137,5 +155,25 @@ public class ServerConfigContext {
    */
   public boolean getShowGUI() {
     return showGUI;
+  }
+
+  /**
+   * Use RMI getter.
+   *
+   * @return The use RMI flag.
+   * 
+   */
+  public boolean getUseRMI() {
+    return useRMI;
+  }
+
+  /**
+   * Server address getter.
+   *
+   * @return The server address.
+   * 
+   */
+  public String getServerAddress() {
+    return serverAddress;
   }
 }

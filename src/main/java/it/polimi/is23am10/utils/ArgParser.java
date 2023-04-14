@@ -6,6 +6,9 @@ import it.polimi.is23am10.server.config.exceptions.InvalidPortNumberException;
 import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
 import it.polimi.is23am10.utils.exceptions.MissingParameterException;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Parser for argument from CLI.
  *
@@ -51,6 +54,25 @@ public class ArgParser {
    * The show gui cli command.
    */
   public static final String SHOW_GUI_CLI_COMMAND = "--show-cli";  
+
+  /**
+   * The use rmi cli command.
+   */
+  public static final String USE_RMI_CLI_COMMAND = "--use-rmi";  
+
+  /**
+   * The server address cli command.
+   */
+  public static final String SERVER_ADDRESS_CLI_COMMAND = "--address";  
+
+  /**
+   * Regex expression for validating ipv4 addresses
+   */
+  private static final String IPV4_REGEX = 
+  "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+  "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+  "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+  "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 
   /**
    * Argument parser method that checks commands.
@@ -101,11 +123,26 @@ public class ArgParser {
               throw new MissingParameterException(args[i]);
             }
             break;
+          case SERVER_ADDRESS_CLI_COMMAND:
+            if (i + 1 < args.length) {
+              if (Pattern.matches(IPV4_REGEX, args[i + 1])){
+                ServerConfig.setServerAddress(args[i + 1]);
+                i++;
+              } else {
+                throw new InvalidArgumentException("Address is not a valid IPV4. For localhost omit flag.");
+              }
+            } else {
+              throw new MissingParameterException(args[i]);
+            }
+            break;
           case IS_SERVER_CLI_COMMAND:
             ServerConfig.setIsServer(true);
             break;
           case SHOW_GUI_CLI_COMMAND:
             ServerConfig.setShowGUI(true);
+            break;
+          case USE_RMI_CLI_COMMAND:
+            ServerConfig.setUseRMI(true);
             break;
           default:
             throw new InvalidArgumentException(args[i]);
