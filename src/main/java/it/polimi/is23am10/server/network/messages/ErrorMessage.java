@@ -1,7 +1,5 @@
 package it.polimi.is23am10.server.network.messages;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import it.polimi.is23am10.server.model.player.Player;
 
