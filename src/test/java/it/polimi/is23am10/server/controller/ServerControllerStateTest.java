@@ -52,7 +52,7 @@ class ServerControllerStateTest {
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException,
-      FullGameException, NotValidScoreBlockValueException {
+      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
     ServerControllerState.getGamePools().clear();
     ServerControllerState.getPlayersPool().clear();
     mockGame = GameFactory.getNewGame("Max", 4);
@@ -64,7 +64,7 @@ class ServerControllerStateTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException {
+      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
 
     ServerControllerState.addGameHandler(new GameHandler("Steve", 2));
 
@@ -77,7 +77,7 @@ class ServerControllerStateTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException {
+      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
 
     GameHandler handler = new GameHandler("Steve", 2);
     ServerControllerState.addGameHandler(handler);
@@ -104,7 +104,7 @@ class ServerControllerStateTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException {
+      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
 
     final GameHandler handler = new GameHandler("Steve", 2);
     final GameHandler handler2 = new GameHandler("Luke", 2);
@@ -198,7 +198,7 @@ class ServerControllerStateTest {
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
       NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedPatternException,
-      FullGameException, NotValidScoreBlockValueException {
+      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
 
     GameHandler handler = new GameHandler("Steve", 2);
     GameHandler handler2 = new GameHandler("Bob", 2);
@@ -244,7 +244,7 @@ class ServerControllerStateTest {
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException,
-      NullGameHandlerInstance, FullGameException, NotValidScoreBlockValueException {
+      NullGameHandlerInstance, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
 
     GameHandler handler = new GameHandler("Steve", 2);
     ServerControllerState.addGameHandler(handler);

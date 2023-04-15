@@ -500,7 +500,7 @@ public class Game implements Serializable {
    *
    * @param player Player to set as active
    */
-  protected void setActivePlayer(Player player) {
+  public void setActivePlayer(Player player) {
     this.activePlayer = player;
   }
 
@@ -509,7 +509,7 @@ public class Game implements Serializable {
    *
    * @param player The winning player to set.
    */
-  protected void setWinnerPlayer(Player player) {
+  public void setWinnerPlayer(Player player) {
     this.winnerPlayer = player;
   }
 

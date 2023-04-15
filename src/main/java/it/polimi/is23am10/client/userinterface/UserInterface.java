@@ -16,12 +16,29 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  */
 public interface UserInterface {
   
+  /**
+   * Method called when first running the game.
+   * 
+   */
   void displaySplashScreen();
 
+  /**
+   * Method called when the user wants to join an existing
+   * game and has to pick between the available ones.
+   * It assumes to receive only valid games.
+   */
   void displayAvailableGames(List<VirtualView> availableGames);
 
+  /**
+   * Method called to display the state of the game.
+   * 
+   */
   void displayVirtualView(VirtualView vw);
 
+  /**
+   * Method called to notify the user of a new message.
+   * 
+   */
   void displayChatMessage(AbstractMessage message);
 
   //TODO: Add other needed display methods if needed

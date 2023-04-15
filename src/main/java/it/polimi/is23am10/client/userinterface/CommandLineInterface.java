@@ -3,51 +3,71 @@ package it.polimi.is23am10.client.userinterface;
 import java.util.Comparator;
 import java.util.List;
 
+import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
+/**
+ * A client interface using command line as I/O.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
 public final class CommandLineInterface implements UserInterface {
 
+  /**
+   * {@inheritDoc}
+   */
   public void displaySplashScreen() {
-    System.out.println("MyShelfie - Copyright: CranioCreations");
-    System.out.println("To start, choose if [j]oining an existing match or [c]reating one:");
+    System.out.println(CLIStrings.welcomeString);
+    System.out.println(CLIStrings.joinOrCreateString);
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public void displayAvailableGames(List<VirtualView> availableGames) {
     if (availableGames.isEmpty()) {
-      System.out.println("No available game to join at the moment. Please create one.");
+      System.out.println(CLIStrings.noGamesString);
     } else {
-      System.out.println("Here a list of the available game. Join one by typing the relative index.");
+      System.out.println(CLIStrings.listGamesString);
       availableGames
-          .forEach(ag -> System.out.println(String.format("[{}] - {}/{} joined - GameId: {}",
+          .forEach(ag -> System.out.println(String.format(CLIStrings.availableGameString,
               availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId())));
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public void displayVirtualView(VirtualView vw) {
-    System.out.println("Current state of the game:");
+    System.out.println(CLIStrings.currentStateString);
     if (vw.isEnded()) {
-      System.out.println("Game is over. Here the leaderboard:");
+      System.out.println(CLIStrings.gameOverString);
       vw.getPlayers()
           .stream()
           .sorted(Comparator.comparing(p -> p.getScore().getTotalScore(), Comparator.reverseOrder()))
           .forEach(p -> System.out
-              .println(String.format("{} - Score: {}", p.getPlayerName(), p.getScore().getTotalScore())));
-      System.out.println(String.format("WINNER: {}", vw.getWinnerPlayer()));
+              .println(String.format(CLIStrings.playerScoreString, p.getPlayerName(), p.getScore().getTotalScore())));
+      System.out.println(String.format(CLIStrings.winnerString, vw.getWinnerPlayer().getPlayerName()));
     } else {
       if (vw.isLastRound()) {
-        System.out.println("Attention! Someone already completed their Bookshelf: this is last round");
+        System.out.println(CLIStrings.lastRoundString);
       }
-      System.out.println(String.format("Now playing: {} - ", vw.getActivePlayer().getPlayerName()));
+      System.out.println(String.format(CLIStrings.nowPlaying, vw.getActivePlayer().getPlayerName()));
       // TODO: Prettyprint bookshelfs and board [blocked by #107]
-      System.out.println(
-          "Now make your move specifying the `XY` of the tiles you want to pick from board (max 3) and finally the column of your bookshelf you want to put them in.");
-      System.out.println("E.g. `12 22 35 A` moves the three tiles specified into column A");
+      System.out.println(CLIStrings.moveTilesInviteString);
+      System.out.println(CLIStrings.moveTilesExampleString);
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public void displayChatMessage(AbstractMessage message) {
-    System.out.println(String.format("NEW MESSAGE from {}:{}", message.getSender(), message.getMessage()));
+    System.out.println(String.format(CLIStrings.messageString, message.getSender().getPlayerName(), message.getMessage()));
   }
 
 }

@@ -53,7 +53,7 @@ public class ArgParser {
   /**
    * The show gui cli command.
    */
-  public static final String SHOW_GUI_CLI_COMMAND = "--show-cli";  
+  public static final String SHOW_GUI_CLI_COMMAND = "--show-gui";  
 
   /**
    * The use rmi cli command.
