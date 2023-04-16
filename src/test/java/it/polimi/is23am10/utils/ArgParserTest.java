@@ -5,10 +5,10 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import it.polimi.is23am10.server.config.ServerConfig;
-import it.polimi.is23am10.server.config.ServerConfigContext;
-import it.polimi.is23am10.server.config.exceptions.InvalidMaxConnectionsNumberException;
-import it.polimi.is23am10.server.config.exceptions.InvalidPortNumberException;
+import it.polimi.is23am10.utils.config.AppConfig;
+import it.polimi.is23am10.utils.config.AppConfigContext;
+import it.polimi.is23am10.utils.config.exceptions.InvalidMaxConnectionsNumberException;
+import it.polimi.is23am10.utils.config.exceptions.InvalidPortNumberException;
 import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
 import it.polimi.is23am10.utils.exceptions.MissingParameterException;
 import org.junit.jupiter.api.Test;
@@ -27,12 +27,12 @@ public class ArgParserTest {
         "--socket-port", serverPort
     };
     ArgParser.parse(mockCommand);
-    assertEquals(Integer.parseInt(serverPort), ServerConfig.getServerSocketPort());
+    assertEquals(Integer.parseInt(serverPort), AppConfig.getServerSocketPort());
 
-    ServerConfigContext ctx = new ServerConfigContext();
+    AppConfigContext ctx = new AppConfigContext();
     assertEquals(Integer.parseInt(serverPort), ctx.getServerSocketPort());
-    assertEquals(ServerConfig.getKeepAlive(), ctx.getKeepAlive());
-    assertEquals(ServerConfig.getMaxConnections(), ctx.getMaxConnections());
+    assertEquals(AppConfig.getKeepAlive(), ctx.getKeepAlive());
+    assertEquals(AppConfig.getMaxConnections(), ctx.getMaxConnections());
   }
 
   @Test
@@ -44,12 +44,12 @@ public class ArgParserTest {
         "--rmi-port", serverPort
     };
     ArgParser.parse(mockCommand);
-    assertEquals(Integer.parseInt(serverPort), ServerConfig.getServerRmiPort());
+    assertEquals(Integer.parseInt(serverPort), AppConfig.getServerRmiPort());
 
-    ServerConfigContext ctx = new ServerConfigContext();
+    AppConfigContext ctx = new AppConfigContext();
     assertEquals(Integer.parseInt(serverPort), ctx.getServerRmiPort());
-    assertEquals(ServerConfig.getKeepAlive(), ctx.getKeepAlive());
-    assertEquals(ServerConfig.getMaxConnections(), ctx.getMaxConnections());
+    assertEquals(AppConfig.getKeepAlive(), ctx.getKeepAlive());
+    assertEquals(AppConfig.getMaxConnections(), ctx.getMaxConnections());
   }
 
   @Test
@@ -71,12 +71,12 @@ public class ArgParserTest {
         "--max-connections", serverMaxConnections
     };
     ArgParser.parse(mockCommand);
-    assertEquals(Integer.parseInt(serverMaxConnections), ServerConfig.getMaxConnections());
+    assertEquals(Integer.parseInt(serverMaxConnections), AppConfig.getMaxConnections());
 
-    ServerConfigContext ctx = new ServerConfigContext();
+    AppConfigContext ctx = new AppConfigContext();
     assertEquals(Integer.parseInt(serverMaxConnections), ctx.getMaxConnections());
-    assertEquals(ServerConfig.getKeepAlive(), ctx.getKeepAlive());
-    assertEquals(ServerConfig.getServerSocketPort(), ctx.getServerSocketPort());
+    assertEquals(AppConfig.getKeepAlive(), ctx.getKeepAlive());
+    assertEquals(AppConfig.getServerSocketPort(), ctx.getServerSocketPort());
   }
 
   @Test
@@ -98,12 +98,12 @@ public class ArgParserTest {
         "--keep-alive", serverKeepAlive
     };
     ArgParser.parse(mockCommand);
-    assertEquals(Boolean.parseBoolean(serverKeepAlive), ServerConfig.getKeepAlive());
+    assertEquals(Boolean.parseBoolean(serverKeepAlive), AppConfig.getKeepAlive());
 
-    ServerConfigContext ctx = new ServerConfigContext();
+    AppConfigContext ctx = new AppConfigContext();
     assertEquals(Boolean.parseBoolean(serverKeepAlive), ctx.getKeepAlive());
-    assertEquals(ServerConfig.getMaxConnections(), ctx.getMaxConnections());
-    assertEquals(ServerConfig.getServerSocketPort(), ctx.getServerSocketPort());
+    assertEquals(AppConfig.getMaxConnections(), ctx.getMaxConnections());
+    assertEquals(AppConfig.getServerSocketPort(), ctx.getServerSocketPort());
   }
 
   @Test
@@ -121,10 +121,10 @@ public class ArgParserTest {
     final String[] mockCommand = {
       "--is-server"
     };
-    assertFalse(ServerConfig.getIsServer());
+    assertFalse(AppConfig.getIsServer());
     ArgParser.parse(mockCommand);
 
-    ServerConfigContext ctx = new ServerConfigContext();
+    AppConfigContext ctx = new AppConfigContext();
     assertTrue(ctx.getIsServer());
   }
 
@@ -133,10 +133,10 @@ public class ArgParserTest {
     final String[] mockCommand = {
       "--show-gui"
     };
-    assertFalse(ServerConfig.getShowGUI());
+    assertFalse(AppConfig.getShowGUI());
     ArgParser.parse(mockCommand);
 
-    ServerConfigContext ctx = new ServerConfigContext();
+    AppConfigContext ctx = new AppConfigContext();
     assertTrue(ctx.getShowGUI());
   }
 
@@ -145,10 +145,10 @@ public class ArgParserTest {
     final String[] mockCommand = {
       "--use-rmi"
     };
-    assertFalse(ServerConfig.getUseRMI());
+    assertFalse(AppConfig.getUseRMI());
     ArgParser.parse(mockCommand);
 
-    ServerConfigContext ctx = new ServerConfigContext();
+    AppConfigContext ctx = new AppConfigContext();
     assertTrue(ctx.getUseRMI());
   }
 
@@ -159,10 +159,10 @@ public class ArgParserTest {
       "--address", ipAddress
     };
 
-    assertEquals("localhost", ServerConfig.getServerAddress());
+    assertEquals("localhost", AppConfig.getServerAddress());
     ArgParser.parse(mockCommand);
 
-    ServerConfigContext ctx = new ServerConfigContext();
+    AppConfigContext ctx = new AppConfigContext();
     assertEquals(ipAddress, ctx.getServerAddress());
   }
 

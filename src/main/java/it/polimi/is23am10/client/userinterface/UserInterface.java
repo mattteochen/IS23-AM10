@@ -26,18 +26,22 @@ public interface UserInterface {
    * Method called when the user wants to join an existing
    * game and has to pick between the available ones.
    * It assumes to receive only valid games.
+   * 
+   * @param availableGames list of valid joinable games.
    */
   void displayAvailableGames(List<VirtualView> availableGames);
 
   /**
    * Method called to display the state of the game.
    * 
+   * @param vw {@link VirtualView} of the game to display.
    */
   void displayVirtualView(VirtualView vw);
 
   /**
    * Method called to notify the user of a new message.
    * 
+   * @param message message to show to the user.
    */
   void displayChatMessage(AbstractMessage message);
 

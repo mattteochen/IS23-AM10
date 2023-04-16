@@ -1,13 +1,11 @@
-package it.polimi.is23am10.server.config;
+package it.polimi.is23am10.utils.config;
 
-import java.net.InetAddress;
-
-import it.polimi.is23am10.server.config.exceptions.InvalidMaxConnectionsNumberException;
-import it.polimi.is23am10.server.config.exceptions.InvalidPortNumberException;
+import it.polimi.is23am10.utils.config.exceptions.InvalidMaxConnectionsNumberException;
+import it.polimi.is23am10.utils.config.exceptions.InvalidPortNumberException;
 
 /**
- * The server config class definition.
- * If not set otherwise all the configuration parameters for the server
+ * The application config class definition.
+ * If not set otherwise all the configuration parameters for the application
  * are set to default values here.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
@@ -15,13 +13,13 @@ import it.polimi.is23am10.server.config.exceptions.InvalidPortNumberException;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public final class ServerConfig {
+public final class AppConfig {
 
   /**
    * Private constructor.
    * 
    */
-  private ServerConfig() {
+  private AppConfig() {
 
   }
 
@@ -83,7 +81,7 @@ public final class ServerConfig {
   /**
    * The interface to show if app is launched in Client mode.
    * If false launches client in CLI mode.
-   * If {@link ServerConfigContext#isServer} is true this flag is ignored,
+   * If {@link AppConfigContext#isServer} is true this flag is ignored,
    * as server mode only supports CLI as interface, and for logging purpose only.
    */
   private static boolean showGUI = false;
@@ -91,7 +89,7 @@ public final class ServerConfig {
     /**
    * The communication method to use if app is launched is Client Mode.
    * If false launches client over Socket connection.
-   * If {@link ServerConfigContext#isServer} is true this flag is ignored,
+   * If {@link AppConfigContext#isServer} is true this flag is ignored,
    * as server mode both receives RMI and socket connections
    */
   private static boolean useRMI = false;

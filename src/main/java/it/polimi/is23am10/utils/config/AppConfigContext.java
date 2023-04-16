@@ -1,10 +1,10 @@
-package it.polimi.is23am10.server.config;
+package it.polimi.is23am10.utils.config;
 
 /**
  * The server config context class definition.
  * 
  */
-public class ServerConfigContext {
+public class AppConfigContext {
 
   /**
    * The server socket port.
@@ -41,7 +41,7 @@ public class ServerConfigContext {
   /**
    * The interface to show if app is launched in Client mode.
    * If false launches client in CLI mode.
-   * If {@link ServerConfigContext#isServer} is true this flag is ignored,
+   * If {@link AppConfigContext#isServer} is true this flag is ignored,
    * as server mode only supports CLI as interface, and for logging purpose only.
    */
   private boolean showGUI;
@@ -49,7 +49,7 @@ public class ServerConfigContext {
   /**
    * The communication method to use if app is launched is Client Mode.
    * If false launches client over Socket connection.
-   * If {@link ServerConfigContext#isServer} is true this flag is ignored,
+   * If {@link AppConfigContext#isServer} is true this flag is ignored,
    * as server mode both receives RMI and socket connections
    */
   private boolean useRMI;
@@ -68,7 +68,7 @@ public class ServerConfigContext {
    * @param keepAlive      The socket keep alive flag.
    * 
    */
-  public ServerConfigContext(Integer serverSocketPort, Integer serverRmiPort,
+  public AppConfigContext(Integer serverSocketPort, Integer serverRmiPort,
       Integer maxConnections, boolean keepAlive, boolean isServer, boolean showGUI, boolean useRMI, String serverAddress) {
     this.serverSocketPort = serverSocketPort;
     this.serverRmiPort = serverRmiPort;
@@ -86,15 +86,15 @@ public class ServerConfigContext {
    *
    * 
    */
-  public ServerConfigContext() {
-    this.serverSocketPort = ServerConfig.getServerSocketPort();
-    this.serverRmiPort = ServerConfig.getServerRmiPort();
-    this.maxConnection = ServerConfig.getMaxConnections();
-    this.keepAlive = ServerConfig.getKeepAlive();
-    this.isServer = ServerConfig.getIsServer();
-    this.showGUI = ServerConfig.getShowGUI();
-    this.useRMI = ServerConfig.getUseRMI();
-    this.serverAddress = ServerConfig.getServerAddress();
+  public AppConfigContext() {
+    this.serverSocketPort = AppConfig.getServerSocketPort();
+    this.serverRmiPort = AppConfig.getServerRmiPort();
+    this.maxConnection = AppConfig.getMaxConnections();
+    this.keepAlive = AppConfig.getKeepAlive();
+    this.isServer = AppConfig.getIsServer();
+    this.showGUI = AppConfig.getShowGUI();
+    this.useRMI = AppConfig.getUseRMI();
+    this.serverAddress = AppConfig.getServerAddress();
   }
 
   /**

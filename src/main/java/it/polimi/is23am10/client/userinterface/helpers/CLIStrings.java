@@ -2,7 +2,7 @@ package it.polimi.is23am10.client.userinterface.helpers;
 
 /**
  * An helper class containing all the strings to display
- * to the user through UserInterface
+ * to the user through UserInterface.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)

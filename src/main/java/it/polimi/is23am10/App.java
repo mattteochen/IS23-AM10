@@ -7,9 +7,6 @@ import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.client.userinterface.GraphicUserInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.Server;
-import it.polimi.is23am10.server.config.ServerConfigContext;
-import it.polimi.is23am10.server.config.exceptions.InvalidMaxConnectionsNumberException;
-import it.polimi.is23am10.server.config.exceptions.InvalidPortNumberException;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
@@ -17,6 +14,9 @@ import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.utils.ArgParser;
+import it.polimi.is23am10.utils.config.AppConfigContext;
+import it.polimi.is23am10.utils.config.exceptions.InvalidMaxConnectionsNumberException;
+import it.polimi.is23am10.utils.config.exceptions.InvalidPortNumberException;
 import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
 import it.polimi.is23am10.utils.exceptions.MissingParameterException;
 
@@ -49,10 +49,15 @@ public class App {
    */
   protected final static Logger logger = LogManager.getLogger(App.class);
 
+  /**
+   * The main function. Entrypoint for both server and client.
+   * 
+   * @param args CLI arguments to parse.
+   */
   public static void main(String[] args) {
     try {
       ArgParser.parse(args);
-      ServerConfigContext ctx = new ServerConfigContext();
+      AppConfigContext ctx = new AppConfigContext();
 
       if (ctx.getIsServer()) {
         // SERVER MODE

@@ -1,12 +1,12 @@
 package it.polimi.is23am10.server;
 
-import it.polimi.is23am10.server.config.ServerConfigContext;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerSocket;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
+import it.polimi.is23am10.utils.config.AppConfigContext;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -103,7 +103,7 @@ public class Server {
    * @throws RemoteException
    *
    */
-  public void start(ServerConfigContext ctx) throws RemoteException {
+  public void start(AppConfigContext ctx) throws RemoteException {
     logger.info("Starting Spurious Dragon, try to kill me...");
     // https://www.youtube.com/watch?v=Jo6fKboqfMs&ab_channel=memesammler
 
