@@ -3,6 +3,9 @@ package it.polimi.is23am10.client.userinterface;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
@@ -17,12 +20,19 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  */
 public final class CommandLineInterface implements UserInterface {
 
+
+  /**
+   * Logger instance.
+   *
+   */
+  protected final Logger logger = LogManager.getLogger(CommandLineInterface.class);
+
   /**
    * {@inheritDoc}
    */
   public void displaySplashScreen() {
-    System.out.println(CLIStrings.welcomeString);
-    System.out.println(CLIStrings.joinOrCreateString);
+    logger.info(CLIStrings.welcomeString);
+    logger.info(CLIStrings.joinOrCreateString);
   }
 
   /**
@@ -30,11 +40,11 @@ public final class CommandLineInterface implements UserInterface {
    */
   public void displayAvailableGames(List<VirtualView> availableGames) {
     if (availableGames.isEmpty()) {
-      System.out.println(CLIStrings.noGamesString);
+      logger.warn(CLIStrings.noGamesString);
     } else {
-      System.out.println(CLIStrings.listGamesString);
+      logger.info(CLIStrings.listGamesString);
       availableGames
-          .forEach(ag -> System.out.println(String.format(CLIStrings.availableGameString,
+          .forEach(ag -> logger.info(String.format(CLIStrings.availableGameString,
               availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId())));
     }
   }
@@ -43,23 +53,22 @@ public final class CommandLineInterface implements UserInterface {
    * {@inheritDoc}
    */
   public void displayVirtualView(VirtualView vw) {
-    System.out.println(CLIStrings.currentStateString);
+    logger.info(CLIStrings.currentStateString);
     if (vw.isEnded()) {
-      System.out.println(CLIStrings.gameOverString);
+      logger.info(CLIStrings.gameOverString);
       vw.getPlayers()
           .stream()
           .sorted(Comparator.comparing(p -> p.getScore().getTotalScore(), Comparator.reverseOrder()))
-          .forEach(p -> System.out
-              .println(String.format(CLIStrings.playerScoreString, p.getPlayerName(), p.getScore().getTotalScore())));
-      System.out.println(String.format(CLIStrings.winnerString, vw.getWinnerPlayer().getPlayerName()));
+          .forEach(p -> logger.info(String.format(CLIStrings.playerScoreString, p.getPlayerName(), p.getScore().getTotalScore())));
+      logger.info(String.format(CLIStrings.winnerString, vw.getWinnerPlayer().getPlayerName()));
     } else {
       if (vw.isLastRound()) {
-        System.out.println(CLIStrings.lastRoundString);
+        logger.warn(CLIStrings.lastRoundString);
       }
-      System.out.println(String.format(CLIStrings.nowPlaying, vw.getActivePlayer().getPlayerName()));
+      logger.info(String.format(CLIStrings.nowPlaying, vw.getActivePlayer().getPlayerName()));
       // TODO: Prettyprint bookshelfs and board [blocked by #107]
-      System.out.println(CLIStrings.moveTilesInviteString);
-      System.out.println(CLIStrings.moveTilesExampleString);
+      logger.info(CLIStrings.moveTilesInviteString);
+      logger.info(CLIStrings.moveTilesExampleString);
     }
   }
 
@@ -67,7 +76,7 @@ public final class CommandLineInterface implements UserInterface {
    * {@inheritDoc}
    */
   public void displayChatMessage(AbstractMessage message) {
-    System.out.println(String.format(CLIStrings.messageString, message.getSender().getPlayerName(), message.getMessage()));
+    logger.info(String.format(CLIStrings.messageString, message.getSender().getPlayerName(), message.getMessage()));
   }
 
 }
