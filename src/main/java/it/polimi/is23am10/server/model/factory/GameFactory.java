@@ -9,6 +9,7 @@ import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.server.model.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.server.model.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.card.SharedCard;
@@ -62,6 +63,7 @@ public final class GameFactory {
    * @throws NullNumOfPlayersException
    * @throws NullAssignedPatternException
    * @throws NotValidScoreBlockValueException
+   * @throws PlayerNotFoundException
    * 
    */
   public static Game getNewGame(String startingPlayerName, Integer maxPlayerNum)
@@ -70,7 +72,7 @@ public final class GameFactory {
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException,
-      NullAssignedPatternException,FullGameException, NotValidScoreBlockValueException {
+      NullAssignedPatternException,FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
 
     Game game = new Game();
     game.setMaxPlayers(maxPlayerNum);
@@ -80,6 +82,8 @@ public final class GameFactory {
     game.addAssignedSharedPattern(secondCard.getPattern());
 
     game.addPlayer(startingPlayerName);
+    // For testing purposes, setting active player to the "creator" player. Will be randomized once all players join.
+    game.setActivePlayer(game.getPlayerByName(startingPlayerName));
     game.setGameBoard();
     game.setSharedCards(Arrays.asList(firstCard, secondCard));
     game.setEnded(false);
