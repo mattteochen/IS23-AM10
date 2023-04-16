@@ -82,6 +82,7 @@ public final class GameFactory {
     game.addAssignedSharedPattern(secondCard.getPattern());
 
     game.addPlayer(startingPlayerName);
+    // For testing purposes, setting active player to the "creator" player. Will be randomized once all players join.
     game.setActivePlayer(game.getPlayerByName(startingPlayerName));
     game.setGameBoard();
     game.setSharedCards(Arrays.asList(firstCard, secondCard));
