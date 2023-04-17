@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.PlayerFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
@@ -165,7 +166,7 @@ public class GameTest {
         throws NullPointerException, BookshelfGridColIndexOutOfBoundsException,
         BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
         NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException,
-        NullPlayerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+        NullPlayerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException, NullGameHandlerInstance {
       assertEquals(g.getActivePlayer(), p2);
       g.nextTurn();
       assertEquals(g.getActivePlayer(), p3);
@@ -180,7 +181,7 @@ public class GameTest {
         throws NullPlayerNameException,
         BookshelfGridColIndexOutOfBoundsException,
         BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
-        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException, PlayerNotFoundException, NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException, PlayerNotFoundException, NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException, NullGameHandlerInstance {
 
       g.setActivePlayer(p1);
       g.setWinnerPlayer(p1);
@@ -195,7 +196,7 @@ public class GameTest {
         throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
         NullIndexValueException, NullPointerException,
         BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException, NullGameHandlerInstance {
       // removing tiles as long as the board needs to be refilled
       for (int row = 0; row < Board.BOARD_GRID_ROWS; row++) {
         for (int col = 0; col < Board.BOARD_GRID_COLS; col++) {
@@ -272,7 +273,7 @@ public class GameTest {
         NullTileException, NullPlayerBookshelfException,
         NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException, NullPlayerException, 
         NullMatchedBlockCountException, NegativeMatchedBlockCountException, WrongMovesNumberException, 
-        WrongGameBoardPicksException, WrongBookShelfPicksException {
+        WrongGameBoardPicksException, WrongBookShelfPicksException, NullGameHandlerInstance {
       final Integer boardRow = 0;
       final Integer boardCol = 3;
       final Integer bsRow = 5;
