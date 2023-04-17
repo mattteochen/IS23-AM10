@@ -9,6 +9,7 @@ package it.polimi.is23am10.server.command;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class LogOutCommand extends AbstractCommand {
+    
   /**
    * The player name who has logged out.
    * 
