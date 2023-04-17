@@ -5,7 +5,7 @@ import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
-import it.polimi.is23am10.server.network.playerconnector.PlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -144,9 +144,9 @@ public final class ServerControllerState {
     }
     if (target.isPresent()) {
       AbstractPlayerConnector targetConnector = target.get();
-      if (targetConnector.getClass() == PlayerConnector.class) {
+      if (targetConnector.getClass() == PlayerConnectorSocket.class) {
         try {
-          ((PlayerConnector) targetConnector).getConnector().close();
+          ((PlayerConnectorSocket) targetConnector).getConnector().close();
         } catch (IOException e) {
           logger.error("Failed to close socket connection", e);
         }

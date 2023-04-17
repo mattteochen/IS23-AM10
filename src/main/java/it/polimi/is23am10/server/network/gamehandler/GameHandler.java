@@ -8,6 +8,7 @@ import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.server.model.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.server.model.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
@@ -79,6 +80,7 @@ public class GameHandler {
    * @throws NullAssignedPatternException
    * @throws FullGameException
    * @throws NotValidScoreBlockValueException
+   * @throws PlayerNotFoundException
    *
    */
   public GameHandler(String firstPlayerName, Integer maxPlayersNum)
@@ -86,7 +88,7 @@ public class GameHandler {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException,
-      NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException {
+      NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
     this.game = GameFactory.getNewGame(firstPlayerName, maxPlayersNum);
   }
 

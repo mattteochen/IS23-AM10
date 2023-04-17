@@ -3,7 +3,7 @@ package it.polimi.is23am10.client.examples;
 import com.google.gson.Gson;
 
 import it.polimi.is23am10.server.command.AddPlayerCommand;
-import it.polimi.is23am10.server.config.ServerConfig;
+import it.polimi.is23am10.utils.config.AppConfig;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -47,7 +47,7 @@ public class SocketClientAddPlayerExample {
     String message = gson.toJson(command);
 
     // establish socket connection to server
-    socket = new Socket(host.getHostName(), ServerConfig.getServerSocketPort());
+    socket = new Socket(host.getHostName(), AppConfig.getServerSocketPort());
 
     // write to socket using PrintWriter.
     printer = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_8);

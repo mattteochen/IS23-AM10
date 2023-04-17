@@ -1,4 +1,4 @@
-package it.polimi.is23am10.server.config.exceptions;
+package it.polimi.is23am10.utils.config.exceptions;
 
 /**
  * Custom exception for invalid max connections number.

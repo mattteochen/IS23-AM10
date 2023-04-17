@@ -5,7 +5,7 @@ import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.server.controller.interfaces.ControllerConsumer;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
-import it.polimi.is23am10.server.network.playerconnector.PlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +38,7 @@ public class ServerControllerAction implements IServerControllerAction {
 
   /**
    * Apply the callback to a specific {@link Opcode} received from a
-   * {@link PlayerConnector}.
+   * {@link PlayerConnectorSocket}.
    *
    * @param connector The player connector instance.
    * @param command   The deserialized command.

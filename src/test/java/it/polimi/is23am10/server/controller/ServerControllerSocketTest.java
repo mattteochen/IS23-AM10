@@ -30,6 +30,7 @@ import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.server.model.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.server.model.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
@@ -41,7 +42,7 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.network.messages.GameMessage;
-import it.polimi.is23am10.server.network.playerconnector.PlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
@@ -79,7 +80,7 @@ class TestingPurposesClass2 {
 class ServerControllerSocketTest {
 
   @Mock
-  PlayerConnector playerConnector;
+  PlayerConnectorSocket playerConnector;
 
   @Mock
   ServerControllerAction serverControllerAction;
@@ -97,7 +98,7 @@ class ServerControllerSocketTest {
   @Test
   void CONSTRUCTOR_should_BUILD_OBJECT() throws NullSocketConnectorException, NullBlockingQueueException {
     Socket socket = new Socket();
-    ServerControllerSocket testController = new ServerControllerSocket(new PlayerConnector(socket, new LinkedBlockingQueue<>()),
+    ServerControllerSocket testController = new ServerControllerSocket(new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>()),
         new ServerControllerAction());
     assertNotNull(testController);
   }
@@ -175,7 +176,7 @@ class ServerControllerSocketTest {
       InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
       NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
-      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException {
+      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
     Socket mockSocket = Mockito.mock(Socket.class);
     Game game = GameFactory.getNewGame("Steve", 4);
     VirtualView virtualView = new VirtualView(game);

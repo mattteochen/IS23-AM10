@@ -16,6 +16,7 @@ import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.server.model.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.server.model.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
@@ -378,7 +379,7 @@ class PrivatePatternFactoryTest {
       throws AlreadyInitiatedPatternException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, NullPlayerNamesException, NullMaxPlayerException,
-      InvalidMaxPlayerException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException {
+      InvalidMaxPlayerException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
     Game game = GameFactory.getNewGame("firstPlayer", 4);
     game.addPlayer("secondPlayer");
     game.addPlayer("thirdPlayer");
