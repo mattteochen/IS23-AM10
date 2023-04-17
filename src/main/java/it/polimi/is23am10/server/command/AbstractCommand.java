@@ -20,7 +20,8 @@ public abstract class AbstractCommand implements Serializable {
     START,
     ADD_PLAYER,
     MOVE_TILES,
-    NULL
+    NULL,
+    LOGOUT
   }
 
   /**
