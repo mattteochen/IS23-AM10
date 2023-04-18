@@ -313,6 +313,25 @@ public class Game implements Serializable {
   }
 
   /**
+   * Remove from the game the pointed player.
+   *
+   * @param playerName The player's name who has to be removed from the game.
+   * @throws PlayerNotFoundException
+   */
+  public void removePlayer(String playerName) throws PlayerNotFoundException {
+    Optional<Player> playerToRemove = players.stream()
+        .filter(o -> o.getPlayerName().equals(playerName))
+        .findFirst();
+    if (playerToRemove.isEmpty()) {
+      throw new PlayerNotFoundException();
+    }
+
+    players.remove(playerToRemove.get());
+
+    //TODO: if the removed player is the active or first
+  }
+
+  /**
    * Function that adds multiple players to game.
    *
    * @param players List of players to add.
@@ -480,8 +499,7 @@ public class Game implements Serializable {
    * @return Player matching provided name.
    * @throws PlayerNotFoundException
    */
-  public Player getPlayerByName(String playerName) throws
-      NullPlayerNameException, PlayerNotFoundException {
+  public Player getPlayerByName(String playerName) throws NullPlayerNameException, PlayerNotFoundException {
     if (playerName == null) {
       throw new NullPlayerNameException("[Class Game, method getPlayerByName]");
     }
@@ -538,7 +556,7 @@ public class Game implements Serializable {
    * from that card, the first available SB is given to the player.
    * 
    */
-  private void assignScoreBlocks(){
+  private void assignScoreBlocks() {
     sharedCards.forEach(c -> {
       if (c.getPattern().getRule().test(activePlayer.getBookshelf()) && !c.getCardWinners().contains(activePlayer)) {
         c.addCardWinner(activePlayer);
@@ -563,7 +581,7 @@ public class Game implements Serializable {
    */
   public void nextTurn()
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-      NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException, NullPointerException, 
+      NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException, NullPointerException,
       NullMatchedBlockCountException, NegativeMatchedBlockCountException {
     assignScoreBlocks();
     activePlayer.updateScore();
@@ -600,8 +618,8 @@ public class Game implements Serializable {
    * @throws NullIndexValueException
    * @throws NullTileException
    */
-  public void putTileAction(Tile t, Coordinates coord) throws
-      BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+  public void putTileAction(Tile t, Coordinates coord)
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException, NullTileException {
     activePlayer.getBookshelf().setBookshelfGridIndex(coord.getRow(), coord.getCol(), t);
   }
@@ -609,7 +627,8 @@ public class Game implements Serializable {
   /**
    * Quick helper function to determine if the player is the last in turn.
    *
-   * @param playerToCheck A reference player instance on which to operate the check.
+   * @param playerToCheck A reference player instance on which to operate the
+   *                      check.
    * @return Is playerToCheck the last one in turn
    */
   private boolean isLastPlayer(Player playerToCheck) {
@@ -662,7 +681,7 @@ public class Game implements Serializable {
   /**
    * Method that is called when all players joined
    * the game and the first one should be picked.
-   * Can be used in tests to force starting a game before 
+   * Can be used in tests to force starting a game before
    * the players threshold is met.
    */
   public void assignPlayers() {
@@ -720,11 +739,12 @@ public class Game implements Serializable {
       throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
       NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPlayerBookshelfException,
-      NullScoreBlockListException, NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException, 
+      NullScoreBlockListException, NullPointerException, NullMatchedBlockCountException,
+      NegativeMatchedBlockCountException,
       WrongMovesNumberException, WrongGameBoardPicksException, WrongBookShelfPicksException {
 
     MovesValidator.validateGameMoves(selectedCoordinates, activePlayer.getBookshelf(), gameBoard);
-    
+
     for (Map.Entry<Coordinates, Coordinates> entry : selectedCoordinates.entrySet()) {
       Coordinates boardCoord = entry.getKey();
       Coordinates bsCoord = entry.getValue();
