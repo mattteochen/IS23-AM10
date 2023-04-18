@@ -38,7 +38,7 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.network.gamehandler.GameHandler;
-import it.polimi.is23am10.server.network.playerconnector.PlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.MovesValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
