@@ -101,6 +101,7 @@ public class PlayerFactory {
     instance.setBookshelf(new Bookshelf());
     instance.setPrivateCard(privateCard);
     instance.setScoreBlocks(new ArrayList<>());
+    instance.setIsConnected(true);
 
     return instance;
   }

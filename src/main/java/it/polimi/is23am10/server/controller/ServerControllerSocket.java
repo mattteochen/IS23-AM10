@@ -109,8 +109,9 @@ public final class ServerControllerSocket implements Runnable {
       }
     }
     
-    if (!playerConnector.getConnector().isConnected()) {
+    if (!playerConnector.getConnector().isConnected() && playerConnector.getPlayer()!=null) {
       Player disconnectedPlayer = playerConnector.getPlayer();
+      disconnectedPlayer.setIsConnected(false);
       logger.info("Player {} disconnected", disconnectedPlayer);
       try {
         ServerControllerState.getGameHandlerByUUID(
