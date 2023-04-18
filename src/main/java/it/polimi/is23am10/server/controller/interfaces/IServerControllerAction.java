@@ -305,8 +305,7 @@ public interface IServerControllerAction extends Remote {
       Player player = playerConnector.getPlayer();
 
       gameHandler.removePlayerConnector(playerConnector);
-      gameHandler.getGame().removePlayer(player.getPlayerName());
-
+      
       logger.info("{} Logged out player {} from game {}",
           ServerDebugPrefixString.LOGOUT_COMMAND_PREFIX,
           player.getPlayerName(), gameId);
@@ -325,10 +324,6 @@ public interface IServerControllerAction extends Remote {
       logger.error("{} {} {}",
           ServerDebugPrefixString.LOGOUT_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INTERRUPTED, e);
-    } catch (PlayerNotFoundException e) {
-      logger.error("{} {} {}",
-          ServerDebugPrefixString.LOGOUT_COMMAND_PREFIX,
-          ErrorTypeString.ERROR_REMOVING_PLAYER, e);
     } finally {
       if (errorMsg != null) {
         try {
