@@ -46,6 +46,13 @@ public class Player implements Serializable {
   private String playerName;
 
   /**
+   * Status of the player.
+   * Tells us if he's connected or not.
+   * 
+   */
+  private boolean isConnected;
+
+  /**
    * The score storage for the player.
    * It groups all the possible score values that a player can earn during a game.
    * 
@@ -239,6 +246,24 @@ public class Player implements Serializable {
     score.setBookshelfPoints(bookshelf);
     score.setPrivatePoints(bookshelf, privateCard);
     score.setScoreBlockPoints(scoreBlocks);
+  }
+
+  /**
+   * Setter of connected status.
+   *
+   * @param status status of player connection.
+   */
+  public void setIsConnected(boolean status) {
+    this.isConnected = status;
+  }
+
+  /**
+   * Getter of connected status.
+   *
+   * @return status of player connection.
+   */
+  public boolean getIsConnected() {
+    return this.isConnected;
   }
 
   /**
