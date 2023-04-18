@@ -173,12 +173,12 @@ public interface IServerControllerAction extends Remote {
       if (gameHandler.getGame().getPlayerNames().contains(playerName) &&
           !gameHandler.getGame().getPlayerByName(playerName).getIsConnected()) {
         try {
-          ((PlayerConnector) gameHandler.getPlayerConnectors()
+          ((PlayerConnectorSocket) gameHandler.getPlayerConnectors()
               .stream()
               .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerName))
               .findFirst()
               .get())
-              .setConnector(((PlayerConnector) playerConnector).getConnector());
+              .setConnector(((PlayerConnectorSocket) playerConnector).getConnector());
 
           gameHandler.getGame().getPlayerByName(playerName).setIsConnected(true);
         } catch (NullSocketConnectorException e) {

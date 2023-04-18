@@ -576,10 +576,10 @@ public class Game implements Serializable {
       gameBoard.refillIfNeeded();
       int nextPlayerIdx = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size();
       
-      setActivePlayer(players.get(nextPlayerIdx));
-      if(!players.get(nextPlayerIdx).getIsConnected()){
-        nextTurn();
+      while(!players.get(nextPlayerIdx).getIsConnected()){
+        nextPlayerIdx = (nextPlayerIdx+ 1) % getPlayers().size();
       }
+      setActivePlayer(players.get(nextPlayerIdx));
     }
   }
 
@@ -638,7 +638,7 @@ public class Game implements Serializable {
       setLastRound();
     }
     // Regardless of bookshelf, if last player and lastRound, end game
-    if (lastRound && isLastPlayer(activePlayer)) {
+    if ((lastRound && isLastPlayer(activePlayer)) || players.stream().filter(p -> p.getIsConnected()).count() == 1) {
       endGame();
     }
   }
