@@ -61,13 +61,13 @@ public final class ErrorTypeString {
   public static final String ERROR_REMOVING_HANDLER = "Failed to remove game handler";
 
   /**
-   * Message error in adding game handler.
+   * Message error in removing player.
    *
    */
   public static final String ERROR_REMOVING_PLAYER = "Failed to remove player";
 
   /**
-   * Message error in adding game handler.
+   * Message error removing connector.
    *
    */
   public static final String ERROR_REMOVING_CONNECTOR = "Failed to remove connector";
