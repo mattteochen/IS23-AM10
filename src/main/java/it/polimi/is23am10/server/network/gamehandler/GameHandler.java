@@ -56,8 +56,7 @@ public class GameHandler {
    * The connected players connectors.
    *
    */
-  private Set<AbstractPlayerConnector> playerConnectors =
-      Collections.synchronizedSet(new HashSet<>());
+  private Set<AbstractPlayerConnector> playerConnectors = Collections.synchronizedSet(new HashSet<>());
 
   /**
    * Constructor.
@@ -88,7 +87,8 @@ public class GameHandler {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException,
-      NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
+      NullNumOfPlayersException, NullAssignedPatternException, FullGameException,
+      NotValidScoreBlockValueException, PlayerNotFoundException {
     this.game = GameFactory.getNewGame(firstPlayerName, maxPlayersNum);
   }
 
@@ -129,6 +129,21 @@ public class GameHandler {
   }
 
   /**
+   * Remove the following player connector from the socket server.
+   * Will accept a built instance of {@link AbstractPlayerConnector}
+   *
+   * @param playerConnector The connector to be removed from the current game.
+   * @throws NullPlayerConnector
+   */
+  public void removePlayerConnector(AbstractPlayerConnector playerConnector)
+      throws NullPlayerConnector {
+    if (playerConnector == null) {
+      throw new NullPlayerConnector();
+    }
+    playerConnectors.remove(playerConnector);
+  }
+
+  /**
    * Push a new game state to the message queue for each connected player.
    *
    * @throws InterruptedException
@@ -140,9 +155,9 @@ public class GameHandler {
       for (AbstractPlayerConnector pc : playerConnectors) {
         VirtualView gameCopy = new VirtualView(game);
         gameCopy.getPlayers()
-        .stream()
-        .filter(p -> !p.getPlayerName().equals(pc.getPlayer().getPlayerName()))
-        .forEach(p -> p.obfuscatePrivateCard());
+            .stream()
+            .filter(p -> !p.getPlayerName().equals(pc.getPlayer().getPlayerName()))
+            .forEach(p -> p.obfuscatePrivateCard());
         // synch is performed by the blocking queue.
         pc.addMessageToQueue(new GameMessage(gameCopy));
       }
