@@ -1,10 +1,11 @@
 package it.polimi.is23am10.server.controller.interfaces;
 
 import it.polimi.is23am10.server.command.AbstractCommand;
+import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
+import it.polimi.is23am10.server.command.LogOutCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
-import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.server.controller.ServerControllerState;
 import it.polimi.is23am10.server.controller.ServerDebugPrefixString;
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
@@ -39,6 +40,7 @@ import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.utils.ErrorTypeString;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
@@ -280,6 +282,60 @@ public interface IServerControllerAction extends Remote {
         } catch (InterruptedException e) {
           logger.error("{} {} {}",
               ServerDebugPrefixString.START_COMMAND_PREFIX,
+              ErrorTypeString.ERROR_INTERRUPTED, e);
+        }
+      }
+    }
+  };
+
+  /**
+   * The {@link Opcode#LOGOUT} command callback worker.
+   *
+   */
+  final ControllerConsumer logOutConsumer = (logger, playerConnector, command) -> {
+    ErrorMessage errorMsg = null;
+
+    try {
+      if (playerConnector == null) {
+        throw new NullPlayerConnector();
+      }
+      LogOutCommand logOutCommand = (LogOutCommand) command;
+      UUID gameId = logOutCommand.getGameId();
+      GameHandler gameHandler = ServerControllerState.getGameHandlerByUUID(gameId);
+      Player player = playerConnector.getPlayer();
+
+      gameHandler.removePlayerConnector(playerConnector);
+      gameHandler.getGame().removePlayer(player.getPlayerName());
+
+      logger.info("{} Logged out player {} from game {}",
+          ServerDebugPrefixString.LOGOUT_COMMAND_PREFIX,
+          player.getPlayerName(), gameId);
+
+      gameHandler.pushGameState();
+
+    } catch (NullGameHandlerInstance e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.LOGOUT_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_REMOVING_HANDLER, e);
+    } catch (NullPlayerConnector e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.LOGOUT_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_REMOVING_CONNECTOR, e);
+    } catch (InterruptedException e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.LOGOUT_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_INTERRUPTED, e);
+    } catch (PlayerNotFoundException e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.LOGOUT_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_REMOVING_PLAYER, e);
+    } finally {
+      if (errorMsg != null) {
+        try {
+          playerConnector.addMessageToQueue(errorMsg);
+        } catch (InterruptedException e) {
+          logger.error("{} {} {}",
+              ServerDebugPrefixString.LOGOUT_COMMAND_PREFIX,
               ErrorTypeString.ERROR_INTERRUPTED, e);
         }
       }
