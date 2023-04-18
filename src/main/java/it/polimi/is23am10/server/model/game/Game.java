@@ -313,25 +313,6 @@ public class Game implements Serializable {
   }
 
   /**
-   * Remove from the game the pointed player.
-   *
-   * @param playerName The player's name who has to be removed from the game.
-   * @throws PlayerNotFoundException
-   */
-  public void removePlayer(String playerName) throws PlayerNotFoundException {
-    Optional<Player> playerToRemove = players.stream()
-        .filter(o -> o.getPlayerName().equals(playerName))
-        .findFirst();
-    if (playerToRemove.isEmpty()) {
-      throw new PlayerNotFoundException();
-    }
-
-    players.remove(playerToRemove.get());
-
-    //TODO: if the removed player is the active or first
-  }
-
-  /**
    * Function that adds multiple players to game.
    *
    * @param players List of players to add.
