@@ -1,11 +1,11 @@
-package it.polimi.is23am10.server.config;
+package it.polimi.is23am10.utils.config;
 
-import it.polimi.is23am10.server.config.exceptions.InvalidMaxConnectionsNumberException;
-import it.polimi.is23am10.server.config.exceptions.InvalidPortNumberException;
+import it.polimi.is23am10.utils.config.exceptions.InvalidMaxConnectionsNumberException;
+import it.polimi.is23am10.utils.config.exceptions.InvalidPortNumberException;
 
 /**
- * The server config class definition.
- * If not set otherwise all the configuration parameters for the server
+ * The application config class definition.
+ * If not set otherwise all the configuration parameters for the application
  * are set to default values here.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
@@ -13,13 +13,13 @@ import it.polimi.is23am10.server.config.exceptions.InvalidPortNumberException;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public final class ServerConfig {
+public final class AppConfig {
 
   /**
    * Private constructor.
    * 
    */
-  private ServerConfig() {
+  private AppConfig() {
 
   }
 
@@ -73,6 +73,34 @@ public final class ServerConfig {
   private static boolean keepAlive = true;
 
   /**
+   * The kind of app to launch. If false launches a client.
+   * 
+   */
+  private static boolean isServer = false;
+
+  /**
+   * The interface to show if app is launched in Client mode.
+   * If false launches client in CLI mode.
+   * If {@link AppConfigContext#isServer} is true this flag is ignored,
+   * as server mode only supports CLI as interface, and for logging purpose only.
+   */
+  private static boolean showGUI = false;
+
+    /**
+   * The communication method to use if app is launched is Client Mode.
+   * If false launches client over Socket connection.
+   * If {@link AppConfigContext#isServer} is true this flag is ignored,
+   * as server mode both receives RMI and socket connections
+   */
+  private static boolean useRMI = false;
+
+  /**
+   * The network address where the server is running.
+   * 
+   */
+  private static String serverAddress = "localhost";
+
+  /**
    * Server port setter.
    *
    * @param p port number.
@@ -121,6 +149,46 @@ public final class ServerConfig {
   public static void setKeepAlive(boolean k) {
     keepAlive = k;
   }
+  
+  /**
+   * Keep alive setter.
+   *
+   * @param is launch server app
+   * 
+   */
+  public static void setIsServer(boolean is) {
+    isServer = is;
+  }
+
+  /**
+   * Show GUI setter.
+   *
+   * @param sg show GUI if client
+   * 
+   */
+  public static void setShowGUI(boolean sg) {
+    showGUI = sg;
+  }
+
+  /**
+   * Use RMI setter.
+   *
+   * @param rmi use RMI or not (socket).
+   * 
+   */
+  public static void setUseRMI(boolean rmi) {
+    useRMI = rmi;
+  }
+
+  /**
+   * Server address setter.
+   *
+   * @param address Server address.
+   * 
+   */
+  public static void setServerAddress(String address) {
+    serverAddress = address;
+  }
 
   /**
    * Server port getter.
@@ -160,5 +228,45 @@ public final class ServerConfig {
    */
   public static boolean getKeepAlive() {
     return keepAlive;
+  }
+
+  /**
+   * Is server getter.
+   *
+   * @return The isServer flag.
+   * 
+   */
+  public static boolean getIsServer() {
+    return isServer;
+  }
+
+  /**
+   * Show GUI getter.
+   *
+   * @return The show GUI flag.
+   * 
+   */
+  public static boolean getShowGUI() {
+    return showGUI;
+  }
+  
+  /**
+   * Use RMI getter.
+   *
+   * @return The use RMI flag.
+   * 
+   */
+  public static boolean getUseRMI() {
+    return useRMI;
+  }
+
+  /**
+   * Server address getter.
+   *
+   * @return The server address.
+   * 
+   */
+  public static String getServerAddress() {
+    return serverAddress;
   }
 }

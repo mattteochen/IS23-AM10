@@ -17,7 +17,7 @@ import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketCo
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 @SuppressWarnings({ "checkstyle:nonemptyatclausedescriptioncheck" })
-public class PlayerConnector extends AbstractPlayerConnector {
+public class PlayerConnectorSocket extends AbstractPlayerConnector {
   /**
    * The socket connection reference.
    *
@@ -34,7 +34,7 @@ public class PlayerConnector extends AbstractPlayerConnector {
    * @throws NullBlockingQueueException
    *
    */
-  public PlayerConnector(Socket connector, LinkedBlockingQueue<AbstractMessage> msgQueue)
+  public PlayerConnectorSocket(Socket connector, LinkedBlockingQueue<AbstractMessage> msgQueue)
       throws NullSocketConnectorException, NullBlockingQueueException {
     super(msgQueue);
     if (connector == null) {

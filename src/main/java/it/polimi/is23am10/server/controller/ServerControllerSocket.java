@@ -19,7 +19,7 @@ import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
-import it.polimi.is23am10.server.network.playerconnector.PlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.utils.ErrorTypeString;
 
 import java.io.BufferedReader;
@@ -51,11 +51,11 @@ public final class ServerControllerSocket implements Runnable {
   protected Logger logger = LogManager.getLogger(ServerControllerSocket.class);
 
   /**
-   * The single client connection instance of type {@link PlayerConnector}.
+   * The single client connection instance of type {@link PlayerConnectorSocket}.
    * This is the entry and exit point for out responsive application.
    *
    */
-  protected PlayerConnector playerConnector;
+  protected PlayerConnectorSocket playerConnector;
 
   /**
    * The {@link Gson} serializer and deserializer for game's
@@ -81,7 +81,7 @@ public final class ServerControllerSocket implements Runnable {
    *                               with the low level socket instance.
    * @param serverControllerAction The server action taker instance.
    */
-  public ServerControllerSocket(PlayerConnector playerConnector,
+  public ServerControllerSocket(PlayerConnectorSocket playerConnector,
       ServerControllerAction serverControllerAction) {
     this.playerConnector = playerConnector;
     this.serverControllerAction = serverControllerAction;
