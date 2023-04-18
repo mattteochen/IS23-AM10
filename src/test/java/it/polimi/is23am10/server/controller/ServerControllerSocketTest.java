@@ -113,8 +113,8 @@ class ServerControllerSocketTest {
     doNothing().when(controller).update();
     controller.run();
 
-    verify(playerConnector, times(2)).getConnector();
-    verify(mockSocket, times(2)).isConnected();
+    verify(playerConnector, times(3)).getConnector();
+    verify(mockSocket, times(3)).isConnected();
   }
 
   @Test

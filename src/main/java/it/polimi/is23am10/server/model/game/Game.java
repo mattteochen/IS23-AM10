@@ -568,28 +568,18 @@ public class Game implements Serializable {
   public void nextTurn()
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException, NullPointerException,
-      NullMatchedBlockCountException, NegativeMatchedBlockCountException, NullGameHandlerInstance {
+      NullMatchedBlockCountException, NegativeMatchedBlockCountException {
     assignScoreBlocks();
     activePlayer.updateScore();
     checkEndGame();
     if (!(getEnded())) {
       gameBoard.refillIfNeeded();
       int nextPlayerIdx = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size();
-
-      // gets player connector of that player
-      PlayerConnector c = ((PlayerConnector) ServerControllerState.getGameHandlerByUUID(getGameId())
-          .getPlayerConnectors()
-          .stream()
-          .filter(pc -> pc.getPlayer().equals(players.get(nextPlayerIdx)))
-          .findFirst()
-          .get());
-
-      // checks if player is still connected, otherwise skips turn
-      if (!c.getConnector()
-          .isConnected()) {
-            setActivePlayer(players.get(nextPlayerIdx+1));
-      }
+      
       setActivePlayer(players.get(nextPlayerIdx));
+      if(!players.get(nextPlayerIdx).getIsConnected()){
+        nextTurn();
+      }
     }
   }
 

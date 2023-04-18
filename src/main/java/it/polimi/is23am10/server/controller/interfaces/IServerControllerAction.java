@@ -39,11 +39,14 @@ import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.utils.ErrorTypeString;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.UUID;
@@ -167,23 +170,41 @@ public interface IServerControllerAction extends Remote {
       final UUID gameId = ((AddPlayerCommand) command).getGameId();
       final GameHandler gameHandler = ServerControllerState.getGameHandlerByUUID(gameId);
 
-      // add the new player in the game model.
-      // note, it is essential that the the model is updated first
-      // to avoid wrong parameters in connectors if any exception
-      // will be thrown from the model.
-      gameHandler.getGame().addPlayer(playerName);
+      if (gameHandler.getGame().getPlayerNames().contains(playerName) &&
+          !gameHandler.getGame().getPlayerByName(playerName).getIsConnected()) {
+        try {
+          ((PlayerConnector) gameHandler.getPlayerConnectors()
+              .stream()
+              .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerName))
+              .findFirst()
+              .get())
+              .setConnector(((PlayerConnector) playerConnector).getConnector());
 
-      final Player playerRef = gameHandler.getGame().getPlayerByName(playerName);
+          gameHandler.getGame().getPlayerByName(playerName).setIsConnected(true);
+        } catch (NullSocketConnectorException e) {
+          logger.error("{} {} {}",
+              ServerDebugPrefixString.START_COMMAND_PREFIX,
+              ErrorTypeString.ERROR_ADDING_PLAYERS, e);
+        }
+      } else {
+        // add the new player in the game model.
+        // note, it is essential that the the model is updated first
+        // to avoid wrong parameters in connectors if any exception
+        // will be thrown from the model.
+        gameHandler.getGame().addPlayer(playerName);
 
-      // populate the connector with the game and player reference.
-      playerConnector.setGameId(gameId);
-      playerConnector.setPlayer(playerRef);
+        final Player playerRef = gameHandler.getGame().getPlayerByName(playerName);
 
-      // add the new player connector instance to the game's player pool.
-      gameHandler.addPlayerConnector(playerConnector);
+        // populate the connector with the game and player reference.
+        playerConnector.setGameId(gameId);
+        playerConnector.setPlayer(playerRef);
 
-      // add the new player connector instance on the player pool.
-      ServerControllerState.addPlayerConnector(playerConnector);
+        // add the new player connector instance to the game's player pool.
+        gameHandler.addPlayerConnector(playerConnector);
+
+        // add the new player connector instance on the player pool.
+        ServerControllerState.addPlayerConnector(playerConnector);
+      }
 
       logger.info("{} Added new player {} to game {}",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
