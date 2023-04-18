@@ -1,5 +1,7 @@
 package it.polimi.is23am10.server.command;
 
+import java.util.UUID;
+
 /**
  * The log out command class definition.
  *
@@ -9,12 +11,18 @@ package it.polimi.is23am10.server.command;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class LogOutCommand extends AbstractCommand {
-    
+
   /**
    * The player name who has logged out.
    * 
    */
   private String playerName;
+
+  /**
+   * Game id to specify in which match this command
+   * is executed. Must match with game currently playing.
+   */
+  private UUID gameId;
 
   /**
    * An utility to be used during deserialization processes.
@@ -38,8 +46,15 @@ public class LogOutCommand extends AbstractCommand {
    *
    * @return The player name.
    */
-  public String getPlayerName(){
+  public String getPlayerName() {
     return playerName;
+  }
+
+  /**
+   * GameId getter.
+   */
+  public UUID getGameId() {
+    return gameId;
   }
 
   /**
