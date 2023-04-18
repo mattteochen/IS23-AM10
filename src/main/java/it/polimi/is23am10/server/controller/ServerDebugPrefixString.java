@@ -36,4 +36,10 @@ public final class ServerDebugPrefixString {
    *
    */
   public static final String MOVE_TILES_COMMAND_PREFIX = "MOVE_TILES ->";
+
+  /**
+   * {@link Opcode#LOGOUT} prefix string.
+   *
+   */
+  public static final String LOGOUT_COMMAND_PREFIX = "LOGOUT ->";
 }
