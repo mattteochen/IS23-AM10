@@ -638,7 +638,8 @@ public class Game implements Serializable {
       setLastRound();
     }
     // Regardless of bookshelf, if last player and lastRound, end game
-    if ((lastRound && isLastPlayer(activePlayer)) || players.stream().filter(p -> p.getIsConnected()).count() == 1) {
+    if ((lastRound && isLastPlayer(activePlayer)) 
+        || players.stream().filter(p -> p.getIsConnected()).count() == 1) {
       endGame();
     }
   }

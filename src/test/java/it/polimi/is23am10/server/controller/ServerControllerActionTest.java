@@ -1,5 +1,6 @@
 package it.polimi.is23am10.server.controller;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -37,6 +38,7 @@ import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlocking
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.utils.ErrorTypeString;
 
+import java.io.IOException;
 import java.net.Socket;
 import java.util.Optional;
 import java.util.UUID;
@@ -376,5 +378,47 @@ class ServerControllerActionTest {
     serverControllerAction.addPlayerConsumer.accept(logger, steve, steveCmd);
 
     assertFalse(handler.getPlayerConnectors().contains(steve));
+  }
+
+  @Test
+  void ADD_PLAYER_CONSUMER_should_add_player_trying_to_reconnect()
+      throws NullSocketConnectorException, NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+      NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
+      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException,
+      NullBlockingQueueException, IOException, InterruptedException {
+    Socket socket = new Socket();
+    GameHandler handler = new GameHandler("Max", 3);
+    ServerControllerState.addGameHandler(handler);
+    
+    PlayerConnectorSocket alice = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
+    AbstractCommand aliceCmd = new AddPlayerCommand("Alice", handler.getGame().getGameId());
+    
+    serverControllerAction.addPlayerConsumer.accept(logger, alice, aliceCmd);
+
+    PlayerConnectorSocket steve = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
+    AbstractCommand steveCmd = new AddPlayerCommand("Steve", handler.getGame().getGameId());
+    
+    serverControllerAction.addPlayerConsumer.accept(logger, steve, steveCmd);
+    
+    steve.getConnector().close();
+    steve.getPlayer().setIsConnected(false);
+    
+    assertFalse(steve.getConnector().isConnected());
+    assertFalse(steve.getPlayer().getIsConnected());
+    assertTrue(handler.getGame().getPlayerNames().contains("Steve"));
+    
+    Socket newSocket = new Socket(); 
+    PlayerConnectorSocket steveReconnecting = new PlayerConnectorSocket(newSocket, new LinkedBlockingQueue<>());
+    AbstractCommand steveReconnectingCmd = new AddPlayerCommand("Steve", handler.getGame().getGameId());
+    
+    serverControllerAction.addPlayerConsumer.accept(logger, steveReconnecting, steveReconnectingCmd);
+
+    assertTrue(handler.getPlayerConnectors().contains(steve));
+    assertTrue(handler.getGame().getPlayerNames().contains("Steve"));
+    assertEquals("Steve", steve.getPlayer().getPlayerName());
+    assertEquals(handler.getGame().getGameId(), steve.getGameId());
+    assertEquals(3, handler.getGame().getPlayers().size());
   }
 }
