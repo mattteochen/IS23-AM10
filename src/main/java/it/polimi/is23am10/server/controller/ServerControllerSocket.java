@@ -93,6 +93,7 @@ public final class ServerControllerSocket implements Runnable {
    */
   @Override
   public void run() {
+    
     while (playerConnector != null && playerConnector.getConnector().isConnected()) {
       try {
         AbstractCommand command = buildCommand();
@@ -108,18 +109,17 @@ public final class ServerControllerSocket implements Runnable {
         // thread.
       }
     }
-    
-    if (!playerConnector.getConnector().isConnected() && playerConnector.getPlayer()!=null) {
-      Player disconnectedPlayer = playerConnector.getPlayer();
-      disconnectedPlayer.setIsConnected(false);
-      logger.info("Player {} disconnected", disconnectedPlayer);
+
+    if (!playerConnector.getConnector().isConnected() && playerConnector.getPlayer() != null) {
+      playerConnector.getPlayer().setIsConnected(false);
+      logger.info("Player {} disconnected", playerConnector.getPlayer().getPlayerName());
       try {
         ServerControllerState.getGameHandlerByUUID(
             playerConnector.getGameId()).getPlayerConnectors()
             .forEach(pc -> {
               try {
                 pc.addMessageToQueue(
-                    new ErrorMessage(disconnectedPlayer + "disconnected from the game."));
+                    new ErrorMessage(playerConnector.getPlayer().getPlayerName() + "disconnected from the game."));
               } catch (InterruptedException e) {
                 logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
               }

@@ -407,6 +407,7 @@ class ServerControllerActionTest {
     
     assertFalse(steve.getConnector().isConnected());
     assertFalse(steve.getPlayer().getIsConnected());
+    assertEquals(handler.getGame().getPlayerByName("Steve"), steve.getPlayer());
     assertTrue(handler.getGame().getPlayerNames().contains("Steve"));
     
     Socket newSocket = new Socket(); 

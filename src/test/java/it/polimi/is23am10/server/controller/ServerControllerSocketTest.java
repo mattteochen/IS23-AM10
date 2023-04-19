@@ -20,8 +20,6 @@ import com.google.gson.JsonSyntaxException;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
-import it.polimi.is23am10.server.controller.ServerControllerAction;
-import it.polimi.is23am10.server.controller.ServerControllerSocket;
 import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
@@ -251,5 +249,11 @@ class ServerControllerSocketTest {
     when(playerConnector.getConnector()).thenReturn(mockSocket);
     when(mockSocket.getInputStream()).thenReturn(inputStream);
     assertThrows(JsonParseException.class, () -> controller.buildCommand());
+  }
+
+  @Test
+  void DISCONNECTION_should_send_messages_to_players() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException, IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException{
+    Socket mockSocket = Mockito.mock(Socket.class);
+    
   }
 }

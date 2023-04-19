@@ -263,7 +263,7 @@ public class Player implements Serializable {
    * @return status of player connection.
    */
   public boolean getIsConnected() {
-    return this.isConnected;
+    return isConnected;
   }
 
   /**
