@@ -421,5 +421,15 @@ class ServerControllerActionTest {
     assertEquals("Steve", steve.getPlayer().getPlayerName());
     assertEquals(handler.getGame().getGameId(), steve.getGameId());
     assertEquals(3, handler.getGame().getPlayers().size());
+    
+    /*
+     * I'm here removing the other messages that alice has in her queue 
+     * (the two virtual views of the game) sent when the other player
+     * connected to the game and then reconnected.
+     * The last message will be the message informing that Steve reconnected.
+     */
+    alice.getMessageFromQueue().get().getMessage();
+    alice.getMessageFromQueue().get().getMessage();
+    assertEquals("Steve reconnected to the game.", alice.getMessageFromQueue().get().getMessage());
   }
 }
