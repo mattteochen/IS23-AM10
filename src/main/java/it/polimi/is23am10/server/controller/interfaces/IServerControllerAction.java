@@ -181,6 +181,16 @@ public interface IServerControllerAction extends Remote {
               .setConnector(((PlayerConnectorSocket) playerConnector).getConnector());
 
           gameHandler.getGame().getPlayerByName(playerName).setIsConnected(true);
+          gameHandler.getPlayerConnectors()
+          .forEach(pc -> {
+            try {
+              pc.addMessageToQueue(
+                  new ErrorMessage(playerName + " reconnected to the game."));
+            } catch (InterruptedException e) {
+              logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
+            }
+          });
+
         } catch (NullSocketConnectorException e) {
           logger.error("{} {} {}",
               ServerDebugPrefixString.START_COMMAND_PREFIX,

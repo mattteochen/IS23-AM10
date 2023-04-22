@@ -110,7 +110,7 @@ public final class ServerControllerSocket implements Runnable {
       }
     }
 
-    if (!playerConnector.getConnector().isConnected() ) {
+    if (!playerConnector.getConnector().isConnected()) {
       playerConnector.getPlayer().setIsConnected(false);
       logger.info("Player {} disconnected", playerConnector.getPlayer().getPlayerName());
       try {
@@ -119,7 +119,8 @@ public final class ServerControllerSocket implements Runnable {
             .forEach(pc -> {
               try {
                 pc.addMessageToQueue(
-                    new ErrorMessage(playerConnector.getPlayer().getPlayerName() + " disconnected from the game."));
+                    new ErrorMessage(playerConnector.getPlayer().getPlayerName() 
+                    + " disconnected from the game."));
               } catch (InterruptedException e) {
                 logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
               }
