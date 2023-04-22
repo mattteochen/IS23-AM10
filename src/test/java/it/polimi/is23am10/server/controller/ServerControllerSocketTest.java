@@ -73,18 +73,21 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
-@SuppressWarnings({"checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck", "checkstyle:membernamecheck", "checkstyle:OuterTypeFilenameCheck"})
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck", "checkstyle:membernamecheck", "checkstyle:OuterTypeFilenameCheck" })
 class TestingPurposesClass {
   String s = "Before you marry a person, you should first make them use a computer with slow Internet to see who they really are";
 }
 
-@SuppressWarnings({"checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck"})
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck" })
 class TestingPurposesClass2 {
   String className = "I never forget a face but in your case, I’ll be glad to make an exception";
 }
 
 @RunWith(MockitoJUnitRunner.class)
-@SuppressWarnings({"deprecation", "unchecked", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck"})
+@SuppressWarnings({ "deprecation", "unchecked", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck",
+    "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck" })
 class ServerControllerSocketTest {
 
   @Mock
@@ -106,7 +109,8 @@ class ServerControllerSocketTest {
   @Test
   void CONSTRUCTOR_should_BUILD_OBJECT() throws NullSocketConnectorException, NullBlockingQueueException {
     Socket socket = new Socket();
-    ServerControllerSocket testController = new ServerControllerSocket(new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>()),
+    ServerControllerSocket testController = new ServerControllerSocket(
+        new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>()),
         new ServerControllerAction());
     assertNotNull(testController);
   }
@@ -191,7 +195,8 @@ class ServerControllerSocketTest {
       InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
       NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
-      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
+      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException,
+      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
     Socket mockSocket = Mockito.mock(Socket.class);
     Game game = GameFactory.getNewGame("Steve", 4);
     VirtualView virtualView = new VirtualView(game);
@@ -269,29 +274,34 @@ class ServerControllerSocketTest {
   }
 
   @Test
-  void DISCONNECTION_should_send_messages_to_players() throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException, IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullGameHandlerInstance{
-    Socket mockSocket = Mockito.mock(Socket.class);
-    PlayerConnectorSocket alivePlayerPC = new PlayerConnectorSocket(mockSocket, new LinkedBlockingQueue<>());
-    Player mockPlayer = Mockito.mock(Player.class);
-    GameHandler mockGameHandler = Mockito.mock(GameHandler.class);
-    //ServerControllerState mockServerControllerState = Mockito.mock(ServerControllerState.class);
-    MockedStatic<ServerControllerState> mockedStaticSCS = Mockito.mockStatic(ServerControllerState.class, Mockito.CALLS_REAL_METHODS);
-    AbstractCommand mockCmd = Mockito.mock(AbstractCommand.class);
- 
-    when(playerConnector.getPlayer()).thenReturn(mockPlayer);
-    when(mockPlayer.getPlayerName()).thenReturn("Steve");
-    when(playerConnector.getConnector()).thenReturn(mockSocket);
-    when(mockSocket.isConnected()).thenReturn(true, false, false);
-    //doReturn(mockGameHandler).when(mockedStaticSCS).getGameHandlerByUUID(any());
-    mockedStaticSCS.when(() -> ServerControllerState.getGameHandlerByUUID(any())).thenReturn(mockGameHandler);
-    //when(mockServerControllerState.getGameHandlerByUUID(any())).thenReturn(mockGameHandler);
-    when(mockGameHandler.getPlayerConnectors()).thenReturn(Set.of(alivePlayerPC));
-    doReturn(mockCmd).when(controller).buildCommand();
-    doNothing().when(serverControllerAction).execute(any(), any());
-    controller.run();
-    
-    assertFalse(mockPlayer.getIsConnected());
-    assertEquals("Steve disconnected from the game.", alivePlayerPC.getMessageFromQueue().get().getMessage());
+  void DISCONNECTION_should_send_messages_to_players()
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException,
+      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException, IOException, InterruptedException,
+      NullSocketConnectorException, NullBlockingQueueException, NullGameHandlerInstance {
+    try (MockedStatic<ServerControllerState> utilities = Mockito.mockStatic(ServerControllerState.class)) {
+      Socket mockSocket = Mockito.mock(Socket.class);
+      PlayerConnectorSocket alivePlayerPC = new PlayerConnectorSocket(mockSocket, new LinkedBlockingQueue<>());
+      Player mockPlayer = Mockito.mock(Player.class);
+      GameHandler mockGameHandler = Mockito.mock(GameHandler.class);
+      utilities.when(() -> ServerControllerState.getGameHandlerByUUID(any()))
+          .thenReturn(mockGameHandler);
+
+      AbstractCommand mockCmd = Mockito.mock(AbstractCommand.class);
+      when(playerConnector.getPlayer()).thenReturn(mockPlayer);
+      when(mockPlayer.getPlayerName()).thenReturn("Steve");
+      when(playerConnector.getConnector()).thenReturn(mockSocket);
+      when(mockSocket.isConnected()).thenReturn(true, false, false);
+      when(mockGameHandler.getPlayerConnectors()).thenReturn(Set.of(alivePlayerPC));
+      doReturn(mockCmd).when(controller).buildCommand();
+      doNothing().when(serverControllerAction).execute(any(), any());
+      controller.run();
+
+      assertFalse(mockPlayer.getIsConnected());
+      assertEquals("Steve disconnected from the game.", alivePlayerPC.getMessageFromQueue().get().getMessage());
+    }
 
   }
 }
