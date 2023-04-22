@@ -27,7 +27,7 @@ public interface UserInterface {
    * game and has to pick between the available ones.
    * It assumes to receive only valid games.
    * 
-   * @param availableGames list of valid joinable games.
+   * @param availableGames A list of valid joinable games.
    */
   void displayAvailableGames(List<VirtualView> availableGames);
 
@@ -39,11 +39,18 @@ public interface UserInterface {
   void displayVirtualView(VirtualView vw);
 
   /**
-   * Method called to notify the user of a new message.
+   * Method called to notify the user of a new chat message.
    * 
-   * @param message message to show to the user.
+   * @param message The message to show to the user.
    */
   void displayChatMessage(AbstractMessage message);
+
+  /**
+   * Method called to notify the user of a new error message.
+   * 
+   * @param message The error to show to the user.
+   */
+  void displayErrorMessage(AbstractMessage message);
 
   //TODO: Add other needed display methods if needed
 }

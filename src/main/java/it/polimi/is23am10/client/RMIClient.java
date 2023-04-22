@@ -1,5 +1,7 @@
 package it.polimi.is23am10.client;
 
+import java.net.UnknownHostException;
+
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 
@@ -19,9 +21,17 @@ public class RMIClient extends Client {
    * @param pc player connector
    * @param ui user interface
    */
-  public RMIClient(PlayerConnectorRmi pc, UserInterface ui) {
-    userInterface = ui;
-    playerConnector = pc;
+  public RMIClient(PlayerConnectorRmi pc, UserInterface ui) throws UnknownHostException {
+    super(pc, ui);
+  }
+
+  /**
+   * Client core cycle.
+   * Send user requested commands and read updates.
+   * 
+   */
+  @Override
+  public void run() {
   }
   
 }

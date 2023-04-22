@@ -8,7 +8,6 @@ import it.polimi.is23am10.client.userinterface.GraphicUserInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.Server;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
-import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
@@ -21,9 +20,9 @@ import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
 import it.polimi.is23am10.utils.exceptions.MissingParameterException;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.concurrent.Executors;
@@ -85,6 +84,8 @@ public class App {
     } catch (NumberFormatException | InvalidArgumentException | MissingParameterException | InvalidPortNumberException
         | InvalidMaxConnectionsNumberException e) {
       logger.error("Cannot parse CLI arguments.", e);
+    } catch(UnknownHostException e) {
+      logger.error("Failed to retrieve server address");
     } catch (IOException e) {
       logger.error("Cannot launch server.", e);
     } catch (NullBlockingQueueException | NullSocketConnectorException e) {

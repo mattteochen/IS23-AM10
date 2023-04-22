@@ -10,7 +10,7 @@ import it.polimi.is23am10.server.model.player.Player;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public abstract class AbstractMessage {
+public class AbstractMessage {
 
   /**
    * Message in string. Plaintext or JSON.

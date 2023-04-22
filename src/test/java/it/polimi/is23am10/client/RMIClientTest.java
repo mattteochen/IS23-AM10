@@ -2,6 +2,7 @@ package it.polimi.is23am10.client;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.net.UnknownHostException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketCo
 
 public class RMIClientTest {
   @Test
-  void constructor_should_create_RMIClientTest() throws NullSocketConnectorException, NullBlockingQueueException {
+  void constructor_should_create_RMIClientTest() throws NullSocketConnectorException, NullBlockingQueueException, UnknownHostException {
     PlayerConnectorRmi pc = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
     UserInterface ui = new CommandLineInterface();
 

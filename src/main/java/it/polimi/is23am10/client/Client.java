@@ -1,5 +1,8 @@
 package it.polimi.is23am10.client;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
@@ -20,7 +23,25 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  * 
  */
-public abstract class Client {
+public abstract class Client implements Runnable {
+
+  /**
+   * Protected constructor for client using Socket as communication method.
+   * 
+   * @param pc player connector
+   * @param ui user interface
+   */
+  protected Client(AbstractPlayerConnector pc, UserInterface ui) throws UnknownHostException {
+    playerConnector = pc;
+    userInterface = ui;
+    serverAddress = InetAddress.getLocalHost();
+  }
+
+  /**
+   * The server host IP address.
+   * 
+   */
+  protected InetAddress serverAddress;
 
   /**
    * Player connector. Allows the client to communicate with the server
