@@ -28,7 +28,8 @@ public abstract class AbstractMessage {
   public enum MessageType {
     GAME_SNAPSHOT,
     CHAT_MESSAGE,
-    ERROR_MESSAGE
+    ERROR_MESSAGE,
+    AVAILABLE_GAMES
   }
 
   /**
