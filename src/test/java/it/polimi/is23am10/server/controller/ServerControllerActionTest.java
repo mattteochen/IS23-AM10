@@ -415,7 +415,7 @@ class ServerControllerActionTest {
     serverControllerAction.getAvailableGamesConsumer.accept(logger, playerConnector, gagCommand);
 
     assertEquals(1, playerConnector.getMsgQueueSize());
-    AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue().get();
+    AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue();
     assertNotNull(msg);
     assertNotNull(msg.getAvailableGames());
     assertEquals(3, msg.getAvailableGames().size());
@@ -454,7 +454,7 @@ class ServerControllerActionTest {
     serverControllerAction.getAvailableGamesConsumer.accept(logger, playerConnector, gagCommand);
 
     assertEquals(1, playerConnector.getMsgQueueSize());
-    AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue().get();
+    AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue();
     assertNotNull(msg);
     assertNotNull(msg.getAvailableGames());
     assertEquals(2, msg.getAvailableGames().size());
