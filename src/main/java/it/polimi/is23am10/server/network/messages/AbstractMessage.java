@@ -30,7 +30,8 @@ public class AbstractMessage implements Serializable {
   public enum MessageType {
     GAME_SNAPSHOT,
     CHAT_MESSAGE,
-    ERROR_MESSAGE
+    ERROR_MESSAGE,
+    AVAILABLE_GAMES
   }
 
   /**

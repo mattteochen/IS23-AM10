@@ -38,8 +38,10 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
+import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
+import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.ErrorTypeString;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
@@ -49,7 +51,9 @@ import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * The server controller action interface definition.
@@ -251,6 +255,28 @@ public interface IServerControllerAction extends Remote {
               ErrorTypeString.ERROR_INTERRUPTED, e);
         }
       }
+    }
+  };
+
+  /**
+   * The {@link Opcode#GET_GAMES} command callback worker.
+   *
+   */
+  final ControllerConsumer getAvailableGamesConsumer = (logger, playerConnector, command) -> {
+
+    List<VirtualView> availableGames = ServerControllerState.getGamePools()
+    .stream()
+    .map(gh -> gh.getGame())
+    .filter(g -> g.getPlayers().size() < g.getMaxPlayer())
+    .map(g -> new VirtualView(g))
+    .collect(Collectors.toList());
+
+    try {
+      playerConnector.addMessageToQueue(new AvailableGamesMessage(availableGames, playerConnector.getPlayer()));
+    } catch (InterruptedException e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.START_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_INTERRUPTED, e);
     }
   };
 

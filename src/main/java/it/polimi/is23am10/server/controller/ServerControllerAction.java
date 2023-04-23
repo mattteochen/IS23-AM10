@@ -34,7 +34,8 @@ public class ServerControllerAction implements IServerControllerAction {
   private final Map<Opcode, ControllerConsumer> actions = Map.of(
       Opcode.START, startConsumer,
       Opcode.ADD_PLAYER, addPlayerConsumer,
-      Opcode.MOVE_TILES, moveTilesConsumer);
+      Opcode.MOVE_TILES, moveTilesConsumer,
+      Opcode.GET_GAMES, getAvailableGamesConsumer);
 
   /**
    * Apply the callback to a specific {@link Opcode} received from a
