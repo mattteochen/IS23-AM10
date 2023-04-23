@@ -28,12 +28,12 @@ public final class AvailableGamesMessage extends AbstractMessage {
     .create();
   
   /**
-   * Not mandatory. Not null if direct message.
+   * The list with available games.
    */
   private List<VirtualView> availableGames;
 
   /**
-   * Not mandatory. Not null if direct message.
+   * Player receiving the list.
    */
   private Player receiver;
 
