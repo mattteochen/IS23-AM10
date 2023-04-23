@@ -5,6 +5,7 @@ import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
+import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
 import it.polimi.is23am10.server.controller.ServerControllerState;
 import it.polimi.is23am10.server.controller.ServerDebugPrefixString;
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
@@ -44,6 +45,8 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.UUID;
@@ -95,6 +98,11 @@ public interface IServerControllerAction extends Remote {
       // add the new player connector instance on the player pool.
       ServerControllerState.addPlayerConnector(playerConnector);
 
+      // if RMI, rebind the connector
+      if (playerConnector.getClass() == PlayerConnectorRmi.class) {
+        ServerControllerRmiBindings.rebindPlayerConnector(playerConnector);
+      }
+
       // add the new player connector to the game handler.
       gameHandler.addPlayerConnector(playerConnector);
 
@@ -137,6 +145,10 @@ public interface IServerControllerAction extends Remote {
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INTERRUPTED, e);
       errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INTERRUPTED);
+    } catch (RemoteException e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.START_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_RMI_EXPOSURE, e);
     } finally {
       if (errorMsg != null) {
         try {
@@ -185,6 +197,11 @@ public interface IServerControllerAction extends Remote {
       // add the new player connector instance on the player pool.
       ServerControllerState.addPlayerConnector(playerConnector);
 
+      // if RMI, rebind the connector
+      if (playerConnector.getClass() == PlayerConnectorRmi.class) {
+        ServerControllerRmiBindings.rebindPlayerConnector(playerConnector);
+      }
+
       logger.info("{} Added new player {} to game {}",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           playerName, gameId);
@@ -196,37 +213,41 @@ public interface IServerControllerAction extends Remote {
         | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
         | NullAssignedPatternException | PlayerNotFoundException e) {
       logger.error("{} {} {}",
-          ServerDebugPrefixString.START_COMMAND_PREFIX,
+          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_PLAYERS, e);
       errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS);
     } catch (DuplicatePlayerNameException | FullGameException e) {
       logger.error("{} {} {}",
-          ServerDebugPrefixString.START_COMMAND_PREFIX,
+          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_PLAYERS, e);
       errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS);
     } catch (NullPlayerConnector e) {
       // TODO: as we have a null connector, the model should expose something to
       // remove the player.
       logger.error("{} {} {}",
-          ServerDebugPrefixString.START_COMMAND_PREFIX,
+          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_CONNECTOR, e);
     } catch (InterruptedException e) {
       logger.error("{} {} {}",
-          ServerDebugPrefixString.START_COMMAND_PREFIX,
+          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INTERRUPTED, e);
       errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INTERRUPTED);
     } catch (NullGameHandlerInstance e) {
       logger.error("{} {} {}",
-          ServerDebugPrefixString.START_COMMAND_PREFIX,
+          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_HANDLER, e);
       errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS);
+    } catch (RemoteException e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_RMI_EXPOSURE, e);
     } finally {
       if (errorMsg != null) {
         try {
           playerConnector.addMessageToQueue(errorMsg);
         } catch (InterruptedException e) {
           logger.error("{} {} {}",
-              ServerDebugPrefixString.START_COMMAND_PREFIX,
+              ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
               ErrorTypeString.ERROR_INTERRUPTED, e);
         }
       }
@@ -255,7 +276,7 @@ public interface IServerControllerAction extends Remote {
           handler.getGame().getGameId());
     } catch (NullGameHandlerInstance e) {
       logger.error("{} {} {}",
-          ServerDebugPrefixString.START_COMMAND_PREFIX,
+          ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_HANDLER, e);
     } catch (BoardGridColIndexOutOfBoundsException | BoardGridRowIndexOutOfBoundsException
         | BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
@@ -270,7 +291,7 @@ public interface IServerControllerAction extends Remote {
       errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INVALID_MOVE);
     } catch (InterruptedException e) {
       logger.error("{} {} {}",
-          ServerDebugPrefixString.START_COMMAND_PREFIX,
+          ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INTERRUPTED, e);
       errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INTERRUPTED);
     } finally {
@@ -279,7 +300,7 @@ public interface IServerControllerAction extends Remote {
           playerConnector.addMessageToQueue(errorMsg);
         } catch (InterruptedException e) {
           logger.error("{} {} {}",
-              ServerDebugPrefixString.START_COMMAND_PREFIX,
+              ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
               ErrorTypeString.ERROR_INTERRUPTED, e);
         }
       }

@@ -1,14 +1,12 @@
 package it.polimi.is23am10.server.network.virtualview;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import it.polimi.is23am10.server.model.game.Game;
 import it.polimi.is23am10.server.model.items.board.Board;
-import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
-import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
-import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 /**
  * A virtual view with the state of the game, downscoped
@@ -19,8 +17,8 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public final class VirtualView {
-  
+public final class VirtualView implements Serializable {
+
   /**
    * Unique Game identifier
    */
@@ -60,7 +58,7 @@ public final class VirtualView {
    * 1-12 number referencing the shared cards to show
    */
   private List<Integer> sharedCardsIndexes;
-  
+
   /**
    * Boolean flag signaling game is over
    */
@@ -71,9 +69,10 @@ public final class VirtualView {
    * last round.
    */
   private boolean lastRound;
-  
+
   /**
    * Getter for game id
+   * 
    * @return game id
    */
   public UUID getGameId() {
@@ -82,6 +81,7 @@ public final class VirtualView {
 
   /**
    * Getter for player list ({@link VirtualPlayer})
+   * 
    * @return player list
    */
   public List<VirtualPlayer> getPlayers() {
@@ -90,6 +90,7 @@ public final class VirtualView {
 
   /**
    * Getter for max players
+   * 
    * @return max players
    */
   public Integer getMaxPlayers() {
@@ -98,6 +99,7 @@ public final class VirtualView {
 
   /**
    * Getter for active player
+   * 
    * @return active player
    */
   public VirtualPlayer getActivePlayer() {
@@ -106,6 +108,7 @@ public final class VirtualView {
 
   /**
    * Getter for first player
+   * 
    * @return first player
    */
   public VirtualPlayer getFirstPlayer() {
@@ -114,6 +117,7 @@ public final class VirtualView {
 
   /**
    * Getter for winner player
+   * 
    * @return winner player
    */
   public VirtualPlayer getWinnerPlayer() {
@@ -122,6 +126,7 @@ public final class VirtualView {
 
   /**
    * Getter for game board
+   * 
    * @return game board
    */
   public Board getGameBoard() {
@@ -130,6 +135,7 @@ public final class VirtualView {
 
   /**
    * Getter for shared cards indexes
+   * 
    * @return shared cards indexes
    */
   public List<Integer> getSharedCardsIndexes() {
@@ -138,6 +144,7 @@ public final class VirtualView {
 
   /**
    * Getter for ended
+   * 
    * @return is game ended
    */
   public boolean isEnded() {
@@ -146,16 +153,16 @@ public final class VirtualView {
 
   /**
    * Getter for last round
+   * 
    * @return is game in last round
    */
   public boolean isLastRound() {
     return lastRound;
   }
 
-
-
   /**
    * Public constructor. Builds VirtualView out of {@link Game}
+   * 
    * @param g instance of {@link Game} to "virtualize"
    */
   public VirtualView(Game g) {
@@ -167,16 +174,15 @@ public final class VirtualView {
     this.lastRound = g.isLastRound();
     this.maxPlayers = g.getMaxPlayer();
     this.players = g.getPlayers()
-      .stream()
-      .map(p -> new VirtualPlayer(p))
-      .collect(Collectors.toList());
+        .stream()
+        .map(p -> new VirtualPlayer(p))
+        .collect(Collectors.toList());
     this.sharedCardsIndexes = g.getSharedCard()
-      .stream()
-      .map(c -> c.getPattern().getIndex())
-      .collect(Collectors.toList());
+        .stream()
+        .map(c -> c.getPattern().getIndex())
+        .collect(Collectors.toList());
     this.winnerPlayer = g.getWinnerPlayer() == null ? null : new VirtualPlayer(g.getWinnerPlayer());
   }
-
 
   /**
    * {@inheritDoc}
@@ -188,9 +194,7 @@ public final class VirtualView {
     }
 
     VirtualView view = (VirtualView) obj;
-    return (
-      gameId.equals(view.getGameId())
-    );
+    return (gameId.equals(view.getGameId()));
   }
 
   /**

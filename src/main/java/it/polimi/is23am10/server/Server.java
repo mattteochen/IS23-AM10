@@ -1,6 +1,7 @@
 package it.polimi.is23am10.server;
 
 import it.polimi.is23am10.server.controller.ServerControllerAction;
+import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
 import it.polimi.is23am10.server.controller.ServerControllerSocket;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
@@ -13,7 +14,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.logging.log4j.LogManager;
@@ -58,40 +58,23 @@ public class Server {
   protected ExecutorService executorService;
 
   /**
-   * RMI server instance.
-   *
-   */
-  protected IServerControllerAction rmiServer;
-
-  /**
-   * RMI stub instance.
-   *
-   */
-  protected IServerControllerAction rmiStub;
-
-  /**
-   * RMI registry instance.
-   *
-   */
-  Registry rmiRegistry;
-
-  /**
    * Constructor.
    *
-   * @param serverSocket The server socket reference of a newly connected client.
-   * @param executorService The built thread executor service.
-   * @param rmiServer An built instance of the implementing class.
-   * @param rmiRegistry A built instance of the RMI registry.
+   * @param serverSocket                    The server socket reference of a newly
+   *                                        connected client.
+   * @param executorService                 The built thread executor service.
+   * @param rmiServerControllerActionServer An built instance of the implementing
+   *                                        class.
+   * @param rmiRegistry                     A built instance of the RMI registry.
    * @throws RemoteException
    *
    */
   public Server(ServerSocket serverSocket, ExecutorService executorService,
-      IServerControllerAction rmiServer, Registry rmiRegistry) throws RemoteException {
+      IServerControllerAction rmiServerControllerActionServer, Registry rmiRegistry) throws RemoteException {
     this.executorService = executorService;
     this.serverSocket = serverSocket;
-    this.rmiServer = rmiServer;
-    this.rmiStub = (IServerControllerAction) UnicastRemoteObject.exportObject(this.rmiServer, 0);
-    this.rmiRegistry = rmiRegistry;
+    ServerControllerRmiBindings.setRmiRegistry(rmiRegistry);
+    ServerControllerRmiBindings.rebindServerControllerAction(rmiServerControllerActionServer);
   }
 
   /**
@@ -107,9 +90,7 @@ public class Server {
     logger.info("Starting Spurious Dragon, try to kill me...");
     // https://www.youtube.com/watch?v=Jo6fKboqfMs&ab_channel=memesammler
 
-    //start the rmi server
-    rmiRegistry.rebind("IServerControllerAction", rmiStub);
-    //start the socket server
+    // start the socket server
     while (!serverSocket.isClosed()) {
       try {
         Socket client = serverSocket.accept();

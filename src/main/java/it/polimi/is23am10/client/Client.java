@@ -3,8 +3,11 @@ package it.polimi.is23am10.client;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import com.google.gson.Gson;
+
 import it.polimi.is23am10.client.userinterface.UserInterface;
-import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
+import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
 /**
@@ -31,11 +34,25 @@ public abstract class Client implements Runnable {
    * @param pc player connector
    * @param ui user interface
    */
-  protected Client(AbstractPlayerConnector pc, UserInterface ui) throws UnknownHostException {
+  protected Client(IPlayerConnector pc, UserInterface ui) throws UnknownHostException {
     playerConnector = pc;
     userInterface = ui;
     serverAddress = InetAddress.getLocalHost();
+    gson = new Gson();
+    requestedDisconnection = false;
   }
+
+  /**
+   * Clean disconnection request.
+   * 
+   */
+  private boolean requestedDisconnection;
+
+  /**
+   * A {@link Gson} instance to serialize and deserialize commands.
+   * 
+   */
+  protected Gson gson;
 
   /**
    * The server host IP address.
@@ -47,7 +64,7 @@ public abstract class Client implements Runnable {
    * Player connector. Allows the client to communicate with the server
    * and receive updates (game snapshots, chat messages)
    */
-  protected static AbstractPlayerConnector playerConnector;
+  protected IPlayerConnector playerConnector;
 
   /**
    * Instance of the game currently played on client.
@@ -55,12 +72,42 @@ public abstract class Client implements Runnable {
    * at each turn with the updated instance arriving in playerConnector's queue
    * Completely replaced when starting new games.
    */
-  protected static VirtualView virtualView;
+  protected VirtualView virtualView;
 
   /**
    * Interface used for communicating with the user. Can be either
    * graphical or textual. Only output methods are exposed by interface.
    */
-  protected static UserInterface userInterface;
+  protected UserInterface userInterface;
 
+  /**
+   * Detected if the use has requested a clean disconnection.
+   *
+   * @returns The disconnection flag.
+   *
+   */
+  protected boolean hasRequestedDisconnection() {
+    return requestedDisconnection;
+  }
+
+  /**
+   * Parse the server payload.
+   * 
+   * @param pc The socket player connector.
+   *
+   */
+  protected void showServerMessage(AbstractMessage msg) {
+    switch (msg.getMessageType()) {
+      case CHAT_MESSAGE:
+        userInterface.displayChatMessage(msg);
+        break;
+      case GAME_SNAPSHOT:
+        userInterface.displayVirtualView(gson.fromJson(msg.getMessage(), VirtualView.class));
+        break;
+      case ERROR_MESSAGE:
+        userInterface.displayErrorMessage(msg);
+        break;
+      default:
+    }
+  }
 }

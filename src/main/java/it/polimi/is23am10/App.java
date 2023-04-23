@@ -8,6 +8,7 @@ import it.polimi.is23am10.client.userinterface.GraphicUserInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.Server;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
+import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.rmi.NotBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.concurrent.Executors;
@@ -73,22 +75,24 @@ public class App {
           Registry registry = LocateRegistry.getRegistry(ctx.getServerRmiPort());
           // TODO: Lookup for server controller action. Evaluate possible passing it over
           PlayerConnectorRmi playerConnector = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
-          client = new RMIClient(playerConnector, userInterface);
+          IServerControllerAction serverControllerActionServerRef = (IServerControllerAction) registry
+              .lookup(IServerControllerAction.class.getName());
+          client = new RMIClient(playerConnector, userInterface, null, serverControllerActionServerRef, registry);
         } else {
           Socket socket = new Socket(ctx.getServerAddress(), ctx.getServerSocketPort());
           PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
           client = new SocketClient(playerConnector, userInterface);
         }
-        // TODO: run client
+        client.run();
       }
     } catch (NumberFormatException | InvalidArgumentException | MissingParameterException | InvalidPortNumberException
         | InvalidMaxConnectionsNumberException e) {
       logger.error("Cannot parse CLI arguments.", e);
-    } catch(UnknownHostException e) {
+    } catch (UnknownHostException e) {
       logger.error("Failed to retrieve server address");
     } catch (IOException e) {
       logger.error("Cannot launch server.", e);
-    } catch (NullBlockingQueueException | NullSocketConnectorException e) {
+    } catch (NullBlockingQueueException | NullSocketConnectorException | NotBoundException e) {
       logger.error("Cannot launch client.", e);
     }
   }
