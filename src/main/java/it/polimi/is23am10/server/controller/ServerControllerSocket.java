@@ -12,6 +12,7 @@ import com.google.gson.JsonSyntaxException;
 
 import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
+import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
@@ -175,6 +176,8 @@ public final class ServerControllerSocket implements Runnable {
           return context.deserialize(jsonObject, AddPlayerCommand.class);
         case "it.polimi.is23am10.server.command.MoveTilesCommand":
           return context.deserialize(jsonObject, MoveTilesCommand.class);
+        case "it.polimi.is23am10.server.command.GetAvailableGamesCommand":
+          return context.deserialize(jsonObject, GetAvailableGamesCommand.class);
         default:
           throw new JsonParseException("Unknown class name: " + className);
       }
