@@ -3,6 +3,8 @@ package it.polimi.is23am10.client.userinterface;
 import java.util.List;
 
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
 /**
@@ -39,11 +41,18 @@ public interface UserInterface {
   void displayVirtualView(VirtualView vw);
 
   /**
-   * Method called to notify the user of a new message.
+   * Method called to notify the user of a new chat message.
    * 
    * @param message message to show to the user.
    */
-  void displayChatMessage(AbstractMessage message);
+  void displayChatMessage(ChatMessage message);
+
+  /**
+   * Method called to notify the user of an error.
+   * 
+   * @param message message to show to the user.
+   */
+  void displayError(ErrorMessage errorMessage);
 
   //TODO: Add other needed display methods if needed
 }

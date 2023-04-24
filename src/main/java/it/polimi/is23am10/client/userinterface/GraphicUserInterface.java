@@ -3,6 +3,8 @@ package it.polimi.is23am10.client.userinterface;
 import java.util.List;
 
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
 /**
@@ -39,7 +41,14 @@ public final class GraphicUserInterface implements UserInterface{
   /**
    * {@inheritDoc}
    */
-  public void displayChatMessage(AbstractMessage message) {
+  public void displayChatMessage(ChatMessage message) {
+    // TODO Auto-generated method stub
+  }
+
+  /**
+   * {@inheritDoc}}
+   */
+  public void displayError(ErrorMessage errorMessage) {
     // TODO Auto-generated method stub
   }
   

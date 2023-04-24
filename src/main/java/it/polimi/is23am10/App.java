@@ -68,7 +68,7 @@ public class App {
         server.start(ctx);
       } else {
         // CLIENT MODE
-        UserInterface userInterface = ctx.getShowGUI() ? new GraphicUserInterface() : new CommandLineInterface();
+        UserInterface userInterface = ctx.getShowGUI() ? new GraphicUserInterface() : new CommandLineInterface(ctx.getShowDebug());
         Client client;
         if (ctx.getUseRMI()) {
           Registry registry = LocateRegistry.getRegistry(ctx.getServerRmiPort());

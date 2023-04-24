@@ -39,6 +39,7 @@ import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.ErrorTypeString;
@@ -117,13 +118,13 @@ public interface IServerControllerAction extends Remote {
       logger.error("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INITIALIZING_NEW_GAME);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, ErrorSeverity.ERROR);
     } catch (InvalidNumOfPlayersException | InvalidMaxPlayerException | DuplicatePlayerNameException
         | FullGameException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_PLAYERS, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS, ErrorSeverity.ERROR);
     } catch (NullGameHandlerInstance e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
@@ -140,7 +141,7 @@ public interface IServerControllerAction extends Remote {
       logger.error("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INTERRUPTED, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INTERRUPTED);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INTERRUPTED, ErrorSeverity.ERROR);
     } finally {
       if (errorMsg != null) {
         try {
@@ -202,12 +203,12 @@ public interface IServerControllerAction extends Remote {
       logger.error("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_PLAYERS, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS, ErrorSeverity.ERROR);
     } catch (DuplicatePlayerNameException | FullGameException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_PLAYERS, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS, ErrorSeverity.ERROR);
     } catch (NullPlayerConnector e) {
       // TODO: as we have a null connector, the model should expose something to
       // remove the player.
@@ -218,12 +219,12 @@ public interface IServerControllerAction extends Remote {
       logger.error("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INTERRUPTED, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INTERRUPTED);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INTERRUPTED, ErrorSeverity.ERROR);
     } catch (NullGameHandlerInstance e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_HANDLER, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS, ErrorSeverity.ERROR);
     } finally {
       if (errorMsg != null) {
         try {
@@ -293,12 +294,12 @@ public interface IServerControllerAction extends Remote {
       logger.warn("{} {} {}",
           ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INVALID_MOVE, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INVALID_MOVE);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INVALID_MOVE, ErrorSeverity.ERROR);
     } catch (InterruptedException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INTERRUPTED, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INTERRUPTED);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INTERRUPTED, ErrorSeverity.ERROR);
     } finally {
       if (errorMsg != null) {
         try {

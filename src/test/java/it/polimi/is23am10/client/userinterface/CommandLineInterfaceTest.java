@@ -10,12 +10,11 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
+import it.polimi.is23am10.client.userinterface.helpers.OutputWrapper.OutputLevel;
 import it.polimi.is23am10.server.model.factory.GameFactory;
-import it.polimi.is23am10.server.model.factory.PlayerFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.server.model.game.Game;
@@ -36,7 +35,6 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.model.score.Score;
-import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
@@ -45,27 +43,28 @@ public class CommandLineInterfaceTest {
   private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
   private static CommandLineInterface cli;
 
+  private void assertOutput(OutputLevel level, String output) {
+    assertEquals(cli.ow.getString(level, output), outputStreamCaptor.toString().strip());
+  }
+
   @BeforeEach
   public void setUp() {
     System.setOut(new PrintStream(outputStreamCaptor));
-    cli = new CommandLineInterface();
+    cli = new CommandLineInterface(false);
   }
 
-  @Disabled("Blocked by #115")
   @Test
   void displaySplashScreen_should_display_splash_screen() {
     cli.displaySplashScreen();
-    assertEquals(CLIStrings.welcomeString + "\n" + CLIStrings.joinOrCreateString, outputStreamCaptor.toString().trim());
+    assertOutput(OutputLevel.INFO, CLIStrings.welcomeString.stripLeading() + "\n" + CLIStrings.joinOrCreateString);
   }
 
-  @Disabled("Blocked by #115")
   @Test
   void displayAvailableGames_should_display_noGames_string() {
     cli.displayAvailableGames(List.of());
-    assertEquals(CLIStrings.noGamesString, outputStreamCaptor.toString().trim());
+    assertOutput(OutputLevel.WARNING, CLIStrings.noGamesString);
   }
 
-  @Disabled("Blocked by #115")
   @Test
   void displayAvailableGames_should_display_games() throws NullMaxPlayerException, InvalidMaxPlayerException,
       NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
@@ -86,10 +85,9 @@ public class CommandLineInterfaceTest {
         String.format(CLIStrings.availableGameString, 1, vw2.getPlayers().size(), vw2.getMaxPlayers(),
             vw2.getGameId()));
 
-    assertEquals(expectedString, outputStreamCaptor.toString().trim());
+    assertOutput(OutputLevel.INFO, expectedString);
   }
 
-  @Disabled("Blocked by #115")
   @Test
   void displayVirtualView_should_display_leaderboard()
       throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
@@ -118,10 +116,9 @@ public class CommandLineInterfaceTest {
         String.format(CLIStrings.playerScoreString, player1Name, 0),
         String.format(CLIStrings.winnerString, player2Name));
 
-    assertEquals(expectedString, outputStreamCaptor.toString().trim());
+    assertOutput(OutputLevel.INFO, expectedString);
   }
 
-  @Disabled("Blocked by #115")
   @Test
   void displayVirtualView_should_display_lastRound() throws NullMaxPlayerException, InvalidMaxPlayerException,
       NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
@@ -136,7 +133,6 @@ public class CommandLineInterfaceTest {
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.lastRoundString));
   }
 
-  @Disabled("Blocked by #115")
   @Test
   void displayVirtualView_should_display_game_state()
       throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
@@ -155,22 +151,42 @@ public class CommandLineInterfaceTest {
         CLIStrings.moveTilesInviteString,
         CLIStrings.moveTilesExampleString);
 
-    assertEquals(expectedString, outputStreamCaptor.toString().trim());
+    assertOutput(OutputLevel.INFO, expectedString);
   }
 
-  @Disabled("Blocked by #115")
   @Test
-  void displayChatMessage_should_display_message() throws NullPlayerNameException, NullPlayerIdException {
+  void displayChatMessage_should_display_private_message() throws NullPlayerNameException, NullPlayerIdException {
+    String textMessage = "valar morghulis";
+    String playerName = "Jaqen H'ghar";
+    String receiverName = "Arya Stark";
+    Player p = new Player();
+    p.setPlayerID(UUID.nameUUIDFromBytes(playerName.getBytes()));
+    p.setPlayerName(playerName);
+
+    Player receiver = new Player();
+    receiver.setPlayerID(UUID.nameUUIDFromBytes(receiverName.getBytes()));
+    receiver.setPlayerName(receiverName);
+    
+    ChatMessage m = new ChatMessage(p, textMessage, receiver);
+    cli.displayChatMessage(m);
+
+    final String expectedString = String.format(CLIStrings.messageString, playerName, textMessage);
+    assertOutput(OutputLevel.CHAT, expectedString);
+  }
+
+  @Test
+  void displayChatMessage_should_display_broadcast_message() throws NullPlayerNameException, NullPlayerIdException {
     String textMessage = "valar morghulis";
     String playerName = "Jaqen H'ghar";
     Player p = new Player();
     p.setPlayerID(UUID.nameUUIDFromBytes(playerName.getBytes()));
     p.setPlayerName(playerName);
-    AbstractMessage m = new ChatMessage(p, textMessage);
+    
+    ChatMessage m = new ChatMessage(p, textMessage);
     cli.displayChatMessage(m);
 
-    assertEquals(String.format(CLIStrings.messageString, playerName, textMessage),
-        outputStreamCaptor.toString().trim());
+    final String expectedString = String.format(CLIStrings.broadcastMessageString, playerName, textMessage);
+    assertOutput(OutputLevel.CHAT, expectedString);
   }
 
   @AfterEach
