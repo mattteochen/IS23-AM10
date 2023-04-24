@@ -42,5 +42,12 @@ public final class GraphicUserInterface implements UserInterface{
   public void displayChatMessage(AbstractMessage message) {
     // TODO Auto-generated method stub
   }
-  
+
+  /**
+   *
+   * {@inheritDoc}
+   */
+  public void displayErrorMessage(AbstractMessage message) {
+    // TODO Auto-generated method stub
+  }
 }

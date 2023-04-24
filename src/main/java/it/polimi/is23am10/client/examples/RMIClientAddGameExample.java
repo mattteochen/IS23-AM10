@@ -31,11 +31,12 @@ public class RMIClientAddGameExample {
    * @throws NullSocketConnectorException
    *
    */
-  public static void main(String[] args) throws RemoteException, NotBoundException, NullSocketConnectorException, NullBlockingQueueException {
+  public static void main(String[] args)
+      throws RemoteException, NotBoundException, NullSocketConnectorException, NullBlockingQueueException {
     final Logger logger = LogManager.getLogger(RMIClientAddGameExample.class);
     Registry registry = LocateRegistry.getRegistry(AppConfig.getServerRmiPort());
-    IServerControllerAction server =
-        (IServerControllerAction) registry.lookup("IServerControllerAction");
+    logger.info("Locating " + IServerControllerAction.class.getName());
+    IServerControllerAction server = (IServerControllerAction) registry.lookup(IServerControllerAction.class.getName());
     AbstractCommand command = new StartGameCommand("Steve", 4);
     logger.info("Sending request to RMI Server {}", command.getOpcode());
     server.execute(new PlayerConnectorRmi(new LinkedBlockingQueue<>()), command);

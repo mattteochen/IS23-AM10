@@ -19,13 +19,12 @@ public final class ErrorTypeString {
 
   }
 
-
   /**
    * Message error in initializing the game.
    *
    */
   public static final String ERROR_INITIALIZING_NEW_GAME = "Failed to initialize new game";
-  
+
   /**
    * Message error in adding player to the game.
    *
@@ -37,7 +36,7 @@ public final class ErrorTypeString {
    *
    */
   public static final String ERROR_INTERRUPTED = "Failed to execute";
-  
+
   /**
    * Message error in executing a move chosen by the client.
    *
@@ -55,6 +54,9 @@ public final class ErrorTypeString {
    */
   public static final String ERROR_ADDING_HANDLER = "Failed to add game handler";
 
-
-
+  /**
+   * Message error in adding a new RMI server.
+   *
+   */
+  public static final String ERROR_RMI_EXPOSURE = "Failed to start RMI server";
 }

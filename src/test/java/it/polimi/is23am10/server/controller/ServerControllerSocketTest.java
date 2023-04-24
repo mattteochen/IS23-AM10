@@ -206,7 +206,7 @@ class ServerControllerSocketTest {
     playerConnector.addMessageToQueue(message);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);
-    when(playerConnector.getMessageFromQueue()).thenReturn(Optional.of(message));
+    when(playerConnector.getMessageFromQueue()).thenReturn(message);
     when(mockSocket.getOutputStream()).thenReturn(outputStream);
     controller.update();
     verify(playerConnector, times(1)).getMessageFromQueue();

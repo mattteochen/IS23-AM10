@@ -143,13 +143,12 @@ public final class ServerControllerSocket implements Runnable {
    * 
    */
   protected void update() throws InterruptedException, IOException {
-    Optional<AbstractMessage> optMessage = playerConnector.getMessageFromQueue();
-    if (optMessage.isPresent()) {
-      AbstractMessage message = optMessage.get();
+    AbstractMessage msg = playerConnector.getMessageFromQueue();
+    if (msg != null) {
       PrintWriter printer = new PrintWriter(playerConnector.getConnector().getOutputStream(), true,
           StandardCharsets.UTF_8);
-      printer.println(message.getMessage());
-      logger.info("{} sent to client {}", message.getMessageType(), message.getMessage());
+      printer.println(gson.toJson(msg));
+      logger.info("{} sent to client {}", msg.getMessageType(), msg.getMessage());
     }
   }
 

@@ -24,3 +24,9 @@ hs_err_pid*
 
 #Artifacts
 **/target/**
+
+#Java language server
+.classpath
+.factorypath
+.project
+.settings
