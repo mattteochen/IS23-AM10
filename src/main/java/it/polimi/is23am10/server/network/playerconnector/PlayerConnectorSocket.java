@@ -52,4 +52,19 @@ public class PlayerConnectorSocket extends AbstractPlayerConnector {
   public synchronized Socket getConnector() {
     return connector;
   }
+
+  /**
+   * Setter for {@link Socket}, the low level connector.
+   * 
+   * @param socket the socket I want to set.
+   * 
+   * @throws NullSocketConnectorException
+   *
+   */
+  public synchronized void setConnector(Socket socket) throws NullSocketConnectorException {
+    if(socket == null){
+      throw new NullSocketConnectorException();
+    }
+    this.connector = socket;
+  }
 }
