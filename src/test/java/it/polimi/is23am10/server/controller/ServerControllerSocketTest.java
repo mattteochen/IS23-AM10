@@ -19,6 +19,7 @@ import com.google.gson.JsonSyntaxException;
 
 import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
+import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
@@ -239,6 +240,20 @@ class ServerControllerSocketTest {
     when(playerConnector.getConnector()).thenReturn(mockSocket);
     when(mockSocket.getInputStream()).thenReturn(inputStream);
     assertEquals(cmd, (MoveTilesCommand) controller.buildCommand());
+  }
+
+  @Test
+  void GET_AVAILABLE_GAMES_COMMAND_should_GET_AVAILABLE_GAMES_COMMAND()
+      throws JsonIOException, JsonSyntaxException, IOException {
+    Socket mockSocket = Mockito.mock(Socket.class);
+    GetAvailableGamesCommand cmd = new GetAvailableGamesCommand();
+    Gson gson = new Gson();
+    String json = gson.toJson(cmd);
+    ByteArrayInputStream inputStream = new ByteArrayInputStream(json.getBytes());
+
+    when(playerConnector.getConnector()).thenReturn(mockSocket);
+    when(mockSocket.getInputStream()).thenReturn(inputStream);
+    assertEquals(cmd, (GetAvailableGamesCommand) controller.buildCommand());
   }
 
   @Test

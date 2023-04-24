@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
+import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
@@ -33,13 +34,17 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
+import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
+import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.ErrorTypeString;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -126,7 +131,7 @@ class ServerControllerActionTest {
     assertEquals(0, ServerControllerState.getGamePools().size());
     assertEquals(0, ServerControllerState.getPlayersPool().size());
 
-    assertEquals(1,playerConnector.getMsgQueueSize());
+    assertEquals(1, playerConnector.getMsgQueueSize());
     Optional<AbstractMessage> errorMsg = playerConnector.getMessageFromQueue();
     assertEquals(ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, errorMsg.get().getMessage());
   }
@@ -218,7 +223,8 @@ class ServerControllerActionTest {
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
-      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException, InterruptedException {
+      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException,
+      InterruptedException {
     Socket socket = new Socket();
     PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
 
@@ -253,7 +259,8 @@ class ServerControllerActionTest {
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
-      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException, InterruptedException {
+      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException,
+      InterruptedException {
     Socket socket = new Socket();
     GameHandler handler = new GameHandler("Max", 2);
     ServerControllerState.addGameHandler(handler);
@@ -299,7 +306,8 @@ class ServerControllerActionTest {
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullBlockingQueueException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException, InterruptedException {
+      NullBlockingQueueException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException,
+      PlayerNotFoundException, InterruptedException {
     Socket socket = new Socket();
     PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
     GameHandler handler = new GameHandler("Max", 2);
@@ -313,12 +321,11 @@ class ServerControllerActionTest {
 
     assertEquals(null, playerConnector.getPlayer());
     assertEquals(null, playerConnector.getGameId());
-        
-    assertEquals(1,playerConnector.getMsgQueueSize());
+
+    assertEquals(1, playerConnector.getMsgQueueSize());
     Optional<AbstractMessage> errorMsg = playerConnector.getMessageFromQueue();
     assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.get().getMessage());
   }
-
 
   @Test
   void ADD_PLAYER_CONSUMER_should_THROW_DuplicatePlayerNameException()
@@ -327,7 +334,8 @@ class ServerControllerActionTest {
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
-      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException, InterruptedException {
+      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException,
+      InterruptedException {
 
     Socket socket = new Socket();
     PlayerConnectorSocket steve = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
@@ -356,7 +364,7 @@ class ServerControllerActionTest {
     serverControllerAction.addPlayerConsumer.accept(logger, steveBrother, steveBrotherCmd);
     assertEquals(oldPlayerConnectors + 1, ServerControllerState.getPlayersPool().size());
 
-    assertEquals(1,steveBrother.getMsgQueueSize());
+    assertEquals(1, steveBrother.getMsgQueueSize());
     Optional<AbstractMessage> errorMsg = steveBrother.getMessageFromQueue();
     assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.get().getMessage());
   }
@@ -431,5 +439,79 @@ class ServerControllerActionTest {
     alice.getMessageFromQueue().get().getMessage();
     alice.getMessageFromQueue().get().getMessage();
     assertEquals("Steve reconnected to the game.", alice.getMessageFromQueue().get().getMessage());
+  }
+  
+  void GET_AVAILABLE_GAMES_should_return_gameList()
+      throws NullSocketConnectorException, NullBlockingQueueException, NullMaxPlayerException,
+      InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
+      NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
+      DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
+      InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException,
+      NotValidScoreBlockValueException, PlayerNotFoundException, NullGameHandlerInstance, InterruptedException {
+
+    Socket mockSocket = new Socket();
+    AbstractPlayerConnector playerConnector = new PlayerConnectorSocket(mockSocket, new LinkedBlockingQueue<>());
+
+    GameHandler h1 = new GameHandler("bob", 2);
+    GameHandler h2 = new GameHandler("frank zappa", 3);
+    GameHandler h3 = new GameHandler("nicoletta", 4);
+
+    List<VirtualView> availableGames = List.of(new VirtualView(h1.getGame()), new VirtualView(h2.getGame()),
+        new VirtualView(h3.getGame()));
+
+    ServerControllerState.addGameHandler(h1);
+    ServerControllerState.addGameHandler(h2);
+    ServerControllerState.addGameHandler(h3);
+
+    AbstractCommand gagCommand = new GetAvailableGamesCommand();
+
+    serverControllerAction.getAvailableGamesConsumer.accept(logger, playerConnector, gagCommand);
+
+    assertEquals(1, playerConnector.getMsgQueueSize());
+    AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue().get();
+    assertNotNull(msg);
+    assertNotNull(msg.getAvailableGames());
+    assertEquals(3, msg.getAvailableGames().size());
+    assertTrue(
+        msg.getAvailableGames().containsAll(availableGames) && availableGames.containsAll(msg.getAvailableGames()));
+  }
+
+  @Test
+  void GET_AVAILABLE_GAMES_should_skip_full_games()
+      throws NullSocketConnectorException, NullBlockingQueueException, NullMaxPlayerException,
+      InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
+      NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
+      DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
+      InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException,
+      NotValidScoreBlockValueException, PlayerNotFoundException, NullGameHandlerInstance, InterruptedException {
+
+    Socket mockSocket = new Socket();
+    AbstractPlayerConnector playerConnector = new PlayerConnectorSocket(mockSocket, new LinkedBlockingQueue<>());
+
+    GameHandler h1 = new GameHandler("bob", 2);
+    GameHandler h2 = new GameHandler("frank zappa", 3);
+    GameHandler h3 = new GameHandler("nicoletta", 4);
+
+    // Adding one more player makes the game full, therefore unavailable
+    h1.getGame().addPlayer("giovanni");
+
+    List<VirtualView> availableGames = List.of(new VirtualView(h2.getGame()),
+        new VirtualView(h3.getGame()));
+
+    ServerControllerState.addGameHandler(h1);
+    ServerControllerState.addGameHandler(h2);
+    ServerControllerState.addGameHandler(h3);
+
+    AbstractCommand gagCommand = new GetAvailableGamesCommand();
+
+    serverControllerAction.getAvailableGamesConsumer.accept(logger, playerConnector, gagCommand);
+
+    assertEquals(1, playerConnector.getMsgQueueSize());
+    AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue().get();
+    assertNotNull(msg);
+    assertNotNull(msg.getAvailableGames());
+    assertEquals(2, msg.getAvailableGames().size());
+    assertTrue(
+        msg.getAvailableGames().containsAll(availableGames) && availableGames.containsAll(msg.getAvailableGames()));
   }
 }

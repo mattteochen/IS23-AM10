@@ -572,6 +572,13 @@ public class Game implements Serializable {
     assignScoreBlocks();
     activePlayer.updateScore();
     checkEndGame();
+    
+    /*
+     * If there's only one player left, checkEndGame() will eventually 
+     * end the game here setting the ended flag to true, otherwise
+     * if the game has two or more players still connected we're entering
+     * this part of code to decide next player playing 
+     */
     if (!(getEnded())) {
       gameBoard.refillIfNeeded();
       int nextPlayerIdx = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size();
@@ -639,7 +646,7 @@ public class Game implements Serializable {
     }
     // Regardless of bookshelf, if last player and lastRound, end game
     if ((lastRound && isLastPlayer(activePlayer)) 
-        || players.stream().filter(p -> p.getIsConnected()).count() == 1) {
+        || players.stream().filter(p -> p.getIsConnected()).count() <= 1) {
       endGame();
     }
   }
