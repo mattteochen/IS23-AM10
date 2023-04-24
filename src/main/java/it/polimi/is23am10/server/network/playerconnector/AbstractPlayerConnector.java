@@ -4,6 +4,7 @@ import it.polimi.is23am10.server.model.game.Game;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
+import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -21,7 +22,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 @SuppressWarnings({ "checkstyle:nonemptyatclausedescriptioncheck" })
-public abstract class AbstractPlayerConnector implements Serializable {
+public abstract class AbstractPlayerConnector implements Serializable, IPlayerConnector {
 
   /**
    * The player inside a game session.
@@ -58,47 +59,44 @@ public abstract class AbstractPlayerConnector implements Serializable {
   }
 
   /**
-   * Getter for the associated game id.
+   * {@inheritDoc}
    *
-   * @return The game id.
    *
    */
+  @Override
   public synchronized UUID getGameId() {
     return gameId;
   }
 
   /**
-   * Getter for the associated player.
+   * {@inheritDoc}
    *
-   * @return The player reference.
    *
    */
+  @Override
   public synchronized Player getPlayer() {
     return player;
   }
 
   /**
-   * Retrieve a message from the queue.
-   * This deletes the retrieved message.
+   * {@inheritDoc}
    *
-   * @return The oldest message if present.
-   * @throws InterruptedException
    *
    */
-  public Optional<AbstractMessage> getMessageFromQueue() throws InterruptedException {
+  @Override
+  public AbstractMessage getMessageFromQueue() throws InterruptedException {
     if (msgQueue.isEmpty()) {
-      return Optional.empty();
+      return null;
     }
-    return Optional.of(msgQueue.take());
+    return (msgQueue.take());
   }
 
   /**
-   * Retrieve the message queue size.
+   * {@inheritDoc}
    *
-   * @return The blocking message queue size.
-   * @throws InterruptedException
    *
    */
+  @Override
   public int getMsgQueueSize() {
     return msgQueue.size();
   }

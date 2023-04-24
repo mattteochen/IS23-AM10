@@ -16,8 +16,12 @@ import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
+import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
+import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
+import it.polimi.is23am10.utils.ErrorTypeString;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,6 +30,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -89,6 +94,7 @@ public final class ServerControllerSocket implements Runnable {
    */
   @Override
   public void run() {
+    
     while (playerConnector != null && playerConnector.getConnector().isConnected()) {
       try {
         AbstractCommand command = buildCommand();
@@ -104,6 +110,27 @@ public final class ServerControllerSocket implements Runnable {
         // thread.
       }
     }
+
+    playerConnector.getPlayer().setIsConnected(false);
+    logger.info("Player {} disconnected", playerConnector.getPlayer().getPlayerName());
+    try {
+      ServerControllerState.getGameHandlerByUUID(
+          playerConnector.getGameId()).getPlayerConnectors()
+          .stream()
+          .filter(pc -> 
+          pc.getPlayer().getPlayerName() != playerConnector.getPlayer().getPlayerName())
+          .forEach(pc -> {
+            try {
+              pc.addMessageToQueue(
+                  new ErrorMessage(playerConnector.getPlayer().getPlayerName() 
+                  + " disconnected from the game."));
+            } catch (InterruptedException e) {
+              logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
+            }
+          });
+    } catch (NullGameHandlerInstance e) {
+      logger.error(" {} {}", ErrorTypeString.ERROR_ADDING_HANDLER, e);
+    }
   }
 
   /**
@@ -116,12 +143,12 @@ public final class ServerControllerSocket implements Runnable {
    * 
    */
   protected void update() throws InterruptedException, IOException {
-    Optional<AbstractMessage> optMessage = playerConnector.getMessageFromQueue();
-    if (optMessage.isPresent()) {
-      AbstractMessage message = optMessage.get();
-      PrintWriter printer = new PrintWriter(playerConnector.getConnector().getOutputStream(), true, StandardCharsets.UTF_8);
-      printer.println(message.getMessage());
-      logger.info("{} sent to client {}",message.getMessageType(), message.getMessage());
+    AbstractMessage msg = playerConnector.getMessageFromQueue();
+    if (msg != null) {
+      PrintWriter printer = new PrintWriter(playerConnector.getConnector().getOutputStream(), true,
+          StandardCharsets.UTF_8);
+      printer.println(gson.toJson(msg));
+      logger.info("{} sent to client {}", msg.getMessageType(), msg.getMessage());
     }
   }
 

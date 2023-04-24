@@ -51,5 +51,12 @@ public final class GraphicUserInterface implements UserInterface{
   public void displayError(ErrorMessage errorMessage) {
     // TODO Auto-generated method stub
   }
-  
+
+  /**
+   *
+   * {@inheritDoc}
+   */
+  public void displayErrorMessage(AbstractMessage message) {
+    // TODO Auto-generated method stub
+  }
 }

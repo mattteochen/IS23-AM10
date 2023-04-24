@@ -38,6 +38,7 @@ public class VirtualPlayerTest {
     assertEquals(p.getPlayerName(), vp.getPlayerName());
     assertEquals(p.getPrivateCard().getPattern().getIndex(), vp.getPrivateCardIndex());
     assertEquals(p.getScore(), vp.getScore());
+    assertEquals(p.getIsConnected(), vp.getIsConnected());
   }
 
 }

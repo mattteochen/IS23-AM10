@@ -44,6 +44,12 @@ public final class VirtualPlayer {
    * 1-12 number referencing the private card to show
    */
   private Integer privateCardIndex;
+
+  /**
+   * Status of the player.
+   * 
+   */
+  private boolean isConnected;
   
   /**
    * Public constructor. Builds VirtualPlayer out of {@link Player}
@@ -59,6 +65,7 @@ public final class VirtualPlayer {
       this.score = new Score(p.getScore());
       this.bookshelf = new Bookshelf(p.getBookshelf());
       this.privateCardIndex = p.getPrivateCard().getPattern().getIndex();
+      this.isConnected = p.getIsConnected();
     }
   }
 
@@ -100,6 +107,14 @@ public final class VirtualPlayer {
    */
   public String getPlayerName() {
     return playerName;
+  }
+
+  /**
+   * Getter for connected status.
+   * @return connected status.
+   */
+  public boolean getIsConnected() {
+    return isConnected;
   }
 
   /**
