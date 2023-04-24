@@ -54,12 +54,5 @@ public interface UserInterface {
    */
   void displayError(ErrorMessage errorMessage);
 
-  /**
-   * Method called to notify the user of a new error message.
-   * 
-   * @param message The error to show to the user.
-   */
-  void displayErrorMessage(AbstractMessage message);
-
   //TODO: Add other needed display methods if needed
 }

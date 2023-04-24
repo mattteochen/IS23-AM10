@@ -33,6 +33,7 @@ import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.GameMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
@@ -108,7 +109,7 @@ public class SocketClientTest {
   void parseServerMessage_should_parseMessage() throws IOException {
     Player p = Mockito.mock(Player.class);
     Socket mockSocket = Mockito.mock(Socket.class);
-    AbstractMessage msg = new ErrorMessage("New Message", p);
+    AbstractMessage msg = new ErrorMessage("New Message", p, ErrorSeverity.WARNING);
     Gson gson = new Gson();
     String json = gson.toJson(msg);
     ByteArrayInputStream inputStream = new ByteArrayInputStream(json.getBytes());
@@ -124,17 +125,17 @@ public class SocketClientTest {
   // correctenss of the below tests must be handled by the implementer class
   @Test
   void showServerMessage_should_showErrorMessage() {
-    AbstractMessage msg = new ErrorMessage("New Message", null);
+    ErrorMessage msg = new ErrorMessage("New Message", null);
 
-    doNothing().when(userInterface).displayErrorMessage(msg);
+    doNothing().when(userInterface).displayError(msg);
     socketClient.showServerMessage(msg);
 
-    verify(userInterface, times(1)).displayErrorMessage(msg);
+    verify(userInterface, times(1)).displayError(msg);
   }
 
   @Test
   void showServerMessage_should_showChatMessage() {
-    AbstractMessage msg = new ChatMessage(null, "Let's rewrite this in Golang", null);
+    ChatMessage msg = new ChatMessage(null, "Let's rewrite this in Golang", null);
 
     doNothing().when(userInterface).displayChatMessage(msg);
     socketClient.showServerMessage(msg);

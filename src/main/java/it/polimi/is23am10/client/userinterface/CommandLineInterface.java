@@ -103,12 +103,4 @@ public final class CommandLineInterface implements UserInterface {
     }
   }
 
-  /**
-   *
-   * {@inheritDoc}
-   */
-  public void displayErrorMessage(AbstractMessage message) {
-    logger.info(String.format(CLIStrings.errorString, message.getMessage()));
-  }
-
 }

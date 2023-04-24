@@ -20,6 +20,7 @@ import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.utils.ErrorTypeString;
 
@@ -123,7 +124,7 @@ public final class ServerControllerSocket implements Runnable {
             try {
               pc.addMessageToQueue(
                   new ErrorMessage(playerConnector.getPlayer().getPlayerName() 
-                  + " disconnected from the game."));
+                  + " disconnected from the game.", ErrorSeverity.WARNING));
             } catch (InterruptedException e) {
               logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
             }
