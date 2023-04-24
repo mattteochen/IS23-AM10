@@ -130,9 +130,9 @@ class ServerControllerActionTest {
     assertEquals(0, ServerControllerState.getGamePools().size());
     assertEquals(0, ServerControllerState.getPlayersPool().size());
 
-    assertEquals(1, playerConnector.getMsgQueueSize());
-    Optional<AbstractMessage> errorMsg = playerConnector.getMessageFromQueue();
-    assertEquals(ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, errorMsg.get().getMessage());
+    assertEquals(1,playerConnector.getMsgQueueSize());
+    AbstractMessage errorMsg = playerConnector.getMessageFromQueue();
+    assertEquals(ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, errorMsg.getMessage());
   }
 
   @Test
@@ -150,8 +150,8 @@ class ServerControllerActionTest {
     assertEquals(0, ServerControllerState.getGamePools().size());
     assertEquals(0, ServerControllerState.getPlayersPool().size());
 
-    Optional<AbstractMessage> errorMsg = playerConnector.getMessageFromQueue();
-    assertEquals(ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, errorMsg.get().getMessage());
+    AbstractMessage errorMsg = playerConnector.getMessageFromQueue();
+    assertEquals(ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, errorMsg.getMessage());
   }
 
   @Test
@@ -169,8 +169,8 @@ class ServerControllerActionTest {
     assertEquals(0, ServerControllerState.getGamePools().size());
     assertEquals(0, ServerControllerState.getPlayersPool().size());
 
-    Optional<AbstractMessage> errorMsg = playerConnector.getMessageFromQueue();
-    assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.get().getMessage());
+    AbstractMessage errorMsg = playerConnector.getMessageFromQueue();
+    assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.getMessage());
   }
 
   @Test
@@ -247,8 +247,8 @@ class ServerControllerActionTest {
     assertFalse(handler.getGame().getPlayerNames().contains("Steve"));
 
     assertEquals(1, playerConnector.getMsgQueueSize());
-    Optional<AbstractMessage> errorMsg = playerConnector.getMessageFromQueue();
-    assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.get().getMessage());
+    AbstractMessage errorMsg = playerConnector.getMessageFromQueue();
+    assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.getMessage());
   }
 
   @Test
@@ -295,8 +295,8 @@ class ServerControllerActionTest {
     assertFalse(handler.getGame().getPlayerNames().contains("Alice"));
 
     assertEquals(1, alice.getMsgQueueSize());
-    Optional<AbstractMessage> errorMsg = alice.getMessageFromQueue();
-    assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.get().getMessage());
+    AbstractMessage errorMsg = alice.getMessageFromQueue();
+    assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.getMessage());
   }
 
   @Test
@@ -320,10 +320,10 @@ class ServerControllerActionTest {
 
     assertEquals(null, playerConnector.getPlayer());
     assertEquals(null, playerConnector.getGameId());
-
-    assertEquals(1, playerConnector.getMsgQueueSize());
-    Optional<AbstractMessage> errorMsg = playerConnector.getMessageFromQueue();
-    assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.get().getMessage());
+        
+    assertEquals(1,playerConnector.getMsgQueueSize());
+    AbstractMessage errorMsg = playerConnector.getMessageFromQueue();
+    assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.getMessage());
   }
 
   @Test
@@ -363,9 +363,9 @@ class ServerControllerActionTest {
     serverControllerAction.addPlayerConsumer.accept(logger, steveBrother, steveBrotherCmd);
     assertEquals(oldPlayerConnectors + 1, ServerControllerState.getPlayersPool().size());
 
-    assertEquals(1, steveBrother.getMsgQueueSize());
-    Optional<AbstractMessage> errorMsg = steveBrother.getMessageFromQueue();
-    assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.get().getMessage());
+    assertEquals(1,steveBrother.getMsgQueueSize());
+    AbstractMessage errorMsg = steveBrother.getMessageFromQueue();
+    assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.getMessage());
   }
 
   @Test
@@ -415,7 +415,7 @@ class ServerControllerActionTest {
     serverControllerAction.getAvailableGamesConsumer.accept(logger, playerConnector, gagCommand);
 
     assertEquals(1, playerConnector.getMsgQueueSize());
-    AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue().get();
+    AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue();
     assertNotNull(msg);
     assertNotNull(msg.getAvailableGames());
     assertEquals(3, msg.getAvailableGames().size());
@@ -454,7 +454,7 @@ class ServerControllerActionTest {
     serverControllerAction.getAvailableGamesConsumer.accept(logger, playerConnector, gagCommand);
 
     assertEquals(1, playerConnector.getMsgQueueSize());
-    AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue().get();
+    AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue();
     assertNotNull(msg);
     assertNotNull(msg.getAvailableGames());
     assertEquals(2, msg.getAvailableGames().size());

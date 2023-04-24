@@ -1,6 +1,5 @@
 package it.polimi.is23am10.server.network.messages;
 
-import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
 import com.google.gson.Gson;
@@ -19,7 +18,7 @@ public final class GameMessage extends AbstractMessage {
   /**
    * Gson object for serialization and deserialization
    */
-  protected final Gson gson = new GsonBuilder()
+  protected final transient Gson gson = new GsonBuilder()
     .create();
   
   /**
