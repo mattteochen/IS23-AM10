@@ -95,6 +95,12 @@ public final class AppConfig {
   private static boolean useRMI = false;
 
   /**
+   * A simple flag that if enabled shows all verbose messages
+   * in console logs.
+   */
+  private static boolean showDebug = false;
+
+  /**
    * The network address where the server is running.
    * 
    */
@@ -178,6 +184,16 @@ public final class AppConfig {
    */
   public static void setUseRMI(boolean rmi) {
     useRMI = rmi;
+  }
+
+  /**
+   * Show verbose debug.
+   *
+   * @param debug show debug or not.
+   * 
+   */
+  public static void setShowDebug(boolean debug) {
+    showDebug = debug;
   }
 
   /**
@@ -268,5 +284,15 @@ public final class AppConfig {
    */
   public static String getServerAddress() {
     return serverAddress;
+  }
+
+  /**
+   * Show debug getter.
+   *
+   * @return The debug flag.
+   * 
+   */
+  public static boolean getShowDebug() {
+    return showDebug;
   }
 }

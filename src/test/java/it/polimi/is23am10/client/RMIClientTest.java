@@ -16,7 +16,7 @@ public class RMIClientTest {
   @Test
   void constructor_should_create_RMIClientTest() throws NullSocketConnectorException, NullBlockingQueueException {
     PlayerConnectorRmi pc = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
-    UserInterface ui = new CommandLineInterface();
+    UserInterface ui = new CommandLineInterface(true);
 
     Client rmiClient = new RMIClient(pc, ui);
 

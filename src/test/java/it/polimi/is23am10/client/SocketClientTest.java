@@ -18,7 +18,7 @@ public class SocketClientTest {
   void constructor_should_create_SocketClientTest() throws NullSocketConnectorException, NullBlockingQueueException {
     Socket socket = new Socket();
     PlayerConnectorSocket pc = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
-    UserInterface ui = new CommandLineInterface();
+    UserInterface ui = new CommandLineInterface(true);
 
     Client socketClient = new SocketClient(pc, ui);
 
