@@ -55,8 +55,10 @@ public class PlayerConnectorSocket extends AbstractPlayerConnector {
 
   /**
    * Setter for {@link Socket}, the low level connector.
+   * 
+   * @param socket the socket I want to set.
+   * 
    * @throws NullSocketConnectorException
-   *
    *
    */
   public synchronized void setConnector(Socket socket) throws NullSocketConnectorException {
