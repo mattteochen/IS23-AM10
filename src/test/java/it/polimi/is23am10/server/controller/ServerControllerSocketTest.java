@@ -318,7 +318,7 @@ class ServerControllerSocketTest {
       controller.run();
 
       assertFalse(mockPlayer.getIsConnected());
-      assertEquals("Steve disconnected from the game.", alivePlayerPC.getMessageFromQueue().get().getMessage());
+      assertEquals("Steve disconnected from the game.", alivePlayerPC.getMessageFromQueue().getMessage());
     }
 
   }

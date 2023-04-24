@@ -436,9 +436,9 @@ class ServerControllerActionTest {
      * connected to the game and then reconnected.
      * The last message will be the message informing that Steve reconnected.
      */
-    alice.getMessageFromQueue().get().getMessage();
-    alice.getMessageFromQueue().get().getMessage();
-    assertEquals("Steve reconnected to the game.", alice.getMessageFromQueue().get().getMessage());
+    alice.getMessageFromQueue().getMessage();
+    alice.getMessageFromQueue().getMessage();
+    assertEquals("Steve reconnected to the game.", alice.getMessageFromQueue().getMessage());
   }
   
   void GET_AVAILABLE_GAMES_should_return_gameList()
