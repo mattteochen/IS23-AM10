@@ -18,11 +18,6 @@ public abstract class AbstractMessage {
   protected String message;
 
   /**
-   * Player sending the message.
-   */
-  protected Player sender;
-
-  /**
    * Enum for type of message sent.
    */
   public enum MessageType {
@@ -53,14 +48,5 @@ public abstract class AbstractMessage {
    */
   public MessageType getMessageType() {
     return msgType;
-  }
-
-  /**
-   * Getter for the sending player.
-   *
-   * @return the sending player
-   */
-  public Player getSender() {
-    return sender;
   }
 }
