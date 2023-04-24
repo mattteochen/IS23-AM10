@@ -118,7 +118,7 @@ public final class ServerControllerSocket implements Runnable {
           playerConnector.getGameId()).getPlayerConnectors()
           .stream()
           .filter(pc -> 
-          !pc.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))
+          pc.getPlayer().getPlayerName() != playerConnector.getPlayer().getPlayerName())
           .forEach(pc -> {
             try {
               pc.addMessageToQueue(

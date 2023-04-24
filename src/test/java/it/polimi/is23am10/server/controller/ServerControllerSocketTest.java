@@ -129,8 +129,8 @@ class ServerControllerSocketTest {
     doNothing().when(controller).update();
     controller.run();
 
-    verify(playerConnector, times(3)).getConnector();
-    verify(mockSocket, times(3)).isConnected();
+    verify(playerConnector, times(2)).getConnector();
+    verify(mockSocket, times(2)).isConnected();
   }
 
   @Test
@@ -300,6 +300,7 @@ class ServerControllerSocketTest {
       Socket mockSocket = Mockito.mock(Socket.class);
       PlayerConnectorSocket alivePlayerPC = new PlayerConnectorSocket(mockSocket, new LinkedBlockingQueue<>());
       Player mockPlayer = Mockito.mock(Player.class);
+      Player mockAlivePlayer = Mockito.mock(Player.class);
       GameHandler mockGameHandler = Mockito.mock(GameHandler.class);
       utilities.when(() -> ServerControllerState.getGameHandlerByUUID(any()))
           .thenReturn(mockGameHandler);
@@ -310,6 +311,8 @@ class ServerControllerSocketTest {
       when(playerConnector.getConnector()).thenReturn(mockSocket);
       when(mockSocket.isConnected()).thenReturn(true, false, false);
       when(mockGameHandler.getPlayerConnectors()).thenReturn(Set.of(alivePlayerPC));
+      alivePlayerPC.setPlayer(mockAlivePlayer);
+      when(mockAlivePlayer.getPlayerName()).thenReturn("Alice");   
       doReturn(mockCmd).when(controller).buildCommand();
       doNothing().when(serverControllerAction).execute(any(), any());
       controller.run();
