@@ -3,11 +3,11 @@ package it.polimi.is23am10.client.userinterface;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
+import it.polimi.is23am10.client.userinterface.helpers.OutputWrapper;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
 /**
@@ -20,32 +20,32 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  */
 public final class CommandLineInterface implements UserInterface {
 
+  public final OutputWrapper ow;
 
-  /**
-   * Logger instance.
-   *
-   */
-  protected final Logger logger = LogManager.getLogger(CommandLineInterface.class);
+  public CommandLineInterface(boolean showDebug) {
+    ow = new OutputWrapper(showDebug);
+  }
 
   /**
    * {@inheritDoc}
    */
   public void displaySplashScreen() {
-    logger.info(CLIStrings.welcomeString);
-    logger.info(CLIStrings.joinOrCreateString);
+    ow.info(CLIStrings.welcomeString, true);
+    ow.info(CLIStrings.joinOrCreateString, false);
   }
 
   /**
    * {@inheritDoc}
    */
   public void displayAvailableGames(List<VirtualView> availableGames) {
+    ow.debug(availableGames.toString(), false);
     if (availableGames.isEmpty()) {
-      logger.warn(CLIStrings.noGamesString);
+      ow.warning(CLIStrings.noGamesString, false);
     } else {
-      logger.info(CLIStrings.listGamesString);
+      ow.info(CLIStrings.listGamesString, true);
       availableGames
-          .forEach(ag -> logger.info(String.format(CLIStrings.availableGameString,
-              availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId())));
+          .forEach(ag -> ow.info(String.format(CLIStrings.availableGameString,
+              availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId()),false));
     }
   }
 
@@ -53,38 +53,54 @@ public final class CommandLineInterface implements UserInterface {
    * {@inheritDoc}
    */
   public void displayVirtualView(VirtualView vw) {
-    logger.info(CLIStrings.currentStateString);
+    ow.debug(vw.toString(), false);
+    ow.info(CLIStrings.currentStateString, true);
     if (vw.isEnded()) {
-      logger.info(CLIStrings.gameOverString);
+      ow.info(CLIStrings.gameOverString, false);
       vw.getPlayers()
           .stream()
           .sorted(Comparator.comparing(p -> p.getScore().getTotalScore(), Comparator.reverseOrder()))
-          .forEach(p -> logger.info(String.format(CLIStrings.playerScoreString, p.getPlayerName(), p.getScore().getTotalScore())));
-      logger.info(String.format(CLIStrings.winnerString, vw.getWinnerPlayer().getPlayerName()));
+          .forEach(p -> ow.info(String.format(CLIStrings.playerScoreString, p.getPlayerName(), p.getScore().getTotalScore()), false));
+      ow.info(String.format(CLIStrings.winnerString, vw.getWinnerPlayer().getPlayerName()), false);
     } else {
       if (vw.isLastRound()) {
-        logger.warn(CLIStrings.lastRoundString);
+        ow.warning(CLIStrings.lastRoundString, false);
       }
-      logger.info(String.format(CLIStrings.nowPlaying, vw.getActivePlayer().getPlayerName()));
+      ow.info(String.format(CLIStrings.nowPlaying, vw.getActivePlayer().getPlayerName()), false);
       // TODO: Prettyprint bookshelfs and board [blocked by #107]
-      logger.info(CLIStrings.moveTilesInviteString);
-      logger.info(CLIStrings.moveTilesExampleString);
+      ow.info(CLIStrings.moveTilesInviteString, false);
+      ow.info(CLIStrings.moveTilesExampleString, false);
     }
   }
 
   /**
    * {@inheritDoc}
    */
-  public void displayChatMessage(AbstractMessage message) {
-    logger.info(String.format(CLIStrings.messageString, message.getSender().getPlayerName(), message.getMessage()));
+  public void displayChatMessage(ChatMessage message) {
+    ow.debug(message.toString(), false);
+    final String msgString = message.isBroadcast() ? CLIStrings.broadcastMessageString : CLIStrings.messageString;
+    ow.chat(String.format(msgString, message.getSender().getPlayerName(), message.getMessage()), false);
   }
 
   /**
-   *
-   * {@inheritDoc}
+   * {@inheritDoc}}
    */
-  public void displayErrorMessage(AbstractMessage message) {
-    logger.info(String.format(CLIStrings.errorString, message.getMessage()));
+  public void displayError(ErrorMessage errorMessage) {
+    ow.debug(errorMessage.toString(), false);
+    final String msgString = errorMessage.isBroadcast() ? CLIStrings.broadcastErrorString : CLIStrings.errorMessage;
+    switch (errorMessage.getErrorSeverity()) {
+      case WARNING:
+        ow.warning(String.format(msgString, errorMessage.getMessage()), false);
+        break;
+      case ERROR:
+        ow.error(String.format(msgString, errorMessage.getMessage()), false);
+        break;
+      case CRITICAL:
+        ow.critical(String.format(msgString, errorMessage.getMessage()), false);
+        break;
+      default:
+        break;
+    }
   }
 
 }

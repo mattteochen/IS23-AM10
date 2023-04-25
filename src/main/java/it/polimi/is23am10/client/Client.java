@@ -7,6 +7,8 @@ import com.google.gson.Gson;
 
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
@@ -99,13 +101,13 @@ public abstract class Client implements Runnable {
   protected void showServerMessage(AbstractMessage msg) {
     switch (msg.getMessageType()) {
       case CHAT_MESSAGE:
-        userInterface.displayChatMessage(msg);
+        userInterface.displayChatMessage((ChatMessage) msg);
         break;
       case GAME_SNAPSHOT:
         userInterface.displayVirtualView(gson.fromJson(msg.getMessage(), VirtualView.class));
         break;
       case ERROR_MESSAGE:
-        userInterface.displayErrorMessage(msg);
+        userInterface.displayError((ErrorMessage) msg);
         break;
       default:
     }

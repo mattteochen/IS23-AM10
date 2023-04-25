@@ -20,11 +20,6 @@ public class AbstractMessage implements Serializable {
   protected String message;
 
   /**
-   * Player sending the message.
-   */
-  protected Player sender;
-
-  /**
    * Enum for type of message sent.
    */
   public enum MessageType {
@@ -55,14 +50,5 @@ public class AbstractMessage implements Serializable {
    */
   public MessageType getMessageType() {
     return msgType;
-  }
-
-  /**
-   * Getter for the sending player.
-   *
-   * @return the sending player
-   */
-  public Player getSender() {
-    return sender;
   }
 }

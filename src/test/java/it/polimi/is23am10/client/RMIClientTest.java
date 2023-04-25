@@ -70,7 +70,7 @@ public class RMIClientTest {
   void constructor_should_create_RMIClientTest()
       throws NullSocketConnectorException, NullBlockingQueueException, UnknownHostException, RemoteException {
     PlayerConnectorRmi pc = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
-    UserInterface ui = new CommandLineInterface();
+    UserInterface ui = new CommandLineInterface(true);
 
     Client rmiClient = new RMIClient(pc, ui, null, null, null);
 

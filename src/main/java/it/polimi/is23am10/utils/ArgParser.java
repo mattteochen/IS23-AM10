@@ -66,6 +66,11 @@ public class ArgParser {
   public static final String SERVER_ADDRESS_CLI_COMMAND = "--address";  
 
   /**
+   * The debug command. If enabled shows all messages in console.
+   */
+  public static final String DEBUG_CLI_COMMAND = "--debug";  
+
+  /**
    * Regex expression for validating ipv4 addresses
    */
   private static final String IPV4_REGEX = 
@@ -143,6 +148,9 @@ public class ArgParser {
             break;
           case USE_RMI_CLI_COMMAND:
             AppConfig.setUseRMI(true);
+            break;
+          case DEBUG_CLI_COMMAND:
+            AppConfig.setShowDebug(true);
             break;
           default:
             throw new InvalidArgumentException(args[i]);
