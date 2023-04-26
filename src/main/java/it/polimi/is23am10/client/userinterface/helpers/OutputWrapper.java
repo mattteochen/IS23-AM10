@@ -13,15 +13,24 @@ import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.server.model.game.Game;
 import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.server.model.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.PlayerNotFoundException;
+import it.polimi.is23am10.server.model.items.board.Board;
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.server.model.items.scoreblock.exceptions.NotValidScoreBlockValueException;
+import it.polimi.is23am10.server.model.items.tile.Tile;
+import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
@@ -32,7 +41,9 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreExceptio
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
+import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 /**
  * An helper class with all the methods needed to properly print
@@ -78,6 +89,20 @@ public final class OutputWrapper {
       OutputLevel.CRITICAL, ANSICodes.RED_BACKGROUND_BRIGHT + "⚫️ %s" + ANSICodes.RESET);
 
   /**
+   * A map that associates TileType to their Java source code encoding.
+   * 
+   */
+  private static final Map<TileType, String> emojiMap = Map.of(
+      TileType.BOOK, "\uD83D\uDCD4", // NOTEBOOK WITH DECORATIVE COVER
+      TileType.CAT, "\uD83D\uDC08", // CAT
+      TileType.FRAME, "\uD83D\uDFE7", // FRAME WITH PICTURE ,
+      TileType.GAME, "\uD83C\uDFAE", // VIDEO GAME,
+      TileType.PLANT, "\uD83C\uDF40", // POTTED PLANT
+      TileType.TROPHY, "\uD83C\uDFC6", // TROPHY
+      TileType.EMPTY, "\u2B1C" // WHITE LARGE SQUARE
+  );
+
+  /**
    * Public constructor for OutputWrapper.
    * 
    * @param showDebug instance-specific debug flag.
@@ -89,8 +114,9 @@ public final class OutputWrapper {
   /**
    * Prints a debug line on console.
    * 
-   * @param string Debug string to display.
-   * @param cleanFirst Flag to set if message should be preceded by a console clean. 
+   * @param string     Debug string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
    */
   public void debug(String string, boolean cleanFirst) {
     if (showDebug) {
@@ -101,18 +127,127 @@ public final class OutputWrapper {
   /**
    * Prints a info line on console.
    * 
-   * @param string Info string to display.
-   * @param cleanFirst Flag to set if message should be preceded by a console clean. 
+   * @param string     Info string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
    */
   public void info(String string, boolean cleanFirst) {
     printString(OutputLevel.INFO, string, cleanFirst);
   }
 
   /**
+   * Print the players bookshelf on console
+   * 
+   * @param players    List of players in the game session.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
+   * @throws BookshelfGridColIndexOutOfBoundsException
+   * @throws BookshelfGridRowIndexOutOfBoundsException
+   * @throws NullIndexValueException
+   */
+  public void show(List<VirtualPlayer> players, boolean cleanFirst) throws BookshelfGridColIndexOutOfBoundsException,
+      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
+    printString(OutputLevel.INFO, "", cleanFirst);
+
+    // Name
+    StringBuilder name = new StringBuilder();
+    for (VirtualPlayer vp : players) {
+      name.append("\tPlayer #" + vp.getPlayerName() + "\t");
+    }
+    System.out.println(name.toString() + "\n");
+
+    // Index
+    StringBuilder idx = new StringBuilder();
+    for (VirtualPlayer vp : players) {
+      idx.append("\t\s\sA B C D E" + "\t");
+    }
+    System.out.println(idx.toString());
+
+    // Top padding
+    StringBuilder topPadding = new StringBuilder();
+    for (VirtualPlayer vp : players) {
+      topPadding.append("\t\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\t");
+    }
+    System.out.println(topPadding.toString());
+
+    for (int i = 0; i < Bookshelf.BOOKSHELF_ROWS; i++) {
+      StringBuilder row = new StringBuilder();
+      for (VirtualPlayer vp : players) {
+        Bookshelf b = vp.getBookshelf();
+        row.append("\t\u2B1B");
+        for (int j = 0; j < Bookshelf.BOOKSHELF_COLS; j++) {
+          Tile t = b.getBookshelfGridAt(i, j);
+          String emoji = emojiMap.get(t.getType());
+          row.append(emoji);
+        }
+        row.append("\u2B1B ").append("\t");
+      }
+      System.out.println(row.toString());
+    }
+
+    // Bottom padding
+    StringBuilder bottomPadding = new StringBuilder();
+    for (VirtualPlayer vp : players) {
+      bottomPadding.append("\t\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\t");
+    }
+    System.out.println(bottomPadding.toString() + "\n\n");
+  }
+
+  /**
+   * Print game board on console.
+   * 
+   * @param gameBoard  The game board of the game session.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
+   * @throws BoardGridRowIndexOutOfBoundsException
+   * @throws BoardGridColIndexOutOfBoundsException
+   * @throws NullIndexValueException
+   */
+  public void show(Board gameBoard, boolean cleanFirst)
+      throws BoardGridRowIndexOutOfBoundsException,
+      BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+
+    printString(OutputLevel.INFO, "", cleanFirst);
+
+    // Header
+    StringBuilder header = new StringBuilder();
+    header.append("\tGame board status: ").append("\t");
+    System.out.println(header.toString() + "\n");
+
+    // Index
+    StringBuilder idx = new StringBuilder();
+    idx.append("\t\s\s1 2 3 4 5 6 7 8 9\t");
+    System.out.println(idx.toString());
+
+    // Top padding
+    StringBuilder topPadding = new StringBuilder();
+    topPadding.append("\t\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\t");
+    System.out.println(topPadding.toString());
+
+    for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
+      StringBuilder row = new StringBuilder();
+      row.append("\t\u2B1B");
+      for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
+        Tile tile = gameBoard.getBoardGrid()[i][j];
+        String emoji = emojiMap.get(tile.getType());
+        row.append(emoji);
+      }
+      row.append("\u2B1B ").append(i + 1).append("\t");
+      System.out.println(row.toString());
+    }
+
+    // Bottom padding
+    StringBuilder bottomPadding = new StringBuilder();
+    bottomPadding.append("\t\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\t");
+    System.out.println(bottomPadding.toString() + "\n\n");
+  }
+
+  /**
    * Prints a chat message on console.
    * 
-   * @param string Message string to display.
-   * @param cleanFirst Flag to set if message should be preceded by a console clean. 
+   * @param string     Message string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
    */
   public void chat(String string, boolean cleanFirst) {
     printString(OutputLevel.CHAT, string, cleanFirst);
@@ -121,8 +256,9 @@ public final class OutputWrapper {
   /**
    * Prints a warning line on console.
    * 
-   * @param string Warning string to display.
-   * @param cleanFirst Flag to set if message should be preceded by a console clean. 
+   * @param string     Warning string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
    */
   public void warning(String string, boolean cleanFirst) {
     printString(OutputLevel.WARNING, string, cleanFirst);
@@ -131,8 +267,9 @@ public final class OutputWrapper {
   /**
    * Prints a error line on console.
    * 
-   * @param string Error string to display.
-   * @param cleanFirst Flag to set if message should be preceded by a console clean. 
+   * @param string     Error string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
    */
   public void error(String string, boolean cleanFirst) {
     printString(OutputLevel.ERROR, string, cleanFirst);
@@ -141,8 +278,9 @@ public final class OutputWrapper {
   /**
    * Prints a critical error line on console.
    * 
-   * @param string Critical error string to display.
-   * @param cleanFirst Flag to set if message should be preceded by a console clean. 
+   * @param string     Critical error string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
    */
   public void critical(String string, boolean cleanFirst) {
     printString(OutputLevel.CRITICAL, string, cleanFirst);
@@ -173,7 +311,7 @@ public final class OutputWrapper {
    * Helper method used by tests to retrieve the string to be printed
    * before actually printing it.
    * 
-   * @param level {@link OutputLevel} of the message.
+   * @param level  {@link OutputLevel} of the message.
    * @param string The string of the message to display.
    * @return The formatted string ready to be printed.
    */
@@ -188,8 +326,8 @@ public final class OutputWrapper {
   /**
    * Public method to print a string. Used from CLI.
    * 
-   * @param level {@link OutputLevel} of the message.
-   * @param string The string of the message to display.
+   * @param level      {@link OutputLevel} of the message.
+   * @param string     The string of the message to display.
    * @param cleanFirst Flag that resets the console before print if true.
    */
   public void printString(OutputLevel level, String string, boolean cleanFirst) {
@@ -209,13 +347,18 @@ public final class OutputWrapper {
   }
 
   // Runnable method to eyeball the various outputs.
-  // TODO: Remove in prod / once all outputs are testable from actual client. 
+  // TODO: Remove in prod / once all outputs are testable from actual client.
   public static void main(String args[])
-      throws NullPlayerNameException, IOException, NullMaxPlayerException, InvalidMaxPlayerException,
-      NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
-      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException,
-      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
+      throws NullPlayerNameException, IOException, NullMaxPlayerException,
+      InvalidMaxPlayerException,
+      NullPlayerIdException, NullPlayerBookshelfException,
+      NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException,
+      AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException,
+      NullNumOfPlayersException, NullAssignedPatternException,
+      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException,
+      NullPointerException {
     OutputWrapper ow = new OutputWrapper(true);
 
     ow.debug("THIS IS A DEBUG MESSAGE", false);
@@ -235,8 +378,11 @@ public final class OutputWrapper {
     cli.displayChatMessage(new ChatMessage(p1, "Salve salvino"));
     String choice = reader.readLine();
 
+    Game g = GameFactory.getNewGame("Nicoletta", 3);
+    g.addPlayer("Linus");
+    g.addPlayer("Ahmed");
     VirtualView vw1 = new VirtualView(GameFactory.getNewGame("bob", 2));
-    VirtualView vw2 = new VirtualView(GameFactory.getNewGame("nicoletta", 3));
+    VirtualView vw2 = new VirtualView(g);
     List<VirtualView> games = List.of(
         vw1, vw2);
     cli.displayAvailableGames(games);
@@ -245,7 +391,7 @@ public final class OutputWrapper {
 
     String gameChoice = reader.readLine();
 
-    cli.displayVirtualView(vw1);
+    cli.displayVirtualView(vw2);
   }
 
 }
