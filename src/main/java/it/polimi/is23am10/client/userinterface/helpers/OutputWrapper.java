@@ -93,13 +93,13 @@ public final class OutputWrapper {
    * 
    */
   private static final Map<TileType, String> emojiMap = Map.of(
-      TileType.BOOK, "\uD83D\uDCD4", // NOTEBOOK WITH DECORATIVE COVER
-      TileType.CAT, "\uD83D\uDC08", // CAT
-      TileType.FRAME, "\uD83D\uDFE7", // FRAME WITH PICTURE ,
-      TileType.GAME, "\uD83C\uDFAE", // VIDEO GAME,
-      TileType.PLANT, "\uD83C\uDF40", // POTTED PLANT
-      TileType.TROPHY, "\uD83C\uDFC6", // TROPHY
-      TileType.EMPTY, "\u2B1C" // WHITE LARGE SQUARE
+      TileType.BOOK, "📔", // NOTEBOOK WITH DECORATIVE COVER
+      TileType.CAT, "🐈", // CAT
+      TileType.FRAME, "🟧", // ORANGE SQUARE ,
+      TileType.GAME, "🎮", // VIDEO GAME,
+      TileType.PLANT, "🍀", // FOUR LEAF CLOVER
+      TileType.TROPHY, "🏆", // TROPHY
+      TileType.EMPTY, "⬜" // WHITE LARGE SQUARE
   );
 
   /**
@@ -211,12 +211,12 @@ public final class OutputWrapper {
 
     // Index
     StringBuilder idx = new StringBuilder();
-    idx.append("\t\s\s1 2 3 4 5 6 7 8 9\t");
+    idx.append(ANSICodes.RED_BOLD + "\t\sX" + ANSICodes.RESET).append(" 1 2 3 4 5 6 7 8 9\t");
     System.out.println(idx.toString());
 
     // Top padding
     StringBuilder topPadding = new StringBuilder();
-    topPadding.append("\t\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\t");
+    topPadding.append("\t\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B").append(ANSICodes.RED_BOLD + "\sY\t" + ANSICodes.RESET);
     System.out.println(topPadding.toString());
 
     for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
