@@ -5,10 +5,14 @@ import java.util.List;
 
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.client.userinterface.helpers.OutputWrapper;
-import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 /**
  * A client interface using command line as I/O.
@@ -67,7 +71,21 @@ public final class CommandLineInterface implements UserInterface {
         ow.warning(CLIStrings.lastRoundString, false);
       }
       ow.info(String.format(CLIStrings.nowPlaying, vw.getActivePlayer().getPlayerName()), false);
-      // TODO: Prettyprint bookshelfs and board [blocked by #107]
+
+      try {
+        ow.show(vw.getGameBoard(), false);
+      } catch (BoardGridRowIndexOutOfBoundsException | BoardGridColIndexOutOfBoundsException
+          | NullIndexValueException e) {
+        e.printStackTrace();
+      }
+
+      try {
+        ow.show(vw.getPlayers(), false);
+      } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
+          | NullIndexValueException e) {
+        e.printStackTrace();
+      }
+
       ow.info(CLIStrings.moveTilesInviteString, false);
       ow.info(CLIStrings.moveTilesExampleString, false);
     }
