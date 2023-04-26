@@ -145,8 +145,7 @@ public final class OutputWrapper {
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws NullIndexValueException
    */
-  public void show(List<VirtualPlayer> players, boolean cleanFirst) throws BookshelfGridColIndexOutOfBoundsException,
-      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
+  public void show(List<VirtualPlayer> players, boolean cleanFirst) {
 
     // Name
     StringBuilder name = new StringBuilder();
@@ -168,16 +167,18 @@ public final class OutputWrapper {
       topPadding.append("\t\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\t");
     }
     System.out.println(topPadding.toString());
-
     for (int i = 0; i < Bookshelf.BOOKSHELF_ROWS; i++) {
       StringBuilder row = new StringBuilder();
       for (VirtualPlayer vp : players) {
         Bookshelf b = vp.getBookshelf();
         row.append("\t\u2B1B");
         for (int j = 0; j < Bookshelf.BOOKSHELF_COLS; j++) {
-          Tile t = b.getBookshelfGridAt(i, j);
-          String emoji = emojiMap.get(t.getType());
-          row.append(emoji);
+          try {
+            row.append(emojiMap.get(b.getBookshelfGridAt(i, j).getType()));
+          } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
+              | NullIndexValueException e) {
+            e.printStackTrace();
+          }
         }
         row.append("\u2B1B ").append("\t");
       }
@@ -202,10 +203,7 @@ public final class OutputWrapper {
    * @throws BoardGridColIndexOutOfBoundsException
    * @throws NullIndexValueException
    */
-  public void show(Board gameBoard, boolean cleanFirst)
-      throws BoardGridRowIndexOutOfBoundsException,
-      BoardGridColIndexOutOfBoundsException, NullIndexValueException {
-
+  public void show(Board gameBoard, boolean cleanFirst) {
     // Header
     StringBuilder header = new StringBuilder();
     header.append("\n\n\tGame board status: ").append("\t");
@@ -226,8 +224,7 @@ public final class OutputWrapper {
       row.append("\t\u2B1B");
       for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
         Tile tile = gameBoard.getBoardGrid()[i][j];
-        String emoji = emojiMap.get(tile.getType());
-        row.append(emoji);
+        row.append(emojiMap.get(tile.getType()));
       }
       row.append("\u2B1B ").append(i + 1).append("\t");
       System.out.println(row.toString());

@@ -49,7 +49,7 @@ public final class CommandLineInterface implements UserInterface {
       ow.info(CLIStrings.listGamesString, true);
       availableGames
           .forEach(ag -> ow.info(String.format(CLIStrings.availableGameString,
-              availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId()),false));
+              availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId()), false));
     }
   }
 
@@ -64,7 +64,8 @@ public final class CommandLineInterface implements UserInterface {
       vw.getPlayers()
           .stream()
           .sorted(Comparator.comparing(p -> p.getScore().getTotalScore(), Comparator.reverseOrder()))
-          .forEach(p -> ow.info(String.format(CLIStrings.playerScoreString, p.getPlayerName(), p.getScore().getTotalScore()), false));
+          .forEach(p -> ow.info(
+              String.format(CLIStrings.playerScoreString, p.getPlayerName(), p.getScore().getTotalScore()), false));
       ow.info(String.format(CLIStrings.winnerString, vw.getWinnerPlayer().getPlayerName()), false);
     } else {
       if (vw.isLastRound()) {
@@ -72,19 +73,8 @@ public final class CommandLineInterface implements UserInterface {
       }
       ow.info(String.format(CLIStrings.nowPlaying, vw.getActivePlayer().getPlayerName()), false);
 
-      try {
-        ow.show(vw.getGameBoard(), false);
-      } catch (BoardGridRowIndexOutOfBoundsException | BoardGridColIndexOutOfBoundsException
-          | NullIndexValueException e) {
-        e.printStackTrace();
-      }
-
-      try {
-        ow.show(vw.getPlayers(), false);
-      } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
-          | NullIndexValueException e) {
-        e.printStackTrace();
-      }
+      ow.show(vw.getGameBoard(), false);
+      ow.show(vw.getPlayers(), false);
 
       ow.info(CLIStrings.moveTilesInviteString, false);
       ow.info(CLIStrings.moveTilesExampleString, false);
