@@ -146,11 +146,10 @@ public final class OutputWrapper {
    * @throws NullIndexValueException
    */
   public void show(List<VirtualPlayer> players, boolean cleanFirst) {
-
     // Name
     StringBuilder name = new StringBuilder();
     for (VirtualPlayer vp : players) {
-      name.append(String.format(CLIStrings.playerName, vp.getPlayerName()) + CLIStrings.tab);
+      name.append(String.format(CLIStrings.playerName, vp.getPlayerName()));
     }
     info(name.toString() + CLIStrings.newLine, false);
 
@@ -167,6 +166,8 @@ public final class OutputWrapper {
       topPadding.append(CLIStrings.paddingBookshelf);
     }
     info(topPadding.toString(), false);
+
+    // Body
     for (int i = 0; i < Bookshelf.BOOKSHELF_ROWS; i++) {
       StringBuilder row = new StringBuilder();
       for (VirtualPlayer vp : players) {
@@ -217,6 +218,7 @@ public final class OutputWrapper {
     topPadding.append(CLIStrings.topPaddingBoard);
     info(topPadding.toString(), false);
 
+    // Body
     for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
       StringBuilder row = new StringBuilder();
       row.append(CLIStrings.tabBlackSquare);
@@ -231,7 +233,7 @@ public final class OutputWrapper {
     // Bottom padding
     StringBuilder bottomPadding = new StringBuilder();
     bottomPadding.append(CLIStrings.bottomPaddingBoard);
-    info(bottomPadding.toString() + CLIStrings.doubleNewLine, false);
+    info(bottomPadding.toString(), false);
   }
 
   /**
