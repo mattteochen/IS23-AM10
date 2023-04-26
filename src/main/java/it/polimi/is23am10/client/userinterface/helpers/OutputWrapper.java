@@ -147,7 +147,6 @@ public final class OutputWrapper {
    */
   public void show(List<VirtualPlayer> players, boolean cleanFirst) throws BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
-    printString(OutputLevel.INFO, "", cleanFirst);
 
     // Name
     StringBuilder name = new StringBuilder();
@@ -207,11 +206,9 @@ public final class OutputWrapper {
       throws BoardGridRowIndexOutOfBoundsException,
       BoardGridColIndexOutOfBoundsException, NullIndexValueException {
 
-    printString(OutputLevel.INFO, "", cleanFirst);
-
     // Header
     StringBuilder header = new StringBuilder();
-    header.append("\tGame board status: ").append("\t");
+    header.append("\n\n\tGame board status: ").append("\t");
     System.out.println(header.toString() + "\n");
 
     // Index
