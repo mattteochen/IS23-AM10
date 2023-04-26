@@ -150,28 +150,28 @@ public final class OutputWrapper {
     // Name
     StringBuilder name = new StringBuilder();
     for (VirtualPlayer vp : players) {
-      name.append("\tPlayer #" + vp.getPlayerName() + "\t");
+      name.append(String.format(CLIStrings.playerName, vp.getPlayerName()) + CLIStrings.tab);
     }
-    System.out.println(name.toString() + "\n");
+    info(name.toString() + CLIStrings.newLine, false);
 
     // Index
     StringBuilder idx = new StringBuilder();
     for (VirtualPlayer vp : players) {
-      idx.append("\t\s\sA B C D E" + "\t");
+      idx.append(CLIStrings.indexBookshelf);
     }
-    System.out.println(idx.toString());
+    info(idx.toString(), false);
 
     // Top padding
     StringBuilder topPadding = new StringBuilder();
     for (VirtualPlayer vp : players) {
-      topPadding.append("\t\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\t");
+      topPadding.append(CLIStrings.paddingBookshelf);
     }
-    System.out.println(topPadding.toString());
+    info(topPadding.toString(), false);
     for (int i = 0; i < Bookshelf.BOOKSHELF_ROWS; i++) {
       StringBuilder row = new StringBuilder();
       for (VirtualPlayer vp : players) {
         Bookshelf b = vp.getBookshelf();
-        row.append("\t\u2B1B");
+        row.append(CLIStrings.tabBlackSquare);
         for (int j = 0; j < Bookshelf.BOOKSHELF_COLS; j++) {
           try {
             row.append(emojiMap.get(b.getBookshelfGridAt(i, j).getType()));
@@ -180,17 +180,17 @@ public final class OutputWrapper {
             e.printStackTrace();
           }
         }
-        row.append("\u2B1B ").append("\t");
+        row.append(CLIStrings.blackSquareTab);
       }
-      System.out.println(row.toString());
+      info(row.toString(), false);
     }
 
     // Bottom padding
     StringBuilder bottomPadding = new StringBuilder();
     for (VirtualPlayer vp : players) {
-      bottomPadding.append("\t\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\t");
+      bottomPadding.append(CLIStrings.paddingBookshelf);
     }
-    System.out.println(bottomPadding.toString() + "\n\n");
+    info(bottomPadding.toString() + CLIStrings.doubleNewLine, false);
   }
 
   /**
@@ -199,41 +199,39 @@ public final class OutputWrapper {
    * @param gameBoard  The game board of the game session.
    * @param cleanFirst Flag to set if message should be preceded by a console
    *                   clean.
-   * @throws BoardGridRowIndexOutOfBoundsException
-   * @throws BoardGridColIndexOutOfBoundsException
-   * @throws NullIndexValueException
+   * 
    */
   public void show(Board gameBoard, boolean cleanFirst) {
     // Header
     StringBuilder header = new StringBuilder();
-    header.append("\n\n\tGame board status: ").append("\t");
-    System.out.println(header.toString() + "\n");
+    header.append(CLIStrings.boardStatus);
+    info(header.toString(), false);
 
     // Index
     StringBuilder idx = new StringBuilder();
-    idx.append(ANSICodes.RED_BOLD + "\t\sX" + ANSICodes.RESET).append(" 1 2 3 4 5 6 7 8 9\t");
-    System.out.println(idx.toString());
+    idx.append(CLIStrings.indexBoard);
+    info(idx.toString(), false);
 
     // Top padding
     StringBuilder topPadding = new StringBuilder();
-    topPadding.append("\t\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B").append(ANSICodes.RED_BOLD + "\sY\t" + ANSICodes.RESET);
-    System.out.println(topPadding.toString());
+    topPadding.append(CLIStrings.topPaddingBoard);
+    info(topPadding.toString(), false);
 
     for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
       StringBuilder row = new StringBuilder();
-      row.append("\t\u2B1B");
+      row.append(CLIStrings.tabBlackSquare);
       for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
         Tile tile = gameBoard.getBoardGrid()[i][j];
         row.append(emojiMap.get(tile.getType()));
       }
-      row.append("\u2B1B ").append(i + 1).append("\t");
-      System.out.println(row.toString());
+      row.append(String.format(CLIStrings.verticalBoardIndex, (i+1)));
+      info(row.toString(), false);
     }
 
     // Bottom padding
     StringBuilder bottomPadding = new StringBuilder();
-    bottomPadding.append("\t\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\u2B1B\t");
-    System.out.println(bottomPadding.toString() + "\n\n");
+    bottomPadding.append(CLIStrings.bottomPaddingBoard);
+    info(bottomPadding.toString() + CLIStrings.doubleNewLine, false);
   }
 
   /**
