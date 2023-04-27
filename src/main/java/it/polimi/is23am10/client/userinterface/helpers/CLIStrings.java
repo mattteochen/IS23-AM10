@@ -43,7 +43,7 @@ public final class CLIStrings {
   public final static String indexBoard = ANSICodes.RED_BOLD + "\t\sX" + ANSICodes.RESET + " 1 2 3 4 5 6 7 8 9\t";
   public final static String verticalBoardIndex = "⬛\s%d\t";
   public final static String indexBookshelf = "\t\s\sA B C D E\s\t";
-  public final static String boardStatus = "\n\n\tGame board status:\t\n";
+  public final static String boardStatus = "\n\tGame board status:\t\n";
   public final static String playerIdx = "\tPlayer #%d\t";
   public final static String blackLargeSquare = "";
   public final static String tabBlackSquare = "\t⬛";
@@ -65,4 +65,5 @@ public final class CLIStrings {
   public final static String tableBody1 = "\t#%-5d | %-10s | %-" ;
   public final static String tableBody2 = "s | %-12s | %-6d";
   public final static String line = "-";
+  public final static String bookshelfError = "🛑 Wrong bookshelf coordinates!";
 }
