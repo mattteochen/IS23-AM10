@@ -44,11 +44,12 @@ public final class CLIStrings {
   public final static String verticalBoardIndex = "⬛\s%d\t";
   public final static String indexBookshelf = "\t\s\sA B C D E\s\t";
   public final static String boardStatus = "\n\n\tGame board status:\t\n";
-  public final static String playerName = "\tPlayer #%s\t";
+  public final static String playerIdx = "\tPlayer #%d\t";
   public final static String blackLargeSquare = "";
   public final static String tabBlackSquare = "\t⬛";
   public final static String blackSquareTab = "⬛\t";
   public final static String tab = "\t";
   public final static String newLine = "\n";
   public final static String doubleNewLine = "\n\n";
+  public final static String playersInfo = "Players:\n";
 }
