@@ -6,13 +6,9 @@ import java.io.InputStreamReader;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalInt;
-
 import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
@@ -24,8 +20,6 @@ import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternExcept
 import it.polimi.is23am10.server.model.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.PlayerNotFoundException;
 import it.polimi.is23am10.server.model.items.board.Board;
-import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
-import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
@@ -59,6 +53,8 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public final class OutputWrapper {
+
+  private static int MIN_NAME_LENGTH = 15;
 
   /**
    * Enum containing the output types.
@@ -106,6 +102,10 @@ public final class OutputWrapper {
       TileType.EMPTY, "⬜" // WHITE LARGE SQUARE
   );
 
+  /**
+   * A map that associates a boolean referring to the online/offline player status
+   * to green/red emoticon. *
+   */
   private static final Map<Boolean, String> onlineOffline = Map.of(
       true, "🟢", // ONLINE
       false, "🔴" // OFFLINE
@@ -122,7 +122,7 @@ public final class OutputWrapper {
 
   /**
    * Prints a debug line on console.
-   * 
+   *
    * @param string     Debug string to display.
    * @param cleanFirst Flag to set if message should be preceded by a console
    *                   clean.
@@ -135,7 +135,7 @@ public final class OutputWrapper {
 
   /**
    * Prints a info line on console.
-   * 
+   *
    * @param string     Info string to display.
    * @param cleanFirst Flag to set if message should be preceded by a console
    *                   clean.
@@ -144,6 +144,9 @@ public final class OutputWrapper {
     printString(OutputLevel.INFO, string, cleanFirst);
   }
 
+  /**
+   * Private method to print repeated sequence of char.
+   */
   private static String repeatString(String str, int count) {
     return String.join("", Collections.nCopies(count, str));
   }
@@ -151,7 +154,7 @@ public final class OutputWrapper {
   /**
    * Print the players bookshelf on console
    * 
-   * @param players    List of players in the game session.
+   * @param vw         The virtualView
    * @param cleanFirst Flag to set if message should be preceded by a console
    *                   clean.
    * @throws BookshelfGridColIndexOutOfBoundsException
@@ -162,8 +165,10 @@ public final class OutputWrapper {
 
     List<VirtualPlayer> players = vw.getPlayers();
 
-    OptionalInt maxLengthOptional = players.stream().mapToInt(p -> p.getPlayerName().length()).max();
-    int maxLenght = maxLengthOptional.orElse(15);
+    int maxLenght = players.stream()
+        .mapToInt(p -> p.getPlayerName().length())
+        .max()
+        .orElse(MIN_NAME_LENGTH);
 
     StringBuilder playersStatus = new StringBuilder();
     playersStatus
@@ -189,14 +194,14 @@ public final class OutputWrapper {
       if (vw.getActivePlayer().equals(vp)) {
         role = CLIStrings.yourTurn;
       }
-      int score = vp.getScore().getBookshelfPoints();
+      int score = vp.getScore().getTotalScore();
 
       playersStatus
           .append(String.format(CLIStrings.tableBody1 + maxLenght + CLIStrings.tableBody2, pos++, status, player, role,
               score))
           .append(CLIStrings.newLine);
     }
-    info(playersStatus + CLIStrings.newLine, false);
+    info(playersStatus.toString(), false);
 
     // Name
     StringBuilder name = new StringBuilder();
@@ -231,7 +236,7 @@ public final class OutputWrapper {
             row.append(emojiMap.get(b.getBookshelfGridAt(i, j).getType()));
           } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
               | NullIndexValueException e) {
-            e.printStackTrace();
+            error(CLIStrings.bookshelfError, false);;
           }
         }
         row.append(CLIStrings.blackSquareTab);
@@ -429,6 +434,7 @@ public final class OutputWrapper {
     g.addPlayer("Numa Pompilio");
     g.addPlayer("Anco Marzio");
     g.addPlayer("Lucio Tarquinio Prisco");
+
     VirtualView vw1 = new VirtualView(GameFactory.getNewGame("bob", 2));
     VirtualView vw2 = new VirtualView(g);
     List<VirtualView> games = List.of(
