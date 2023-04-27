@@ -144,7 +144,7 @@ public final class OutputWrapper {
     printString(OutputLevel.INFO, string, cleanFirst);
   }
 
-  private static String repeatString(String str, int count){
+  private static String repeatString(String str, int count) {
     return String.join("", Collections.nCopies(count, str));
   }
 
@@ -167,10 +167,13 @@ public final class OutputWrapper {
 
     StringBuilder playersStatus = new StringBuilder();
     playersStatus
-        .append(String.format("\t%-6s | %-10s | %-" +  maxLenght + "s | %-12s | %-6s", "N.", "Status", "Player", "Role", "Score"))
+        .append(String.format(CLIStrings.tableHeader1 + maxLenght + CLIStrings.tableHeader2, CLIStrings.N,
+            CLIStrings.status, CLIStrings.player, CLIStrings.role, CLIStrings.score))
         .append(CLIStrings.newLine)
-        .append(String.format("\t%-6s | %-10s | %-" +  maxLenght + "s | %-12s | %-6s", "----", "----------", repeatString("-", maxLenght),
-            "------------", "------"))
+        .append(
+            String.format(CLIStrings.tableLines1 + maxLenght + CLIStrings.tableLines2, repeatString(CLIStrings.line, 4),
+                repeatString(CLIStrings.line, 10), repeatString(CLIStrings.line, maxLenght),
+                repeatString(CLIStrings.line, 12), repeatString(CLIStrings.line, 6)))
         .append(CLIStrings.newLine);
 
     int pos = 1;
@@ -181,14 +184,16 @@ public final class OutputWrapper {
       String role = "";
 
       if (vw.getFirstPlayer().equals(vp)) {
-        role = "First Player";
+        role = CLIStrings.firstPlayer;
       }
       if (vw.getActivePlayer().equals(vp)) {
-        role = "Your turn";
+        role = CLIStrings.yourTurn;
       }
       int score = vp.getScore().getBookshelfPoints();
 
-      playersStatus.append(String.format("\t#%-5d | %-10s | %-" +  maxLenght + "s | %-12s | %-6d", pos++, status, player, role, score))
+      playersStatus
+          .append(String.format(CLIStrings.tableBody1 + maxLenght + CLIStrings.tableBody2, pos++, status, player, role,
+              score))
           .append(CLIStrings.newLine);
     }
     info(playersStatus + CLIStrings.newLine, false);

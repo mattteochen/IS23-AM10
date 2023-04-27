@@ -51,5 +51,18 @@ public final class CLIStrings {
   public final static String tab = "\t";
   public final static String newLine = "\n";
   public final static String doubleNewLine = "\n\n";
-  public final static String playersInfo = "Players:\n";
+  public final static String tableHeader1 = "\t%-6s | %-10s | %-";
+  public final static String tableHeader2 = "s | %-12s | %-6s";
+  public final static String N = "N.";
+  public final static String status = "Status";
+  public final static String player = "Player";
+  public final static String role = "Role";
+  public final static String score = "Score";
+  public final static String tableLines1 = "\t%-6s | %-10s | %-";
+  public final static String tableLines2 = "s | %-12s | %-6s";
+  public final static String firstPlayer = "First Player";
+  public final static String yourTurn = "Your turn";
+  public final static String tableBody1 = "\t#%-5d | %-10s | %-" ;
+  public final static String tableBody2 = "s | %-12s | %-6d";
+  public final static String line = "-";
 }
