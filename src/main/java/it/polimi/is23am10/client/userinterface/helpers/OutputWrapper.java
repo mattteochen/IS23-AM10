@@ -6,8 +6,12 @@ import java.io.InputStreamReader;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalInt;
 
 import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.server.model.factory.GameFactory;
@@ -102,6 +106,11 @@ public final class OutputWrapper {
       TileType.EMPTY, "⬜" // WHITE LARGE SQUARE
   );
 
+  private static final Map<Boolean, String> onlineOffline = Map.of(
+      true, "🟢", // ONLINE
+      false, "🔴" // OFFLINE
+  );
+
   /**
    * Public constructor for OutputWrapper.
    * 
@@ -135,6 +144,10 @@ public final class OutputWrapper {
     printString(OutputLevel.INFO, string, cleanFirst);
   }
 
+  private static String repeatString(String str, int count){
+    return String.join("", Collections.nCopies(count, str));
+  }
+
   /**
    * Print the players bookshelf on console
    * 
@@ -145,11 +158,46 @@ public final class OutputWrapper {
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws NullIndexValueException
    */
-  public void show(List<VirtualPlayer> players, boolean cleanFirst) {
+  public void show(VirtualView vw, boolean cleanFirst) {
+
+    List<VirtualPlayer> players = vw.getPlayers();
+
+    OptionalInt maxLengthOptional = players.stream().mapToInt(p -> p.getPlayerName().length()).max();
+    int maxLenght = maxLengthOptional.orElse(15);
+
+    StringBuilder playersStatus = new StringBuilder();
+    playersStatus
+        .append(String.format("\t%-6s | %-10s | %-" +  maxLenght + "s | %-12s | %-6s", "N.", "Status", "Player", "Role", "Score"))
+        .append(CLIStrings.newLine)
+        .append(String.format("\t%-6s | %-10s | %-" +  maxLenght + "s | %-12s | %-6s", "----", "----------", repeatString("-", maxLenght),
+            "------------", "------"))
+        .append(CLIStrings.newLine);
+
+    int pos = 1;
+    for (VirtualPlayer vp : players) {
+
+      String status = onlineOffline.get(vp.getIsConnected());
+      String player = vp.getPlayerName();
+      String role = "";
+
+      if (vw.getFirstPlayer().equals(vp)) {
+        role = "First Player";
+      }
+      if (vw.getActivePlayer().equals(vp)) {
+        role = "Your turn";
+      }
+      int score = vp.getScore().getBookshelfPoints();
+
+      playersStatus.append(String.format("\t#%-5d | %-10s | %-" +  maxLenght + "s | %-12s | %-6d", pos++, status, player, role, score))
+          .append(CLIStrings.newLine);
+    }
+    info(playersStatus + CLIStrings.newLine, false);
+
     // Name
     StringBuilder name = new StringBuilder();
+    pos = 1;
     for (VirtualPlayer vp : players) {
-      name.append(String.format(CLIStrings.playerName, vp.getPlayerName()));
+      name.append(String.format(CLIStrings.playerIdx, pos++));
     }
     info(name.toString() + CLIStrings.newLine, false);
 
@@ -226,7 +274,7 @@ public final class OutputWrapper {
         Tile tile = gameBoard.getBoardGrid()[i][j];
         row.append(emojiMap.get(tile.getType()));
       }
-      row.append(String.format(CLIStrings.verticalBoardIndex, (i+1)));
+      row.append(String.format(CLIStrings.verticalBoardIndex, (i + 1)));
       info(row.toString(), false);
     }
 
@@ -372,9 +420,10 @@ public final class OutputWrapper {
     cli.displayChatMessage(new ChatMessage(p1, "Salve salvino"));
     String choice = reader.readLine();
 
-    Game g = GameFactory.getNewGame("Nicoletta", 3);
-    g.addPlayer("Linus");
-    g.addPlayer("Ahmed");
+    Game g = GameFactory.getNewGame("Romolo", 4);
+    g.addPlayer("Numa Pompilio");
+    g.addPlayer("Anco Marzio");
+    g.addPlayer("Lucio Tarquinio Prisco");
     VirtualView vw1 = new VirtualView(GameFactory.getNewGame("bob", 2));
     VirtualView vw2 = new VirtualView(g);
     List<VirtualView> games = List.of(
