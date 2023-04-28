@@ -8,10 +8,10 @@ This Java project is a porting of the boardgame *MyShelfie* by [Cranio Creations
 
 ### The team
 **Group 10 (Prof. Alessandro Margara)**
-- Alessandro Amandonico (@aleama01)
-- Francesco Buccoliero (@frbuccoliero)
-- Kaixi Matteo Chen (@mattteochen)
-- Lorenzo Cavallero (@locavallero)
+- Alessandro Amandonico ([@aleama01](https://github.com/aleama01))
+- Francesco Buccoliero ([@frbuccoliero](https://github.com/frbuccoliero))
+- Kaixi Matteo Chen ([@mattteochen](https://github.com/mattteochen))
+- Lorenzo Cavallero ([@locavallero](https://github.com/locavallero))
 
 ---
 
