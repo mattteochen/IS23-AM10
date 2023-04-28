@@ -1,6 +1,5 @@
 # MyShelfie - IS23AM10
-| [![Actions Status](https://github.com/mattteochen/IS23-AM10/actions/workflows/CI.yml/badge.svg)](https://github.com/mattteochen/IS23-AM10/actions) | ![Coverage](.github/badges/jacoco.svg) |
-| --- | --- |
+[![Actions Status](https://github.com/mattteochen/IS23-AM10/actions/workflows/CI.yml/badge.svg)](https://github.com/mattteochen/IS23-AM10/actions) ![Coverage](.github/badges/jacoco.svg)
 
 ![MyShelfie](.github/img/myshelfie_logo.png)
 
