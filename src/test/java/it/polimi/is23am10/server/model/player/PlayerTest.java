@@ -1,7 +1,9 @@
 package it.polimi.is23am10.server.model.player;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -299,5 +301,27 @@ public class PlayerTest {
     assertEquals(BS_POINTS, p.getScore().getBookshelfPoints());
     assertEquals(SB_POINTS, p.getScore().getScoreBlockPoints());
     assertEquals(EG_POINTS, p.getScore().getExtraPoint());
+  }
+
+
+  @Nested
+  class setIsConnected_tests {
+
+    ArrayList<String> players;
+    Player p;
+    Game game;
+
+    @BeforeEach
+    void setIsConnected_tests_setup() throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullAssignedPatternException {
+      game = new Game();
+      p = PlayerFactory.getNewPlayer("myNewPlayer", game);
+    }
+
+    @Test
+    public void setIsConnected_should_set_isConnected() throws NullPlayerScoreException {
+      assertTrue(p.getIsConnected());
+      p.setIsConnected(false);
+      assertFalse(p.getIsConnected());
+    }
   }
 }

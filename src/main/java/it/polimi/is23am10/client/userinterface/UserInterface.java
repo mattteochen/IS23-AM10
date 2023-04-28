@@ -3,6 +3,8 @@ package it.polimi.is23am10.client.userinterface;
 import java.util.List;
 
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
 /**
@@ -27,7 +29,7 @@ public interface UserInterface {
    * game and has to pick between the available ones.
    * It assumes to receive only valid games.
    * 
-   * @param availableGames list of valid joinable games.
+   * @param availableGames A list of valid joinable games.
    */
   void displayAvailableGames(List<VirtualView> availableGames);
 
@@ -39,11 +41,18 @@ public interface UserInterface {
   void displayVirtualView(VirtualView vw);
 
   /**
-   * Method called to notify the user of a new message.
+   * Method called to notify the user of a new chat message.
+   * 
+   * @param message The message to show to the user.
+   */
+  void displayChatMessage(ChatMessage message);
+
+  /**
+   * Method called to notify the user of an error.
    * 
    * @param message message to show to the user.
    */
-  void displayChatMessage(AbstractMessage message);
+  void displayError(ErrorMessage errorMessage);
 
   //TODO: Add other needed display methods if needed
 }

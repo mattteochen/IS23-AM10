@@ -20,15 +20,33 @@ public final class ErrorMessage extends AbstractMessage {
   private Player receiver;
 
   /**
+   * Three degrees of severity.
+   * Rule of thumb: 
+   * <ul>
+   * <li>Warning = something changed the flow of the game. User must be aware.
+   * <li>Error = something unexpected happened but game can continue.
+   * <li>Critical = something so bad happened that the game must end.
+   * </ul>
+   */
+  public enum ErrorSeverity {
+    WARNING,
+    ERROR,
+    CRITICAL
+  }
+
+  private ErrorSeverity errorSeverity;
+
+  /**
    * Public constructor for ErrorMessage.
    *
    * @param errorMessage message to send.
    * @param receiver player who receives the message.
    */
-  public ErrorMessage(String errorMessage, Player receiver) {
+  public ErrorMessage(String errorMessage, Player receiver, ErrorSeverity errorSeverity) {
     msgType = MessageType.ERROR_MESSAGE;
     this.message = errorMessage;
     this.receiver = receiver;
+    this.errorSeverity = errorSeverity;
   }
 
   /**
@@ -36,9 +54,10 @@ public final class ErrorMessage extends AbstractMessage {
    *
    * @param errorMessage message to send.
    */
-  public ErrorMessage(String errorMessage) {
+  public ErrorMessage(String errorMessage, ErrorSeverity errorSeverity) {
     msgType = MessageType.ERROR_MESSAGE;
     this.message = errorMessage;
+    this.errorSeverity = errorSeverity;
   }
 
   /**
@@ -57,5 +76,14 @@ public final class ErrorMessage extends AbstractMessage {
    */
   public Player getReceiver() {
     return receiver;
+  }
+
+  /**
+   * Getter for the severity.
+   *
+   * @return the severity of the error.
+   */
+  public ErrorSeverity getErrorSeverity() {
+    return errorSeverity;
   }
 }

@@ -17,11 +17,12 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
+import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
+import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
-import it.polimi.is23am10.server.controller.ServerControllerAction;
-import it.polimi.is23am10.server.controller.ServerControllerSocket;
+import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
@@ -35,12 +36,14 @@ import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayer
 import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.server.model.items.scoreblock.exceptions.NotValidScoreBlockValueException;
+import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
+import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.messages.GameMessage;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
@@ -53,30 +56,39 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
-@SuppressWarnings({"checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck", "checkstyle:membernamecheck", "checkstyle:OuterTypeFilenameCheck"})
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck", "checkstyle:membernamecheck", "checkstyle:OuterTypeFilenameCheck" })
 class TestingPurposesClass {
   String s = "Before you marry a person, you should first make them use a computer with slow Internet to see who they really are";
 }
 
-@SuppressWarnings({"checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck"})
+@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
+    "checkstyle:onetoplevelclasscheck" })
 class TestingPurposesClass2 {
   String className = "I never forget a face but in your case, I’ll be glad to make an exception";
 }
 
 @RunWith(MockitoJUnitRunner.class)
-@SuppressWarnings({"deprecation", "unchecked", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck"})
+@SuppressWarnings({ "deprecation", "unchecked", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck",
+    "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck" })
 class ServerControllerSocketTest {
 
   @Mock
@@ -98,7 +110,8 @@ class ServerControllerSocketTest {
   @Test
   void CONSTRUCTOR_should_BUILD_OBJECT() throws NullSocketConnectorException, NullBlockingQueueException {
     Socket socket = new Socket();
-    ServerControllerSocket testController = new ServerControllerSocket(new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>()),
+    ServerControllerSocket testController = new ServerControllerSocket(
+        new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>()),
         new ServerControllerAction());
     assertNotNull(testController);
   }
@@ -107,6 +120,8 @@ class ServerControllerSocketTest {
   void RUN_should_START_CONTROLLER() throws JsonIOException, JsonSyntaxException, IOException, InterruptedException {
     Socket mockSocket = Mockito.mock(Socket.class);
     StartGameCommand cmd = new StartGameCommand("test", 2);
+    Player mockPlayer = Mockito.mock(Player.class);
+    when(playerConnector.getPlayer()).thenReturn(mockPlayer);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);
     when(mockSocket.isConnected()).thenReturn(true, false);
@@ -121,6 +136,8 @@ class ServerControllerSocketTest {
   @Test
   void RUN_should_THROW_IOException() throws JsonIOException, JsonSyntaxException, IOException {
     Socket mockSocket = Mockito.mock(Socket.class);
+    Player mockPlayer = Mockito.mock(Player.class);
+    when(playerConnector.getPlayer()).thenReturn(mockPlayer);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);
     when(mockSocket.isConnected()).thenReturn(true, false);
@@ -133,7 +150,8 @@ class ServerControllerSocketTest {
   @Test
   void RUN_should_THROW_JSONException() throws JsonIOException, JsonSyntaxException, IOException {
     Socket mockSocket = Mockito.mock(Socket.class);
-
+    Player mockPlayer = Mockito.mock(Player.class);
+    when(playerConnector.getPlayer()).thenReturn(mockPlayer);
     when(playerConnector.getConnector()).thenReturn(mockSocket);
     when(mockSocket.isConnected()).thenReturn(true, true, false);
     doThrow(JsonIOException.class, JsonSyntaxException.class).when(controller).buildCommand();
@@ -147,6 +165,8 @@ class ServerControllerSocketTest {
       throws JsonIOException, JsonSyntaxException, IOException, InterruptedException {
     Socket mockSocket = Mockito.mock(Socket.class);
     StartGameCommand cmd = new StartGameCommand("test", 2);
+    Player mockPlayer = Mockito.mock(Player.class);
+    when(playerConnector.getPlayer()).thenReturn(mockPlayer);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);
     when(mockSocket.isConnected()).thenReturn(true, false);
@@ -176,7 +196,8 @@ class ServerControllerSocketTest {
       InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
       NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
       DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
-      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
+      InvalidNumOfPlayersException, NullNumOfPlayersException, InterruptedException, NullAssignedPatternException,
+      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
     Socket mockSocket = Mockito.mock(Socket.class);
     Game game = GameFactory.getNewGame("Steve", 4);
     VirtualView virtualView = new VirtualView(game);
@@ -185,7 +206,7 @@ class ServerControllerSocketTest {
     playerConnector.addMessageToQueue(message);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);
-    when(playerConnector.getMessageFromQueue()).thenReturn(Optional.of(message));
+    when(playerConnector.getMessageFromQueue()).thenReturn(message);
     when(mockSocket.getOutputStream()).thenReturn(outputStream);
     controller.update();
     verify(playerConnector, times(1)).getMessageFromQueue();
@@ -222,6 +243,20 @@ class ServerControllerSocketTest {
   }
 
   @Test
+  void GET_AVAILABLE_GAMES_COMMAND_should_GET_AVAILABLE_GAMES_COMMAND()
+      throws JsonIOException, JsonSyntaxException, IOException {
+    Socket mockSocket = Mockito.mock(Socket.class);
+    GetAvailableGamesCommand cmd = new GetAvailableGamesCommand();
+    Gson gson = new Gson();
+    String json = gson.toJson(cmd);
+    ByteArrayInputStream inputStream = new ByteArrayInputStream(json.getBytes());
+
+    when(playerConnector.getConnector()).thenReturn(mockSocket);
+    when(mockSocket.getInputStream()).thenReturn(inputStream);
+    assertEquals(cmd, (GetAvailableGamesCommand) controller.buildCommand());
+  }
+
+  @Test
   void BUILD_COMMAND_should_THROW_JsonParseException_noClassName()
       throws JsonIOException, JsonSyntaxException, IOException {
 
@@ -251,5 +286,40 @@ class ServerControllerSocketTest {
     when(playerConnector.getConnector()).thenReturn(mockSocket);
     when(mockSocket.getInputStream()).thenReturn(inputStream);
     assertThrows(JsonParseException.class, () -> controller.buildCommand());
+  }
+
+  @Test
+  void DISCONNECTION_should_send_messages_to_players()
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException,
+      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException, IOException, InterruptedException,
+      NullSocketConnectorException, NullBlockingQueueException, NullGameHandlerInstance {
+    try (MockedStatic<ServerControllerState> utilities = Mockito.mockStatic(ServerControllerState.class)) {
+      Socket mockSocket = Mockito.mock(Socket.class);
+      PlayerConnectorSocket alivePlayerPC = new PlayerConnectorSocket(mockSocket, new LinkedBlockingQueue<>());
+      Player mockPlayer = Mockito.mock(Player.class);
+      Player mockAlivePlayer = Mockito.mock(Player.class);
+      GameHandler mockGameHandler = Mockito.mock(GameHandler.class);
+      utilities.when(() -> ServerControllerState.getGameHandlerByUUID(any()))
+          .thenReturn(mockGameHandler);
+
+      AbstractCommand mockCmd = Mockito.mock(AbstractCommand.class);
+      when(playerConnector.getPlayer()).thenReturn(mockPlayer);
+      when(mockPlayer.getPlayerName()).thenReturn("Steve");
+      when(playerConnector.getConnector()).thenReturn(mockSocket);
+      when(mockSocket.isConnected()).thenReturn(true, false, false);
+      when(mockGameHandler.getPlayerConnectors()).thenReturn(Set.of(alivePlayerPC));
+      alivePlayerPC.setPlayer(mockAlivePlayer);
+      when(mockAlivePlayer.getPlayerName()).thenReturn("Alice");   
+      doReturn(mockCmd).when(controller).buildCommand();
+      doNothing().when(serverControllerAction).execute(any(), any());
+      controller.run();
+
+      assertFalse(mockPlayer.getIsConnected());
+      assertEquals("Steve disconnected from the game.", alivePlayerPC.getMessageFromQueue().getMessage());
+    }
+
   }
 }

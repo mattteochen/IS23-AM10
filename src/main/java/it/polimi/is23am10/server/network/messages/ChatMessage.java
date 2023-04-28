@@ -17,6 +17,12 @@ public final class ChatMessage extends AbstractMessage {
    */
   private Player receiver;
 
+
+  /**
+   * Player sending the message.
+   */
+  protected Player sender;
+
   /**
    * Public constructor for building a direct message.
    * 
@@ -59,6 +65,15 @@ public final class ChatMessage extends AbstractMessage {
    */
   public Player getReceiver() {
     return receiver;
+  }
+
+  /**
+   * Getter for the sending player.
+   *
+   * @return the sending player
+   */
+  public Player getSender() {
+    return sender;
   }
 
 }

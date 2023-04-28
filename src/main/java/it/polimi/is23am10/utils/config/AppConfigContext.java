@@ -61,6 +61,12 @@ public class AppConfigContext {
   private String serverAddress;
 
   /**
+   * A simple flag that if enabled shows all verbose messages
+   * in console logs.
+   */
+  private boolean showDebug;
+
+  /**
    * Constructor.
    *
    * @param serverSocketPort     The server port number.
@@ -69,7 +75,7 @@ public class AppConfigContext {
    * 
    */
   public AppConfigContext(Integer serverSocketPort, Integer serverRmiPort,
-      Integer maxConnections, boolean keepAlive, boolean isServer, boolean showGUI, boolean useRMI, String serverAddress) {
+      Integer maxConnections, boolean keepAlive, boolean isServer, boolean showGUI, boolean useRMI, String serverAddress, boolean showDebug) {
     this.serverSocketPort = serverSocketPort;
     this.serverRmiPort = serverRmiPort;
     this.maxConnection = maxConnections;
@@ -78,6 +84,7 @@ public class AppConfigContext {
     this.showGUI = showGUI;
     this.useRMI = useRMI;
     this.serverAddress = serverAddress;
+    this.showDebug = showDebug;
   }
 
 
@@ -95,6 +102,7 @@ public class AppConfigContext {
     this.showGUI = AppConfig.getShowGUI();
     this.useRMI = AppConfig.getUseRMI();
     this.serverAddress = AppConfig.getServerAddress();
+    this.showDebug = AppConfig.getShowDebug();
   }
 
   /**
@@ -175,5 +183,15 @@ public class AppConfigContext {
    */
   public String getServerAddress() {
     return serverAddress;
+  }
+
+  /**
+   * Show debug getter.
+   *
+   * @return The debug flag.
+   * 
+   */
+  public boolean getShowDebug() {
+    return showDebug;
   }
 }
