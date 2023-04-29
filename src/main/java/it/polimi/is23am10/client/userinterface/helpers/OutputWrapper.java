@@ -66,8 +66,14 @@ public final class OutputWrapper {
     CRITICAL
   }
 
-  private final Integer CLEAN_SCREEN_REPS = 100;
-  private final Integer MIN_LENGHT_PADDING_FOR_NAMES = 15;
+  private static final Integer CLEAN_SCREEN_REPS = 100;
+  private static final Integer PADDING_4 = 4;
+  private static final Integer PADDING_6 = 6;
+  private static final Integer PADDING_11 = 11;
+  private static final Integer PADDING_12 = 12;
+  private static final Integer PADDING_16 = 16;
+  private static final Integer PADDING_18 = 18;
+  private static final Integer MIN_PADDING_FOR_NAMES = 15;
 
   /**
    * A flag relative to the instance of {@link OutputWrapper}
@@ -203,17 +209,20 @@ public final class OutputWrapper {
     int maxLength = players.stream()
         .mapToInt(p -> p.getPlayerName().length())
         .max()
-        .orElse(MIN_LENGHT_PADDING_FOR_NAMES);
+        .orElse(MIN_PADDING_FOR_NAMES);
 
     StringBuilder playersStatus = new StringBuilder();
     playersStatus
         .append(String.format(CLIStrings.tableHeader1 + maxLength + CLIStrings.tableHeader2,
-            CLIStrings.N, CLIStrings.status, CLIStrings.player, CLIStrings.role, CLIStrings.score))
+            CLIStrings.N, CLIStrings.status, CLIStrings.player, CLIStrings.role,
+            CLIStrings.bookshelfPoints, CLIStrings.scoreBlockPoints, CLIStrings.extraPoints, CLIStrings.totalScore))
         .append(CLIStrings.newLine)
         .append(
-            String.format(CLIStrings.tableLines1 + maxLength + CLIStrings.tableLines2, repeatString(CLIStrings.line, 4),
-                repeatString(CLIStrings.line, 10), repeatString(CLIStrings.line, maxLength),
-                repeatString(CLIStrings.line, 12), repeatString(CLIStrings.line, 6)))
+            String.format(CLIStrings.tableLines1 + maxLength + CLIStrings.tableLines2,
+                repeatString(CLIStrings.line, PADDING_4), repeatString(CLIStrings.line, PADDING_6),
+                repeatString(CLIStrings.line, maxLength), repeatString(CLIStrings.line, PADDING_12),
+                repeatString(CLIStrings.line, PADDING_16), repeatString(CLIStrings.line, PADDING_18),
+                repeatString(CLIStrings.line, PADDING_12), repeatString(CLIStrings.line, PADDING_11)))
         .append(CLIStrings.newLine);
 
     int pos = 1;
@@ -222,6 +231,10 @@ public final class OutputWrapper {
       String status = onlineOffline.get(vp.getIsConnected());
       String player = vp.getPlayerName();
       String role = "";
+      int totalScore = vp.getScore().getTotalScore();
+      int extraPoints = vp.getScore().getExtraPoint();
+      int bookshelfPoints = vp.getScore().getBookshelfPoints();
+      int scoreBlocksPoint = vp.getScore().getScoreBlockPoints();
 
       if (vw.getFirstPlayer().equals(vp)) {
         role = CLIStrings.firstPlayer;
@@ -229,17 +242,17 @@ public final class OutputWrapper {
       if (vw.getActivePlayer().equals(vp)) {
         role = CLIStrings.yourTurn;
       }
-      int score = vp.getScore().getTotalScore();
 
       playersStatus
-          .append(String.format(CLIStrings.tableBody1 + maxLength + CLIStrings.tableBody2, pos++, status, player, role,
-              score))
+          .append(String.format(CLIStrings.tableBody1 + maxLength + CLIStrings.tableBody2,
+              pos++, status, player, role, bookshelfPoints, scoreBlocksPoint, extraPoints, totalScore))
           .append(CLIStrings.newLine);
     }
     info(playersStatus.toString(), false);
 
     // Name
     StringBuilder name = new StringBuilder();
+    name.append(CLIStrings.newLine); // New Line for esthetic purpose.
     pos = 1;
     for (VirtualPlayer vp : players) {
       name.append(String.format(CLIStrings.playerIdx, pos++));
@@ -274,7 +287,6 @@ public final class OutputWrapper {
               | BookshelfGridRowIndexOutOfBoundsException
               | NullIndexValueException e) {
             error(CLIStrings.bookshelfError, false);
-            ;
           }
         }
         row.append(CLIStrings.blackSquareTab);
