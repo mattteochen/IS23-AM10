@@ -54,8 +54,6 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
  */
 public final class OutputWrapper {
 
-  private static int MIN_NAME_LENGTH = 15;
-
   /**
    * Enum containing the output types.
    */
@@ -69,6 +67,7 @@ public final class OutputWrapper {
   }
 
   private final Integer CLEAN_SCREEN_REPS = 100;
+  private final Integer MIN_LENGHT_PADDING_FOR_NAMES = 15;
 
   /**
    * A flag relative to the instance of {@link OutputWrapper}
@@ -113,7 +112,7 @@ public final class OutputWrapper {
 
   /**
    * Public constructor for OutputWrapper.
-   * 
+   *
    * @param showDebug instance-specific debug flag.
    */
   public OutputWrapper(boolean showDebug) {
@@ -152,9 +151,9 @@ public final class OutputWrapper {
   }
 
   /**
-   * Print the players bookshelf on console
-   * 
-   * @param vw         The virtualView
+   * Print the current game status on console.
+   *
+   * @param vw         The virtualView.
    * @param cleanFirst Flag to set if message should be preceded by a console
    *                   clean.
    * @throws BookshelfGridColIndexOutOfBoundsException
@@ -163,104 +162,7 @@ public final class OutputWrapper {
    */
   public void show(VirtualView vw, boolean cleanFirst) {
 
-    List<VirtualPlayer> players = vw.getPlayers();
-
-    int maxLenght = players.stream()
-        .mapToInt(p -> p.getPlayerName().length())
-        .max()
-        .orElse(MIN_NAME_LENGTH);
-
-    StringBuilder playersStatus = new StringBuilder();
-    playersStatus
-        .append(String.format(CLIStrings.tableHeader1 + maxLenght + CLIStrings.tableHeader2, CLIStrings.N,
-            CLIStrings.status, CLIStrings.player, CLIStrings.role, CLIStrings.score))
-        .append(CLIStrings.newLine)
-        .append(
-            String.format(CLIStrings.tableLines1 + maxLenght + CLIStrings.tableLines2, repeatString(CLIStrings.line, 4),
-                repeatString(CLIStrings.line, 10), repeatString(CLIStrings.line, maxLenght),
-                repeatString(CLIStrings.line, 12), repeatString(CLIStrings.line, 6)))
-        .append(CLIStrings.newLine);
-
-    int pos = 1;
-    for (VirtualPlayer vp : players) {
-
-      String status = onlineOffline.get(vp.getIsConnected());
-      String player = vp.getPlayerName();
-      String role = "";
-
-      if (vw.getFirstPlayer().equals(vp)) {
-        role = CLIStrings.firstPlayer;
-      }
-      if (vw.getActivePlayer().equals(vp)) {
-        role = CLIStrings.yourTurn;
-      }
-      int score = vp.getScore().getTotalScore();
-
-      playersStatus
-          .append(String.format(CLIStrings.tableBody1 + maxLenght + CLIStrings.tableBody2, pos++, status, player, role,
-              score))
-          .append(CLIStrings.newLine);
-    }
-    info(playersStatus.toString(), false);
-
-    // Name
-    StringBuilder name = new StringBuilder();
-    pos = 1;
-    for (VirtualPlayer vp : players) {
-      name.append(String.format(CLIStrings.playerIdx, pos++));
-    }
-    info(name.toString() + CLIStrings.newLine, false);
-
-    // Index
-    StringBuilder idx = new StringBuilder();
-    for (VirtualPlayer vp : players) {
-      idx.append(CLIStrings.indexBookshelf);
-    }
-    info(idx.toString(), false);
-
-    // Top padding
-    StringBuilder topPadding = new StringBuilder();
-    for (VirtualPlayer vp : players) {
-      topPadding.append(CLIStrings.paddingBookshelf);
-    }
-    info(topPadding.toString(), false);
-
-    // Body
-    for (int i = 0; i < Bookshelf.BOOKSHELF_ROWS; i++) {
-      StringBuilder row = new StringBuilder();
-      for (VirtualPlayer vp : players) {
-        Bookshelf b = vp.getBookshelf();
-        row.append(CLIStrings.tabBlackSquare);
-        for (int j = 0; j < Bookshelf.BOOKSHELF_COLS; j++) {
-          try {
-            row.append(emojiMap.get(b.getBookshelfGridAt(i, j).getType()));
-          } catch (BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
-              | NullIndexValueException e) {
-            error(CLIStrings.bookshelfError, false);;
-          }
-        }
-        row.append(CLIStrings.blackSquareTab);
-      }
-      info(row.toString(), false);
-    }
-
-    // Bottom padding
-    StringBuilder bottomPadding = new StringBuilder();
-    for (VirtualPlayer vp : players) {
-      bottomPadding.append(CLIStrings.paddingBookshelf);
-    }
-    info(bottomPadding.toString() + CLIStrings.doubleNewLine, false);
-  }
-
-  /**
-   * Print game board on console.
-   * 
-   * @param gameBoard  The game board of the game session.
-   * @param cleanFirst Flag to set if message should be preceded by a console
-   *                   clean.
-   * 
-   */
-  public void show(Board gameBoard, boolean cleanFirst) {
+    Board gameBoard = vw.getGameBoard();
     // Header
     StringBuilder header = new StringBuilder();
     header.append(CLIStrings.boardStatus);
@@ -285,6 +187,9 @@ public final class OutputWrapper {
         row.append(emojiMap.get(tile.getType()));
       }
       row.append(String.format(CLIStrings.verticalBoardIndex, (i + 1)));
+
+      vw.getSharedCardsIndexes();
+
       info(row.toString(), false);
     }
 
@@ -292,11 +197,102 @@ public final class OutputWrapper {
     StringBuilder bottomPadding = new StringBuilder();
     bottomPadding.append(CLIStrings.bottomPaddingBoard);
     info(bottomPadding.toString(), false);
+
+    List<VirtualPlayer> players = vw.getPlayers();
+
+    int maxLength = players.stream()
+        .mapToInt(p -> p.getPlayerName().length())
+        .max()
+        .orElse(MIN_LENGHT_PADDING_FOR_NAMES);
+
+    StringBuilder playersStatus = new StringBuilder();
+    playersStatus
+        .append(String.format(CLIStrings.tableHeader1 + maxLength + CLIStrings.tableHeader2,
+            CLIStrings.N, CLIStrings.status, CLIStrings.player, CLIStrings.role, CLIStrings.score))
+        .append(CLIStrings.newLine)
+        .append(
+            String.format(CLIStrings.tableLines1 + maxLength + CLIStrings.tableLines2, repeatString(CLIStrings.line, 4),
+                repeatString(CLIStrings.line, 10), repeatString(CLIStrings.line, maxLength),
+                repeatString(CLIStrings.line, 12), repeatString(CLIStrings.line, 6)))
+        .append(CLIStrings.newLine);
+
+    int pos = 1;
+    for (VirtualPlayer vp : players) {
+
+      String status = onlineOffline.get(vp.getIsConnected());
+      String player = vp.getPlayerName();
+      String role = "";
+
+      if (vw.getFirstPlayer().equals(vp)) {
+        role = CLIStrings.firstPlayer;
+      }
+      if (vw.getActivePlayer().equals(vp)) {
+        role = CLIStrings.yourTurn;
+      }
+      int score = vp.getScore().getTotalScore();
+
+      playersStatus
+          .append(String.format(CLIStrings.tableBody1 + maxLength + CLIStrings.tableBody2, pos++, status, player, role,
+              score))
+          .append(CLIStrings.newLine);
+    }
+    info(playersStatus.toString(), false);
+
+    // Name
+    StringBuilder name = new StringBuilder();
+    pos = 1;
+    for (VirtualPlayer vp : players) {
+      name.append(String.format(CLIStrings.playerIdx, pos++));
+    }
+    info(name.toString(), false);
+
+    // Index
+    idx = new StringBuilder();
+    idx.append(CLIStrings.newLine); // New Line for esthetic purpose.
+    for (VirtualPlayer vp : players) {
+      idx.append(CLIStrings.indexBookshelf);
+    }
+    info(idx.toString(), false);
+
+    // Top padding
+    topPadding = new StringBuilder();
+    for (VirtualPlayer vp : players) {
+      topPadding.append(CLIStrings.paddingBookshelf);
+    }
+    info(topPadding.toString(), false);
+
+    // Body
+    for (int i = 0; i < Bookshelf.BOOKSHELF_ROWS; i++) {
+      StringBuilder row = new StringBuilder();
+      for (VirtualPlayer vp : players) {
+        Bookshelf b = vp.getBookshelf();
+        row.append(CLIStrings.tabBlackSquare);
+        for (int j = 0; j < Bookshelf.BOOKSHELF_COLS; j++) {
+          try {
+            row.append(emojiMap.get(b.getBookshelfGridAt(i, j).getType()));
+          } catch (BookshelfGridColIndexOutOfBoundsException
+              | BookshelfGridRowIndexOutOfBoundsException
+              | NullIndexValueException e) {
+            error(CLIStrings.bookshelfError, false);
+            ;
+          }
+        }
+        row.append(CLIStrings.blackSquareTab);
+      }
+      info(row.toString(), false);
+    }
+
+    // Bottom padding
+    bottomPadding = new StringBuilder();
+    for (VirtualPlayer vp : players) {
+      bottomPadding.append(CLIStrings.paddingBookshelf);
+    }
+    info(bottomPadding.toString() + CLIStrings.doubleNewLine, false);
   }
 
   /**
    * Prints a chat message on console.
-   * 
+   *
    * @param string     Message string to display.
    * @param cleanFirst Flag to set if message should be preceded by a console
    *                   clean.
@@ -307,7 +303,7 @@ public final class OutputWrapper {
 
   /**
    * Prints a warning line on console.
-   * 
+   *
    * @param string     Warning string to display.
    * @param cleanFirst Flag to set if message should be preceded by a console
    *                   clean.
@@ -318,7 +314,7 @@ public final class OutputWrapper {
 
   /**
    * Prints a error line on console.
-   * 
+   *
    * @param string     Error string to display.
    * @param cleanFirst Flag to set if message should be preceded by a console
    *                   clean.
@@ -329,7 +325,7 @@ public final class OutputWrapper {
 
   /**
    * Prints a critical error line on console.
-   * 
+   *
    * @param string     Critical error string to display.
    * @param cleanFirst Flag to set if message should be preceded by a console
    *                   clean.
@@ -350,7 +346,7 @@ public final class OutputWrapper {
 
   /**
    * Helper method to get current timestamp to show when in debug mode.
-   * 
+   *
    * @return Formatted timestamp as string.
    */
   private String getTimestamp() {
@@ -362,7 +358,7 @@ public final class OutputWrapper {
   /**
    * Helper method used by tests to retrieve the string to be printed
    * before actually printing it.
-   * 
+   *
    * @param level  {@link OutputLevel} of the message.
    * @param string The string of the message to display.
    * @return The formatted string ready to be printed.
@@ -377,7 +373,7 @@ public final class OutputWrapper {
 
   /**
    * Public method to print a string. Used from CLI.
-   * 
+   *
    * @param level      {@link OutputLevel} of the message.
    * @param string     The string of the message to display.
    * @param cleanFirst Flag that resets the console before print if true.
@@ -391,7 +387,7 @@ public final class OutputWrapper {
 
   /**
    * Setter for the debug flag.
-   * 
+   *
    * @param toSet Debug flag.
    */
   public void setDebug(boolean toSet) {
@@ -400,7 +396,7 @@ public final class OutputWrapper {
 
   // Runnable method to eyeball the various outputs.
   // TODO: Remove in prod / once all outputs are testable from actual client.
-  public static void main(String args[])
+  public static void main(String[] args)
       throws NullPlayerNameException, IOException, NullMaxPlayerException,
       InvalidMaxPlayerException,
       NullPlayerIdException, NullPlayerBookshelfException,
