@@ -167,22 +167,16 @@ public final class OutputWrapper {
    * @throws NullIndexValueException
    */
   public void show(VirtualView vw, boolean cleanFirst) {
-
     Board gameBoard = vw.getGameBoard();
+
     // Header
-    StringBuilder header = new StringBuilder();
-    header.append(CLIStrings.boardStatus);
-    info(header.toString(), false);
+    info(CLIStrings.boardStatus, false);
 
     // Index
-    StringBuilder idx = new StringBuilder();
-    idx.append(CLIStrings.indexBoard);
-    info(idx.toString(), false);
+    info(CLIStrings.indexBoard, false);
 
     // Top padding
-    StringBuilder topPadding = new StringBuilder();
-    topPadding.append(CLIStrings.topPaddingBoard);
-    info(topPadding.toString(), false);
+    info(CLIStrings.topPaddingBoard, false);
 
     // Body
     for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
@@ -200,9 +194,7 @@ public final class OutputWrapper {
     }
 
     // Bottom padding
-    StringBuilder bottomPadding = new StringBuilder();
-    bottomPadding.append(CLIStrings.bottomPaddingBoard);
-    info(bottomPadding.toString(), false);
+    info(CLIStrings.bottomPaddingBoard, false);
 
     List<VirtualPlayer> players = vw.getPlayers();
 
@@ -260,7 +252,7 @@ public final class OutputWrapper {
     info(name.toString(), false);
 
     // Index
-    idx = new StringBuilder();
+    StringBuilder idx = new StringBuilder();
     idx.append(CLIStrings.newLine); // New Line for esthetic purpose.
     for (VirtualPlayer vp : players) {
       idx.append(CLIStrings.indexBookshelf);
@@ -268,7 +260,7 @@ public final class OutputWrapper {
     info(idx.toString(), false);
 
     // Top padding
-    topPadding = new StringBuilder();
+    StringBuilder topPadding = new StringBuilder();
     for (VirtualPlayer vp : players) {
       topPadding.append(CLIStrings.paddingBookshelf);
     }
@@ -295,7 +287,7 @@ public final class OutputWrapper {
     }
 
     // Bottom padding
-    bottomPadding = new StringBuilder();
+    StringBuilder bottomPadding = new StringBuilder();
     for (VirtualPlayer vp : players) {
       bottomPadding.append(CLIStrings.paddingBookshelf);
     }
