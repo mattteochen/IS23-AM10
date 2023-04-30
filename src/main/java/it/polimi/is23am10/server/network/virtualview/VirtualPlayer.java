@@ -21,29 +21,34 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 public final class VirtualPlayer {
 
   /**
-   * Unique player identifier
+   * Unique player identifier.
    */
   private UUID playerId;
 
   /**
-   * Player's game name
+   * Player's game name.
    */
   private String playerName;
 
   /**
-   * Player's score
+   * Player's score.
    */
   private Score score;
 
   /**
-   * Player's bookshelf with its tiles
+   * Player's bookshelf with its tiles.
    */
   private Bookshelf bookshelf;
 
   /**
-   * 1-12 number referencing the private card to show
+   * 1-12 number referencing the private card to show.
    */
   private Integer privateCardIndex;
+
+  /**
+   * Player's private card bookshelf.
+   */
+  private Bookshelf privateCardBookshelf;
 
   /**
    * Status of the player.
@@ -53,7 +58,7 @@ public final class VirtualPlayer {
   
   /**
    * Public constructor. Builds VirtualPlayer out of {@link Player}
-   * @param p instance of {@link Player} to "virtualize"
+   * @param p instance of {@link Player} to "virtualize".
    * @throws NullIndexValueException
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws BookshelfGridColIndexOutOfBoundsException
@@ -65,12 +70,14 @@ public final class VirtualPlayer {
       this.score = new Score(p.getScore());
       this.bookshelf = new Bookshelf(p.getBookshelf());
       this.privateCardIndex = p.getPrivateCard().getPattern().getIndex();
+      // TODO: after private Bookshelf refactoring.
+      //this.privateCardBookshelf;
       this.isConnected = p.getIsConnected();
     }
   }
 
   /**
-   * Getter for player id
+   * Getter for player id.
    * @return player id
    */
   public UUID getPlayerId() {
@@ -78,7 +85,7 @@ public final class VirtualPlayer {
   }
 
   /**
-   * Getter for score
+   * Getter for score.
    * @return score
    */
   public Score getScore() {
@@ -86,7 +93,7 @@ public final class VirtualPlayer {
   }
 
   /**
-   * Getter for bookshelf
+   * Getter for bookshelf.
    * @return bookshelf
    */
   public Bookshelf getBookshelf() {
@@ -94,7 +101,7 @@ public final class VirtualPlayer {
   }
 
   /**
-   * Getter for private card index
+   * Getter for private card index.
    * @return private card index
    */
   public Integer getPrivateCardIndex() {
@@ -102,7 +109,15 @@ public final class VirtualPlayer {
   }
 
   /**
-   * Getter for player name
+   * Getter for private card bookshelf.
+   * @return Private card bookshelf.
+   */
+  public Bookshelf getPrivateCardBookshelf() {
+    return privateCardBookshelf;
+  }
+
+  /**
+   * Getter for player name.
    * @return player name
    */
   public String getPlayerName() {
@@ -120,10 +135,11 @@ public final class VirtualPlayer {
   /**
    * Void method used when pushing state
    * to all players, in order to keep secret
-   * each player's card to other players
+   * each player's card to other players.
    */
   public void obfuscatePrivateCard() {
     privateCardIndex = 0;
+    privateCardBookshelf = null;
   }
 
   /**
