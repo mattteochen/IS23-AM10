@@ -1,7 +1,12 @@
 package it.polimi.is23am10.client;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import com.google.gson.Gson;
 
@@ -9,8 +14,11 @@ import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
+import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import it.polimi.is23am10.utils.Coordinates;
 
 /**
  * An abstract class representing the app running in client mode. Holds the
@@ -112,4 +120,29 @@ public abstract class Client implements Runnable {
       default:
     }
   }
+
+  /**
+   * Abstract method that send command to get all available games.
+   * @throws IOException
+ * @throws InterruptedException
+   */
+  abstract HashMap<Integer,VirtualView> getAvailableGames(AbstractPlayerConnector apc) throws IOException, InterruptedException;
+
+  /**
+   * Abstract method that send command to start a new game.
+   * @throws IOException
+   */
+  abstract void startGame(AbstractPlayerConnector apc, String playerName, int maxPlayerNum) throws IOException;
+
+  /**
+   * Abstract method that send command to add a new player.
+ * @throws IOException
+   */
+  abstract void addPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException;
+
+  /**
+   * Abstract method that send command to move tiles.
+   * @throws IOException
+   */
+  abstract void moveTiles(AbstractPlayerConnector apc , Map<Coordinates, Coordinates> moves) throws IOException;
 }
