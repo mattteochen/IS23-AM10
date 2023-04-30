@@ -54,7 +54,7 @@ public final class CLIStrings {
   public final static String tableHeader2 = "s | %-" + OutputWrapper.M_PADDING + "s | %-" + OutputWrapper.XL_PADDING
       + "s | %-" + OutputWrapper.XXL_PADDING + "s | %-" + 14 + "s | %-" + OutputWrapper.M_PADDING + "s | %-"
       + OutputWrapper.S_PADDING + "s ";
-  public final static String N = "N.";
+  public final static String N = "No.";
   public final static String status = "Status";
   public final static String player = "Player";
   public final static String role = "Role";
@@ -76,9 +76,10 @@ public final class CLIStrings {
   public final static String line = "-";
   public final static String bookshelfError = "🛑 Wrong bookshelf coordinates!";
   public final static String sharedCardsHeader = "\t%-" + OutputWrapper.XL_PADDING + "s | %-";
-  public final static String sharedCardHeaderDescription = "s |";
+  public final static String sharedCardHeaderDescription = "s ";
   public final static String sharedCardsBody = "\t#%-" + OutputWrapper.XL_PADDING + "d| %-";
-  public final static String sharedCardsBodyDescription = "s |";
+  public final static String sharedCardsBodyDescription = "s ";
   public final static String idx = "Shared Card Idx.";
   public final static String description = "Card Description";
+  public final static String privateCardIdx = "\tPrivate Card #%d\t";
 }
