@@ -569,6 +569,7 @@ public class Game implements Serializable {
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException, NullPointerException,
       NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+    activePlayer.setIsActivePlayer(false);
     assignScoreBlocks();
     activePlayer.updateScore();
     checkEndGame();
@@ -587,6 +588,7 @@ public class Game implements Serializable {
         nextPlayerIdx = (nextPlayerIdx+ 1) % getPlayers().size();
       }
       setActivePlayer(players.get(nextPlayerIdx));
+      players.get(nextPlayerIdx).setIsActivePlayer(true);
     }
   }
 
