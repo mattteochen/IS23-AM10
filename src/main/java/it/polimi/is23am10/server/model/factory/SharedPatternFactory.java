@@ -592,7 +592,7 @@ public final class SharedPatternFactory {
           "Five columns with ascending or descending height. Starting from the first or the last column, the next column has to have one tile more. The tile types are not considered.", 12)));
 
   /**
-   * Method used to get random PrivatePattern between the 12 possible.
+   * Method used to get random SharedPattern between the 12 possible.
    *
    * @param usedPatterns a List of {@link SharedPattern} storing the already used
    *                     patterns.
