@@ -147,13 +147,29 @@ public class CommandLineInterfaceTest {
     VirtualView vw = new VirtualView(g);
     cli.displayVirtualView(vw);
 
-    final String expectedString = String.format("%s\n%s\n%s\n%s",
-        CLIStrings.currentStateString,
-        String.format(CLIStrings.nowPlaying, playerName),
-        CLIStrings.moveTilesInviteString,
-        CLIStrings.moveTilesExampleString);
+    // .show(VirtualView) method doesn't return the dynamic strings like other OW methods.
+    // Sample-testing cli strings to ensure the whole method gets executed.
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.currentStateString));
+    assertTrue(outputStreamCaptor.toString().contains(String.format(CLIStrings.nowPlaying, playerName)));
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.boardStatus));
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.indexBoard));
 
-    assertOutput(OutputLevel.INFO, expectedString);
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.topPaddingBoard));
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.tabBlackSquare));    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.bottomPaddingBoard));
+    
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.bookshelfPoints));
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.scoreBlockPoints));
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.privatePoints));
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.extraPoints));
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.totalScore));
+    
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.yourTurn));
+
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.indexBookshelf));
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.paddingBookshelf));
+    
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.moveTilesInviteString));
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.moveTilesExampleString));
   }
 
   @Test
