@@ -9,7 +9,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.server.model.factory.GameFactory;
@@ -310,7 +309,7 @@ public final class OutputWrapper {
     StringBuilder sharedCards = new StringBuilder();
 
     maxLength = vw.getSharedCards().stream()
-        .mapToInt(p -> p.getValue().length())
+        .mapToInt(p -> CLIStrings.sharedPatternsDesc.get(p).length())
         .max()
         .orElse(HUNDRED_PADDING);
 
@@ -326,12 +325,10 @@ public final class OutputWrapper {
         .append(CLIStrings.newLine);
 
     // Body.
-    for (Entry<Integer, String> sc : vw.getSharedCards()) {
-      Integer idx = sc.getKey();
-      String description = sc.getValue();
+    for (Integer sc : vw.getSharedCards()) {
       sharedCards
-          .append(String.format(CLIStrings.sharedCardsBody + maxLength + CLIStrings.sharedCardsBodyDescription, idx,
-              description))
+          .append(String.format(CLIStrings.sharedCardsBody + maxLength + CLIStrings.sharedCardsBodyDescription, sc,
+              CLIStrings.sharedPatternsDesc.get(sc)))
           .append(CLIStrings.newLine);
     }
     info(sharedCards.toString(), false);
@@ -365,7 +362,7 @@ public final class OutputWrapper {
     for (int i = 0; i < Bookshelf.BOOKSHELF_ROWS; i++) {
       StringBuilder row = new StringBuilder();
       for (VirtualPlayer vp : players) {
-        Bookshelf b = vp.getBookshelf();
+        Bookshelf b = PrivatePatternsHelper.getBookshelf(vp.getPrivateCardIndex());
         row.append(CLIStrings.tabBlackSquare);
         for (int j = 0; j < Bookshelf.BOOKSHELF_COLS; j++) {
           try {

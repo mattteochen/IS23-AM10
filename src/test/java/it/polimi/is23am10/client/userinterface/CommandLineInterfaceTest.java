@@ -128,6 +128,7 @@ public class CommandLineInterfaceTest {
       PlayerNotFoundException {
     Game g = GameFactory.getNewGame("giovanni", 2);
     g.setLastRound();
+    g.setFirstPlayer(g.getActivePlayer());
     VirtualView vw = new VirtualView(g);
     cli.displayVirtualView(vw);
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.lastRoundString));
@@ -142,6 +143,7 @@ public class CommandLineInterfaceTest {
       FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
     String playerName = "giovanni";
     Game g = GameFactory.getNewGame(playerName, 2);
+    g.setFirstPlayer(g.getActivePlayer());
     VirtualView vw = new VirtualView(g);
     cli.displayVirtualView(vw);
 

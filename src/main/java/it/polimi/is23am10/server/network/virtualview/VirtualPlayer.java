@@ -70,8 +70,6 @@ public final class VirtualPlayer {
       this.score = new Score(p.getScore());
       this.bookshelf = new Bookshelf(p.getBookshelf());
       this.privateCardIndex = p.getPrivateCard().getPattern().getIndex();
-      // TODO: after private Bookshelf refactoring.
-      //this.privateCardBookshelf;
       this.isConnected = p.getIsConnected();
     }
   }
@@ -109,14 +107,6 @@ public final class VirtualPlayer {
   }
 
   /**
-   * Getter for private card bookshelf.
-   * @return Private card bookshelf.
-   */
-  public Bookshelf getPrivateCardBookshelf() {
-    return privateCardBookshelf;
-  }
-
-  /**
    * Getter for player name.
    * @return player name
    */
@@ -139,7 +129,6 @@ public final class VirtualPlayer {
    */
   public void obfuscatePrivateCard() {
     privateCardIndex = 0;
-    privateCardBookshelf = null;
   }
 
   /**

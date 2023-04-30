@@ -61,7 +61,7 @@ public final class VirtualView implements Serializable {
   /**
    * Pairs of shared cards indexes - descriptions.
    */
-  private List<Entry<Integer, String>> sharedCards;
+  private List<Integer> sharedCards;
 
   /**
    * Boolean flag signaling game is over
@@ -142,7 +142,7 @@ public final class VirtualView implements Serializable {
    * 
    * @return Pairs of shared cards indexes and descriptions.
    */
-  public List<Entry<Integer, String>> getSharedCards() {
+  public List<Integer> getSharedCards() {
     return sharedCards;
   }
 
@@ -182,13 +182,10 @@ public final class VirtualView implements Serializable {
         .map(p -> new VirtualPlayer(p))
         .collect(Collectors.toList());
 
-    this.sharedCards = new ArrayList<>();
-    for (SharedCard sc : g.getSharedCard()) {
-      Integer idx = sc.getPattern().getIndex();
-      String description = sc.getPattern().getPatternDescription();
-      Entry<Integer, String> obj = new AbstractMap.SimpleEntry<>(idx, description);
-      this.sharedCards.add(obj);
-    }
+    this.sharedCards = g.getSharedCard()
+        .stream()
+        .map(c -> c.getPattern().getIndex())
+        .collect(Collectors.toList());
 
     this.winnerPlayer = g.getWinnerPlayer() == null ? null : new VirtualPlayer(g.getWinnerPlayer());
   }

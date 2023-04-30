@@ -567,29 +567,18 @@ public final class SharedPatternFactory {
    *
    */
   private static final List<SharedPattern<Predicate<Bookshelf>>> patternsArray = List.of(
-      (new SharedPattern<Predicate<Bookshelf>>(checkTwoAdjacent,
-          "Six separated groups made of two adjacent tiles of the same type. The tile type of different groups can be different.", 1)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkCornersMatch,
-          "The four tiles at the corners of the bookshelf are of the same type.", 2)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkFourAdjacent,
-          "Four separated groups made of four adjacent tiles of the same type. The tile's type of different groups can be different.", 3)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkSquares,
-          "Two groups of four tiles of the same type forming a 2x2 square shape. The tile type of the two squares has to be the same.", 4)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkMaxThreeTypesInColumn,
-          "At least three full columns (filled with six tiles), having maximum three different tile types per column. ", 5)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkEightOfSameType,
-          "At least eight tiles of the same type. There are no restrictions concerning their positions.", 6)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkDiagonalsSameType,
-          "Five tiles of the same type forming a diagonal.", 7)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkMaxThreeTypesInRow,
-          "At least four full rows (filled with five tiles), having maximum three different tile types per row.", 8)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkTwoColumnAllDiff,
-          "At least two full columns (filled with six tiles), having tiles of all different types.", 9)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkTwoRowsAllDiff,
-          "At least two full rows (filled with five tiles), having tiles of all different types.", 10)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkTilesXShape, "Five tiles of the same type, forming an X shape.", 11)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkOrderedBookshelfColumns,
-          "Five columns with ascending or descending height. Starting from the first or the last column, the next column has to have one tile more. The tile types are not considered.", 12)));
+      (new SharedPattern<Predicate<Bookshelf>>(checkTwoAdjacent, 1)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkCornersMatch, 2)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkFourAdjacent, 3)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkSquares, 4)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkMaxThreeTypesInColumn,5)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkEightOfSameType,6)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkDiagonalsSameType,7)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkMaxThreeTypesInRow, 8)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkTwoColumnAllDiff,9)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkTwoRowsAllDiff, 10)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkTilesXShape, 11)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkOrderedBookshelfColumns, 12)));
 
   /**
    * Method used to get random SharedPattern between the 12 possible.
