@@ -1,20 +1,31 @@
 package it.polimi.is23am10.client;
 
+import java.io.IOException;
 import java.net.UnknownHostException;
 import java.rmi.registry.Registry;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.command.AbstractCommand;
+import it.polimi.is23am10.server.command.AddPlayerCommand;
+import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
+import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
+import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import it.polimi.is23am10.utils.Coordinates;
 
 /**
  * A client using RMI as communication method.
@@ -145,4 +156,35 @@ public class RMIClient extends Client {
       }
     }
   }
+
+  @Override
+  HashMap<Integer,VirtualView> getAvailableGames(AbstractPlayerConnector apc) throws IOException,InterruptedException {
+    HashMap<Integer,VirtualView> availableGames = new HashMap<>();
+    AbstractCommand command = new GetAvailableGamesCommand();
+    serverControllerActionServer.execute(apc, command);
+    return availableGames;
+  }
+
+  @Override
+  void startGame(AbstractPlayerConnector apc, String playerName, int maxPlayerNum)
+       throws IOException {
+    AbstractCommand command = new StartGameCommand(playerName, maxPlayerNum);
+    serverControllerActionServer.execute(apc, command);
+  }
+
+  @Override
+  void addPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException {
+    AbstractCommand command = new AddPlayerCommand(playerName, apc.getGameId());
+    serverControllerActionServer.execute(apc, command);
+  }
+
+  @Override
+  void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves) 
+      throws IOException {
+    AbstractCommand command = new MoveTilesCommand(
+        apc.getPlayer().getPlayerName(), apc.getGameId(), moves);
+    serverControllerActionServer.execute(apc, command);
+  }
+
+
 }
