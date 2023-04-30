@@ -197,13 +197,24 @@ public class SocketClient extends Client {
                   //TODO: throw an exception
                 }else{
                   moveTiles(playerConnectorSocket, moves);
-                  
                 }
               break;
               default:
             }
-          }
+          } 
 
+          //I can send messages or logout whether it's my turn or not
+          String fullCommand = br.readLine();
+          String command = fullCommand.split(" ")[0];
+          switch(command){
+            case "chat":
+                //TODO: add send chat message command
+              break;
+            case "logout":
+                //TODO: add logout command
+              break;
+            default:
+          }
         }
       } catch (IOException | InterruptedException e) {
         System.out.println("🛑 " + e.getMessage());
@@ -266,7 +277,7 @@ public class SocketClient extends Client {
   HashMap<Integer, VirtualView> getAvailableGames(AbstractPlayerConnector apc)
       throws IOException, InterruptedException {
     GetAvailableGamesCommand command = new GetAvailableGamesCommand();
-    HashMap mapIndexVirtualView = new HashMap<Integer, VirtualView>();
+    HashMap<Integer, VirtualView> mapIndexVirtualView = new HashMap<Integer, VirtualView>();
     Integer gameIdx = 0;
     String req = gson.toJson(command);
     PrintWriter epson = new PrintWriter(((PlayerConnectorSocket) apc).getConnector().getOutputStream(), true,
