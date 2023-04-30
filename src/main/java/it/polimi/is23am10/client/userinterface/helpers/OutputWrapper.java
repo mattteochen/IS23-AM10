@@ -202,10 +202,11 @@ public final class OutputWrapper {
 
     List<VirtualPlayer> players = vw.getPlayers();
 
-    int maxLength = players.stream()
+    int maxLength = Math.max(
+      players.stream()
         .mapToInt(p -> p.getPlayerName().length())
-        .max()
-        .orElse(MIN_PADDING_FOR_NAMES);
+        .max().getAsInt(), 
+        MIN_PADDING_FOR_NAMES);
 
     // Print Player Status.
     StringBuilder playersStatus = new StringBuilder();
@@ -232,11 +233,11 @@ public final class OutputWrapper {
       String status = onlineOffline.get(vp.getIsConnected());
       String player = vp.getPlayerName();
       String role = "";
-      int totalScore = vp.getScore().getTotalScore();
+      String totalScoreString = vp.getScore().getStringTotalScore();
       int extraPoints = vp.getScore().getExtraPoint();
       int bookshelfPoints = vp.getScore().getBookshelfPoints();
       int scoreBlocksPoint = vp.getScore().getScoreBlockPoints();
-      int privatePoints = vp.getScore().getPrivatePoints();
+      String privatePointsString = (vp.getScore().getPrivatePoints() == -1) ? "?" : vp.getScore().getPrivatePoints().toString();
 
       if (vw.getFirstPlayer().equals(vp)) {
         role = CLIStrings.firstPlayer;
@@ -247,7 +248,7 @@ public final class OutputWrapper {
 
       playersStatus
           .append(String.format(CLIStrings.tableBody1 + maxLength + CLIStrings.tableBody2,
-              pos++, status, player, role, bookshelfPoints, scoreBlocksPoint, privatePoints, extraPoints, totalScore))
+              pos++, status, player, role, bookshelfPoints, scoreBlocksPoint, privatePointsString, extraPoints, totalScoreString))
           .append(CLIStrings.newLine);
     }
     info(playersStatus.toString(), false);
@@ -255,7 +256,7 @@ public final class OutputWrapper {
     // Print Bookshelfs.
     // Name.
     StringBuilder name = new StringBuilder();
-    name.append(CLIStrings.newLine); // New Line for esthetic purpose.
+    name.append(CLIStrings.newLine); // New Line for aesthetic purpose.
     pos = 1;
     for (VirtualPlayer vp : players) {
       name.append(String.format(CLIStrings.playerIdx, pos++));
@@ -264,7 +265,7 @@ public final class OutputWrapper {
 
     // Index.
     StringBuilder playerIndex = new StringBuilder();
-    playerIndex.append(CLIStrings.newLine); // New Line for esthetic purpose.
+    playerIndex.append(CLIStrings.newLine); // New Line for aesthetic purpose.
     for (VirtualPlayer vp : players) {
       playerIndex.append(CLIStrings.indexBookshelf);
     }
@@ -302,16 +303,15 @@ public final class OutputWrapper {
     for (VirtualPlayer vp : players) {
       bottomPadding.append(CLIStrings.paddingBookshelf);
     }
-    bottomPadding.append(CLIStrings.doubleNewLine); // New Line for esthetic purpose.
+    bottomPadding.append(CLIStrings.doubleNewLine); // New Line for aesthetic purpose.
     info(bottomPadding.toString(), false);
 
     // Print Shared Cards descriptions.
     StringBuilder sharedCards = new StringBuilder();
 
-    maxLength = vw.getSharedCards().stream()
+    maxLength = Math.max(vw.getSharedCards().stream()
         .mapToInt(p -> CLIStrings.sharedPatternsDesc.get(p).length())
-        .max()
-        .orElse(HUNDRED_PADDING);
+        .max().getAsInt(),HUNDRED_PADDING);
 
     // Header.
     sharedCards
@@ -530,6 +530,9 @@ public final class OutputWrapper {
 
     VirtualView vw1 = new VirtualView(GameFactory.getNewGame("bob", 2));
     VirtualView vw2 = new VirtualView(g);
+
+    vw2.getPlayers().get(0).obfuscatePrivateCard();
+
     List<VirtualView> games = List.of(
         vw1, vw2);
     cli.displayAvailableGames(games);

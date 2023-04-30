@@ -46,11 +46,6 @@ public final class VirtualPlayer {
   private Integer privateCardIndex;
 
   /**
-   * Player's private card bookshelf.
-   */
-  private Bookshelf privateCardBookshelf;
-
-  /**
    * Status of the player.
    * 
    */
@@ -129,6 +124,7 @@ public final class VirtualPlayer {
    */
   public void obfuscatePrivateCard() {
     privateCardIndex = 0;
+    score.obfuscatePrivatePoints();
   }
 
   /**

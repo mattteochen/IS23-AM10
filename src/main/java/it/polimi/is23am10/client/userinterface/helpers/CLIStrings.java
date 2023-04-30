@@ -74,7 +74,7 @@ public final class CLIStrings {
   public final static String tableBody1 = "\t#%-" + OutputWrapper.XXS_PADDING + "d| %-" + OutputWrapper.XS_PADDING + "s | %-";
   public final static String tableBody2 = "s | %-" + OutputWrapper.M_PADDING + "s | %-" + OutputWrapper.XL_PADDING
       + "d | %-" + OutputWrapper.XXL_PADDING + "d | %-" + OutputWrapper.L_PADDING + "s | %-" + OutputWrapper.M_PADDING
-      + "d | %-" + OutputWrapper.S_PADDING + "d";
+      + "d | %-" + OutputWrapper.S_PADDING + "s";
   public final static String line = "-";
   public final static String bookshelfError = "🛑 Wrong bookshelf coordinates!";
   public final static String sharedCardsHeader = "\t%-" + OutputWrapper.XL_PADDING + "s | %-";

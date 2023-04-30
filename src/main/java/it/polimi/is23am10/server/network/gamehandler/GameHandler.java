@@ -139,10 +139,12 @@ public class GameHandler {
     synchronized (playerConnectors) {
       for (AbstractPlayerConnector pc : playerConnectors) {
         VirtualView gameCopy = new VirtualView(game);
-        gameCopy.getPlayers()
-        .stream()
-        .filter(p -> !p.getPlayerName().equals(pc.getPlayer().getPlayerName()))
-        .forEach(p -> p.obfuscatePrivateCard());
+        if (!game.getEnded()) {
+          gameCopy.getPlayers()
+          .stream()
+          .filter(p -> !p.getPlayerName().equals(pc.getPlayer().getPlayerName()))
+          .forEach(p -> p.obfuscatePrivateCard());
+        }
         // synch is performed by the blocking queue.
         pc.addMessageToQueue(new GameMessage(gameCopy));
       }

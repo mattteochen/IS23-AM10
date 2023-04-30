@@ -58,7 +58,7 @@ public final class CommandLineInterface implements UserInterface {
       ow.info(CLIStrings.gameOverString, false);
       vw.getPlayers()
           .stream()
-          .sorted(Comparator.comparing(p -> p.getScore().getTotalScore(), Comparator.reverseOrder()))
+          .sorted(Comparator.comparing(p -> p.getScore().getVisibleScore(), Comparator.reverseOrder()))
           .forEach(p -> ow.info(
               String.format(CLIStrings.playerScoreString, p.getPlayerName(), p.getScore().getTotalScore()), false));
       ow.info(String.format(CLIStrings.winnerString, vw.getWinnerPlayer().getPlayerName()), false);

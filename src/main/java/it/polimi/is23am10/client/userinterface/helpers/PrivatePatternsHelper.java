@@ -26,9 +26,8 @@ public final class PrivatePatternsHelper {
    * Public funciton used to retrieve a bookshelf from its 
    * private card,
    * 
-   * 
-   * @param idx
-   * @return
+   * @param idx index of bookshelf.
+   * @return relative bookshelf.
    */
   public static Bookshelf getBookshelf(Integer idx) {
     try {
