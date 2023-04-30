@@ -68,7 +68,6 @@ public final class CommandLineInterface implements UserInterface {
       }
       ow.info(String.format(CLIStrings.nowPlaying, vw.getActivePlayer().getPlayerName()), false);
 
-      ow.show(vw.getGameBoard(), false);
       ow.show(vw, false);
 
       ow.info(CLIStrings.moveTilesInviteString, false);
