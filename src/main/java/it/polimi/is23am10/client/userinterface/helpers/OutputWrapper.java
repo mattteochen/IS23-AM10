@@ -9,6 +9,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
 import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
@@ -66,14 +68,18 @@ public final class OutputWrapper {
     CRITICAL
   }
 
-  private static final Integer CLEAN_SCREEN_REPS = 100;
-  private static final Integer PADDING_4 = 4;
-  private static final Integer PADDING_6 = 6;
-  private static final Integer PADDING_11 = 11;
-  private static final Integer PADDING_12 = 12;
-  private static final Integer PADDING_16 = 16;
-  private static final Integer PADDING_18 = 18;
-  private static final Integer MIN_PADDING_FOR_NAMES = 15;
+  private final Integer CLEAN_SCREEN_REPS = 100;
+
+  // Variable padding sizes for string formatting.
+  public static final Integer XXS_PADDING = 4;
+  public static final Integer XS_PADDING = 6;
+  public static final Integer S_PADDING = 11;
+  public static final Integer M_PADDING = 12;
+  public static final Integer L_PADDING = 14;
+  public static final Integer XL_PADDING = 16;
+  public static final Integer XXL_PADDING = 18;
+  public static final Integer HUNDRED_PADDING = 100;
+  public static final Integer MIN_PADDING_FOR_NAMES = 15;
 
   /**
    * A flag relative to the instance of {@link OutputWrapper}
@@ -167,18 +173,20 @@ public final class OutputWrapper {
    * @throws NullIndexValueException
    */
   public void show(VirtualView vw, boolean cleanFirst) {
+
+    // Print game board.
     Board gameBoard = vw.getGameBoard();
 
-    // Header
+    // Header.
     info(CLIStrings.boardStatus, false);
 
-    // Index
+    // Index.
     info(CLIStrings.indexBoard, false);
 
-    // Top padding
+    // Top padding.
     info(CLIStrings.topPaddingBoard, false);
 
-    // Body
+    // Body.
     for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
       StringBuilder row = new StringBuilder();
       row.append(CLIStrings.tabBlackSquare);
@@ -187,13 +195,10 @@ public final class OutputWrapper {
         row.append(emojiMap.get(tile.getType()));
       }
       row.append(String.format(CLIStrings.verticalBoardIndex, (i + 1)));
-
-      vw.getSharedCardsIndexes();
-
       info(row.toString(), false);
     }
 
-    // Bottom padding
+    // Bottom padding.
     info(CLIStrings.bottomPaddingBoard, false);
 
     List<VirtualPlayer> players = vw.getPlayers();
@@ -203,20 +208,25 @@ public final class OutputWrapper {
         .max()
         .orElse(MIN_PADDING_FOR_NAMES);
 
+    // Print Player Status.
     StringBuilder playersStatus = new StringBuilder();
+    // Header.
     playersStatus
         .append(String.format(CLIStrings.tableHeader1 + maxLength + CLIStrings.tableHeader2,
             CLIStrings.N, CLIStrings.status, CLIStrings.player, CLIStrings.role,
-            CLIStrings.bookshelfPoints, CLIStrings.scoreBlockPoints, CLIStrings.extraPoints, CLIStrings.totalScore))
+            CLIStrings.bookshelfPoints, CLIStrings.scoreBlockPoints, CLIStrings.privatePoints, CLIStrings.extraPoints,
+            CLIStrings.totalScore))
         .append(CLIStrings.newLine)
         .append(
             String.format(CLIStrings.tableLines1 + maxLength + CLIStrings.tableLines2,
-                repeatString(CLIStrings.line, PADDING_4), repeatString(CLIStrings.line, PADDING_6),
-                repeatString(CLIStrings.line, maxLength), repeatString(CLIStrings.line, PADDING_12),
-                repeatString(CLIStrings.line, PADDING_16), repeatString(CLIStrings.line, PADDING_18),
-                repeatString(CLIStrings.line, PADDING_12), repeatString(CLIStrings.line, PADDING_11)))
+                repeatString(CLIStrings.line, XXS_PADDING), repeatString(CLIStrings.line, XS_PADDING),
+                repeatString(CLIStrings.line, maxLength), repeatString(CLIStrings.line, M_PADDING),
+                repeatString(CLIStrings.line, XL_PADDING), repeatString(CLIStrings.line, XXL_PADDING),
+                repeatString(CLIStrings.line, L_PADDING), repeatString(CLIStrings.line, M_PADDING),
+                repeatString(CLIStrings.line, S_PADDING)))
         .append(CLIStrings.newLine);
 
+    // Body.
     int pos = 1;
     for (VirtualPlayer vp : players) {
 
@@ -227,6 +237,7 @@ public final class OutputWrapper {
       int extraPoints = vp.getScore().getExtraPoint();
       int bookshelfPoints = vp.getScore().getBookshelfPoints();
       int scoreBlocksPoint = vp.getScore().getScoreBlockPoints();
+      int privatePoints = vp.getScore().getPrivatePoints();
 
       if (vw.getFirstPlayer().equals(vp)) {
         role = CLIStrings.firstPlayer;
@@ -237,12 +248,13 @@ public final class OutputWrapper {
 
       playersStatus
           .append(String.format(CLIStrings.tableBody1 + maxLength + CLIStrings.tableBody2,
-              pos++, status, player, role, bookshelfPoints, scoreBlocksPoint, extraPoints, totalScore))
+              pos++, status, player, role, bookshelfPoints, scoreBlocksPoint, privatePoints, extraPoints, totalScore))
           .append(CLIStrings.newLine);
     }
     info(playersStatus.toString(), false);
 
-    // Name
+    // Print Bookshelfs.
+    // Name.
     StringBuilder name = new StringBuilder();
     name.append(CLIStrings.newLine); // New Line for esthetic purpose.
     pos = 1;
@@ -251,22 +263,22 @@ public final class OutputWrapper {
     }
     info(name.toString(), false);
 
-    // Index
-    StringBuilder idx = new StringBuilder();
-    idx.append(CLIStrings.newLine); // New Line for esthetic purpose.
+    // Index.
+    StringBuilder playerIndex = new StringBuilder();
+    playerIndex.append(CLIStrings.newLine); // New Line for esthetic purpose.
     for (VirtualPlayer vp : players) {
-      idx.append(CLIStrings.indexBookshelf);
+      playerIndex.append(CLIStrings.indexBookshelf);
     }
-    info(idx.toString(), false);
+    info(playerIndex.toString(), false);
 
-    // Top padding
+    // Top padding.
     StringBuilder topPadding = new StringBuilder();
     for (VirtualPlayer vp : players) {
       topPadding.append(CLIStrings.paddingBookshelf);
     }
     info(topPadding.toString(), false);
 
-    // Body
+    // Body.
     for (int i = 0; i < Bookshelf.BOOKSHELF_ROWS; i++) {
       StringBuilder row = new StringBuilder();
       for (VirtualPlayer vp : players) {
@@ -286,12 +298,96 @@ public final class OutputWrapper {
       info(row.toString(), false);
     }
 
-    // Bottom padding
+    // Bottom padding.
     StringBuilder bottomPadding = new StringBuilder();
     for (VirtualPlayer vp : players) {
       bottomPadding.append(CLIStrings.paddingBookshelf);
     }
-    info(bottomPadding.toString() + CLIStrings.doubleNewLine, false);
+    bottomPadding.append(CLIStrings.doubleNewLine); // New Line for esthetic purpose.
+    info(bottomPadding.toString(), false);
+
+    // Print Shared Cards descriptions.
+    StringBuilder sharedCards = new StringBuilder();
+
+    maxLength = vw.getSharedCards().stream()
+        .mapToInt(p -> p.getValue().length())
+        .max()
+        .orElse(HUNDRED_PADDING);
+
+    // Header.
+    sharedCards
+        .append(String.format(CLIStrings.sharedCardsHeader + maxLength + CLIStrings.sharedCardHeaderDescription ,
+            CLIStrings.idx, CLIStrings.description))
+        .append(CLIStrings.newLine)
+        .append(
+            String
+                .format(String.format(CLIStrings.sharedCardsHeader + maxLength + CLIStrings.sharedCardHeaderDescription,
+                    repeatString(CLIStrings.line, XL_PADDING), repeatString(CLIStrings.line, maxLength))))
+        .append(CLIStrings.newLine);
+
+    // Body.
+    for (Entry<Integer, String> sc : vw.getSharedCards()) {
+      Integer idx = sc.getKey();
+      String description = sc.getValue();
+      sharedCards
+          .append(String.format(CLIStrings.sharedCardsBody + maxLength + CLIStrings.sharedCardsBodyDescription, idx,
+              description))
+          .append(CLIStrings.newLine);
+    }
+    info(sharedCards.toString(), false);
+
+    // Print Private Cards.
+    StringBuilder privateCards = new StringBuilder();
+    privateCards.append(CLIStrings.newLine); // New Line for esthetic purpose.
+    pos = 1;
+    // Header
+    for (VirtualPlayer vp : players) { 
+      privateCards.append(String.format(CLIStrings.privateCardIdx, pos++));
+    }
+    info(privateCards.toString(), false);
+
+    // Index.
+    StringBuilder bsIndex = new StringBuilder();
+    bsIndex.append(CLIStrings.newLine); // New Line for esthetic purpose.
+    for (VirtualPlayer vp : players) {
+      bsIndex.append(CLIStrings.indexBookshelf);
+    }
+    info(bsIndex.toString(), false); 
+
+    // Top padding.
+    topPadding = new StringBuilder();
+    for (VirtualPlayer vp : players) {
+      topPadding.append(CLIStrings.paddingBookshelf);
+    }
+    info(topPadding.toString(), false);
+
+    // Body.
+    for (int i = 0; i < Bookshelf.BOOKSHELF_ROWS; i++) {
+      StringBuilder row = new StringBuilder();
+      for (VirtualPlayer vp : players) {
+        Bookshelf b = vp.getBookshelf();
+        row.append(CLIStrings.tabBlackSquare);
+        for (int j = 0; j < Bookshelf.BOOKSHELF_COLS; j++) {
+          try {
+            row.append(emojiMap.get(b.getBookshelfGridAt(i, j).getType()));
+          } catch (BookshelfGridColIndexOutOfBoundsException
+              | BookshelfGridRowIndexOutOfBoundsException
+              | NullIndexValueException e) {
+            error(CLIStrings.bookshelfError, false);
+          }
+        }
+        row.append(CLIStrings.blackSquareTab);
+      }
+      info(row.toString(), false);
+    }
+
+    // Bottom padding.
+    bottomPadding = new StringBuilder();
+    for (VirtualPlayer vp : players) {
+      bottomPadding.append(CLIStrings.paddingBookshelf);
+    }
+    bottomPadding.append(CLIStrings.doubleNewLine); // New Line for esthetic purpose.
+    info(bottomPadding.toString(), false);
   }
 
   /**
@@ -447,5 +543,4 @@ public final class OutputWrapper {
 
     cli.displayVirtualView(vw2);
   }
-
 }
