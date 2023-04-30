@@ -31,8 +31,8 @@ public final class CLIStrings {
   public final static String winnerString = "WINNER: %s";
   public final static String lastRoundString = "Attention! Someone already completed their Bookshelf: this is last round";
   public final static String nowPlaying = "Now playing: %s";
-  public final static String moveTilesInviteString =  "Now make your move specifying the `XY` of the tiles you want to pick from board (max 3) and finally the column of your bookshelf you want to put them in.";
-  public final static String moveTilesExampleString =  "E.g. `12 22 35 A` moves the three tiles specified into column A";
+  public final static String moveTilesInviteString =  "Now make your move specifying the `XY` of the tile you want to pick from board (max 3) followed by the coordinates of the bookshelf you want to put the tile in.";
+  public final static String moveTilesExampleString =  "E.g. `12 22 25 57` moves the first tile (1,2) to the bookshelf coords (2,2), the second tile from the board coord(2,5) to the bookshelf coord (5,7)";
   public final static String messageString =  "(%s -> You): %s";
   public final static String broadcastMessageString = "(%s -> All): %s";
   public final static String errorMessage =  "(Server -> You): %s";
