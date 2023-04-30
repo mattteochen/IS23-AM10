@@ -59,7 +59,7 @@ public final class VirtualView implements Serializable {
   private Board gameBoard;
 
   /**
-   * 1-12 number referencing the shared cards to show
+   * Pairs of shared cards indexes - descriptions.
    */
   private List<Entry<Integer, String>> sharedCards;
 
@@ -140,7 +140,7 @@ public final class VirtualView implements Serializable {
   /**
    * Getter for shared cards indexes
    * 
-   * @return shared cards indexes
+   * @return Pairs of shared cards indexes and descriptions.
    */
   public List<Entry<Integer, String>> getSharedCards() {
     return sharedCards;
