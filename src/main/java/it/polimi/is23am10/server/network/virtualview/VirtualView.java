@@ -1,12 +1,16 @@
 package it.polimi.is23am10.server.network.virtualview;
 
 import java.io.Serializable;
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import it.polimi.is23am10.server.model.game.Game;
 import it.polimi.is23am10.server.model.items.board.Board;
+import it.polimi.is23am10.server.model.items.card.SharedCard;
 
 /**
  * A virtual view with the state of the game, downscoped
@@ -57,7 +61,7 @@ public final class VirtualView implements Serializable {
   /**
    * 1-12 number referencing the shared cards to show
    */
-  private List<Integer> sharedCardsIndexes;
+  private List<Entry<Integer, String>> sharedCards;
 
   /**
    * Boolean flag signaling game is over
@@ -138,8 +142,8 @@ public final class VirtualView implements Serializable {
    * 
    * @return shared cards indexes
    */
-  public List<Integer> getSharedCardsIndexes() {
-    return sharedCardsIndexes;
+  public List<Entry<Integer, String>> getSharedCards() {
+    return sharedCards;
   }
 
   /**
@@ -177,10 +181,15 @@ public final class VirtualView implements Serializable {
         .stream()
         .map(p -> new VirtualPlayer(p))
         .collect(Collectors.toList());
-    this.sharedCardsIndexes = g.getSharedCard()
-        .stream()
-        .map(c -> c.getPattern().getIndex())
-        .collect(Collectors.toList());
+
+    this.sharedCards = new ArrayList<>();
+    for (SharedCard sc : g.getSharedCard()) {
+      Integer idx = sc.getPattern().getIndex();
+      String description = sc.getPattern().getPatternDescription();
+      Entry<Integer, String> obj = new AbstractMap.SimpleEntry<>(idx, description);
+      this.sharedCards.add(obj);
+    }
+
     this.winnerPlayer = g.getWinnerPlayer() == null ? null : new VirtualPlayer(g.getWinnerPlayer());
   }
 
