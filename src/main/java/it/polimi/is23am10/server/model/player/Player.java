@@ -53,6 +53,13 @@ public class Player implements Serializable {
   private boolean isConnected;
 
   /**
+   * Status of the player.
+   * Tells us if he's connected or not.
+   * 
+   */
+  private boolean isActivePlayer;
+
+  /**
    * The score storage for the player.
    * It groups all the possible score values that a player can earn during a game.
    * 
@@ -264,6 +271,24 @@ public class Player implements Serializable {
    */
   public boolean getIsConnected() {
     return isConnected;
+  }
+
+  /**
+   * Setter of active player status.
+   *
+   * @param status status of player.
+   */
+  public void setIsActivePlayer(boolean status) {
+    this.isActivePlayer = status;
+  }
+
+  /**
+   * Getter of active player status.
+   *
+   * @return status of player .
+   */
+  public boolean getIsActivePlayer() {
+    return isActivePlayer;
   }
 
   /**
