@@ -7,7 +7,7 @@ on:
       - "develop"
       - 'feature/*'
       - 'hotfix/*'
-      - 'test'
+      - 'fix/*'
   pull_request:
     branches:
       - main
