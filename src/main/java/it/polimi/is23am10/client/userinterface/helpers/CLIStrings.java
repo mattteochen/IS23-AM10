@@ -21,8 +21,9 @@ public final class CLIStrings {
       Politecnico di Milano - Software Engineering Project - Group IS23AM10
       
     """;
-  public final static String joinOrCreateString = "To start, choose if [j]oining an existing match or [c]reating one:";
+  public final static String joinOrCreateString = "To start, choose if [j]oining an existing match or [c]reating one. If joining a game you should specify the game index, if creating a new one specify the number of maximum players.";
   public final static String noGamesString = "No available game to join at the moment. Please create one.";
+  public final static String insertPlayerNameString = "Insert your player name here:";
   public final static String listGamesString = "Here a list of the available games. Join one by typing the relative index.";
   public final static String availableGameString = "[%d] - %d/%d joined - GameId: %s";
   public final static String currentStateString = "Current state of the game:";

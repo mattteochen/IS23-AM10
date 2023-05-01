@@ -109,6 +109,7 @@ public class SocketClient extends Client {
               e.printStackTrace();
             }
           } 
+          
           if (selectedPlayerName != null) {
             getAvailableGames(playerConnectorSocket);
             
