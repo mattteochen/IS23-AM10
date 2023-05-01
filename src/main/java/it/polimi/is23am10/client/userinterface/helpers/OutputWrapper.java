@@ -290,7 +290,7 @@ public final class OutputWrapper {
           } catch (BookshelfGridColIndexOutOfBoundsException
               | BookshelfGridRowIndexOutOfBoundsException
               | NullIndexValueException e) {
-            error(CLIStrings.bookshelfError, false);
+            error(CLIStrings.bookshelfError, true);
           }
         }
         row.append(CLIStrings.blackSquareTab);
@@ -370,7 +370,7 @@ public final class OutputWrapper {
           } catch (BookshelfGridColIndexOutOfBoundsException
               | BookshelfGridRowIndexOutOfBoundsException
               | NullIndexValueException e) {
-            error(CLIStrings.bookshelfError, false);
+            error(CLIStrings.bookshelfError, true);
           }
         }
         row.append(CLIStrings.blackSquareTab);
