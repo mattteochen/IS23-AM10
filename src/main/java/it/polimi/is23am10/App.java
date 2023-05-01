@@ -83,6 +83,7 @@ public class App {
           PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
           client = new SocketClient(playerConnector, userInterface);
         }
+        client.getMessageHandler();
         client.run();
       }
     } catch (NumberFormatException | InvalidArgumentException | MissingParameterException | InvalidPortNumberException

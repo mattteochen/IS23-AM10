@@ -28,6 +28,8 @@ import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerState;
 import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.PlayerFactory;
+import it.polimi.is23am10.server.model.player.Player;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
@@ -79,31 +81,38 @@ public class SocketClient extends Client {
      */
     String selectedPlayerName = null;
     UUID selectedGameId = null;
-    
+
     System.out.println(CLIStrings.welcomeString);
-    
+
     while (playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()) {
       // TODO: implement user requests
       // if any new user request, process it (if virtual view has not declared that it
       // is this player turn, skip).
-      
+
       try {
-        CommandLineInterface cli = (CommandLineInterface) userInterface;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        
+
         // Execute if the client is not connected to a game.
         if (playerConnectorSocket.getGameId() == null) {
-          HashMap<Integer, VirtualView> availableGames = getAvailableGames(playerConnectorSocket);
-
+          
           // First I'm gonna ask the player name
           if (selectedPlayerName == null) {
+            System.out.println(CLIStrings.insertPlayerNameString);
             // Select only the string before the space if the client writes more words
             selectedPlayerName = br.readLine().split(" ")[0];
-          } else {
-            cli.displayAvailableGames(
-                availableGames.values()
-                    .stream()
-                    .collect(Collectors.toList()));
+            Player p = new Player();
+            try {
+              p.setPlayerName(selectedPlayerName);
+              playerConnectorSocket.setPlayer(p);
+            } catch (NullPlayerNameException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
+          } 
+          if (selectedPlayerName != null) {
+            getAvailableGames(playerConnectorSocket);
+            
+            System.out.println(CLIStrings.moveTilesInviteString);
 
             String fullCommand = br.readLine();
             String command = fullCommand.split(" ")[0];
@@ -114,8 +123,9 @@ public class SocketClient extends Client {
               switch (command) {
                 case "j":
                   String idx = fullCommand.split(" ")[1];
-                  if (CommandSyntaxValidator.validateGameIdx(idx,availableGames.values().size())) {
-                    selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
+                  if (CommandSyntaxValidator.validateGameIdx(idx, 4)) {
+                    //selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
+                    selectedGameId = UUID.fromString(fullCommand.split(" ")[2]);
                     addPlayer(playerConnectorSocket, selectedPlayerName, selectedGameId);
                     playerConnectorSocket.setGameId(selectedGameId);
                   } else {
@@ -141,75 +151,77 @@ public class SocketClient extends Client {
             }
 
           }
-        }else{
+        } else {
           // Executed if the client is connected to a game.
 
           // This allows the player to play the turn if he's the active player
-          if(playerConnectorSocket.getPlayer().getIsActivePlayer()){
-            System.out.println(CLIStrings.moveTilesInviteString);
+          if (playerConnectorSocket.getPlayer().getIsActivePlayer()) {
 
-            //TODO: show here board and bookshelf 
+            // TODO: show here board and bookshelf with cli
 
             String fullCommand = br.readLine();
             String command = fullCommand.split(" ")[0];
 
-            switch(command){
+            switch (command) {
               case "move":
-                HashMap<Coordinates,Coordinates> moves = new HashMap<>();
+                HashMap<Coordinates, Coordinates> moves = new HashMap<>();
 
-                //reads a string containing coordinates of a tile 
-                for(int nMove = 0; nMove < 3; nMove++){
+                // reads a string containing coordinates of a tile
+                for (int nMove = 0; nMove < 3; nMove++) {
                   /*
-                   * This checks the correct number of moves we are playing, 
-                   * since the single move syntax is "ab -> cd ef -> gh" we want 
+                   * This checks the correct number of moves we are playing,
+                   * since the single move syntax is "ab -> cd ef -> gh" we want
                    * that we have groups of three strings for each move: "ab" "->" "cd".
-                   * To do so I'm checking that the numbers of strings in the full line (fullCommand)
+                   * To do so I'm checking that the numbers of strings in the full line
+                   * (fullCommand)
                    * has 3 more strings for each supposed move.
                    * If I have for example the last move which is "eb ->", so if it's incomplete,
                    * or if it is the fourth move, it will be ignored.
                    * 
                    */
-                  if((fullCommand.split(" ").length - (nMove+1)*3) >= 0){
-                    String coordBoard = fullCommand.split(" ")[nMove*3];
-                    String arrow =  fullCommand.split(" ")[nMove*3+1];
-                    String coordBookshelf =  fullCommand.split(" ")[nMove*3+2];
+                  if ((fullCommand.split(" ").length - (nMove + 1) * 3) >= 0) {
+                    String coordBoard = fullCommand.split(" ")[nMove * 3];
+                    String arrow = fullCommand.split(" ")[nMove * 3 + 1];
+                    String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 2];
 
-                    if(CommandSyntaxValidator.validateCoord(coordBoard) && CommandSyntaxValidator.validateCoord(coordBookshelf) && arrow.equals("->")){
-                      Integer xBoardCoord = coordBoard.charAt(0) -'0';
-                      Integer yBoardCoord = coordBoard.charAt(1) -'0';
-                      Integer xBookshelfCoord = coordBookshelf.charAt(0) -'0';
-                      Integer yBookshelfCoord = coordBookshelf.charAt(1) -'0';
-                      moves.put(new Coordinates(xBoardCoord,yBoardCoord), new Coordinates(xBookshelfCoord,yBookshelfCoord));
-                    }else{
+                    if (CommandSyntaxValidator.validateCoord(coordBoard)
+                        && CommandSyntaxValidator.validateCoord(coordBookshelf) && arrow.equals("->")) {
+                      Integer xBoardCoord = coordBoard.charAt(0) - '0';
+                      Integer yBoardCoord = coordBoard.charAt(1) - '0';
+                      Integer xBookshelfCoord = coordBookshelf.charAt(0) - '0';
+                      Integer yBookshelfCoord = coordBookshelf.charAt(1) - '0';
+                      moves.put(new Coordinates(xBoardCoord, yBoardCoord),
+                          new Coordinates(xBookshelfCoord, yBookshelfCoord));
+                    } else {
                       System.out.println("🛑 Invalid syntax of move command.");
-                      //TODO: throw exception invalid move
+                      // TODO: throw exception invalid move
                     }
                   } else {
                     break;
                   }
                 }
-                
+
                 // Checks if no valid moves were added
-                if(moves.isEmpty()){
+                if (moves.isEmpty()) {
                   System.out.println("🛑 No valid moves found.");
-                  //TODO: throw an exception
-                }else{
+                  // TODO: throw an exception
+                } else {
                   moveTiles(playerConnectorSocket, moves);
                 }
-              break;
+                break;
               default:
             }
-          } 
+          }
 
-          //I can send messages or logout whether it's my turn or not
+          // I can send messages or logout whether it's my turn or not
           String fullCommand = br.readLine();
           String command = fullCommand.split(" ")[0];
-          switch(command){
+          switch (command) {
             case "chat":
-                //TODO: add send chat message command
+              // TODO: add send chat message command
               break;
             case "logout":
-                //TODO: add logout command
+              // TODO: add logout command
               break;
             default:
           }
@@ -233,17 +245,6 @@ public class SocketClient extends Client {
        * System.out.println("🛑 " + e.getMessage());
        * }
        */
-
-      // retrieve and show server messages, it includes chat messages
-      try {
-        AbstractMessage serverMessage = parseServerMessage(playerConnectorSocket);
-        if (serverMessage != null) {
-          showServerMessage(serverMessage);
-        }
-      } catch (IOException e) {
-        // TODO: integrate custom logger
-        System.out.println("🛑 Failed to retrieve information from server, your game context may not be updated");
-      }
     }
 
     // TODO: integrate custom logger
@@ -272,7 +273,7 @@ public class SocketClient extends Client {
    * @throws IOException
    */
   @Override
-  HashMap<Integer, VirtualView> getAvailableGames(AbstractPlayerConnector apc)
+  void getAvailableGames(AbstractPlayerConnector apc)
       throws IOException, InterruptedException {
     GetAvailableGamesCommand command = new GetAvailableGamesCommand();
     HashMap<Integer, VirtualView> mapIndexVirtualView = new HashMap<Integer, VirtualView>();
@@ -281,13 +282,6 @@ public class SocketClient extends Client {
     PrintWriter epson = new PrintWriter(((PlayerConnectorSocket) apc).getConnector().getOutputStream(), true,
         StandardCharsets.UTF_8);
     epson.println(req);
-
-    AvailableGamesMessage msg = (AvailableGamesMessage) apc.getMessageFromQueue();
-    for (VirtualView v : msg.getAvailableGames()) {
-      mapIndexVirtualView.put(gameIdx, v);
-      gameIdx++;
-    }
-    return mapIndexVirtualView;
   };
 
   /**
@@ -331,4 +325,24 @@ public class SocketClient extends Client {
         StandardCharsets.UTF_8);
     epson.println(req);
   };
+
+  @Override
+  public void getMessageHandler(){
+    PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
+    Thread messageHandler = new Thread(()->{
+      while(playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()){
+        // retrieve and show server messages, it includes chat messages
+      try {
+        AbstractMessage serverMessage = parseServerMessage(playerConnectorSocket);
+        if (serverMessage != null) {
+          showServerMessage(serverMessage);
+        }
+      } catch (IOException e) {
+        // TODO: integrate custom logger
+        System.out.println("🛑 Failed to retrieve information from server, your game context may not be updated");
+      }
+      }
+    });
+    messageHandler.start();
+  }
 }

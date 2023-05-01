@@ -118,15 +118,22 @@ public abstract class Client implements Runnable {
         userInterface.displayError((ErrorMessage) msg);
         break;
       default:
+        break;
     }
   }
 
   /**
+   * Abstract method that creates and run the message handler.
+   * 
+   */
+  public abstract void getMessageHandler();
+
+  /**
    * Abstract method that send command to get all available games.
    * @throws IOException
- * @throws InterruptedException
+   * @throws InterruptedException
    */
-  abstract HashMap<Integer,VirtualView> getAvailableGames(AbstractPlayerConnector apc) throws IOException, InterruptedException;
+  abstract void getAvailableGames(AbstractPlayerConnector apc) throws IOException, InterruptedException;
 
   /**
    * Abstract method that send command to start a new game.

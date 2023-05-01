@@ -127,20 +127,15 @@ public class RMIClient extends Client {
 
         // Execute if the client is not connected to a game.
         if (playerConnectorRmi.getGameId() == null) {
-          HashMap<Integer, VirtualView> availableGames = getAvailableGames(playerConnectorRmi);
-
+          
           // First I'm gonna ask the player name
           if (selectedPlayerName == null) {
+            System.out.println(CLIStrings.insertPlayerNameString);
             // Select only the string before the space if the client writes more words
             selectedPlayerName = br.readLine().split(" ")[0];
           } else {
-            System.out.println(CLIStrings.listGamesString);
-            
-            cli.displayAvailableGames(
-                availableGames.values()
-                    .stream()
-                    .collect(Collectors.toList()));
-
+            getAvailableGames(playerConnectorRmi);
+           
             String fullCommand = br.readLine();
             String command = fullCommand.split(" ")[0];
             Integer maxPlayers = null;
@@ -148,18 +143,18 @@ public class RMIClient extends Client {
             // Executed if I still haven't selected a game
             if (selectedGameId == null) {
               switch (command) {
-                //joining a game
+                // joining a game
                 case "j":
                   String idx = fullCommand.split(" ")[1];
-                  if (CommandSyntaxValidator.validateGameIdx(idx,availableGames.values().size())) {
-                    selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
+                  if (CommandSyntaxValidator.validateGameIdx(idx, 4)) {
+                    selectedGameId = UUID.fromString(fullCommand.split(" ")[2]);
                     addPlayer(playerConnectorRmi, selectedPlayerName, selectedGameId);
                     playerConnectorRmi.setGameId(selectedGameId);
                   } else {
                     // TODO: throw custom exception.
                   }
                   break;
-                //creating a game
+                // creating a game
                 case "g":
                   String numMaxPlayers = fullCommand.split(" ")[1];
                   if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
@@ -170,7 +165,7 @@ public class RMIClient extends Client {
                     // TODO: throw custom exception
                   }
                   break;
-                //quitting and going back to playerName selection
+                // quitting and going back to playerName selection
                 case "q":
                   selectedPlayerName = null;
                   selectedGameId = null;
@@ -214,12 +209,13 @@ public class RMIClient extends Client {
                     String arrow = fullCommand.split(" ")[nMove * 3 + 1];
                     String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 2];
 
-                    if (CommandSyntaxValidator.validateCoord(coordBoard) && CommandSyntaxValidator.validateCoord(coordBookshelf)
+                    if (CommandSyntaxValidator.validateCoord(coordBoard)
+                        && CommandSyntaxValidator.validateCoord(coordBookshelf)
                         && arrow.equals("->")) {
-                      Integer xBoardCoord = coordBoard.charAt(0) -'0';
-                      Integer yBoardCoord = coordBoard.charAt(1) -'0';
-                      Integer xBookshelfCoord = coordBookshelf.charAt(0) -'0';
-                      Integer yBookshelfCoord = coordBookshelf.charAt(1) -'0';
+                      Integer xBoardCoord = coordBoard.charAt(0) - '0';
+                      Integer yBoardCoord = coordBoard.charAt(1) - '0';
+                      Integer xBookshelfCoord = coordBookshelf.charAt(0) - '0';
+                      Integer yBookshelfCoord = coordBookshelf.charAt(1) - '0';
                       moves.put(new Coordinates(xBoardCoord, yBoardCoord),
                           new Coordinates(xBookshelfCoord, yBookshelfCoord));
                     } else {
@@ -258,7 +254,7 @@ public class RMIClient extends Client {
       } catch (IOException | InterruptedException e) {
         System.out.println("🛑 " + e.getMessage());
       }
-      
+
       // TODO: implement user requests
       // if any new user request, process it (if virtual view has not declared that it
       // is this player turn, skip).
@@ -291,43 +287,16 @@ public class RMIClient extends Client {
        * }
        */
 
-      // retrieve and show server messages
-      try {
-        // rmi binding not available
-        if (!hasJoined) {
-          continue;
-        }
-        AbstractMessage msg = playerConnectorServer.getMessageFromQueue();
-        if (msg != null) {
-          showServerMessage(msg);
-        } else {
-          // TODO: replace with custom logger
-          System.out.println("🛑 Received null message");
-        }
-      } catch (InterruptedException | RemoteException e) {
-        // TODO: replace with custom logger
-        System.out.println("🛑 Failed to retrive message from server, bad context state " + e.getMessage());
-      } catch (NullPointerException e) {
-        // TODO: replace with custom logger
-        System.out.println("🛑 Null pointer " + e.getMessage());
-      }
     }
   }
 
   @Override
-  HashMap<Integer, VirtualView> getAvailableGames(AbstractPlayerConnector apc)
+  void getAvailableGames(AbstractPlayerConnector apc)
       throws IOException, InterruptedException {
     HashMap<Integer, VirtualView> mapIndexVirtualView = new HashMap<Integer, VirtualView>();
     Integer gameIdx = 0;
     AbstractCommand command = new GetAvailableGamesCommand();
     serverControllerActionServer.execute(apc, command);
-
-    AvailableGamesMessage msg = (AvailableGamesMessage) apc.getMessageFromQueue();
-    for (VirtualView v : msg.getAvailableGames()) {
-      mapIndexVirtualView.put(gameIdx, v);
-      gameIdx++;
-    }
-    return mapIndexVirtualView;
   }
 
   @Override
@@ -351,4 +320,32 @@ public class RMIClient extends Client {
     serverControllerActionServer.execute(apc, command);
   }
 
+  @Override
+  public void getMessageHandler(){
+    PlayerConnectorRmi playerConnectorRMI = (PlayerConnectorRmi) playerConnector;
+    Thread messageHandler = new Thread(()->{
+      while(!hasRequestedDisconnection()){
+        try {
+          // rmi binding not available
+          if (!hasJoined) {
+            continue;
+          }
+          AbstractMessage msg = playerConnectorServer.getMessageFromQueue();
+          if (msg != null) {
+            showServerMessage(msg);
+          } else {
+            // TODO: replace with custom logger
+            System.out.println("🛑 Received null message");
+          }
+        } catch (InterruptedException | RemoteException e) {
+          // TODO: replace with custom logger
+          System.out.println("🛑 Failed to retrive message from server, bad context state " + e.getMessage());
+        } catch (NullPointerException e) {
+          // TODO: replace with custom logger
+          System.out.println("🛑 Null pointer " + e.getMessage());
+        }
+      }
+    });
+    messageHandler.start();
+  }
 }
