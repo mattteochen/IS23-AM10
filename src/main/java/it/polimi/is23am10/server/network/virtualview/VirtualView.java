@@ -1,16 +1,12 @@
 package it.polimi.is23am10.server.network.virtualview;
 
 import java.io.Serializable;
-import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import it.polimi.is23am10.server.model.game.Game;
 import it.polimi.is23am10.server.model.items.board.Board;
-import it.polimi.is23am10.server.model.items.card.SharedCard;
 
 /**
  * A virtual view with the state of the game, downscoped
@@ -59,7 +55,7 @@ public final class VirtualView implements Serializable {
   private Board gameBoard;
 
   /**
-   * Pairs of shared cards indexes - descriptions.
+   * List of the two shared cards index for this game session.
    */
   private List<Integer> sharedCards;
 
