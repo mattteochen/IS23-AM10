@@ -166,11 +166,9 @@ public class SocketClient extends Client {
     return payload == null ? null : gson.fromJson(payload, AbstractMessage.class);
   }
 
-  /**
-   * Socket implementation of a method that send command to get all available
-   * games.
-   * 
-   * @throws IOException
+ /**
+   * {@inheritDoc}
+   *
    */
   @Override
   void getAvailableGames(AbstractPlayerConnector apc)
@@ -184,10 +182,9 @@ public class SocketClient extends Client {
     epson.println(req);
   };
 
-  /**
-   * Socket implementation of a method that send command to start a new game.
-   * 
-   * @throws IOException
+ /**
+   * {@inheritDoc}
+   *
    */
   @Override
   void startGame(AbstractPlayerConnector apc, String playerName, int maxPlayerNum) throws IOException {
@@ -199,9 +196,8 @@ public class SocketClient extends Client {
   };
 
   /**
-   * Socket implementation of a method that send command to add a new player.
-   * 
-   * @throws IOException
+   * {@inheritDoc}
+   *
    */
   @Override
   void addPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException {
@@ -212,10 +208,9 @@ public class SocketClient extends Client {
     epson.println(req);
   };
 
-  /**
-   * Socket implementation of a method that send command to move tiles.
-   * 
-   * @throws IOException
+   /**
+   * {@inheritDoc}
+   *
    */
   @Override
   void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves) throws IOException {
@@ -226,6 +221,10 @@ public class SocketClient extends Client {
     epson.println(req);
   };
 
+ /**
+   * {@inheritDoc}
+   *
+   */
   @Override
   public void getMessageHandler(){
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;

@@ -196,6 +196,10 @@ public class RMIClient extends Client {
     }
   }
 
+   /**
+   * {@inheritDoc}
+   *
+   */
   @Override
   void getAvailableGames(AbstractPlayerConnector apc)
       throws IOException, InterruptedException {
@@ -205,6 +209,10 @@ public class RMIClient extends Client {
     serverControllerActionServer.execute(apc, command);
   }
 
+   /**
+   * {@inheritDoc}
+   *
+   */
   @Override
   void startGame(AbstractPlayerConnector apc, String playerName, int maxPlayerNum)
       throws IOException {
@@ -212,12 +220,20 @@ public class RMIClient extends Client {
     serverControllerActionServer.execute(apc, command);
   }
 
+   /**
+   * {@inheritDoc}
+   *
+   */
   @Override
   void addPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException {
     AbstractCommand command = new AddPlayerCommand(playerName, gameId);
     serverControllerActionServer.execute(apc, command);
   }
 
+   /**
+   * {@inheritDoc}
+   *
+   */
   @Override
   void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves)
       throws IOException {
@@ -226,6 +242,9 @@ public class RMIClient extends Client {
     serverControllerActionServer.execute(apc, command);
   }
 
+  /**
+   * Method override that creates and starts message handler thread
+   */
   @Override
   public void getMessageHandler(){
     PlayerConnectorRmi playerConnectorRMI = (PlayerConnectorRmi) playerConnector;
@@ -236,14 +255,14 @@ public class RMIClient extends Client {
           if (!hasJoined) {
             continue;
           }
-          AbstractMessage msg = playerConnectorServer.getMessageFromQueue();
+          AbstractMessage msg = playerConnectorRMI.getMessageFromQueue();
           if (msg != null) {
             showServerMessage(msg);
           } else {
             // TODO: replace with custom logger
             System.out.println("🛑 Received null message");
           }
-        } catch (InterruptedException | RemoteException e) {
+        } catch (InterruptedException e) {
           // TODO: replace with custom logger
           System.out.println("🛑 Failed to retrive message from server, bad context state " + e.getMessage());
         } catch (NullPointerException e) {
