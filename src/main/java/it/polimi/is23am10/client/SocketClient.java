@@ -32,6 +32,8 @@ import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
@@ -97,121 +99,18 @@ public class SocketClient extends Client {
           
           // First I'm gonna ask the player name
           if (selectedPlayerName == null) {
-            System.out.println(CLIStrings.insertPlayerNameString);
-            // Select only the string before the space if the client writes more words
-            selectedPlayerName = br.readLine().split(" ")[0];
-            Player p = new Player();
-            try {
-              p.setPlayerName(selectedPlayerName);
-              playerConnectorSocket.setPlayer(p);
-            } catch (NullPlayerNameException e) {
-              // TODO Auto-generated catch block
-              e.printStackTrace();
-            }
+            selectedPlayerName = handlePlayerNameSelection(playerConnectorSocket, br);
           } 
           
           if (selectedPlayerName != null) {
-            getAvailableGames(playerConnectorSocket);
-            
-            System.out.println(CLIStrings.moveTilesInviteString);
-
-            String fullCommand = br.readLine();
-            String command = fullCommand.split(" ")[0];
-            Integer maxPlayers = null;
-
-            // Executed if I still haven't selected a game
-            if (selectedGameId == null) {
-              switch (command) {
-                case "j":
-                  String idx = fullCommand.split(" ")[1];
-                  if (CommandSyntaxValidator.validateGameIdx(idx, 4)) {
-                    //selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
-                    selectedGameId = UUID.fromString(fullCommand.split(" ")[2]);
-                    addPlayer(playerConnectorSocket, selectedPlayerName, selectedGameId);
-                    playerConnectorSocket.setGameId(selectedGameId);
-                  } else {
-                    // TODO: throw custom exception.
-                  }
-                  break;
-                case "n":
-                  String numMaxPlayers = fullCommand.split(" ")[1];
-                  if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
-                    maxPlayers = Integer.parseInt(numMaxPlayers);
-                    startGame(playerConnectorSocket, selectedPlayerName, maxPlayers);
-                    playerConnectorSocket.setGameId(selectedGameId);
-                  } else {
-                    // TODO: throw exception
-                  }
-                  break;
-                case "q":
-                  selectedPlayerName = null;
-                  selectedGameId = null;
-                  break;
-                default:
-              }
-            }
-
+            handleGameSelection(playerConnectorSocket, selectedGameId, br, selectedPlayerName);
           }
         } else {
           // Executed if the client is connected to a game.
 
           // This allows the player to play the turn if he's the active player
           if (playerConnectorSocket.getPlayer().getIsActivePlayer()) {
-
-            // TODO: show here board and bookshelf with cli
-
-            String fullCommand = br.readLine();
-            String command = fullCommand.split(" ")[0];
-
-            switch (command) {
-              case "move":
-                HashMap<Coordinates, Coordinates> moves = new HashMap<>();
-
-                // reads a string containing coordinates of a tile
-                for (int nMove = 0; nMove < 3; nMove++) {
-                  /*
-                   * This checks the correct number of moves we are playing,
-                   * since the single move syntax is "ab -> cd ef -> gh" we want
-                   * that we have groups of three strings for each move: "ab" "->" "cd".
-                   * To do so I'm checking that the numbers of strings in the full line
-                   * (fullCommand)
-                   * has 3 more strings for each supposed move.
-                   * If I have for example the last move which is "eb ->", so if it's incomplete,
-                   * or if it is the fourth move, it will be ignored.
-                   * 
-                   */
-                  if ((fullCommand.split(" ").length - (nMove + 1) * 3) >= 0) {
-                    String coordBoard = fullCommand.split(" ")[nMove * 3];
-                    String arrow = fullCommand.split(" ")[nMove * 3 + 1];
-                    String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 2];
-
-                    if (CommandSyntaxValidator.validateCoord(coordBoard)
-                        && CommandSyntaxValidator.validateCoord(coordBookshelf) && arrow.equals("->")) {
-                      Integer xBoardCoord = coordBoard.charAt(0) - '0';
-                      Integer yBoardCoord = coordBoard.charAt(1) - '0';
-                      Integer xBookshelfCoord = coordBookshelf.charAt(0) - '0';
-                      Integer yBookshelfCoord = coordBookshelf.charAt(1) - '0';
-                      moves.put(new Coordinates(xBoardCoord, yBoardCoord),
-                          new Coordinates(xBookshelfCoord, yBookshelfCoord));
-                    } else {
-                      System.out.println("🛑 Invalid syntax of move command.");
-                      // TODO: throw exception invalid move
-                    }
-                  } else {
-                    break;
-                  }
-                }
-
-                // Checks if no valid moves were added
-                if (moves.isEmpty()) {
-                  System.out.println("🛑 No valid moves found.");
-                  // TODO: throw an exception
-                } else {
-                  moveTiles(playerConnectorSocket, moves);
-                }
-                break;
-              default:
-            }
+            handleMoveCommand(playerConnectorSocket, br);
           }
 
           // I can send messages or logout whether it's my turn or not
