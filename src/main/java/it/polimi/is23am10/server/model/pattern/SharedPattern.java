@@ -37,6 +37,6 @@ public class SharedPattern<T> extends AbstractPattern<T> {
    */
   @Override
   public int hashCode() {
-    return rule.hashCode();
+    return this.getIndex().hashCode();
   }
 }
