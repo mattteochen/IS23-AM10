@@ -2,6 +2,7 @@ package it.polimi.is23am10.server.controller.interfaces;
 
 import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
+import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
@@ -79,11 +80,21 @@ public interface IServerControllerAction extends Remote {
   void execute(AbstractPlayerConnector connector, AbstractCommand command) throws RemoteException;
 
   /**
-   * The {@link Opcode#START} command callback worker.
-   * TODO: add client responses.
+   * Execute the client {@link GetAvailableGamesCommand}.
+   * This is intended to be used under the RMI connection protocol when the client's playerConnector has no power to read the msg queue.
+   *
+   * @param command   The command to be executed.
+   * @returns an {@link AvailableGamesMessage} responce.
+   * @throws RemoteException
    *
    */
-  final ControllerConsumer startConsumer = (logger, playerConnector, command) -> {
+  AvailableGamesMessage execute(GetAvailableGamesCommand command) throws RemoteException;
+
+  /**
+   * The {@link Opcode#START} command callback worker.
+   *
+   */
+  final ControllerConsumer<Void, AbstractCommand> startConsumer = (logger, playerConnector, command) -> {
     ErrorMessage errorMsg = null;
 
     try {
@@ -167,14 +178,14 @@ public interface IServerControllerAction extends Remote {
         }
       }
     }
+    return null;
   };
 
   /**
    * The {@link Opcode#ADD_PLAYER} command callback worker.
-   * TODO: add client responces.
    *
    */
-  final ControllerConsumer addPlayerConsumer = (logger, playerConnector, command) -> {
+  final ControllerConsumer<Void, AbstractCommand> addPlayerConsumer = (logger, playerConnector, command) -> {
     ErrorMessage errorMsg = null;
 
     try {
@@ -294,13 +305,14 @@ public interface IServerControllerAction extends Remote {
         }
       }
     }
+    return null;
   };
 
   /**
    * The {@link Opcode#GET_GAMES} command callback worker.
    *
    */
-  final ControllerConsumer getAvailableGamesConsumer = (logger, playerConnector, command) -> {
+  final ControllerConsumer<Void, AbstractCommand> getAvailableGamesConsumer = (logger, playerConnector, command) -> {
 
     List<VirtualView> availableGames = ServerControllerState.getGamePools()
     .stream()
@@ -316,13 +328,30 @@ public interface IServerControllerAction extends Remote {
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INTERRUPTED, e);
     }
+    return null;
+  };
+
+  /**
+   * The {@link Opcode#GET_GAMES} command callback worker for RMI.
+   * Note that playerConnector field is expected to be null.
+   *
+   */
+  final ControllerConsumer<AvailableGamesMessage, GetAvailableGamesCommand> getAvailableGamesConsumerRmi = (logger, playerConnector, command) -> {
+    List<VirtualView> availableGames = ServerControllerState.getGamePools()
+    .stream()
+    .map(gh -> gh.getGame())
+    .filter(g -> g.getPlayers().size() < g.getMaxPlayer())
+    .map(g -> new VirtualView(g))
+    .collect(Collectors.toList());
+
+    return new AvailableGamesMessage(availableGames);
   };
 
   /**
    * The {@link Opcode#MOVE_TILES} command callback worker.
    *
    */
-  final ControllerConsumer moveTilesConsumer = (logger, playerConnector, command) -> {
+  final ControllerConsumer<Void, AbstractCommand> moveTilesConsumer = (logger, playerConnector, command) -> {
     ErrorMessage errorMsg = null;
 
     try {
@@ -369,5 +398,6 @@ public interface IServerControllerAction extends Remote {
         }
       }
     }
+    return null;
   };
 }

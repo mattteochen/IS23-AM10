@@ -41,12 +41,15 @@ public final class AvailableGamesMessage extends AbstractMessage {
    * Public constructor for AvailableGamesMessage in broadcast.
    *
    * @param availableGames games to send.
+   * @param receivers the optional receiver player.
    */
-  public AvailableGamesMessage(List<VirtualView> availableGames, Player receiver) {
+  public AvailableGamesMessage(List<VirtualView> availableGames, Player ...receivers) {
     msgType = MessageType.AVAILABLE_GAMES;
     this.availableGames = availableGames;
     this.message = gson.toJson(availableGames);
-    this.receiver = receiver;
+    if (receivers != null && receivers.length > 0) {
+      this.receiver = receivers[0];
+    }
   }
 
   /**
