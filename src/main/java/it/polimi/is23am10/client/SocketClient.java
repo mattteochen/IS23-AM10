@@ -71,7 +71,6 @@ public class SocketClient extends Client {
     // live update the view upon receiving an update in a FIFO manner.
     // Consider using a lighter connector.
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
-    OutputWrapper ow = new OutputWrapper(false);
 
     /*
      * The default values are null, I will set those values separately to
@@ -90,15 +89,14 @@ public class SocketClient extends Client {
       
       try {
         CommandLineInterface cli = (CommandLineInterface) userInterface;
-        DataInputStream dis = new DataInputStream(playerConnectorSocket.getConnector().getInputStream());
-        BufferedReader br = new BufferedReader(new InputStreamReader(dis));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         
         // Execute if the client is not connected to a game.
         if (playerConnectorSocket.getGameId() == null) {
           HashMap<Integer, VirtualView> availableGames = getAvailableGames(playerConnectorSocket);
 
           // First I'm gonna ask the player name
-          if (selectedPlayerName == null || selectedPlayerName == "") {
+          if (selectedPlayerName == null) {
             // Select only the string before the space if the client writes more words
             selectedPlayerName = br.readLine().split(" ")[0];
           } else {
@@ -114,9 +112,9 @@ public class SocketClient extends Client {
             // Executed if I still haven't selected a game
             if (selectedGameId == null) {
               switch (command) {
-                case "join":
+                case "j":
                   String idx = fullCommand.split(" ")[1];
-                  if (CommandSyntaxValidator.validate(idx)) {
+                  if (CommandSyntaxValidator.validateGameIdx(idx,availableGames.values().size())) {
                     selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
                     addPlayer(playerConnectorSocket, selectedPlayerName, selectedGameId);
                     playerConnectorSocket.setGameId(selectedGameId);
@@ -124,9 +122,9 @@ public class SocketClient extends Client {
                     // TODO: throw custom exception.
                   }
                   break;
-                case "new":
+                case "n":
                   String numMaxPlayers = fullCommand.split(" ")[1];
-                  if (CommandSyntaxValidator.validate(numMaxPlayers)) {
+                  if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
                     maxPlayers = Integer.parseInt(numMaxPlayers);
                     startGame(playerConnectorSocket, selectedPlayerName, maxPlayers);
                     playerConnectorSocket.setGameId(selectedGameId);
@@ -134,7 +132,7 @@ public class SocketClient extends Client {
                     // TODO: throw exception
                   }
                   break;
-                case "quit":
+                case "q":
                   selectedPlayerName = null;
                   selectedGameId = null;
                   break;
@@ -176,7 +174,7 @@ public class SocketClient extends Client {
                     String arrow =  fullCommand.split(" ")[nMove*3+1];
                     String coordBookshelf =  fullCommand.split(" ")[nMove*3+2];
 
-                    if(CommandSyntaxValidator.validate(coordBoard) && CommandSyntaxValidator.validate(coordBookshelf) && arrow.equals("->")){
+                    if(CommandSyntaxValidator.validateCoord(coordBoard) && CommandSyntaxValidator.validateCoord(coordBookshelf) && arrow.equals("->")){
                       Integer xBoardCoord = Integer.parseInt(coordBoard.substring(0, 1));
                       Integer yBoardCoord = Integer.parseInt(coordBoard.substring(1, 2));
                       Integer xBookshelfCoord = Integer.parseInt(coordBookshelf.substring(0, 1));
