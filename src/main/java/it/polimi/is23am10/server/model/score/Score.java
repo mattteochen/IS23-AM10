@@ -203,6 +203,10 @@ public final class Score implements Serializable {
     privatePoints = privateCardPointsMap.get(pc.getMatchedBlocksCount());
   }
 
+  public void obfuscatePrivatePoints() {
+    privatePoints = -1;
+  }
+
   /**
    * extraPoints getter.
    * 
@@ -285,11 +289,34 @@ public final class Score implements Serializable {
 
   /**
    * Getter method that returns the total score
-   * computing it from all the available scores 
-   * @return total score
+   * computing it from all the available scores.
+   * 
+   * @return total score.
    */
   public Integer getTotalScore() {
     return extraPoint + scoreBlockPoints + privatePoints + bookshelfPoints;
+  }
+
+  /**
+   * Method used to retrieve the total score from a
+   * possibly obfuscated score. It ignores the invalidated privatescore.
+   * Used for sorting purposes in CLI.
+   * 
+   * @return visible score.
+   */
+  public Integer getVisibleScore() {
+    return (privatePoints != -1) ? getTotalScore() : extraPoint + scoreBlockPoints + bookshelfPoints;
+  }
+
+  /**
+   * Method used to retrieve a string representing the
+   * total score. If score is obfuscated (private card points)
+   * it returns a partial score and a graphic indication of possibly missing points.
+   * 
+   * @return String representing total score.
+   */
+  public String getStringTotalScore() {
+    return (privatePoints != -1) ? getTotalScore().toString() : String.format("%d (+?)", getVisibleScore());
   }
 
   /**

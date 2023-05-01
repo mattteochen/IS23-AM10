@@ -55,9 +55,9 @@ public final class VirtualView implements Serializable {
   private Board gameBoard;
 
   /**
-   * 1-12 number referencing the shared cards to show
+   * List of the two shared cards index for this game session.
    */
-  private List<Integer> sharedCardsIndexes;
+  private List<Integer> sharedCards;
 
   /**
    * Boolean flag signaling game is over
@@ -136,10 +136,10 @@ public final class VirtualView implements Serializable {
   /**
    * Getter for shared cards indexes
    * 
-   * @return shared cards indexes
+   * @return Pairs of shared cards indexes and descriptions.
    */
-  public List<Integer> getSharedCardsIndexes() {
-    return sharedCardsIndexes;
+  public List<Integer> getSharedCards() {
+    return sharedCards;
   }
 
   /**
@@ -177,10 +177,12 @@ public final class VirtualView implements Serializable {
         .stream()
         .map(p -> new VirtualPlayer(p))
         .collect(Collectors.toList());
-    this.sharedCardsIndexes = g.getSharedCard()
+
+    this.sharedCards = g.getSharedCard()
         .stream()
         .map(c -> c.getPattern().getIndex())
         .collect(Collectors.toList());
+
     this.winnerPlayer = g.getWinnerPlayer() == null ? null : new VirtualPlayer(g.getWinnerPlayer());
   }
 

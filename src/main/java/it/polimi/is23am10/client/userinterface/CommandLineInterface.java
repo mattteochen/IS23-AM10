@@ -5,7 +5,6 @@ import java.util.List;
 
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.client.userinterface.helpers.OutputWrapper;
-import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
@@ -45,7 +44,7 @@ public final class CommandLineInterface implements UserInterface {
       ow.info(CLIStrings.listGamesString, true);
       availableGames
           .forEach(ag -> ow.info(String.format(CLIStrings.availableGameString,
-              availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId()),false));
+              availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId()), false));
     }
   }
 
@@ -59,15 +58,18 @@ public final class CommandLineInterface implements UserInterface {
       ow.info(CLIStrings.gameOverString, false);
       vw.getPlayers()
           .stream()
-          .sorted(Comparator.comparing(p -> p.getScore().getTotalScore(), Comparator.reverseOrder()))
-          .forEach(p -> ow.info(String.format(CLIStrings.playerScoreString, p.getPlayerName(), p.getScore().getTotalScore()), false));
+          .sorted(Comparator.comparing(p -> p.getScore().getVisibleScore(), Comparator.reverseOrder()))
+          .forEach(p -> ow.info(
+              String.format(CLIStrings.playerScoreString, p.getPlayerName(), p.getScore().getTotalScore()), false));
       ow.info(String.format(CLIStrings.winnerString, vw.getWinnerPlayer().getPlayerName()), false);
     } else {
       if (vw.isLastRound()) {
         ow.warning(CLIStrings.lastRoundString, false);
       }
       ow.info(String.format(CLIStrings.nowPlaying, vw.getActivePlayer().getPlayerName()), false);
-      // TODO: Prettyprint bookshelfs and board [blocked by #107]
+
+      ow.show(vw, false);
+
       ow.info(CLIStrings.moveTilesInviteString, false);
       ow.info(CLIStrings.moveTilesExampleString, false);
     }
