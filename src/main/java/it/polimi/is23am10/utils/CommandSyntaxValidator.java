@@ -72,8 +72,8 @@ public class CommandSyntaxValidator {
     }
 
     // First and second char are digits 
-    if (s.substring(0, 1).chars().allMatch(Character::isDigit)
-        || s.substring(1, 2).chars().allMatch(Character::isDigit)) {
+    if (s.substring(0, 0).chars().allMatch(Character::isDigit)
+        || s.substring(1, 1).chars().allMatch(Character::isDigit)) {
       return true; 
     }
 

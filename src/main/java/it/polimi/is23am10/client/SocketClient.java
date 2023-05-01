@@ -175,10 +175,10 @@ public class SocketClient extends Client {
                     String coordBookshelf =  fullCommand.split(" ")[nMove*3+2];
 
                     if(CommandSyntaxValidator.validateCoord(coordBoard) && CommandSyntaxValidator.validateCoord(coordBookshelf) && arrow.equals("->")){
-                      Integer xBoardCoord = Integer.parseInt(coordBoard.substring(0, 1));
-                      Integer yBoardCoord = Integer.parseInt(coordBoard.substring(1, 2));
-                      Integer xBookshelfCoord = Integer.parseInt(coordBookshelf.substring(0, 1));
-                      Integer yBookshelfCoord = Integer.parseInt(coordBookshelf.substring(1, 2));
+                      Integer xBoardCoord = coordBoard.charAt(0) -'0';
+                      Integer yBoardCoord = coordBoard.charAt(1) -'0';
+                      Integer xBookshelfCoord = coordBookshelf.charAt(0) -'0';
+                      Integer yBookshelfCoord = coordBookshelf.charAt(1) -'0';
                       moves.put(new Coordinates(xBoardCoord,yBoardCoord), new Coordinates(xBookshelfCoord,yBookshelfCoord));
                     }else{
                       System.out.println("🛑 Invalid syntax of move command.");
