@@ -21,6 +21,7 @@ public abstract class AbstractCommand implements Serializable {
     ADD_PLAYER,
     MOVE_TILES,
     GET_GAMES,
+    SEND_CHAT_MESSAGE,
     NULL
   }
 

@@ -5,7 +5,7 @@ import java.util.List;
 
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.client.userinterface.helpers.OutputWrapper;
-import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
@@ -31,7 +31,7 @@ public final class CommandLineInterface implements UserInterface {
    */
   public void displaySplashScreen() {
     ow.info(CLIStrings.welcomeString, true);
-    ow.info(CLIStrings.joinOrCreateString, false);
+    ow.info(CLIStrings.insertPlayerNameString, false);
   }
 
   /**
@@ -43,9 +43,13 @@ public final class CommandLineInterface implements UserInterface {
       ow.warning(CLIStrings.noGamesString, false);
     } else {
       ow.info(CLIStrings.listGamesString, true);
-      availableGames
-          .forEach(ag -> ow.info(String.format(CLIStrings.availableGameString,
-              availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId()),false));
+     // availableGames
+     //     .forEach(ag -> ow.info(String.format(CLIStrings.availableGameString,
+     //         availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId()), false));
+     for (VirtualView ag : availableGames){
+      ow.info(String.format(CLIStrings.availableGameString,
+              availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId()), false);
+     }
     }
   }
 
@@ -55,21 +59,28 @@ public final class CommandLineInterface implements UserInterface {
   public void displayVirtualView(VirtualView vw) {
     ow.debug(vw.toString(), false);
     ow.info(CLIStrings.currentStateString, true);
-    if (vw.isEnded()) {
+    if (vw.getStatus() == GameStatus.ENDED) {
       ow.info(CLIStrings.gameOverString, false);
       vw.getPlayers()
           .stream()
-          .sorted(Comparator.comparing(p -> p.getScore().getTotalScore(), Comparator.reverseOrder()))
-          .forEach(p -> ow.info(String.format(CLIStrings.playerScoreString, p.getPlayerName(), p.getScore().getTotalScore()), false));
+          .sorted(Comparator.comparing(p -> p.getScore().getVisibleScore(), Comparator.reverseOrder()))
+          .forEach(p -> ow.info(
+              String.format(CLIStrings.playerScoreString, p.getPlayerName(), p.getScore().getTotalScore()), false));
       ow.info(String.format(CLIStrings.winnerString, vw.getWinnerPlayer().getPlayerName()), false);
     } else {
-      if (vw.isLastRound()) {
-        ow.warning(CLIStrings.lastRoundString, false);
+      if (vw.getStatus() == GameStatus.WAITING_FOR_PLAYERS) {
+        ow.warning(String.format(CLIStrings.waitingForPlayers, vw.getPlayers().size(), vw.getMaxPlayers(), vw.getGameId()), false);
+      } else {
+        if (vw.getStatus() == GameStatus.LAST_ROUND) {
+          ow.warning(CLIStrings.lastRoundString, false);
+        }
+        ow.info(String.format(CLIStrings.nowPlaying, vw.getActivePlayer().getPlayerName()), false);
+  
+        ow.show(vw, false);
+  
+        ow.info(CLIStrings.moveTilesInviteString, false);
+        ow.info(CLIStrings.moveTilesExampleString, false);
       }
-      ow.info(String.format(CLIStrings.nowPlaying, vw.getActivePlayer().getPlayerName()), false);
-      // TODO: Prettyprint bookshelfs and board [blocked by #107]
-      ow.info(CLIStrings.moveTilesInviteString, false);
-      ow.info(CLIStrings.moveTilesExampleString, false);
     }
   }
 

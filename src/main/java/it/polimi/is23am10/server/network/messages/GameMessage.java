@@ -1,6 +1,7 @@
 package it.polimi.is23am10.server.network.messages;
 
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import it.polimi.is23am10.utils.ThreadLocalTypeAdapterFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,10 +16,18 @@ import com.google.gson.GsonBuilder;
  */
 public final class GameMessage extends AbstractMessage {
 
+    /**
+   * An utility to be used during deserialization processes.
+   * 
+   */
+  @SuppressWarnings("unused")
+  private final String className = this.getClass().getName();
+  
   /**
    * Gson object for serialization and deserialization
    */
   protected final transient Gson gson = new GsonBuilder()
+    .registerTypeAdapterFactory(new ThreadLocalTypeAdapterFactory())
     .create();
   
   /**

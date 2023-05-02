@@ -1,5 +1,6 @@
 package it.polimi.is23am10.server.network.virtualview;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
@@ -18,30 +19,30 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public final class VirtualPlayer {
+public final class VirtualPlayer implements Serializable {
 
   /**
-   * Unique player identifier
+   * Unique player identifier.
    */
   private UUID playerId;
 
   /**
-   * Player's game name
+   * Player's game name.
    */
   private String playerName;
 
   /**
-   * Player's score
+   * Player's score.
    */
   private Score score;
 
   /**
-   * Player's bookshelf with its tiles
+   * Player's bookshelf with its tiles.
    */
   private Bookshelf bookshelf;
 
   /**
-   * 1-12 number referencing the private card to show
+   * 1-12 number referencing the private card to show.
    */
   private Integer privateCardIndex;
 
@@ -53,7 +54,7 @@ public final class VirtualPlayer {
   
   /**
    * Public constructor. Builds VirtualPlayer out of {@link Player}
-   * @param p instance of {@link Player} to "virtualize"
+   * @param p instance of {@link Player} to "virtualize".
    * @throws NullIndexValueException
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws BookshelfGridColIndexOutOfBoundsException
@@ -70,7 +71,7 @@ public final class VirtualPlayer {
   }
 
   /**
-   * Getter for player id
+   * Getter for player id.
    * @return player id
    */
   public UUID getPlayerId() {
@@ -78,7 +79,7 @@ public final class VirtualPlayer {
   }
 
   /**
-   * Getter for score
+   * Getter for score.
    * @return score
    */
   public Score getScore() {
@@ -86,7 +87,7 @@ public final class VirtualPlayer {
   }
 
   /**
-   * Getter for bookshelf
+   * Getter for bookshelf.
    * @return bookshelf
    */
   public Bookshelf getBookshelf() {
@@ -94,7 +95,7 @@ public final class VirtualPlayer {
   }
 
   /**
-   * Getter for private card index
+   * Getter for private card index.
    * @return private card index
    */
   public Integer getPrivateCardIndex() {
@@ -102,7 +103,7 @@ public final class VirtualPlayer {
   }
 
   /**
-   * Getter for player name
+   * Getter for player name.
    * @return player name
    */
   public String getPlayerName() {
@@ -120,10 +121,11 @@ public final class VirtualPlayer {
   /**
    * Void method used when pushing state
    * to all players, in order to keep secret
-   * each player's card to other players
+   * each player's card to other players.
    */
   public void obfuscatePrivateCard() {
     privateCardIndex = 0;
+    score.obfuscatePrivatePoints();
   }
 
   /**

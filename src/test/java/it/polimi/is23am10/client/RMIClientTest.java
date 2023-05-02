@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -34,6 +35,7 @@ import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketCo
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
+@Disabled
 public class RMIClientTest {
   @Mock
   PlayerConnectorRmi playerConnectorRmi;

@@ -110,4 +110,9 @@ public class Coordinates implements Serializable {
     int tmp = (this.col + ((this.row + 1) / 2));
     return this.row + (tmp * tmp);
   }
+
+  @Override 
+  public String toString() {
+    return String.format("%s %s", row, col);
+  }
 }

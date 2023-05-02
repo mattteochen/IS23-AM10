@@ -1,40 +1,33 @@
 package it.polimi.is23am10.client;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
 import java.rmi.registry.Registry;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
-import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.model.player.Player;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
-import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
-import it.polimi.is23am10.server.network.messages.ErrorMessage;
-import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
-import it.polimi.is23am10.server.network.virtualview.VirtualView;
-import it.polimi.is23am10.utils.CommandSyntaxValidator;
 import it.polimi.is23am10.utils.Coordinates;
 
 /**
@@ -111,16 +104,7 @@ public class RMIClient extends Client {
   public void run() {
     final PlayerConnectorRmi playerConnectorRmi = (PlayerConnectorRmi) playerConnector;
 
-    /*
-     * The default values are null, I will set those values separately to
-     * handle input errors in a separate way. This allows us, once selected the
-     * game, to reinsert only the player name if wrong.
-     */
-    String selectedPlayerName = null;
-    UUID selectedGameId = null;
-
-    System.out.println(CLIStrings.welcomeString);
-
+  
     while (!hasRequestedDisconnection()) {
 
       try {
@@ -128,37 +112,25 @@ public class RMIClient extends Client {
 
         // Execute if the client is not connected to a game.
         if (playerConnectorRmi.getGameId() == null) {
-          
+          userInterface.displaySplashScreen();
           // First I'm gonna ask the player name
-          if (selectedPlayerName == null) {
-            selectedPlayerName = handlePlayerNameSelection(playerConnectorRmi, br);
+          playerConnectorRmi.setPlayer(new Player());
+          if (playerConnectorRmi.getPlayer().getPlayerName() == null || playerConnectorRmi.getPlayer().getPlayerName().equals("") ) {
+            playerConnectorRmi.getPlayer().setPlayerName(handlePlayerNameSelection(playerConnectorRmi, br));
           } 
-
-          if (selectedPlayerName != null) {
-            handleGameSelection(playerConnectorRmi, selectedGameId, br, selectedPlayerName);
+          if (playerConnectorRmi.getPlayer().getPlayerName() != null) {
+            handleGameSelection(playerConnectorRmi, playerConnectorRmi.getGameId(), br, playerConnectorRmi.getPlayer().getPlayerName());
           }
-        } else {
+        }
+        if(playerConnectorRmi.getGameId() != null) {
           // Executed if the client is connected to a game.
-
-          // This allows the player to play the turn if he's the active player
-          if (playerConnectorRmi.getPlayer().getIsActivePlayer()) {
-            handleMoveCommand(playerConnectorRmi, br);
-          }
-
-          String fullCommand = br.readLine();
-          String command = fullCommand.split(" ")[0];
-          switch (command) {
-            case "chat":
-              // TODO: add send chat message command
-              break;
-            case "logout":
-              // TODO: add logout command
-              break;
-            default:
-          }
+          handleCommands(playerConnectorRmi, br);
         }
       } catch (IOException | InterruptedException e) {
         System.out.println("🛑 " + e.getMessage());
+      } catch (NullPlayerNameException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
 
       // TODO: implement user requests
@@ -203,8 +175,6 @@ public class RMIClient extends Client {
   @Override
   void getAvailableGames(AbstractPlayerConnector apc)
       throws IOException, InterruptedException {
-    HashMap<Integer, VirtualView> mapIndexVirtualView = new HashMap<Integer, VirtualView>();
-    Integer gameIdx = 0;
     AbstractCommand command = new GetAvailableGamesCommand();
     serverControllerActionServer.execute(apc, command);
   }
@@ -241,6 +211,16 @@ public class RMIClient extends Client {
         apc.getPlayer().getPlayerName(), apc.getGameId(), moves);
     serverControllerActionServer.execute(apc, command);
   }
+
+  /**
+ * {@inheritDoc}
+ * 
+ */
+ @Override
+ void sendChatMessage(AbstractPlayerConnector apc, ChatMessage msg) throws IOException {
+  AbstractCommand command = new SendChatMessageCommand(msg);
+  serverControllerActionServer.execute(apc, command);
+ }
 
   /**
    * Method override that creates and starts message handler thread

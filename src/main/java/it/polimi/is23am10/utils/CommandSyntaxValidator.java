@@ -16,6 +16,11 @@ public class CommandSyntaxValidator {
   private final static int MAX_PLAYERS_LIMIT = 4;
 
   /**
+   * Min number of players.
+   */
+  private final static int MIN_PLAYERS_LIMIT = 2;
+
+  /**
    * Empty constructor.
    */
   private CommandSyntaxValidator() {
@@ -52,7 +57,7 @@ public class CommandSyntaxValidator {
       return false;
     }
     // Index out of bounds
-    if (Integer.parseInt(s) < 0 || Integer.parseInt(s) >= MAX_PLAYERS_LIMIT) {
+    if (Integer.parseInt(s) < MIN_PLAYERS_LIMIT || Integer.parseInt(s) > MAX_PLAYERS_LIMIT) {
       return false;
     }
     return true;
@@ -68,6 +73,7 @@ public class CommandSyntaxValidator {
     
     // Null parameter or invalid length
     if (s == null || s.length() != 2) {
+      System.out.println("coord length error");
       return false;
     }
 
@@ -76,7 +82,7 @@ public class CommandSyntaxValidator {
         || s.substring(1, 1).chars().allMatch(Character::isDigit)) {
       return true; 
     }
-
+    System.out.println("coord not digit");
     return false;
   }
 

@@ -2,7 +2,9 @@ package it.polimi.is23am10.server.controller.interfaces;
 
 import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
+import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
@@ -38,7 +40,9 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
+import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
@@ -79,11 +83,21 @@ public interface IServerControllerAction extends Remote {
   void execute(AbstractPlayerConnector connector, AbstractCommand command) throws RemoteException;
 
   /**
-   * The {@link Opcode#START} command callback worker.
-   * TODO: add client responses.
+   * Execute the client {@link GetAvailableGamesCommand}.
+   * This is intended to be used under the RMI connection protocol when the client's playerConnector has no power to read the msg queue.
+   *
+   * @param command   The command to be executed.
+   * @returns an {@link AvailableGamesMessage} responce.
+   * @throws RemoteException
    *
    */
-  final ControllerConsumer startConsumer = (logger, playerConnector, command) -> {
+  AvailableGamesMessage execute(GetAvailableGamesCommand command) throws RemoteException;
+
+  /**
+   * The {@link Opcode#START} command callback worker.
+   *
+   */
+  final ControllerConsumer<Void, AbstractCommand> startConsumer = (logger, playerConnector, command) -> {
     ErrorMessage errorMsg = null;
 
     try {
@@ -167,14 +181,14 @@ public interface IServerControllerAction extends Remote {
         }
       }
     }
+    return null;
   };
 
   /**
    * The {@link Opcode#ADD_PLAYER} command callback worker.
-   * TODO: add client responces.
    *
    */
-  final ControllerConsumer addPlayerConsumer = (logger, playerConnector, command) -> {
+  final ControllerConsumer<Void, AbstractCommand> addPlayerConsumer = (logger, playerConnector, command) -> {
     ErrorMessage errorMsg = null;
 
     try {
@@ -185,12 +199,12 @@ public interface IServerControllerAction extends Remote {
       final String playerName = ((AddPlayerCommand) command).getPlayerName();
       final UUID gameId = ((AddPlayerCommand) command).getGameId();
       final GameHandler gameHandler = ServerControllerState.getGameHandlerByUUID(gameId);
-      
-      /* 
-       * Checks if the client is trying to reconnect to the game , 
+
+      /*
+       * Checks if the client is trying to reconnect to the game ,
        * so if there's already an inactive Player in the game with that name,
        * if found one we're executing the if statement and replacing the old socket
-       * connector with a new one connected, otherwise the else branch is executed 
+       * connector with a new one connected, otherwise the else branch is executed
        * and the player is normally added to the game.
        */
       if (gameHandler.getGame().getPlayerNames().contains(playerName) &&
@@ -205,14 +219,14 @@ public interface IServerControllerAction extends Remote {
 
           gameHandler.getGame().getPlayerByName(playerName).setIsConnected(true);
           gameHandler.getPlayerConnectors()
-          .forEach(pc -> {
-            try {
-              pc.addMessageToQueue(
-                  new ErrorMessage(playerName + " reconnected to the game.", ErrorSeverity.WARNING));
-            } catch (InterruptedException e) {
-              logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
-            }
-          });
+              .forEach(pc -> {
+                try {
+                  pc.addMessageToQueue(
+                      new ErrorMessage(playerName + " reconnected to the game.", ErrorSeverity.WARNING));
+                } catch (InterruptedException e) {
+                  logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
+                }
+              });
 
         } catch (NullSocketConnectorException e) {
           logger.error("{} {} {}",
@@ -294,20 +308,21 @@ public interface IServerControllerAction extends Remote {
         }
       }
     }
+    return null;
   };
 
   /**
    * The {@link Opcode#GET_GAMES} command callback worker.
    *
    */
-  final ControllerConsumer getAvailableGamesConsumer = (logger, playerConnector, command) -> {
+  final ControllerConsumer<Void, AbstractCommand> getAvailableGamesConsumer = (logger, playerConnector, command) -> {
 
     List<VirtualView> availableGames = ServerControllerState.getGamePools()
-    .stream()
-    .map(gh -> gh.getGame())
-    .filter(g -> g.getPlayers().size() < g.getMaxPlayer())
-    .map(g -> new VirtualView(g))
-    .collect(Collectors.toList());
+        .stream()
+        .map(gh -> gh.getGame())
+        .filter(g -> g.getPlayers().size() < g.getMaxPlayer())
+        .map(g -> new VirtualView(g))
+        .collect(Collectors.toList());
 
     try {
       playerConnector.addMessageToQueue(new AvailableGamesMessage(availableGames, playerConnector.getPlayer()));
@@ -316,13 +331,82 @@ public interface IServerControllerAction extends Remote {
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INTERRUPTED, e);
     }
+    return null;
+  };
+
+  /**
+   * The {@link Opcode#GET_GAMES} command callback worker for RMI.
+   * Note that playerConnector field is expected to be null.
+   *
+   */
+  final ControllerConsumer<AvailableGamesMessage, GetAvailableGamesCommand> getAvailableGamesConsumerRmi = (logger, playerConnector, command) -> {
+    List<VirtualView> availableGames = ServerControllerState.getGamePools()
+    .stream()
+    .map(gh -> gh.getGame())
+    .filter(g -> g.getPlayers().size() < g.getMaxPlayer())
+    .map(g -> new VirtualView(g))
+    .collect(Collectors.toList());
+
+    return new AvailableGamesMessage(availableGames);
+  };
+
+  /**
+   * The {@link Opcode#SEND_CHAT_MESSAGE} command callback worker.
+   *
+   */
+  final ControllerConsumer<Void,AbstractCommand> sendChatMessageConsumer = (logger, playerConnector, command) -> {
+    try {
+      if (playerConnector == null) {
+        throw new NullPlayerConnector();
+      }
+      SendChatMessageCommand scmCommand = (SendChatMessageCommand) command;
+      GameHandler handler = ServerControllerState.getGameHandlerByUUID(playerConnector.getGameId());
+
+      if (scmCommand.getChatMessage().isBroadcast()) {
+        handler.getPlayerConnectors()
+            .stream()
+            .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))
+            .forEach(pc -> {
+              try {
+                pc.addMessageToQueue(scmCommand.getChatMessage());
+              } catch (InterruptedException e) {
+                logger.error("{} {} {}",
+                    ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
+                    ErrorTypeString.ERROR_INTERRUPTED, e);
+              }
+            });
+      } else {
+        String receiverName = scmCommand.getChatMessage().getReceiverName();
+
+        handler.getPlayerConnectors()
+            .stream()
+            .filter(pc -> pc.getPlayer().getPlayerName().equals(receiverName))
+            .findFirst()
+            .get()
+            .addMessageToQueue(scmCommand.getChatMessage());
+      }
+    } catch (InterruptedException e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_INTERRUPTED, e);
+    } catch (NullGameHandlerInstance e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_ADDING_HANDLER, e);
+    } catch (NullPlayerConnector e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_ADDING_CONNECTOR, e);
+    }
+
+    return null;
   };
 
   /**
    * The {@link Opcode#MOVE_TILES} command callback worker.
    *
    */
-  final ControllerConsumer moveTilesConsumer = (logger, playerConnector, command) -> {
+  final ControllerConsumer<Void, AbstractCommand> moveTilesConsumer = (logger, playerConnector, command) -> {
     ErrorMessage errorMsg = null;
 
     try {
@@ -369,5 +453,6 @@ public interface IServerControllerAction extends Remote {
         }
       }
     }
+    return null;
   };
 }

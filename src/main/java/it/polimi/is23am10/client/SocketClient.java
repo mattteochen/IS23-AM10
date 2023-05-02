@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.Type;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerState;
@@ -32,7 +34,9 @@ import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.GameMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
@@ -42,6 +46,12 @@ import it.polimi.is23am10.utils.Coordinates;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 /**
  * A client using Socket as communication method.
@@ -76,16 +86,6 @@ public class SocketClient extends Client {
     // Consider using a lighter connector.
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
 
-    /*
-     * The default values are null, I will set those values separately to
-     * handle input errors in a separate way. This allows us, once selected the
-     * game, to reinsert only the player name if wrong.
-     */
-    String selectedPlayerName = null;
-    UUID selectedGameId = null;
-
-    System.out.println(CLIStrings.welcomeString);
-
     while (playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()) {
       // TODO: implement user requests
       // if any new user request, process it (if virtual view has not declared that it
@@ -93,41 +93,30 @@ public class SocketClient extends Client {
 
       try {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         // Execute if the client is not connected to a game.
         if (playerConnectorSocket.getGameId() == null) {
-          
+          userInterface.displaySplashScreen();
           // First I'm gonna ask the player name
-          if (selectedPlayerName == null) {
-            selectedPlayerName = handlePlayerNameSelection(playerConnectorSocket, br);
+          playerConnectorSocket.setPlayer(new Player());
+          if (playerConnectorSocket.getPlayer().getPlayerName() == null) {
+            playerConnectorSocket.getPlayer().setPlayerName(br.readLine().split(" ")[0]);
           } 
-          
-          if (selectedPlayerName != null) {
-            handleGameSelection(playerConnectorSocket, selectedGameId, br, selectedPlayerName);
+          if (playerConnectorSocket.getPlayer().getPlayerName() != null) {
+            handleGameSelection(playerConnectorSocket, playerConnectorSocket.getGameId(), br, playerConnectorSocket.getPlayer().getPlayerName());
           }
-        } else {
+        }
+
+        if (playerConnectorSocket.getGameId() != null) {
           // Executed if the client is connected to a game.
 
           // This allows the player to play the turn if he's the active player
-          if (playerConnectorSocket.getPlayer().getIsActivePlayer()) {
-            handleMoveCommand(playerConnectorSocket, br);
-          }
-
-          // I can send messages or logout whether it's my turn or not
-          String fullCommand = br.readLine();
-          String command = fullCommand.split(" ")[0];
-          switch (command) {
-            case "chat":
-              // TODO: add send chat message command
-              break;
-            case "logout":
-              // TODO: add logout command
-              break;
-            default:
-          }
+          handleCommands(playerConnectorSocket, br);
         }
       } catch (IOException | InterruptedException e) {
         System.out.println("🛑 " + e.getMessage());
+      } catch (NullPlayerNameException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
 
       // Some hints for the above's implementer: This is a start game request demo,
@@ -163,6 +152,7 @@ public class SocketClient extends Client {
     DataInputStream dis = new DataInputStream(pc.getConnector().getInputStream());
     BufferedReader br = new BufferedReader(new InputStreamReader(dis));
     String payload = br.readLine();
+    System.out.println(payload);
     return payload == null ? null : gson.fromJson(payload, AbstractMessage.class);
   }
 
@@ -214,12 +204,27 @@ public class SocketClient extends Client {
   void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves) throws IOException {
     MoveTilesCommand command = new MoveTilesCommand(apc.getPlayer().getPlayerName(), apc.getGameId(), moves);
     String req = gson.toJson(command);
+    System.out.println(req);
     PrintWriter epson = new PrintWriter(((PlayerConnectorSocket) apc).getConnector().getOutputStream(), true,
         StandardCharsets.UTF_8);
     epson.println(req);
   };
 
- /**
+  
+/**
+ * {@inheritDoc}
+ * 
+ */
+ @Override
+  void sendChatMessage(AbstractPlayerConnector apc, ChatMessage msg) throws IOException {
+    SendChatMessageCommand command = new SendChatMessageCommand(msg);
+    String req = gson.toJson(command);
+    PrintWriter epson = new PrintWriter(((PlayerConnectorSocket) apc).getConnector().getOutputStream(), true,
+        StandardCharsets.UTF_8);
+    epson.println(req);
+  }
+
+/**
    * {@inheritDoc}
    *
    */

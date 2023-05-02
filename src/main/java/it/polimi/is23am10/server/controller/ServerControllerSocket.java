@@ -14,6 +14,7 @@ import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
@@ -206,6 +207,8 @@ public final class ServerControllerSocket implements Runnable {
           return context.deserialize(jsonObject, MoveTilesCommand.class);
         case "it.polimi.is23am10.server.command.GetAvailableGamesCommand":
           return context.deserialize(jsonObject, GetAvailableGamesCommand.class);
+        case "it.polimi.is23am10.server.command.SendChatMessageCommand":
+          return context.deserialize(jsonObject, SendChatMessageCommand.class);
         default:
           throw new JsonParseException("Unknown class name: " + className);
       }
