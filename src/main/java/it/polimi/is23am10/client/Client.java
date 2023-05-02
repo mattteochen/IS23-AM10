@@ -16,6 +16,7 @@ import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
@@ -96,7 +97,8 @@ public abstract class Client implements Runnable {
   protected UserInterface userInterface;
 
   /**
-   * List of available games set when a message from getAvailableGames is received.
+   * List of available games set when a message from getAvailableGames is
+   * received.
    */
   protected List<VirtualView> availableGames;
 
@@ -128,8 +130,8 @@ public abstract class Client implements Runnable {
         userInterface.displayError((ErrorMessage) msg);
         break;
       case AVAILABLE_GAMES:
-        setAvailableGames(availableGames);
-        userInterface.displayAvailableGames(availableGames);
+        setAvailableGames(((AvailableGamesMessage) msg).getAvailableGames());
+        userInterface.displayAvailableGames(((AvailableGamesMessage) msg).getAvailableGames());
         break;
       default:
         break;
@@ -147,21 +149,13 @@ public abstract class Client implements Runnable {
    * 
    * @param ag list of available games
    */
-  protected void setAvailableGames(List<VirtualView> ag){
+  protected void setAvailableGames(List<VirtualView> ag) {
     this.availableGames = ag;
   }
 
   /**
-   * Getter for available games param.
-   * 
-   * @return list of available games
-   */
-  protected List<VirtualView> getAvailableGames(){
-    return this.availableGames;
-  }
-
-  /**
    * Abstract method that send command to get all available games.
+   * 
    * @param apc abstract player connector
    * @throws IOException
    * @throws InterruptedException
@@ -170,26 +164,28 @@ public abstract class Client implements Runnable {
 
   /**
    * Abstract method that send command to start a new game.
-   * @param apc abstract player connector
-   * @param playerName selected player name
+   * 
+   * @param apc          abstract player connector
+   * @param playerName   selected player name
    * @param maxPlayerNum max number of players selected
    * @throws IOException
    */
   abstract void startGame(AbstractPlayerConnector apc, String playerName, int maxPlayerNum) throws IOException;
 
-/**
- * Abstract method that send command to add a new player.
- * @param apc abstract player connector
- * @param playerName selected player name
- * @param gameId selected game id
- * @throws IOException
- */
+  /**
+   * Abstract method that send command to add a new player.
+   * 
+   * @param apc        abstract player connector
+   * @param playerName selected player name
+   * @param gameId     selected game id
+   * @throws IOException
+   */
   abstract void addPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException;
 
   /**
    * Abstract method that send command to move tiles.
    * 
-   * @param apc abstract player connector
+   * @param apc   abstract player connector
    * @param moves map of moves
    * @throws IOException
    */
@@ -199,10 +195,10 @@ public abstract class Client implements Runnable {
    * Handling function for move tiles command.
    * 
    * @param apc abstract player connector
-   * @param br buffered reader
+   * @param br  buffered reader
    * @throws IOException
    */
-  protected void handleMoveCommand(AbstractPlayerConnector apc, BufferedReader br) throws IOException {
+  protected void handleCommands(AbstractPlayerConnector apc, BufferedReader br) throws IOException {
     System.out.println(CLIStrings.moveTilesInviteString);
 
     // TODO: show here board and bookshelf
@@ -211,53 +207,61 @@ public abstract class Client implements Runnable {
     String command = fullCommand.split(" ")[0];
 
     switch (command) {
-      case "move":
-        HashMap<Coordinates, Coordinates> moves = new HashMap<>();
-
-        // reads a string containing coordinates of a tile
-        for (int nMove = 0; nMove < 3; nMove++) {
-          /*
-           * This checks the correct number of moves we are playing,
-           * since the single move syntax is "ab -> cd ef -> gh" we want
-           * that we have groups of three strings for each move: "ab" "->" "cd".
-           * To do so I'm checking that the numbers of strings in the full line
-           * (fullCommand)
-           * has 3 more strings for each supposed move.
-           * If I have for example the last move which is "eb ->", so if it's incomplete,
-           * or if it is the fourth move, it will be ignored.
-           * 
-           */
-          if ((fullCommand.split(" ").length - (nMove + 1) * 3) >= 0) {
-            String coordBoard = fullCommand.split(" ")[nMove * 3];
-            String arrow = fullCommand.split(" ")[nMove * 3 + 1];
-            String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 2];
-
-            if (CommandSyntaxValidator.validateCoord(coordBoard)
-                && CommandSyntaxValidator.validateCoord(coordBookshelf)
-                && arrow.equals("->")) {
-              Integer xBoardCoord = coordBoard.charAt(0) - '0';
-              Integer yBoardCoord = coordBoard.charAt(1) - '0';
-              Integer xBookshelfCoord = coordBookshelf.charAt(0) - '0';
-              Integer yBookshelfCoord = coordBookshelf.charAt(1) - '0';
-              moves.put(new Coordinates(xBoardCoord, yBoardCoord),
-                  new Coordinates(xBookshelfCoord, yBookshelfCoord));
-            } else {
-              System.out.println("🛑 Invalid syntax of move command.");
-              // TODO: throw exception invalid move
-            }
-          } else {
-            break;
-          }
-        }
-
-        // Checks if no valid moves were added
-        if (moves.isEmpty()) {
-          System.out.println("🛑 No valid moves found.");
-          // TODO: throw an exception
-        } else {
-          moveTiles(apc, moves);
-        }
+      case "chat":
+        // TODO: add send chat message command
         break;
+      case "logout":
+        // TODO: add logout command
+        break;
+      case "move":
+        if (apc.getPlayer().getIsActivePlayer()) {
+          HashMap<Coordinates, Coordinates> moves = new HashMap<>();
+
+          // reads a string containing coordinates of a tile
+          for (int nMove = 0; nMove < 3; nMove++) {
+            /*
+             * This checks the correct number of moves we are playing,
+             * since the single move syntax is "ab -> cd ef -> gh" we want
+             * that we have groups of three strings for each move: "ab" "->" "cd".
+             * To do so I'm checking that the numbers of strings in the full line
+             * (fullCommand)
+             * has 3 more strings for each supposed move.
+             * If I have for example the last move which is "eb ->", so if it's incomplete,
+             * or if it is the fourth move, it will be ignored.
+             * 
+             */
+            if ((fullCommand.split(" ").length - (nMove + 1) * 3) >= 0) {
+              String coordBoard = fullCommand.split(" ")[nMove * 3];
+              String arrow = fullCommand.split(" ")[nMove * 3 + 1];
+              String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 2];
+
+              if (CommandSyntaxValidator.validateCoord(coordBoard)
+                  && CommandSyntaxValidator.validateCoord(coordBookshelf)
+                  && arrow.equals("->")) {
+                Integer xBoardCoord = coordBoard.charAt(0) - '0';
+                Integer yBoardCoord = coordBoard.charAt(1) - '0';
+                Integer xBookshelfCoord = coordBookshelf.charAt(0) - '0';
+                Integer yBookshelfCoord = coordBookshelf.charAt(1) - '0';
+                moves.put(new Coordinates(xBoardCoord, yBoardCoord),
+                    new Coordinates(xBookshelfCoord, yBookshelfCoord));
+              } else {
+                System.out.println("🛑 Invalid syntax of move command.");
+                // TODO: throw exception invalid move
+              }
+            } else {
+              break;
+            }
+          }
+
+          // Checks if no valid moves were added
+          if (moves.isEmpty()) {
+            System.out.println("🛑 No valid moves found.");
+            // TODO: throw an exception
+          } else {
+            moveTiles(apc, moves);
+          }
+          break;
+        }
       default:
     }
   }
@@ -266,7 +270,7 @@ public abstract class Client implements Runnable {
    * Handling function for name selection.
    * 
    * @param apc abstract player connector
-   * @param br buffered reader
+   * @param br  buffered reader
    * @return player name selected
    * @throws IOException
    */
@@ -279,18 +283,17 @@ public abstract class Client implements Runnable {
       p.setPlayerName(selectedPlayerName);
       apc.setPlayer(p);
     } catch (NullPlayerNameException e) {
-      // TODO: add custom bla
-      e.printStackTrace();
+      userInterface.displayError(new ErrorMessage("Null player name", p, ErrorSeverity.ERROR));
     }
     return selectedPlayerName;
   }
 
   /**
-   *  Handling function for game selection.
+   * Handling function for game selection.
    * 
-   * @param apc abstract player connector
-   * @param selectedGameId game id selected
-   * @param br buffered reader
+   * @param apc                abstract player connector
+   * @param selectedGameId     game id selected
+   * @param br                 buffered reader
    * @param selectedPlayerName player name selected
    * @throws IOException
    * @throws InterruptedException
@@ -310,9 +313,8 @@ public abstract class Client implements Runnable {
       switch (command) {
         case "j":
           String idx = fullCommand.split(" ")[1];
-          if (CommandSyntaxValidator.validateGameIdx(idx, 4)) {
-            // selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
-            selectedGameId = UUID.fromString(fullCommand.split(" ")[2]);
+          if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
+            selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
             addPlayer(apc, selectedPlayerName, selectedGameId);
             apc.setGameId(selectedGameId);
           } else {
