@@ -145,6 +145,7 @@ public class CommandLineInterfaceTest {
     String playerName = "giovanni";
     Game g = GameFactory.getNewGame(playerName, 2);
     g.setFirstPlayer(g.getActivePlayer());
+    g.addPlayer("Numa Pompilio");
     VirtualView vw = new VirtualView(g);
     cli.displayVirtualView(vw);
 
@@ -155,7 +156,8 @@ public class CommandLineInterfaceTest {
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.indexBoard));
 
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.topPaddingBoard));
-    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.tabBlackSquare));    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.bottomPaddingBoard));
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.tabBlackSquare));    
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.bottomPaddingBoard));
     
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.bookshelfPoints));
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.scoreBlockPoints));
