@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import it.polimi.is23am10.client.userinterface.UserInterface;
@@ -22,6 +23,7 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.GameMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
@@ -30,6 +32,13 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.CommandSyntaxValidator;
 import it.polimi.is23am10.utils.Coordinates;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 /**
  * An abstract class representing the app running in client mode. Holds the
  * three
@@ -48,7 +57,6 @@ import it.polimi.is23am10.utils.Coordinates;
  */
 public abstract class Client implements Runnable {
 
-
   /**
    * Protected constructor for client using Socket as communication method.
    * 
@@ -59,7 +67,9 @@ public abstract class Client implements Runnable {
     playerConnector = pc;
     userInterface = ui;
     serverAddress = InetAddress.getLocalHost();
-    gson = new Gson();
+    gson = new GsonBuilder()
+    .registerTypeAdapter(AbstractMessage.class, new MessageDeserializer())
+    .create();
     requestedDisconnection = false;
   }
 
@@ -137,7 +147,7 @@ public abstract class Client implements Runnable {
         VirtualView v = gson.fromJson(msg.getMessage(), VirtualView.class);
         setVirtualView(v);
         setGameIdRef(v.getGameId());
-        userInterface.displayVirtualView(gson.fromJson(msg.getMessage(), VirtualView.class));
+        userInterface.displayVirtualView(v);
         break;
       case ERROR_MESSAGE:
         userInterface.displayError((ErrorMessage) msg);
@@ -257,13 +267,20 @@ public abstract class Client implements Runnable {
    */
   protected void handleCommands(AbstractPlayerConnector apc, BufferedReader br) throws IOException {
 
-
     String fullCommand = br.readLine();
     String command = fullCommand.split(" ")[0];
 
     switch (command) {
       case "chat":
-        // TODO: add send chat message command
+        // This selects only the part between double quotes which is gonna be the message sent.
+        String msg = fullCommand.split("\"")[1];
+        //If the second string begins with double quotes, there's no receiver and the message is broadcast
+        if(fullCommand.split(" ")[1].startsWith("\"")){
+          sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg));
+        }else{
+          String receiverName = fullCommand.split(" ")[1];
+          sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg, receiverName));
+        }
         break;
       case "logout":
         // TODO: add logout command
@@ -271,8 +288,9 @@ public abstract class Client implements Runnable {
       case "move":
         while(getVirtualView() == null){
         }
-        if (apc.getPlayer().getPlayerName().equals(getVirtualView().getActivePlayer().getPlayerName()) && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS ) {
-          HashMap<Coordinates, Coordinates> moves = new HashMap<>();
+        if (apc.getPlayer().getPlayerName().equals(getVirtualView().getActivePlayer().getPlayerName()) 
+            && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS ) {
+          Map<Coordinates, Coordinates> moves = new HashMap<Coordinates, Coordinates>();
 
           // reads a string containing coordinates of a tile
           for (int nMove = 0; nMove < 3; nMove++) {
@@ -291,7 +309,6 @@ public abstract class Client implements Runnable {
               String coordBoard = fullCommand.split(" ")[nMove * 3 + 1];
               String arrow = fullCommand.split(" ")[nMove * 3 + 2];
               String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 3];
-              System.out.println(coordBoard + " " + arrow + " " + coordBookshelf);
 
               if (CommandSyntaxValidator.validateCoord(coordBoard)
                   && CommandSyntaxValidator.validateCoord(coordBookshelf)
@@ -300,8 +317,9 @@ public abstract class Client implements Runnable {
                 Integer yBoardCoord = coordBoard.charAt(1) - '0';
                 Integer xBookshelfCoord = coordBookshelf.charAt(0) - '0';
                 Integer yBookshelfCoord = coordBookshelf.charAt(1) - '0';
-                moves.put(new Coordinates(xBoardCoord, yBoardCoord),
-                    new Coordinates(xBookshelfCoord, yBookshelfCoord));
+                Coordinates boardCoord = new Coordinates(xBoardCoord, yBoardCoord);
+                Coordinates bsCoord = new Coordinates(xBookshelfCoord, yBookshelfCoord);
+                moves.put(boardCoord,bsCoord);
               } else {
                 System.out.println("🛑 Invalid syntax of move command.");
               }
@@ -313,6 +331,7 @@ public abstract class Client implements Runnable {
           if (moves.isEmpty()) {
             System.out.println("🛑 No valid moves found.");
           } else {
+            System.out.println(moves);
             moveTiles(apc, moves);
           }
           break;
@@ -407,4 +426,37 @@ public abstract class Client implements Runnable {
     }
   }
 
+  /**
+   * Custom deserializer class definition for {@link Gson} usage.
+   * This works on polymorphic {@link AbstractCommand} objects.
+   * 
+   */
+  class MessageDeserializer implements JsonDeserializer<AbstractMessage> {
+    @Override
+    public AbstractMessage deserialize(
+        JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      JsonObject jsonObject = json.getAsJsonObject();
+
+      String className = "";
+      try {
+        className = jsonObject.get("className").getAsString();
+      } catch (Exception e) {
+        throw new JsonParseException(e);
+      }
+
+      switch (className) {
+        case "it.polimi.is23am10.server.network.messages.GameMessage":
+          return context.deserialize(jsonObject, GameMessage.class);
+        case "it.polimi.is23am10.server.network.messages.ChatMessage":
+          return context.deserialize(jsonObject, ChatMessage.class);
+        case "it.polimi.is23am10.server.network.messages.AvailableGamesMessage":
+          return context.deserialize(jsonObject, AvailableGamesMessage.class);
+        case "it.polimi.is23am10.server.network.messages.ErrorMessage":
+          return context.deserialize(jsonObject, ErrorMessage.class);
+        default:
+          throw new JsonParseException("Unknown class name: " + className);
+      }
+    }
+  }
 }
