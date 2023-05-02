@@ -21,6 +21,7 @@ import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
@@ -211,6 +212,15 @@ public class RMIClient extends Client {
         apc.getPlayer().getPlayerName(), apc.getGameId(), moves);
     serverControllerActionServer.execute(apc, command);
   }
+
+  /**
+ * {@inheritDoc}
+ * 
+ */
+ @Override
+ void sendChatMessage(AbstractPlayerConnector apc, ChatMessage msg) throws IOException {
+   
+ }
 
   /**
    * Method override that creates and starts message handler thread

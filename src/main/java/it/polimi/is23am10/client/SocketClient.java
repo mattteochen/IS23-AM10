@@ -32,6 +32,7 @@ import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
@@ -204,7 +205,17 @@ public class SocketClient extends Client {
     epson.println(req);
   };
 
- /**
+  
+/**
+ * {@inheritDoc}
+ * 
+ */
+ @Override
+  void sendChatMessage(AbstractPlayerConnector apc, ChatMessage msg) throws IOException {
+    
+  }
+
+/**
    * {@inheritDoc}
    *
    */

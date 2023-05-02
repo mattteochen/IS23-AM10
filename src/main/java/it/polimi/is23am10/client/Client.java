@@ -191,6 +191,14 @@ public abstract class Client implements Runnable {
    */
   abstract void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves) throws IOException;
 
+/**
+ * Abstract function that send chat message
+ * @param apc abstract player connector
+ * @param msg chat message
+ * @throws IOException
+ */
+  abstract void sendChatMessage(AbstractPlayerConnector apc, ChatMessage msg) throws IOException;
+
   /**
    * Handling function for move tiles command.
    * 
