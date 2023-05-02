@@ -18,6 +18,7 @@ import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.server.model.game.Game;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
@@ -104,7 +105,7 @@ public class CommandLineInterfaceTest {
     cheatScore.setExtraPoint();
     Player player2 = g.getPlayerByName(player2Name);
     player2.setScore(cheatScore);
-    g.setEnded(true);
+    g.setStatus(GameStatus.ENDED);
     g.setWinnerPlayer(player2);
     VirtualView vw = new VirtualView(g);
     cli.displayVirtualView(vw);
@@ -127,7 +128,7 @@ public class CommandLineInterfaceTest {
       NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException,
       PlayerNotFoundException {
     Game g = GameFactory.getNewGame("giovanni", 2);
-    g.setLastRound();
+    g.setStatus(GameStatus.LAST_ROUND);
     g.setFirstPlayer(g.getActivePlayer());
     VirtualView vw = new VirtualView(g);
     cli.displayVirtualView(vw);

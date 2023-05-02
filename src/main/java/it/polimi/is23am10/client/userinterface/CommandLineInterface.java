@@ -5,6 +5,7 @@ import java.util.List;
 
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.client.userinterface.helpers.OutputWrapper;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
@@ -54,7 +55,7 @@ public final class CommandLineInterface implements UserInterface {
   public void displayVirtualView(VirtualView vw) {
     ow.debug(vw.toString(), false);
     ow.info(CLIStrings.currentStateString, true);
-    if (vw.isEnded()) {
+    if (vw.getStatus() == GameStatus.ENDED) {
       ow.info(CLIStrings.gameOverString, false);
       vw.getPlayers()
           .stream()
@@ -63,15 +64,19 @@ public final class CommandLineInterface implements UserInterface {
               String.format(CLIStrings.playerScoreString, p.getPlayerName(), p.getScore().getTotalScore()), false));
       ow.info(String.format(CLIStrings.winnerString, vw.getWinnerPlayer().getPlayerName()), false);
     } else {
-      if (vw.isLastRound()) {
-        ow.warning(CLIStrings.lastRoundString, false);
+      if (vw.getStatus() == GameStatus.WAITING_FOR_PLAYERS) {
+        ow.warning(String.format(CLIStrings.waitingForPlayers, vw.getPlayers().size(), vw.getMaxPlayers(), vw.getGameId()), false);
+      } else {
+        if (vw.getStatus() == GameStatus.LAST_ROUND) {
+          ow.warning(CLIStrings.lastRoundString, false);
+        }
+        ow.info(String.format(CLIStrings.nowPlaying, vw.getActivePlayer().getPlayerName()), false);
+  
+        ow.show(vw, false);
+  
+        ow.info(CLIStrings.moveTilesInviteString, false);
+        ow.info(CLIStrings.moveTilesExampleString, false);
       }
-      ow.info(String.format(CLIStrings.nowPlaying, vw.getActivePlayer().getPlayerName()), false);
-
-      ow.show(vw, false);
-
-      ow.info(CLIStrings.moveTilesInviteString, false);
-      ow.info(CLIStrings.moveTilesExampleString, false);
     }
   }
 
