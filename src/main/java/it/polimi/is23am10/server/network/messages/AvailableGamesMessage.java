@@ -24,13 +24,8 @@ public final class AvailableGamesMessage extends AbstractMessage {
   /**
    * Gson object for serialization and deserialization
    */
-  protected final Gson gson = new GsonBuilder()
+  protected final transient Gson gson = new GsonBuilder()
     .create();
-  
-  /**
-   * The list with available games.
-   */
-  private List<VirtualView> availableGames;
 
   /**
    * Player receiving the list.
@@ -44,18 +39,8 @@ public final class AvailableGamesMessage extends AbstractMessage {
    */
   public AvailableGamesMessage(List<VirtualView> availableGames, Player receiver) {
     msgType = MessageType.AVAILABLE_GAMES;
-    this.availableGames = availableGames;
     this.message = gson.toJson(availableGames);
     this.receiver = receiver;
-  }
-
-  /**
-   * Available games getter.
-   * 
-   * @return available games list.
-   */
-  public List<VirtualView> getAvailableGames() {
-    return availableGames;
   }
 
   /**

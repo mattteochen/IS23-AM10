@@ -44,6 +44,8 @@ import it.polimi.is23am10.utils.Coordinates;
  */
 public abstract class Client implements Runnable {
 
+  private static final int List = 0;
+
   /**
    * Protected constructor for client using Socket as communication method.
    * 
@@ -130,8 +132,8 @@ public abstract class Client implements Runnable {
         userInterface.displayError((ErrorMessage) msg);
         break;
       case AVAILABLE_GAMES:
-        setAvailableGames(((AvailableGamesMessage) msg).getAvailableGames());
-        userInterface.displayAvailableGames(((AvailableGamesMessage) msg).getAvailableGames());
+        setAvailableGames(gson.fromJson(msg.getMessage(), List.class));
+        userInterface.displayAvailableGames(gson.fromJson(msg.getMessage(), List.class));
         break;
       default:
         break;
@@ -309,8 +311,7 @@ public abstract class Client implements Runnable {
   protected void handleGameSelection(AbstractPlayerConnector apc, UUID selectedGameId, BufferedReader br,
       String selectedPlayerName) throws IOException, InterruptedException {
     getAvailableGames(apc);
-
-    System.out.println(CLIStrings.moveTilesInviteString);
+    System.out.println(CLIStrings.joinOrCreateString);
 
     String fullCommand = br.readLine();
     String command = fullCommand.split(" ")[0];
@@ -323,7 +324,9 @@ public abstract class Client implements Runnable {
           String idx = fullCommand.split(" ")[1];
           if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
             selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
+            System.out.println("Joining game "+selectedGameId);
             addPlayer(apc, selectedPlayerName, selectedGameId);
+            System.out.println("Joined game "+selectedGameId);
             apc.setGameId(selectedGameId);
           } else {
             userInterface.displayError(new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
@@ -333,7 +336,9 @@ public abstract class Client implements Runnable {
           String numMaxPlayers = fullCommand.split(" ")[1];
           if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
             maxPlayers = Integer.parseInt(numMaxPlayers);
+            System.out.println("Creating game");
             startGame(apc, selectedPlayerName, maxPlayers);
+            System.out.println("Created game");
             apc.setGameId(selectedGameId);
           } else {
             userInterface.displayError(new ErrorMessage("Failed to create game", ErrorSeverity.CRITICAL));
