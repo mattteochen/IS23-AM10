@@ -2,17 +2,21 @@ package it.polimi.is23am10.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
@@ -44,7 +48,6 @@ import it.polimi.is23am10.utils.Coordinates;
  */
 public abstract class Client implements Runnable {
 
-  private static final int List = 0;
 
   /**
    * Protected constructor for client using Socket as communication method.
@@ -132,6 +135,7 @@ public abstract class Client implements Runnable {
         break;
       case GAME_SNAPSHOT:
         VirtualView v = gson.fromJson(msg.getMessage(), VirtualView.class);
+        setVirtualView(v);
         setGameIdRef(v.getGameId());
         userInterface.displayVirtualView(gson.fromJson(msg.getMessage(), VirtualView.class));
         break;
@@ -139,8 +143,10 @@ public abstract class Client implements Runnable {
         userInterface.displayError((ErrorMessage) msg);
         break;
       case AVAILABLE_GAMES:
-        setAvailableGames(gson.fromJson(msg.getMessage(), List.class));
-        //userInterface.displayAvailableGames(gson.fromJson(msg.getMessage(), List.class));
+        Type listOfMyClassObject = new TypeToken<ArrayList<VirtualView>>() {}.getType();
+        List<VirtualView> availableGamesList = gson.fromJson(msg.getMessage(), listOfMyClassObject);
+        setAvailableGames(availableGamesList);
+        userInterface.displayAvailableGames(availableGamesList);
         break;
       default:
         break;
@@ -176,6 +182,24 @@ public abstract class Client implements Runnable {
   */ 
   synchronized protected UUID getGameIdRef(){
     return gameIdRef;
+  }
+
+  /**
+   * Virtual view getter.
+   * 
+   * @return virtual view
+   */
+  protected VirtualView getVirtualView(){
+    return virtualView;
+  }
+
+  /**
+   * Virtual view setter.
+   * 
+   * @return virtual view
+   */
+  protected void setVirtualView(VirtualView vv){
+    this.virtualView = vv;
   }
 
   /**
@@ -232,9 +256,7 @@ public abstract class Client implements Runnable {
    * @throws IOException
    */
   protected void handleCommands(AbstractPlayerConnector apc, BufferedReader br) throws IOException {
-    System.out.println(CLIStrings.moveTilesInviteString);
 
-    // TODO: show here board and bookshelf
 
     String fullCommand = br.readLine();
     String command = fullCommand.split(" ")[0];
@@ -247,7 +269,9 @@ public abstract class Client implements Runnable {
         // TODO: add logout command
         break;
       case "move":
-        if (apc.getPlayer().getIsActivePlayer()) {
+        while(getVirtualView() == null){
+        }
+        if (apc.getPlayer().getPlayerName().equals(getVirtualView().getActivePlayer().getPlayerName()) && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS ) {
           HashMap<Coordinates, Coordinates> moves = new HashMap<>();
 
           // reads a string containing coordinates of a tile
@@ -263,10 +287,11 @@ public abstract class Client implements Runnable {
              * or if it is the fourth move, it will be ignored.
              * 
              */
-            if ((fullCommand.split(" ").length - (nMove + 1) * 3) >= 0) {
-              String coordBoard = fullCommand.split(" ")[nMove * 3];
-              String arrow = fullCommand.split(" ")[nMove * 3 + 1];
-              String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 2];
+            if ((fullCommand.split(" ").length - (nMove + 1) * 3 + 1) >= 0) {
+              String coordBoard = fullCommand.split(" ")[nMove * 3 + 1];
+              String arrow = fullCommand.split(" ")[nMove * 3 + 2];
+              String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 3];
+              System.out.println(coordBoard + " " + arrow + " " + coordBookshelf);
 
               if (CommandSyntaxValidator.validateCoord(coordBoard)
                   && CommandSyntaxValidator.validateCoord(coordBookshelf)
@@ -279,21 +304,20 @@ public abstract class Client implements Runnable {
                     new Coordinates(xBookshelfCoord, yBookshelfCoord));
               } else {
                 System.out.println("🛑 Invalid syntax of move command.");
-                // TODO: throw exception invalid move
               }
             } else {
               break;
             }
           }
-
           // Checks if no valid moves were added
           if (moves.isEmpty()) {
             System.out.println("🛑 No valid moves found.");
-            // TODO: throw an exception
           } else {
             moveTiles(apc, moves);
           }
           break;
+        }else{
+          System.out.println("Not your turn");
         }
       default:
     }
@@ -333,16 +357,16 @@ public abstract class Client implements Runnable {
    */
   protected void handleGameSelection(AbstractPlayerConnector apc, UUID selectedGameId, BufferedReader br,
       String selectedPlayerName) throws IOException, InterruptedException, NullPlayerNameException {
-    getAvailableGames(apc);
-
-    System.out.println(CLIStrings.joinOrCreateString);
-
-    String fullCommand = br.readLine();
-    String command = fullCommand.split(" ")[0];
-    Integer maxPlayers = null;
-
-    // Executed if I still haven't selected a game
-    if (apc.getGameId() == null) {
+        
+        // Executed if I still haven't selected a game
+      if (apc.getGameId() == null) {
+      getAvailableGames(apc);
+  
+      System.out.println(CLIStrings.joinOrCreateString);
+  
+      String fullCommand = br.readLine();
+      String command = fullCommand.split(" ")[0];
+      Integer maxPlayers = null;
       switch (command) {
         case "j":
           String idx = fullCommand.split(" ")[1];
@@ -350,6 +374,9 @@ public abstract class Client implements Runnable {
             selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
             System.out.println("Joining game "+selectedGameId);
             addPlayer(apc, selectedPlayerName, selectedGameId);
+            while(getGameIdRef() == null){
+            }
+            apc.setGameId(getGameIdRef());
             System.out.println("Joined game "+selectedGameId);
           } else {
             userInterface.displayError(new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
@@ -372,7 +399,7 @@ public abstract class Client implements Runnable {
           }
           break;
         case "q":
-          apc.getPlayer().setPlayerName("");
+          apc.getPlayer().setPlayerName(null);
           apc.setGameId(null);
           break;
         default:
