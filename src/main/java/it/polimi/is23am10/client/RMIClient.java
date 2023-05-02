@@ -21,6 +21,7 @@ import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
@@ -102,16 +103,7 @@ public class RMIClient extends Client {
   public void run() {
     final PlayerConnectorRmi playerConnectorRmi = (PlayerConnectorRmi) playerConnector;
 
-    /*
-     * The default values are null, I will set those values separately to
-     * handle input errors in a separate way. This allows us, once selected the
-     * game, to reinsert only the player name if wrong.
-     */
-    String selectedPlayerName = null;
-    UUID selectedGameId = null;
-
-    System.out.println(CLIStrings.welcomeString);
-
+  
     while (!hasRequestedDisconnection()) {
 
       try {
@@ -119,12 +111,14 @@ public class RMIClient extends Client {
 
         // Execute if the client is not connected to a game.
         if (playerConnectorRmi.getGameId() == null) {
+          userInterface.displaySplashScreen();
           // First I'm gonna ask the player name
-          if (selectedPlayerName == null) {
-            selectedPlayerName = handlePlayerNameSelection(playerConnectorRmi, br);
+          playerConnectorSocket.setPlayer(new Player());
+          if (playerConnectorSocket.getPlayer().getPlayerName() == null || playerConnectorSocket.getPlayer().getPlayerName().equals("") ) {
+            playerConnectorSocket.getPlayer().setPlayerName(handlePlayerNameSelection(playerConnectorSocket, br));
           } 
-          if (selectedPlayerName != null) {
-            handleGameSelection(playerConnectorRmi, selectedGameId, br, selectedPlayerName);
+          if (playerConnectorSocket.getPlayer().getPlayerName() != null) {
+            handleGameSelection(playerConnectorSocket, playerConnectorSocket.getGameId(), br, playerConnectorSocket.getPlayer().getPlayerName());
           }
         }
         if(playerConnectorRmi.getGameId() != null) {
@@ -133,6 +127,9 @@ public class RMIClient extends Client {
         }
       } catch (IOException | InterruptedException e) {
         System.out.println("🛑 " + e.getMessage());
+      } catch (NullPlayerNameException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
 
       // TODO: implement user requests

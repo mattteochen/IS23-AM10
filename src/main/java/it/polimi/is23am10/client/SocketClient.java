@@ -78,16 +78,6 @@ public class SocketClient extends Client {
     // Consider using a lighter connector.
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
 
-    /*
-     * The default values are null, I will set those values separately to
-     * handle input errors in a separate way. This allows us, once selected the
-     * game, to reinsert only the player name if wrong.
-     */
-    String selectedPlayerName = null;
-    UUID selectedGameId = null;
-
-    System.out.println(CLIStrings.welcomeString);
-
     while (playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()) {
       // TODO: implement user requests
       // if any new user request, process it (if virtual view has not declared that it
@@ -95,15 +85,16 @@ public class SocketClient extends Client {
 
       try {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         // Execute if the client is not connected to a game.
         if (playerConnectorSocket.getGameId() == null) {
+          userInterface.displaySplashScreen();
           // First I'm gonna ask the player name
-          if (selectedPlayerName == null) {
-            selectedPlayerName = handlePlayerNameSelection(playerConnectorSocket, br);
+          playerConnectorSocket.setPlayer(new Player());
+          if (playerConnectorSocket.getPlayer().getPlayerName() == null || playerConnectorSocket.getPlayer().getPlayerName().equals("") ) {
+            playerConnectorSocket.getPlayer().setPlayerName(handlePlayerNameSelection(playerConnectorSocket, br));
           } 
-          if (selectedPlayerName != null) {
-            handleGameSelection(playerConnectorSocket, selectedGameId, br, selectedPlayerName);
+          if (playerConnectorSocket.getPlayer().getPlayerName() != null) {
+            handleGameSelection(playerConnectorSocket, playerConnectorSocket.getGameId(), br, playerConnectorSocket.getPlayer().getPlayerName());
           }
         }
 
@@ -115,6 +106,9 @@ public class SocketClient extends Client {
         }
       } catch (IOException | InterruptedException e) {
         System.out.println("🛑 " + e.getMessage());
+      } catch (NullPlayerNameException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
 
       // Some hints for the above's implementer: This is a start game request demo,
