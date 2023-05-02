@@ -30,7 +30,7 @@ public final class CommandLineInterface implements UserInterface {
    */
   public void displaySplashScreen() {
     ow.info(CLIStrings.welcomeString, true);
-    ow.info(CLIStrings.joinOrCreateString, false);
+    ow.info(CLIStrings.insertPlayerNameString, false);
   }
 
   /**

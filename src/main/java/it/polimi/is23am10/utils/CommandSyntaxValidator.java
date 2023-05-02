@@ -16,6 +16,11 @@ public class CommandSyntaxValidator {
   private final static int MAX_PLAYERS_LIMIT = 4;
 
   /**
+   * Min number of players.
+   */
+  private final static int MIN_PLAYERS_LIMIT = 2;
+
+  /**
    * Empty constructor.
    */
   private CommandSyntaxValidator() {
@@ -52,7 +57,7 @@ public class CommandSyntaxValidator {
       return false;
     }
     // Index out of bounds
-    if (Integer.parseInt(s) < 0 || Integer.parseInt(s) >= MAX_PLAYERS_LIMIT) {
+    if (Integer.parseInt(s) < MIN_PLAYERS_LIMIT || Integer.parseInt(s) > MAX_PLAYERS_LIMIT) {
       return false;
     }
     return true;

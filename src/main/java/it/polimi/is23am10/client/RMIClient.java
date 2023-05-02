@@ -21,6 +21,7 @@ import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
+import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
@@ -113,12 +114,12 @@ public class RMIClient extends Client {
         if (playerConnectorRmi.getGameId() == null) {
           userInterface.displaySplashScreen();
           // First I'm gonna ask the player name
-          playerConnectorSocket.setPlayer(new Player());
-          if (playerConnectorSocket.getPlayer().getPlayerName() == null || playerConnectorSocket.getPlayer().getPlayerName().equals("") ) {
-            playerConnectorSocket.getPlayer().setPlayerName(handlePlayerNameSelection(playerConnectorSocket, br));
+          playerConnectorRmi.setPlayer(new Player());
+          if (playerConnectorRmi.getPlayer().getPlayerName() == null || playerConnectorRmi.getPlayer().getPlayerName().equals("") ) {
+            playerConnectorRmi.getPlayer().setPlayerName(handlePlayerNameSelection(playerConnectorRmi, br));
           } 
-          if (playerConnectorSocket.getPlayer().getPlayerName() != null) {
-            handleGameSelection(playerConnectorSocket, playerConnectorSocket.getGameId(), br, playerConnectorSocket.getPlayer().getPlayerName());
+          if (playerConnectorRmi.getPlayer().getPlayerName() != null) {
+            handleGameSelection(playerConnectorRmi, playerConnectorRmi.getGameId(), br, playerConnectorRmi.getPlayer().getPlayerName());
           }
         }
         if(playerConnectorRmi.getGameId() != null) {

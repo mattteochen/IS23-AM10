@@ -40,7 +40,9 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
+import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
@@ -352,7 +354,7 @@ public interface IServerControllerAction extends Remote {
    * The {@link Opcode#SEND_CHAT_MESSAGE} command callback worker.
    *
    */
-  final ControllerConsumer sendChatMessageConsumer = (logger, playerConnector, command) -> {
+  final ControllerConsumer<Void,AbstractCommand> sendChatMessageConsumer = (logger, playerConnector, command) -> {
     try {
       if (playerConnector == null) {
         throw new NullPlayerConnector();
@@ -396,6 +398,8 @@ public interface IServerControllerAction extends Remote {
           ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_CONNECTOR, e);
     }
+
+    return null;
   };
 
   /**
