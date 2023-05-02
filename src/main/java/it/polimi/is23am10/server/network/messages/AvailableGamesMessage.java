@@ -1,13 +1,13 @@
 package it.polimi.is23am10.server.network.messages;
 
-
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
-
+import it.polimi.is23am10.utils.ThreadLocalTypeAdapterFactory;
 
 /**
  * A message containing a list of available games to be sent to the client.
@@ -23,7 +23,9 @@ public final class AvailableGamesMessage extends AbstractMessage {
   /**
    * Gson object for serialization and deserialization
    */
-  protected final transient Gson gson = new Gson();
+  protected final transient Gson gson = new GsonBuilder()
+    .registerTypeAdapterFactory(new ThreadLocalTypeAdapterFactory())
+    .create();
   
   /**
    * The list with available games.
