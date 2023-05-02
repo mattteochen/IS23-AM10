@@ -23,6 +23,7 @@ import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerState;
@@ -212,7 +213,11 @@ public class SocketClient extends Client {
  */
  @Override
   void sendChatMessage(AbstractPlayerConnector apc, ChatMessage msg) throws IOException {
-    
+    SendChatMessageCommand command = new SendChatMessageCommand(msg);
+    String req = gson.toJson(command);
+    PrintWriter epson = new PrintWriter(((PlayerConnectorSocket) apc).getConnector().getOutputStream(), true,
+        StandardCharsets.UTF_8);
+    epson.println(req);
   }
 
 /**

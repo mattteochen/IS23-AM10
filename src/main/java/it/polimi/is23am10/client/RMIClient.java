@@ -16,6 +16,7 @@ import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
@@ -219,7 +220,8 @@ public class RMIClient extends Client {
  */
  @Override
  void sendChatMessage(AbstractPlayerConnector apc, ChatMessage msg) throws IOException {
-   
+  AbstractCommand command = new SendChatMessageCommand(msg);
+  serverControllerActionServer.execute(apc, command);
  }
 
   /**
