@@ -13,6 +13,7 @@ import it.polimi.is23am10.server.model.factory.PlayerFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.server.model.game.Game;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
@@ -206,10 +207,10 @@ public class GameTest {
 
       g.setActivePlayer(p1);
       g.setWinnerPlayer(p1);
-      g.setLastRound();
-      assertFalse(g.getEnded());
+      g.setStatus(GameStatus.LAST_ROUND);
+      assertFalse(g.getStatus() == GameStatus.ENDED);
       g.nextTurn();
-      assertTrue(g.getEnded());
+      assertTrue(g.getStatus() == GameStatus.ENDED);
     }
 
     @Test
@@ -223,11 +224,11 @@ public class GameTest {
 
       g.setActivePlayer(p1);
       g.setWinnerPlayer(p1);
-      assertFalse(g.getEnded());
+      assertFalse(g.getStatus() == GameStatus.ENDED);
       p2.setIsConnected(false);
       p3.setIsConnected(false);
       g.nextTurn();
-      assertTrue(g.getEnded());
+      assertTrue(g.getStatus() == GameStatus.ENDED);
     }
 
     @Test
@@ -357,7 +358,7 @@ public class GameTest {
       ;
 
       // is ending immediately because winner is also first player of the game
-      assertTrue(g.getEnded());
+      assertTrue(g.getStatus() == GameStatus.ENDED);
       assertEquals(g.getWinnerPlayer(), g.getActivePlayer());
     }
 
@@ -377,7 +378,7 @@ public class GameTest {
       g.getActivePlayer().setBookshelf(fullBookshelf);
       g.checkEndGame();
 
-      assertFalse(g.getEnded());
+      assertFalse(g.getStatus() == GameStatus.ENDED);
       assertNull(g.getWinnerPlayer());
     }
   }
