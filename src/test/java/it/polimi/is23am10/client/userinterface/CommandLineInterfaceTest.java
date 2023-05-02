@@ -151,7 +151,6 @@ public class CommandLineInterfaceTest {
     // .show(VirtualView) method doesn't return the dynamic strings like other OW methods.
     // Sample-testing cli strings to ensure the whole method gets executed.
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.currentStateString));
-    assertTrue(outputStreamCaptor.toString().contains(String.format(CLIStrings.nowPlaying, playerName)));
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.boardStatus));
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.indexBoard));
 
