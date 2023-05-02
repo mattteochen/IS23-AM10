@@ -3,6 +3,7 @@ package it.polimi.is23am10.server.controller.interfaces;
 import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
@@ -185,12 +186,12 @@ public interface IServerControllerAction extends Remote {
       final String playerName = ((AddPlayerCommand) command).getPlayerName();
       final UUID gameId = ((AddPlayerCommand) command).getGameId();
       final GameHandler gameHandler = ServerControllerState.getGameHandlerByUUID(gameId);
-      
-      /* 
-       * Checks if the client is trying to reconnect to the game , 
+
+      /*
+       * Checks if the client is trying to reconnect to the game ,
        * so if there's already an inactive Player in the game with that name,
        * if found one we're executing the if statement and replacing the old socket
-       * connector with a new one connected, otherwise the else branch is executed 
+       * connector with a new one connected, otherwise the else branch is executed
        * and the player is normally added to the game.
        */
       if (gameHandler.getGame().getPlayerNames().contains(playerName) &&
@@ -205,14 +206,14 @@ public interface IServerControllerAction extends Remote {
 
           gameHandler.getGame().getPlayerByName(playerName).setIsConnected(true);
           gameHandler.getPlayerConnectors()
-          .forEach(pc -> {
-            try {
-              pc.addMessageToQueue(
-                  new ErrorMessage(playerName + " reconnected to the game.", ErrorSeverity.WARNING));
-            } catch (InterruptedException e) {
-              logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
-            }
-          });
+              .forEach(pc -> {
+                try {
+                  pc.addMessageToQueue(
+                      new ErrorMessage(playerName + " reconnected to the game.", ErrorSeverity.WARNING));
+                } catch (InterruptedException e) {
+                  logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
+                }
+              });
 
         } catch (NullSocketConnectorException e) {
           logger.error("{} {} {}",
@@ -303,11 +304,11 @@ public interface IServerControllerAction extends Remote {
   final ControllerConsumer getAvailableGamesConsumer = (logger, playerConnector, command) -> {
 
     List<VirtualView> availableGames = ServerControllerState.getGamePools()
-    .stream()
-    .map(gh -> gh.getGame())
-    .filter(g -> g.getPlayers().size() < g.getMaxPlayer())
-    .map(g -> new VirtualView(g))
-    .collect(Collectors.toList());
+        .stream()
+        .map(gh -> gh.getGame())
+        .filter(g -> g.getPlayers().size() < g.getMaxPlayer())
+        .map(g -> new VirtualView(g))
+        .collect(Collectors.toList());
 
     try {
       playerConnector.addMessageToQueue(new AvailableGamesMessage(availableGames, playerConnector.getPlayer()));
@@ -315,6 +316,56 @@ public interface IServerControllerAction extends Remote {
       logger.error("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INTERRUPTED, e);
+    }
+  };
+
+  /**
+   * The {@link Opcode#SEND_CHAT_MESSAGE} command callback worker.
+   *
+   */
+  final ControllerConsumer sendChatMessageConsumer = (logger, playerConnector, command) -> {
+    try {
+      if (playerConnector == null) {
+        throw new NullPlayerConnector();
+      }
+      SendChatMessageCommand scmCommand = (SendChatMessageCommand) command;
+      GameHandler handler = ServerControllerState.getGameHandlerByUUID(playerConnector.getGameId());
+
+      if (scmCommand.getChatMessage().isBroadcast()) {
+        handler.getPlayerConnectors()
+            .stream()
+            .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))
+            .forEach(pc -> {
+              try {
+                pc.addMessageToQueue(scmCommand.getChatMessage());
+              } catch (InterruptedException e) {
+                logger.error("{} {} {}",
+                    ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
+                    ErrorTypeString.ERROR_INTERRUPTED, e);
+              }
+            });
+      } else {
+        String receiverName = scmCommand.getChatMessage().getReceiver().getPlayerName();
+
+        handler.getPlayerConnectors()
+            .stream()
+            .filter(pc -> pc.getPlayer().getPlayerName().equals(receiverName))
+            .findFirst()
+            .get()
+            .addMessageToQueue(scmCommand.getChatMessage());
+      }
+    } catch (InterruptedException e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_INTERRUPTED, e);
+    } catch (NullGameHandlerInstance e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_ADDING_HANDLER, e);
+    } catch (NullPlayerConnector e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_ADDING_CONNECTOR, e);
     }
   };
 
