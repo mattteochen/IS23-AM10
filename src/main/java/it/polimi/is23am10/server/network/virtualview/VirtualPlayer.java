@@ -1,5 +1,6 @@
 package it.polimi.is23am10.server.network.virtualview;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
@@ -18,7 +19,7 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public final class VirtualPlayer {
+public final class VirtualPlayer implements Serializable {
 
   /**
    * Unique player identifier.

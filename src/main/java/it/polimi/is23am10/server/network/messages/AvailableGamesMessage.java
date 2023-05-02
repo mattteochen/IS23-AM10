@@ -4,7 +4,6 @@ package it.polimi.is23am10.server.network.messages;
 import java.util.List;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
@@ -24,8 +23,7 @@ public final class AvailableGamesMessage extends AbstractMessage {
   /**
    * Gson object for serialization and deserialization
    */
-  protected final Gson gson = new GsonBuilder()
-    .create();
+  protected final transient Gson gson = new Gson();
   
   /**
    * The list with available games.
@@ -41,12 +39,15 @@ public final class AvailableGamesMessage extends AbstractMessage {
    * Public constructor for AvailableGamesMessage in broadcast.
    *
    * @param availableGames games to send.
+   * @param receivers the optional receiver player.
    */
-  public AvailableGamesMessage(List<VirtualView> availableGames, Player receiver) {
+  public AvailableGamesMessage(List<VirtualView> availableGames, Player ...receivers) {
     msgType = MessageType.AVAILABLE_GAMES;
     this.availableGames = availableGames;
     this.message = gson.toJson(availableGames);
-    this.receiver = receiver;
+    if (receivers != null && receivers.length > 0) {
+      this.receiver = receivers[0];
+    }
   }
 
   /**

@@ -2,8 +2,6 @@ package it.polimi.is23am10.server.network.messages;
 
 import java.io.Serializable;
 
-import it.polimi.is23am10.server.model.player.Player;
-
 /**
  * Abstract class representing a generic message exchanged.
  *
