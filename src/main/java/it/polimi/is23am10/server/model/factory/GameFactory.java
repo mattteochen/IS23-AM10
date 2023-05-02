@@ -5,6 +5,7 @@ import java.util.Arrays;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.server.model.game.Game;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
@@ -86,7 +87,7 @@ public final class GameFactory {
     game.setActivePlayer(game.getPlayerByName(startingPlayerName));
     game.setGameBoard();
     game.setSharedCards(Arrays.asList(firstCard, secondCard));
-    game.setEnded(false);
+    game.setStatus(GameStatus.WAITING_FOR_PLAYERS);
 
     return game;
   }

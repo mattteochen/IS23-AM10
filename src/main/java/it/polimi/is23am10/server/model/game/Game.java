@@ -1,6 +1,5 @@
 package it.polimi.is23am10.server.model.game;
 
-import it.polimi.is23am10.server.controller.ServerControllerState;
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.server.model.factory.PlayerFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
@@ -37,8 +36,6 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
-import it.polimi.is23am10.server.network.gamehandler.GameHandler;
-import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.MovesValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
@@ -128,16 +125,21 @@ public class Game implements Serializable {
   private List<SharedCard> sharedCards;
 
   /**
-   * A boolean signaling the game is ended.
+   * All the possible status the game can be in.
    * 
    */
-  private boolean ended;
+  public enum GameStatus {
+    WAITING_FOR_PLAYERS,
+    STARTED,
+    LAST_ROUND,
+    ENDED
+  }
 
   /**
-   * A boolean signaling the game is in its last round of rounds.
+   * The current status of the game.
    * 
    */
-  private boolean lastRound;
+  private GameStatus status;
 
   /**
    * A cache to store already used shared patterns.
@@ -280,6 +282,7 @@ public class Game implements Serializable {
     final Integer position = players.isEmpty() ? 0 : random.nextInt(players.size());
     players.add(position, player);
     if (players.size() == maxPlayers) {
+      setStatus(GameStatus.STARTED);
       assignPlayers();
     }
   }
@@ -364,21 +367,13 @@ public class Game implements Serializable {
   }
 
   /**
-   * The ended setter.
+   * The status setter.
    *
-   * @param ended A flag referencing if the game is ended.
-   *
-   */
-  public void setEnded(boolean ended) {
-    this.ended = ended;
-  }
-
-  /**
-   * The lastRound setter.
+   * @param status The status to set.
    *
    */
-  public void setLastRound() {
-    this.lastRound = true;
+  public void setStatus(GameStatus status) {
+    this.status = status;
   }
 
   /**
@@ -445,23 +440,11 @@ public class Game implements Serializable {
   /**
    * The ended status getter.
    *
-   * @return A boolean values stating if the current game is still running or
-   *         not.
+   * @return The current status of the game.
    *
    */
-  public boolean getEnded() {
-    return ended;
-  }
-
-  /**
-   * A last round getter.
-   *
-   * @return A boolean values stating if the current game is still running or
-   *         not.
-   *
-   */
-  public boolean isLastRound() {
-    return this.lastRound;
+  public GameStatus getStatus() {
+    return status;
   }
 
   /**
@@ -580,7 +563,7 @@ public class Game implements Serializable {
      * if the game has two or more players still connected we're entering
      * this part of code to decide next player playing 
      */
-    if (!(getEnded())) {
+    if (getStatus() != GameStatus.ENDED) {
       gameBoard.refillIfNeeded();
       int nextPlayerIdx = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size();
       
@@ -644,10 +627,10 @@ public class Game implements Serializable {
     if (activePlayer.getBookshelf().isBookshelfFull()) {
       activePlayer.getScore().setExtraPoint();
       // When one player completes their bookshelf, last turn starts
-      setLastRound();
+      setStatus(GameStatus.LAST_ROUND);
     }
     // Regardless of bookshelf, if last player and lastRound, end game
-    if ((lastRound && isLastPlayer(activePlayer)) 
+    if ((getStatus() == GameStatus.LAST_ROUND && isLastPlayer(activePlayer)) 
         || players.stream().filter(p -> p.getIsConnected()).count() <= 1) {
       endGame();
     }
@@ -695,7 +678,7 @@ public class Game implements Serializable {
    * and declares the winner.
    */
   private void endGame() {
-    setEnded(true);
+    setStatus(GameStatus.ENDED);
     players.stream()
         .reduce(this::decideWinner)
         .ifPresent(this::setWinnerPlayer);
