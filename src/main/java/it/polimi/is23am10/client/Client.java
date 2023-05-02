@@ -105,6 +105,11 @@ public abstract class Client implements Runnable {
   protected List<VirtualView> availableGames;
 
   /**
+   * Game id reference.
+   */
+  protected UUID gameIdRef;
+
+  /**
    * Detected if the use has requested a clean disconnection.
    *
    * @returns The disconnection flag.
@@ -126,6 +131,8 @@ public abstract class Client implements Runnable {
         userInterface.displayChatMessage((ChatMessage) msg);
         break;
       case GAME_SNAPSHOT:
+        VirtualView v = gson.fromJson(msg.getMessage(), VirtualView.class);
+        setGameIdRef(v.getGameId());
         userInterface.displayVirtualView(gson.fromJson(msg.getMessage(), VirtualView.class));
         break;
       case ERROR_MESSAGE:
@@ -133,7 +140,7 @@ public abstract class Client implements Runnable {
         break;
       case AVAILABLE_GAMES:
         setAvailableGames(gson.fromJson(msg.getMessage(), List.class));
-        userInterface.displayAvailableGames(gson.fromJson(msg.getMessage(), List.class));
+        //userInterface.displayAvailableGames(gson.fromJson(msg.getMessage(), List.class));
         break;
       default:
         break;
@@ -153,6 +160,22 @@ public abstract class Client implements Runnable {
    */
   protected void setAvailableGames(List<VirtualView> ag) {
     this.availableGames = ag;
+  }
+
+ /**
+  * GameIdRef setter.
+  * @param id game id ref
+  */ 
+  protected void setGameIdRef(UUID id){
+    this.gameIdRef = id;
+  }
+
+ /**
+  * GameIdRef getter.
+  *
+  */ 
+  synchronized protected UUID getGameIdRef(){
+    return gameIdRef;
   }
 
   /**
@@ -285,7 +308,6 @@ public abstract class Client implements Runnable {
    * @throws IOException
    */
   protected String handlePlayerNameSelection(AbstractPlayerConnector apc, BufferedReader br) throws IOException {
-    System.out.println(CLIStrings.insertPlayerNameString);
     // Select only the string before the space if the client writes more words
     String selectedPlayerName = br.readLine().split(" ")[0];
     Player p = new Player();
@@ -307,10 +329,12 @@ public abstract class Client implements Runnable {
    * @param selectedPlayerName player name selected
    * @throws IOException
    * @throws InterruptedException
+   * @throws NullPlayerNameException
    */
   protected void handleGameSelection(AbstractPlayerConnector apc, UUID selectedGameId, BufferedReader br,
-      String selectedPlayerName) throws IOException, InterruptedException {
+      String selectedPlayerName) throws IOException, InterruptedException, NullPlayerNameException {
     getAvailableGames(apc);
+
     System.out.println(CLIStrings.joinOrCreateString);
 
     String fullCommand = br.readLine();
@@ -318,7 +342,7 @@ public abstract class Client implements Runnable {
     Integer maxPlayers = null;
 
     // Executed if I still haven't selected a game
-    if (selectedGameId == null) {
+    if (apc.getGameId() == null) {
       switch (command) {
         case "j":
           String idx = fullCommand.split(" ")[1];
@@ -327,26 +351,29 @@ public abstract class Client implements Runnable {
             System.out.println("Joining game "+selectedGameId);
             addPlayer(apc, selectedPlayerName, selectedGameId);
             System.out.println("Joined game "+selectedGameId);
-            apc.setGameId(selectedGameId);
           } else {
             userInterface.displayError(new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
           }
           break;
-        case "n":
+        case "c":
           String numMaxPlayers = fullCommand.split(" ")[1];
           if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
             maxPlayers = Integer.parseInt(numMaxPlayers);
             System.out.println("Creating game");
             startGame(apc, selectedPlayerName, maxPlayers);
+            while(getGameIdRef() == null){
+            }
+            apc.setGameId(getGameIdRef());
             System.out.println("Created game");
-            apc.setGameId(selectedGameId);
+            System.out.println(apc.getGameId());
+            System.out.println(apc.getPlayer().getPlayerName());
           } else {
             userInterface.displayError(new ErrorMessage("Failed to create game", ErrorSeverity.CRITICAL));
           }
           break;
         case "q":
-          selectedPlayerName = null;
-          selectedGameId = null;
+          apc.getPlayer().setPlayerName("");
+          apc.setGameId(null);
           break;
         default:
       }
