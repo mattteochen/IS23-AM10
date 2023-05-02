@@ -376,7 +376,7 @@ public interface IServerControllerAction extends Remote {
               }
             });
       } else {
-        String receiverName = scmCommand.getChatMessage().getReceiver().getPlayerName();
+        String receiverName = scmCommand.getChatMessage().getReceiverName();
 
         handler.getPlayerConnectors()
             .stream()

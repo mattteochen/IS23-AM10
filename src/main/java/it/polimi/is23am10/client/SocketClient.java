@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.Type;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.GameMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
@@ -44,6 +46,12 @@ import it.polimi.is23am10.utils.Coordinates;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 /**
  * A client using Socket as communication method.
@@ -90,8 +98,8 @@ public class SocketClient extends Client {
           userInterface.displaySplashScreen();
           // First I'm gonna ask the player name
           playerConnectorSocket.setPlayer(new Player());
-          if (playerConnectorSocket.getPlayer().getPlayerName() == null || playerConnectorSocket.getPlayer().getPlayerName().equals("") ) {
-            playerConnectorSocket.getPlayer().setPlayerName(handlePlayerNameSelection(playerConnectorSocket, br));
+          if (playerConnectorSocket.getPlayer().getPlayerName() == null) {
+            playerConnectorSocket.getPlayer().setPlayerName(br.readLine().split(" ")[0]);
           } 
           if (playerConnectorSocket.getPlayer().getPlayerName() != null) {
             handleGameSelection(playerConnectorSocket, playerConnectorSocket.getGameId(), br, playerConnectorSocket.getPlayer().getPlayerName());
@@ -144,6 +152,7 @@ public class SocketClient extends Client {
     DataInputStream dis = new DataInputStream(pc.getConnector().getInputStream());
     BufferedReader br = new BufferedReader(new InputStreamReader(dis));
     String payload = br.readLine();
+    System.out.println(payload);
     return payload == null ? null : gson.fromJson(payload, AbstractMessage.class);
   }
 
@@ -195,6 +204,7 @@ public class SocketClient extends Client {
   void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves) throws IOException {
     MoveTilesCommand command = new MoveTilesCommand(apc.getPlayer().getPlayerName(), apc.getGameId(), moves);
     String req = gson.toJson(command);
+    System.out.println(req);
     PrintWriter epson = new PrintWriter(((PlayerConnectorSocket) apc).getConnector().getOutputStream(), true,
         StandardCharsets.UTF_8);
     epson.println(req);

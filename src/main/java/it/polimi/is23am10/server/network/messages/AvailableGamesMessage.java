@@ -20,6 +20,13 @@ import it.polimi.is23am10.utils.ThreadLocalTypeAdapterFactory;
  */
 public final class AvailableGamesMessage extends AbstractMessage {
 
+    /**
+   * An utility to be used during deserialization processes.
+   * 
+   */
+  @SuppressWarnings("unused")
+  private final String className = this.getClass().getName();
+  
   /**
    * Gson object for serialization and deserialization
    */

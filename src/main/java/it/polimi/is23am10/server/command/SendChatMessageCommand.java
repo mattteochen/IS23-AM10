@@ -49,7 +49,7 @@ public class SendChatMessageCommand extends AbstractCommand {
    */
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof GetAvailableGamesCommand);
+    return (obj instanceof SendChatMessageCommand);
   }
 }
 
