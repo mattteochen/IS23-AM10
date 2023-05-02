@@ -137,7 +137,7 @@ public class SocketClientTest {
 
   @Test
   void showServerMessage_should_showChatMessage() {
-    ChatMessage msg = new ChatMessage(null, "Let's rewrite this in Golang", null);
+    ChatMessage msg = new ChatMessage(null, "Let's rewrite this in Golang");
 
     doNothing().when(userInterface).displayChatMessage(msg);
     socketClient.showServerMessage(msg);

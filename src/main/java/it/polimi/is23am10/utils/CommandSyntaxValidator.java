@@ -73,6 +73,7 @@ public class CommandSyntaxValidator {
     
     // Null parameter or invalid length
     if (s == null || s.length() != 2) {
+      System.out.println("coord length error");
       return false;
     }
 
@@ -81,7 +82,7 @@ public class CommandSyntaxValidator {
         || s.substring(1, 1).chars().allMatch(Character::isDigit)) {
       return true; 
     }
-
+    System.out.println("coord not digit");
     return false;
   }
 

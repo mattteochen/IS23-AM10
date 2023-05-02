@@ -670,6 +670,7 @@ public class Game implements Serializable {
   public void assignPlayers() {
     Player choosenFirstPlayer = players.get(random.nextInt(players.size()));
     activePlayer = choosenFirstPlayer;
+    activePlayer.setIsActivePlayer(true);
     firstPlayer = choosenFirstPlayer;
   }
 
