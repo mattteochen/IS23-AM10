@@ -96,6 +96,11 @@ public abstract class Client implements Runnable {
   protected UserInterface userInterface;
 
   /**
+   * List of available games set when a message from getAvailableGames is received.
+   */
+  protected List<VirtualView> availableGames;
+
+  /**
    * Detected if the use has requested a clean disconnection.
    *
    * @returns The disconnection flag.
@@ -122,6 +127,10 @@ public abstract class Client implements Runnable {
       case ERROR_MESSAGE:
         userInterface.displayError((ErrorMessage) msg);
         break;
+      case AVAILABLE_GAMES:
+        setAvailableGames(availableGames);
+        userInterface.displayAvailableGames(availableGames);
+        break;
       default:
         break;
     }
@@ -132,6 +141,24 @@ public abstract class Client implements Runnable {
    * 
    */
   public abstract void getMessageHandler();
+
+  /**
+   * Available games param setter.
+   * 
+   * @param ag list of available games
+   */
+  protected void setAvailableGames(List<VirtualView> ag){
+    this.availableGames = ag;
+  }
+
+  /**
+   * Getter for available games param.
+   * 
+   * @return list of available games
+   */
+  protected List<VirtualView> getAvailableGames(){
+    return this.availableGames;
+  }
 
   /**
    * Abstract method that send command to get all available games.

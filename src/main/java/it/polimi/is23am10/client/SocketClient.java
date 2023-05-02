@@ -174,8 +174,6 @@ public class SocketClient extends Client {
   void getAvailableGames(AbstractPlayerConnector apc)
       throws IOException, InterruptedException {
     GetAvailableGamesCommand command = new GetAvailableGamesCommand();
-    HashMap<Integer, VirtualView> mapIndexVirtualView = new HashMap<Integer, VirtualView>();
-    Integer gameIdx = 0;
     String req = gson.toJson(command);
     PrintWriter epson = new PrintWriter(((PlayerConnectorSocket) apc).getConnector().getOutputStream(), true,
         StandardCharsets.UTF_8);
