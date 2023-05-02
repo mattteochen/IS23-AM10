@@ -96,35 +96,20 @@ public class SocketClient extends Client {
 
         // Execute if the client is not connected to a game.
         if (playerConnectorSocket.getGameId() == null) {
-          
           // First I'm gonna ask the player name
           if (selectedPlayerName == null) {
             selectedPlayerName = handlePlayerNameSelection(playerConnectorSocket, br);
           } 
-          
           if (selectedPlayerName != null) {
             handleGameSelection(playerConnectorSocket, selectedGameId, br, selectedPlayerName);
           }
-        } else {
+        }
+
+        if (playerConnectorSocket.getGameId() != null) {
           // Executed if the client is connected to a game.
 
           // This allows the player to play the turn if he's the active player
-          if (playerConnectorSocket.getPlayer().getIsActivePlayer()) {
-            handleMoveCommand(playerConnectorSocket, br);
-          }
-
-          // I can send messages or logout whether it's my turn or not
-          String fullCommand = br.readLine();
-          String command = fullCommand.split(" ")[0];
-          switch (command) {
-            case "chat":
-              // TODO: add send chat message command
-              break;
-            case "logout":
-              // TODO: add logout command
-              break;
-            default:
-          }
+          handleCommands(playerConnectorSocket, br);
         }
       } catch (IOException | InterruptedException e) {
         System.out.println("🛑 " + e.getMessage());
