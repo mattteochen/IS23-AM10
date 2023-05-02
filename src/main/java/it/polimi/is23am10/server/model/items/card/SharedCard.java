@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import it.polimi.is23am10.server.model.factory.SharedPatternFactory;
-import it.polimi.is23am10.server.model.game.exceptions.NullPlayerException;
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.server.model.items.card.exceptions.NullScoreBlockListException;

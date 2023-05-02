@@ -53,7 +53,7 @@ public class VirtualViewTest {
     assertEquals(g.getGameId(), vv.getGameId());
     assertEquals(g.getMaxPlayer(), vv.getMaxPlayers());
     assertEquals(g.getPlayers().stream().map(p -> new VirtualPlayer(p)).collect(Collectors.toList()), vv.getPlayers());
-    assertEquals(g.getSharedCard().stream().map(sc -> sc.getPattern().getIndex()).collect(Collectors.toList()), vv.getSharedCardsIndexes());
+    assertEquals(g.getSharedCard().stream().map(sc -> sc.getPattern().getIndex()).collect(Collectors.toList()), vv.getSharedCards());
 
   }
 }
