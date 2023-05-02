@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import it.polimi.is23am10.server.model.game.Game;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.items.board.Board;
 
 /**
@@ -62,13 +63,7 @@ public final class VirtualView implements Serializable {
   /**
    * Boolean flag signaling game is over
    */
-  private boolean ended;
-
-  /**
-   * Boolean flag signaling game is in its
-   * last round.
-   */
-  private boolean lastRound;
+  private GameStatus status;
 
   /**
    * Getter for game id
@@ -143,22 +138,14 @@ public final class VirtualView implements Serializable {
   }
 
   /**
-   * Getter for ended
+   * Getter for status.
    * 
-   * @return is game ended
+   * @return game status.
    */
-  public boolean isEnded() {
-    return ended;
+  public GameStatus getStatus() {
+    return status;
   }
 
-  /**
-   * Getter for last round
-   * 
-   * @return is game in last round
-   */
-  public boolean isLastRound() {
-    return lastRound;
-  }
 
   /**
    * Public constructor. Builds VirtualView out of {@link Game}
@@ -168,10 +155,9 @@ public final class VirtualView implements Serializable {
   public VirtualView(Game g) {
     this.gameId = g.getGameId();
     this.activePlayer = g.getActivePlayer() == null ? null : new VirtualPlayer(g.getActivePlayer());
-    this.ended = g.getEnded();
     this.firstPlayer = g.getFirstPlayer() == null ? null : new VirtualPlayer(g.getFirstPlayer());
     this.gameBoard = new Board(g.getGameBoard());
-    this.lastRound = g.isLastRound();
+    this.status = g.getStatus();
     this.maxPlayers = g.getMaxPlayer();
     this.players = g.getPlayers()
         .stream()

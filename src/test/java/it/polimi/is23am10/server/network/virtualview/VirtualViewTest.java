@@ -11,6 +11,7 @@ import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.server.model.game.Game;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
@@ -46,8 +47,7 @@ public class VirtualViewTest {
 
     assertNotNull(vv);
     assertEquals(new VirtualPlayer(g.getActivePlayer()), vv.getActivePlayer());
-    assertEquals(g.getEnded(), vv.isEnded());
-    assertEquals(g.isLastRound(), vv.isLastRound());
+    assertEquals(g.getStatus(), vv.getStatus());
     assertEquals(new VirtualPlayer(g.getFirstPlayer()), vv.getActivePlayer());
     assertEquals(g.getGameBoard(), vv.getGameBoard());
     assertEquals(g.getGameId(), vv.getGameId());
