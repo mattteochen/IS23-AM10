@@ -50,7 +50,7 @@ public interface UserInterface {
   /**
    * Method called to notify the user of an error.
    * 
-   * @param message message to show to the user.
+   * @param errorMessage message to show to the user.
    */
   void displayError(ErrorMessage errorMessage);
 

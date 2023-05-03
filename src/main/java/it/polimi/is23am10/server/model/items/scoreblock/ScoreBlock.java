@@ -27,7 +27,7 @@ public final class ScoreBlock implements Serializable {
   /**
    * Constructor.
    * 
-   * @throws NotValidScoreBlockValueException.
+   * @throws NotValidScoreBlockValueException
    * 
    */
   public ScoreBlock(Integer score) throws NotValidScoreBlockValueException {

@@ -132,8 +132,8 @@ public class Bookshelf implements Serializable {
    * @param col  The bookshelf grid col's value.
    * @param tile The tile to be set.
    * @throws NullIndexValueException
-   * @throws BookshelfGridColIndexOutOfBoundsException.
-   * @throws BookshelfGridRowIndexOutOfBoundsException.
+   * @throws BookshelfGridColIndexOutOfBoundsException
+   * @throws BookshelfGridRowIndexOutOfBoundsException
    * 
    */
   public void setBookshelfGridIndex(Integer row, Integer col, Tile tile)
@@ -168,8 +168,8 @@ public class Bookshelf implements Serializable {
    * @param col The bookshelf grid's col value.
    * @return The tile at the given indexes.
    * @throws NullIndexValueException
-   * @throws BookshelfGridColIndexOutOfBoundsException.
-   * @throws BookshelfGridRowIndexOutOfBoundsException.
+   * @throws BookshelfGridColIndexOutOfBoundsException
+   * @throws BookshelfGridRowIndexOutOfBoundsException
    * 
    */
   public Tile getBookshelfGridAt(Integer row, Integer col)

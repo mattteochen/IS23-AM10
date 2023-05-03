@@ -70,7 +70,6 @@ public class PlayerFactory {
    * @throws NullPlayerPrivateCardException
    * @throws NullPlayerScoreBlocksException
    * @throws NullPlayerScoreException
-   * @throws NullPlayerNamesException
    * @throws NullAssignedPatternException
    * 
    */

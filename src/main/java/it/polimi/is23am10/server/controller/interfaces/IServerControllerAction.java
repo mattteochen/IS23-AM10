@@ -84,7 +84,7 @@ public interface IServerControllerAction extends Remote {
    * This is intended to be used under the RMI connection protocol when the client's playerConnector has no power to read the msg queue.
    *
    * @param command   The command to be executed.
-   * @returns an {@link AvailableGamesMessage} responce.
+   * @return an {@link AvailableGamesMessage} response.
    * @throws RemoteException
    *
    */

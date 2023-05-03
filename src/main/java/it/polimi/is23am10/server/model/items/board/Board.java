@@ -111,8 +111,8 @@ public class Board implements Serializable {
    * Constructor.
    * 
    * @param numOfPlayers The current game instance number of players.
-   * @throws InvalidNumOfPlayersException.
-   * @throws NullNumOfPlayersException.
+   * @throws InvalidNumOfPlayersException
+   * @throws NullNumOfPlayersException
    */
   public Board(Integer numOfPlayers)
       throws InvalidNumOfPlayersException, NullNumOfPlayersException {
@@ -231,9 +231,9 @@ public class Board implements Serializable {
    * @param row The row index.
    * @param col The column index.
    * @return The requested tile.
-   * @throws BoardGridRowIndexOutOfBoundsException.
-   * @throws BoardGridColIndexOutOfBoundsException.
-   * @throws NullIndexValueException.
+   * @throws BoardGridRowIndexOutOfBoundsException
+   * @throws BoardGridColIndexOutOfBoundsException
+   * @throws NullIndexValueException
    * 
    */
   public Tile getTileAt(Integer row, Integer col)
@@ -253,9 +253,9 @@ public class Board implements Serializable {
    * @param row The row index.
    * @param col The column index.
    * @return The black map value.
-   * @throws BoardGridRowIndexOutOfBoundsException.
-   * @throws BoardGridColIndexOutOfBoundsException.
-   * @throws NullIndexValueException.
+   * @throws BoardGridRowIndexOutOfBoundsException
+   * @throws BoardGridColIndexOutOfBoundsException
+   * @throws NullIndexValueException
    * 
    */
   public Integer getBlackMapAt(Integer row, Integer col)
@@ -296,9 +296,9 @@ public class Board implements Serializable {
    * @param row The row index.
    * @param col The column index.
    * @return The requested tile.
-   * @throws BoardGridRowIndexOutOfBoundsException.
-   * @throws BoardGridColIndexOutOfBoundsException.
-   * @throws NullIndexValueException.
+   * @throws BoardGridRowIndexOutOfBoundsException
+   * @throws BoardGridColIndexOutOfBoundsException
+   * @throws NullIndexValueException
    * 
    */
   public Tile takeTileAt(Integer row, Integer col)

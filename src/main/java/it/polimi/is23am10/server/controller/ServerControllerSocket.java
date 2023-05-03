@@ -140,7 +140,6 @@ public final class ServerControllerSocket implements Runnable {
    *
    * @throws IOException
    * @throws InterruptedException
-   * @throws InvalidMessageTypeException
    * 
    */
   protected void update() throws InterruptedException, IOException {

@@ -135,7 +135,7 @@ public final class Score implements Serializable {
    * @throws BookshelfGridRowIndexOutOfBoundsException
    * @throws BookshelfGridColIndexOutOfBoundsException
    * @throws NullPlayerBookshelfException
-   * @throws NullPointsException.
+   * @throws NullPointerException
    * 
    */
   public void setBookshelfPoints(Bookshelf bs) 
@@ -176,7 +176,7 @@ public final class Score implements Serializable {
    * scoreBlockPoints setter.
    * 
    * @param scoreBlocks The scoreblock list to get points from.
-   * @throws NullPointsException.
+   * @throws NullScoreBlockListException
    * 
    */
   public void setScoreBlockPoints(List<ScoreBlock> scoreBlocks) throws NullScoreBlockListException {
@@ -192,7 +192,7 @@ public final class Score implements Serializable {
    * @param pc The private card to get points from.
    * @throws NegativeMatchedBlockCountException
    * @throws NullMatchedBlockCountException
-   * @throws NullPointsException.
+   * @throws NullPointerException
    * 
    */
   public void setPrivatePoints(Bookshelf bs, PrivateCard pc) throws NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {

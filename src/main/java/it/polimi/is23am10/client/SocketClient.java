@@ -87,7 +87,7 @@ public class SocketClient extends Client {
    * 
    * @param pc The socket player connector.
    * @return The parsed {@link AbstractMessage}.
-   * @throws IOException.
+   * @throws IOException
    *
    */
   protected AbstractMessage parseServerMessage(PlayerConnectorSocket pc) throws IOException {

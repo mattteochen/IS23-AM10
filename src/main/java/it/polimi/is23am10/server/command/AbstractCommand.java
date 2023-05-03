@@ -33,6 +33,8 @@ public abstract class AbstractCommand implements Serializable {
   /**
    * The opcode instance for the current command instance.
    * 
+   * @param opcode command op code.
+   * 
    */
   protected AbstractCommand(Opcode opcode) {
     this.opcode = opcode != null ? opcode : Opcode.NULL;

@@ -37,7 +37,7 @@ public interface IPlayerConnector extends Remote {
    * Retrieve the message queue size.
    *
    * @return The blocking message queue size.
-   * @throws InterruptedException
+   * @throws RemoteException
    *
    */
   int getMsgQueueSize() throws RemoteException;

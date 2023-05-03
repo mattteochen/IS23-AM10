@@ -17,6 +17,7 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.model.score.Score;
+import it.polimi.is23am10.server.model.game.Game;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import java.io.Serializable;
 import java.util.List;

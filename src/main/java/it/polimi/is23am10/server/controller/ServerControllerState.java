@@ -60,7 +60,7 @@ public final class ServerControllerState {
    * Add a new game handler to the pool.
    *
    * @param handler The game handler instance to add.
-   * @throws NullGameHandlerInstance.
+   * @throws NullGameHandlerInstance
    *
    */
   public static final void addGameHandler(
@@ -108,7 +108,7 @@ public final class ServerControllerState {
    * Add player link to the pool.
    *
    * @param playerConnector The connector object to be linked with a player.
-   * @throws NullPlayerConnector.
+   * @throws NullPlayerConnector
    *
    */
   public static final void addPlayerConnector(
@@ -126,7 +126,6 @@ public final class ServerControllerState {
    *
    * @param gameId     The game id reference.
    * @param player The player to remove.
-   * @throws IOException
    *
    */
   public static final void removePlayerByGame(UUID gameId, Player player) {

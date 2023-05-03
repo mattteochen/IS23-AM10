@@ -73,8 +73,6 @@ public class RMIClient extends Client {
    * A gentle reminder that the {@link IPlayerConnector} bind can only be found
    * after {@link RMIClient#hasJoined} is true.
    *
-   * @param pc The player connector.
-   * 
    */
   protected void lookupInit() throws RemoteException, NotBoundException {
     playerConnectorServer = (IPlayerConnector) rmiRegistry

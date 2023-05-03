@@ -52,8 +52,9 @@ public class SharedCard extends AbstractCard<Predicate<Bookshelf>, SharedPattern
   /**
    * Constructor.
    *
-   * @param usedPatterns is a list of SharedPattern used to store the already
+   * @param usedSharedPatterns is a list of SharedPattern used to store the already
    *                     used.
+   * @param numPlayers the number of players in the game.
    * @throws AlreadyInitiatedPatternException
    */
   public SharedCard(List<SharedPattern<Predicate<Bookshelf>>> usedSharedPatterns, Integer numPlayers)
@@ -70,7 +71,7 @@ public class SharedCard extends AbstractCard<Predicate<Bookshelf>, SharedPattern
    * ScoreBlocks setter.
    * 
    * @param scoreBlockList The score block list.
-   * @throws NullScoreBlockListException.
+   * @throws NullScoreBlockListException
    * 
    */
   public void setScoreBlocks(List<ScoreBlock> scoreBlockList) throws NullScoreBlockListException {

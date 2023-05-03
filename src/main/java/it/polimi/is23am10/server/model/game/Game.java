@@ -90,7 +90,7 @@ public class Game implements Serializable {
   private Integer maxPlayers = MIN_PLAYER_NUM;
 
   /**
-   * List of {@Player} type.
+   * List of {@link Player} type.
    * This instance must never be null.
    * 
    */
@@ -113,13 +113,13 @@ public class Game implements Serializable {
   private Player winnerPlayer;
 
   /**
-   * The instance {@Board} type.
+   * The instance {@link Board} type.
    * 
    */
   private Board gameBoard;
 
   /**
-   * List of {@SharedCard} type containing two randomly selected
+   * List of {@link SharedCard} type containing two randomly selected
    * shared cards for this game.
    */
   private List<SharedCard> sharedCards;
@@ -237,7 +237,7 @@ public class Game implements Serializable {
    *
    * @param maxPlayers The value to be assigned.
    * @throws NullMaxPlayerException
-   * @throws InvalidMaxPlayerException.
+   * @throws InvalidMaxPlayerException
    *
    */
   public void setMaxPlayers(Integer maxPlayers)
@@ -545,8 +545,6 @@ public class Game implements Serializable {
    * @throws NegativeMatchedBlockCountException
    * @throws NullMatchedBlockCountException
    * @throws NullPointerException
-   * @throws NullGameHandlerInstance
-   * @throws NullPlayerException
    */
   public void nextTurn()
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
@@ -701,7 +699,6 @@ public class Game implements Serializable {
    *                            value.
    * @throws BoardGridColIndexOutOfBoundsException
    * @throws BoardGridRowIndexOutOfBoundsException
-   * @throws InvalidBoardTileSelectionException
    * @throws NullIndexValueException
    * @throws BookshelfGridColIndexOutOfBoundsException
    * @throws BookshelfGridRowIndexOutOfBoundsException
@@ -715,7 +712,6 @@ public class Game implements Serializable {
    * @throws WrongGameBoardPicksException
    * @throws WrongMovesNumberException
    * @throws NullGameHandlerInstance
-   * @throws NullPlayerException
    */
   public void activePlayerMove(Map<Coordinates, Coordinates> selectedCoordinates)
       throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
