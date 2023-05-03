@@ -92,7 +92,7 @@ public final class ChatMessage extends AbstractMessage {
    * @return is the message broadcast?
    */
   public boolean isBroadcast() {
-    return receiver == null;
+    return receiverName == null;
   }
 
   /**
