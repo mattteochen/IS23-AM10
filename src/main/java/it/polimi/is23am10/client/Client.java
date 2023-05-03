@@ -2,6 +2,7 @@ package it.polimi.is23am10.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -31,14 +32,14 @@ import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConne
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.CommandSyntaxValidator;
 import it.polimi.is23am10.utils.Coordinates;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+
 /**
  * An abstract class representing the app running in client mode. Holds the
  * three
@@ -133,9 +134,9 @@ public abstract class Client implements Runnable {
   }
 
   /**
-   * Parse the server payload.
+   * Show the received message to the client.
    * 
-   * @param pc The socket player connector.
+   * @param msg The message. Its dynamic type is inferred by {@link Gson}.
    *
    */
   protected void showServerMessage(AbstractMessage msg) {
@@ -146,7 +147,10 @@ public abstract class Client implements Runnable {
       case GAME_SNAPSHOT:
         VirtualView v = gson.fromJson(msg.getMessage(), VirtualView.class);
         setVirtualView(v);
-        setGameIdRef(v.getGameId());
+        //do not overwrite game id
+        if (gameIdRef == null) {
+          setGameIdRef(v.getGameId());
+        }
         userInterface.displayVirtualView(v);
         break;
       case ERROR_MESSAGE:
@@ -167,7 +171,7 @@ public abstract class Client implements Runnable {
    * Abstract method that creates and run the message handler.
    * 
    */
-  public abstract void getMessageHandler();
+  public abstract void runMessageHandler();
 
   /**
    * Available games param setter.
@@ -331,7 +335,7 @@ public abstract class Client implements Runnable {
           if (moves.isEmpty()) {
             System.out.println("🛑 No valid moves found.");
           } else {
-            System.out.println(moves);
+            System.out.println("Chosen moves:" + moves);
             moveTiles(apc, moves);
           }
           break;
@@ -359,6 +363,7 @@ public abstract class Client implements Runnable {
       apc.setPlayer(p);
     } catch (NullPlayerNameException e) {
       userInterface.displayError(new ErrorMessage("Null player name", p, ErrorSeverity.ERROR));
+      return null;
     }
     return selectedPlayerName;
   }
@@ -374,7 +379,7 @@ public abstract class Client implements Runnable {
    * @throws InterruptedException
    * @throws NullPlayerNameException
    */
-  protected void handleGameSelection(AbstractPlayerConnector apc, UUID selectedGameId, BufferedReader br,
+  protected void handleGameSelection(AbstractPlayerConnector apc, BufferedReader br,
       String selectedPlayerName) throws IOException, InterruptedException, NullPlayerNameException {
         
         // Executed if I still haven't selected a game
@@ -390,7 +395,7 @@ public abstract class Client implements Runnable {
         case "j":
           String idx = fullCommand.split(" ")[1];
           if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
-            selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
+            UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
             System.out.println("Joining game "+selectedGameId);
             addPlayer(apc, selectedPlayerName, selectedGameId);
             while(getGameIdRef() == null){
@@ -427,8 +432,37 @@ public abstract class Client implements Runnable {
   }
 
   /**
+   * The client game core machine state.
+   *
+   * @param pc player connector instance.
+   * @throws IOException
+   * @throws NullPlayerException
+   * @throws InterruptedException
+   * 
+   */
+  protected void clientRunnerCore(AbstractPlayerConnector pc) throws IOException, NullPlayerNameException, InterruptedException, NullPlayerIdException {
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    // Execute if the client is not connected to a game.
+    if (pc.getGameId() == null) {
+      userInterface.displaySplashScreen();
+      // First I'm gonna ask the player name
+      pc.setPlayer(new Player());
+      String pn = null;
+      while(pn == null || pn.equals("")) {
+        pn = handlePlayerNameSelection(pc, br);
+      }
+      pc.getPlayer().setPlayerName(pn);
+      pc.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(pn.getBytes()));
+      handleGameSelection(pc, br, pc.getPlayer().getPlayerName());
+    } else {
+      // Executed if the client is connected to a game.
+      handleCommands(pc, br);
+    }
+  }
+
+  /**
    * Custom deserializer class definition for {@link Gson} usage.
-   * This works on polymorphic {@link AbstractCommand} objects.
+   * This works on polymorphic {@link AbstractMessage} objects.
    * 
    */
   class MessageDeserializer implements JsonDeserializer<AbstractMessage> {

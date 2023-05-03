@@ -1,8 +1,7 @@
 package it.polimi.is23am10.client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.net.UnknownHostException;
 import java.rmi.registry.Registry;
 import java.util.Map;
@@ -21,13 +20,16 @@ import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
-import it.polimi.is23am10.server.model.player.Player;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
+import it.polimi.is23am10.utils.CommandSyntaxValidator;
 import it.polimi.is23am10.utils.Coordinates;
 
 /**
@@ -59,12 +61,6 @@ public class RMIClient extends Client {
   protected IPlayerConnector playerConnectorServer;
 
   /**
-   * A flag stating if the player has joined or not a game.
-   * 
-   */
-  protected boolean hasJoined;
-
-  /**
    * Public constructor for client using RMI as communication method.
    * 
    * @param pc   Player connector.
@@ -76,7 +72,6 @@ public class RMIClient extends Client {
   public RMIClient(PlayerConnectorRmi pc, UserInterface ui, IPlayerConnector pcs, IServerControllerAction scas,
       Registry reg) throws UnknownHostException {
     super(pc, ui);
-    hasJoined = false;
     playerConnectorServer = pcs;
     serverControllerActionServer = scas;
     rmiRegistry = reg;
@@ -85,7 +80,7 @@ public class RMIClient extends Client {
   /**
    * Perform all the needed lookups.
    * A gentle reminder that the {@link IPlayerConnector} bind can only be found
-   * after {@link RMIClient#hasJoined} is true.
+   * after a join or creation action.
    *
    * @param pc The player connector.
    * 
@@ -93,6 +88,7 @@ public class RMIClient extends Client {
   protected void lookupInit() throws RemoteException, NotBoundException {
     playerConnectorServer = (IPlayerConnector) rmiRegistry
         .lookup(ServerControllerRmiBindings.getPlayerConnectorRebindId((PlayerConnectorRmi) playerConnector));
+    playerConnectorServer.setPlayer(playerConnector.getPlayer());
   }
 
   /**
@@ -103,68 +99,82 @@ public class RMIClient extends Client {
   @Override
   public void run() {
     final PlayerConnectorRmi playerConnectorRmi = (PlayerConnectorRmi) playerConnector;
-
-  
     while (!hasRequestedDisconnection()) {
-
       try {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-        // Execute if the client is not connected to a game.
-        if (playerConnectorRmi.getGameId() == null) {
-          userInterface.displaySplashScreen();
-          // First I'm gonna ask the player name
-          playerConnectorRmi.setPlayer(new Player());
-          if (playerConnectorRmi.getPlayer().getPlayerName() == null || playerConnectorRmi.getPlayer().getPlayerName().equals("") ) {
-            playerConnectorRmi.getPlayer().setPlayerName(handlePlayerNameSelection(playerConnectorRmi, br));
-          } 
-          if (playerConnectorRmi.getPlayer().getPlayerName() != null) {
-            handleGameSelection(playerConnectorRmi, playerConnectorRmi.getGameId(), br, playerConnectorRmi.getPlayer().getPlayerName());
-          }
-        }
-        if(playerConnectorRmi.getGameId() != null) {
-          // Executed if the client is connected to a game.
-          handleCommands(playerConnectorRmi, br);
-        }
+        clientRunnerCore(playerConnectorRmi);
       } catch (IOException | InterruptedException e) {
         System.out.println("🛑 " + e.getMessage());
-      } catch (NullPlayerNameException e) {
+      } catch (NullPlayerNameException | NullPlayerIdException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
+    }
+  }
 
-      // TODO: implement user requests
-      // if any new user request, process it (if virtual view has not declared that it
-      // is this player turn, skip).
-
-      // Some hints for the above's implementer: This is a start game request demo,
-      // enable this to test, to be removed for the real client request.
-      // TODO: remove when not needed anymore
-      /*
-       * try {
-       * String playerName = "Rmi client";
-       * AbstractCommand command = new StartGameCommand(playerName, 4);
-       * 
-       * //MANDATORY FOR THE LOOKUP: fill the connector with the chosen name as it
-       * will be the identifier across all player connectors
-       * //consider using a lighter player as only the name is used
-       * Player p = new Player();
-       * p.setPlayerName(playerName);
-       * playerConnectorRmi.setPlayer(p);
-       * 
-       * //execute the command
-       * serverControllerActionServer.execute(playerConnectorRmi, command);
-       * hasJoined = true;
-       * //from now on, the server has exposed the binding, let's connect
-       * lookupInit();
-       * //once the lookup is done, assign the current playerConnector to server ref
-       * //playerConnector as for move tiles commands an equality comparison is done
-       * //over the whole Player class
-       * } catch (Exception e) {
-       * System.out.println("🛑 " + e.getMessage());
-       * }
-       */
-
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected void handleGameSelection(AbstractPlayerConnector apc, BufferedReader br,
+      String selectedPlayerName) throws IOException, InterruptedException, NullPlayerNameException {
+        
+        // Executed if I still haven't selected a game
+      if (apc.getGameId() == null) {
+      getAvailableGames(apc);
+  
+      System.out.println(CLIStrings.joinOrCreateString);
+  
+      String fullCommand = br.readLine();
+      String command = fullCommand.split(" ")[0];
+      Integer maxPlayers = null;
+      switch (command) {
+        case "j":
+          String idx = fullCommand.split(" ")[1];
+          if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
+            UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
+            System.out.println("Joining game "+selectedGameId);
+            addPlayer(apc, selectedPlayerName, selectedGameId);
+            try {
+              lookupInit();
+            } catch(NotBoundException e) {
+              userInterface.displayError(new ErrorMessage("Failed to connect to the server, abortig the request", ErrorSeverity.CRITICAL));
+            }
+            runMessageHandler();
+            while(getGameIdRef() == null){
+            }
+            apc.setGameId(getGameIdRef());
+            System.out.println("Joined game "+selectedGameId);
+          } else {
+            userInterface.displayError(new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
+          }
+          break;
+        case "c":
+          String numMaxPlayers = fullCommand.split(" ")[1];
+          if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
+            maxPlayers = Integer.parseInt(numMaxPlayers);
+            System.out.println("Creating game");
+            startGame(apc, selectedPlayerName, maxPlayers);
+            try {
+              lookupInit();
+            } catch(NotBoundException e) {
+              userInterface.displayError(new ErrorMessage("Failed to connect to the server, abortig the request", ErrorSeverity.CRITICAL));
+            }
+            runMessageHandler();
+            while(getGameIdRef() == null){
+            }
+            apc.setGameId(getGameIdRef());
+            System.out.println("Created game");
+          } else {
+            userInterface.displayError(new ErrorMessage("Failed to create game", ErrorSeverity.CRITICAL));
+          }
+          break;
+        case "q":
+          apc.getPlayer().setPlayerName(null);
+          apc.setGameId(null);
+          break;
+        default:
+      }
     }
   }
 
@@ -174,9 +184,9 @@ public class RMIClient extends Client {
    */
   @Override
   void getAvailableGames(AbstractPlayerConnector apc)
-      throws IOException, InterruptedException {
-    AbstractCommand command = new GetAvailableGamesCommand();
-    serverControllerActionServer.execute(apc, command);
+    throws RemoteException {
+    AbstractMessage msg = serverControllerActionServer.execute(new GetAvailableGamesCommand());
+    showServerMessage(msg);
   }
 
    /**
@@ -223,26 +233,19 @@ public class RMIClient extends Client {
  }
 
   /**
-   * Method override that creates and starts message handler thread
+   * Method override that creates and starts message handler thread.
+   * To be started after the {@link RMIClient#lookupInit}.
    */
   @Override
-  public void getMessageHandler(){
-    PlayerConnectorRmi playerConnectorRMI = (PlayerConnectorRmi) playerConnector;
+  public void runMessageHandler(){
     Thread messageHandler = new Thread(()->{
       while(!hasRequestedDisconnection()){
         try {
-          // rmi binding not available
-          if (!hasJoined) {
-            continue;
-          }
-          AbstractMessage msg = playerConnectorRMI.getMessageFromQueue();
+          AbstractMessage msg = playerConnectorServer.getMessageFromQueue();
           if (msg != null) {
             showServerMessage(msg);
-          } else {
-            // TODO: replace with custom logger
-            System.out.println("🛑 Received null message");
           }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | RemoteException e) {
           // TODO: replace with custom logger
           System.out.println("🛑 Failed to retrive message from server, bad context state " + e.getMessage());
         } catch (NullPointerException e) {

@@ -417,11 +417,18 @@ public interface IServerControllerAction extends Remote {
       if (handler.getGame().getActivePlayer().equals(playerConnector.getPlayer())) {
         handler.getGame().activePlayerMove(mtCommand.getMoves());
         handler.pushGameState();
+        logger.info("{} Operated Tile move for {} in game {}",
+            ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
+            handler.getGame().getActivePlayer().getPlayerName(),
+            handler.getGame().getGameId());
+      } else {
+        // System.out.println(handler.getGame().getActivePlayer().getPlayerName() + " " + playerConnector.getPlayer().getPlayerName());
+        // System.out.println(handler.getGame().getActivePlayer().getPlayerID() + " " + playerConnector.getPlayer().getPlayerID());
+        logger.info("{} Ignored Tile move for {} in game {}",
+            ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
+            handler.getGame().getActivePlayer().getPlayerName(),
+            handler.getGame().getGameId());
       }
-      logger.info("{} Operated Tile move for {} in game {}",
-          ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
-          handler.getGame().getActivePlayer().getPlayerName(),
-          handler.getGame().getGameId());
     } catch (NullGameHandlerInstance e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
