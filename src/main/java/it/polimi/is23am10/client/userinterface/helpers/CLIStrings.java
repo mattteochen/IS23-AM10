@@ -43,7 +43,7 @@ public final class CLIStrings {
   public final static String bottomPaddingBoard = "\t⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛\n\n";
   public final static String topPaddingBoard = "\t⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛" + ANSICodes.RED_BOLD + "\sY\t" + ANSICodes.RESET;
   public final static String paddingBookshelf = "\t⬛⬛⬛⬛⬛⬛⬛\t";
-  public final static String indexBoard = ANSICodes.RED_BOLD + "\t\sX" + ANSICodes.RESET + " 1 2 3 4 5 6 7 8 9\t";
+  public final static String indexBoard = ANSICodes.RED_BOLD + "\t\sX" + ANSICodes.RESET + " 0 1 2 3 4 5 6 7 8\t";
   public final static String verticalBoardIndex = "⬛\s%d\t";
   public final static String indexBookshelf = "\t\s\sA B C D E\s\t";
   public final static String boardStatus = "\n\tGame board status:\t\n";

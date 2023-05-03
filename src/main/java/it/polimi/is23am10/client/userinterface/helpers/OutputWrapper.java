@@ -193,7 +193,7 @@ public final class OutputWrapper {
         Tile tile = gameBoard.getBoardGrid()[i][j];
         row.append(emojiMap.get(tile.getType()));
       }
-      row.append(String.format(CLIStrings.verticalBoardIndex, (i + 1)));
+      row.append(String.format(CLIStrings.verticalBoardIndex, (i)));
       info(row.toString(), false);
     }
 
