@@ -133,7 +133,7 @@ public class RMIClient extends Client {
           String idx = fullCommand.split(" ")[1];
           if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
             UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
-            System.out.println("Joining game "+selectedGameId);
+            System.out.println("Joining game " + selectedGameId);
             addPlayer(apc, selectedPlayerName, selectedGameId);
             try {
               lookupInit();
@@ -144,7 +144,7 @@ public class RMIClient extends Client {
             while(getGameIdRef() == null){
             }
             apc.setGameId(getGameIdRef());
-            System.out.println("Joined game "+selectedGameId);
+            System.out.println("Joined game "+ selectedGameId);
           } else {
             userInterface.displayError(new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
           }

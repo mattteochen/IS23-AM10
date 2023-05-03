@@ -59,7 +59,6 @@ public class App {
     try {
       ArgParser.parse(args);
       AppConfigContext ctx = new AppConfigContext();
-
       if (ctx.getIsServer()) {
         // SERVER MODE
         Server server = new Server(new ServerSocket(ctx.getServerSocketPort()),

@@ -32,6 +32,7 @@ import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConne
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.CommandSyntaxValidator;
 import it.polimi.is23am10.utils.Coordinates;
+import it.polimi.is23am10.utils.MovesValidator;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 
 import com.google.gson.JsonDeserializationContext;
@@ -278,10 +279,11 @@ public abstract class Client implements Runnable {
       case "chat":
         // This selects only the part between double quotes which is gonna be the message sent.
         String msg = fullCommand.split("\"")[1];
-        //If the second string begins with double quotes, there's no receiver and the message is broadcast
-        if(fullCommand.split(" ")[1].startsWith("\"")){
+        // If the second string begins with double quotes,
+        // there's no receiver and the message is broadcast
+        if (fullCommand.split(" ")[1].startsWith("\"")) {
           sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg));
-        }else{
+        } else {
           String receiverName = fullCommand.split(" ")[1];
           sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg, receiverName));
         }
@@ -290,10 +292,10 @@ public abstract class Client implements Runnable {
         // TODO: add logout command
         break;
       case "move":
-        while(getVirtualView() == null){
-        }
-        if (apc.getPlayer().getPlayerName().equals(getVirtualView().getActivePlayer().getPlayerName()) 
-            && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS ) {
+        while (getVirtualView() == null){}
+        if (apc.getPlayer().getPlayerName()
+            .equals(getVirtualView().getActivePlayer().getPlayerName())
+            && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS) {
           Map<Coordinates, Coordinates> moves = new HashMap<Coordinates, Coordinates>();
 
           // reads a string containing coordinates of a tile
@@ -335,26 +337,35 @@ public abstract class Client implements Runnable {
           if (moves.isEmpty()) {
             System.out.println("🛑 No valid moves found.");
           } else {
-            System.out.println("Chosen moves:" + moves);
-            moveTiles(apc, moves);
+            try{
+              System.out.println("Chosen moves:" + moves);
+              MovesValidator.validateGameMoves(
+                  moves, virtualView.getActivePlayer().getBookshelf(), virtualView.getGameBoard());
+              moveTiles(apc, moves);
+            } catch (Exception e) {
+              System.out.println("Invalid move!");
+            }
           }
           break;
         }else{
           System.out.println("Not your turn");
         }
+        break;
       default:
+        break;
     }
   }
 
   /**
    * Handling function for name selection.
-   * 
+   *
    * @param apc abstract player connector
    * @param br  buffered reader
    * @return player name selected
    * @throws IOException
    */
-  protected String handlePlayerNameSelection(AbstractPlayerConnector apc, BufferedReader br) throws IOException {
+  protected String handlePlayerNameSelection(AbstractPlayerConnector apc, BufferedReader br) 
+      throws IOException {
     // Select only the string before the space if the client writes more words
     String selectedPlayerName = br.readLine().split(" ")[0];
     Player p = new Player();
@@ -370,8 +381,8 @@ public abstract class Client implements Runnable {
 
   /**
    * Handling function for game selection.
-   * 
-   * @param apc                abstract player connector
+   *
+   * @param apc abstract player connector
    * @param selectedGameId     game id selected
    * @param br                 buffered reader
    * @param selectedPlayerName player name selected
