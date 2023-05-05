@@ -29,7 +29,7 @@ public abstract class AbstractCard<R, T extends AbstractPattern<R>> implements S
    * Only the derived class can set the pattern.
    *
    * @param pattern The pattern to assign.
-   * @throws AlreadyInitiatedPatternException 
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one. If the pattern is already initiated.
    */
   protected void setPattern(T pattern) throws AlreadyInitiatedPatternException {
     if (this.pattern != null) {

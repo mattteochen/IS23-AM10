@@ -232,14 +232,14 @@ public class Player implements Serializable {
    * Function to be called by {@link Game} at the end of Player's turn.
    * Updates its scores passing their score-giving objects to specific methods.
    * 
-   * @throws NullPointerException
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
-   * @throws NullPlayerBookshelfException
-   * @throws NullScoreBlockListException
-   * @throws NegativeMatchedBlockCountException
-   * @throws NullMatchedBlockCountException
+   * @throws NullPointerException Generic NPE.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
    */
   public void updateScore() throws NullPointerException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException,

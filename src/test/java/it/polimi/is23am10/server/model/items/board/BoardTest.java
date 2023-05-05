@@ -165,8 +165,8 @@ class BoardTest {
   /**
    * Testing row boundaries in getTileAt.
    *
-   * @throws NullNumOfPlayersException
-   * @throws InvalidNumOfPlayersException
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
    */
   @Test
   public void getTileAtAt_should_throw_BoardGridRowIndexOutOfBoundsException()
@@ -183,8 +183,8 @@ class BoardTest {
   /**
    * Testing column boundaries in takeTileAt.
    *
-   * @throws NullNumOfPlayersException
-   * @throws InvalidNumOfPlayersException
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
    */
   @Test
   public void getTileAt_should_throw_BoardGridColIndexOutOfBoundsException()
@@ -201,8 +201,8 @@ class BoardTest {
   /**
    * Testing row boundaries in takeTileAt.
    *
-   * @throws NullNumOfPlayersException
-   * @throws InvalidNumOfPlayersException
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
    */
   @Test
   public void getBookShelfGridAt_should_throw_BoardGridRowIndexOutOfBoundsException()
@@ -219,8 +219,8 @@ class BoardTest {
   /**
    * Testing column boundaries in takeTileAt.
    *
-   * @throws NullNumOfPlayersException
-   * @throws InvalidNumOfPlayersException
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
    */
   @Test
   public void getBookShelfGridAt_should_throw_BoardGridColIndexOutOfBoundsException()
@@ -237,8 +237,8 @@ class BoardTest {
   /**
    * Testing row boundaries in getBlackMapAt.
    *
-   * @throws NullNumOfPlayersException
-   * @throws InvalidNumOfPlayersException
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
    */
   @Test
   public void getBlackMapAt_should_throw_BoardGridRowIndexOutOfBoundsException()
@@ -255,8 +255,8 @@ class BoardTest {
   /**
    * Testing column boundaries in getBlackMapAt.
    *
-   * @throws NullNumOfPlayersException
-   * @throws InvalidNumOfPlayersException
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
    */
   @Test
   public void getBlackMapAt_should_throw_BoardGridColIndexOutOfBoundsException()

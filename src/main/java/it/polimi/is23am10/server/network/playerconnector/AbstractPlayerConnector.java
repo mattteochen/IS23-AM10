@@ -47,7 +47,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
    *
    *
    * @param msgQueue The message queue instance.
-   * @throws NullBlockingQueueException
+   * @throws NullBlockingQueueException If providing a null queue when building player connector.
    *
    */
   protected AbstractPlayerConnector(LinkedBlockingQueue<AbstractMessage> msgQueue)
@@ -108,7 +108,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
    * queue to send responses to the client (i.e. game updates).
    *
    * @param message The message to be added.
-   * @throws InterruptedException
+   * @throws InterruptedException On queue message insertion failure.
    *
    */
   public void addMessageToQueue(AbstractMessage message) throws InterruptedException {

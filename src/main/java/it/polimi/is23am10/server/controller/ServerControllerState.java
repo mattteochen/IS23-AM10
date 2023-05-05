@@ -60,7 +60,7 @@ public final class ServerControllerState {
    * Add a new game handler to the pool.
    *
    * @param handler The game handler instance to add.
-   * @throws NullGameHandlerInstance
+   * @throws NullGameHandlerInstance If the game handler is null. On null game handler.
    *
    */
   public static final void addGameHandler(
@@ -108,7 +108,7 @@ public final class ServerControllerState {
    * Add player link to the pool.
    *
    * @param playerConnector The connector object to be linked with a player.
-   * @throws NullPlayerConnector
+   * @throws NullPlayerConnector On null Player connector.
    *
    */
   public static final void addPlayerConnector(
@@ -160,7 +160,7 @@ public final class ServerControllerState {
    *
    * @param gameId the UUID to search for
    * @return the GameHandler, if found
-   * @throws NullGameHandlerInstance
+   * @throws NullGameHandlerInstance If the game handler is null. If game handler with that id is not found.
    */
   public static GameHandler getGameHandlerByUUID(UUID gameId) throws NullGameHandlerInstance {
     Optional<GameHandler> target;

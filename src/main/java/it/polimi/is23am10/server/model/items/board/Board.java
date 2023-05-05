@@ -111,8 +111,8 @@ public class Board implements Serializable {
    * Constructor.
    * 
    * @param numOfPlayers The current game instance number of players.
-   * @throws InvalidNumOfPlayersException
-   * @throws NullNumOfPlayersException
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
    */
   public Board(Integer numOfPlayers)
       throws InvalidNumOfPlayersException, NullNumOfPlayersException {
@@ -147,7 +147,7 @@ public class Board implements Serializable {
   /**
    * Validate the number of players.
    * 
-   * @throws NullNumOfPlayersException.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null..
    */
   private boolean validNumOfPlayers(Integer numOfPlayers) throws NullNumOfPlayersException {
     if (numOfPlayers == null) {
@@ -173,7 +173,6 @@ public class Board implements Serializable {
    * Create the board tile sack.
    * The complete sack has 22 tiles for each {@link TileType}.
    * 
-   * @throws NullTileTypeException.
    */
   private void createInitialTileSack() {
     tileSack = Stream.of(TileType.values())
@@ -231,9 +230,9 @@ public class Board implements Serializable {
    * @param row The row index.
    * @param col The column index.
    * @return The requested tile.
-   * @throws BoardGridRowIndexOutOfBoundsException
-   * @throws BoardGridColIndexOutOfBoundsException
-   * @throws NullIndexValueException
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
    * 
    */
   public Tile getTileAt(Integer row, Integer col)
@@ -253,9 +252,9 @@ public class Board implements Serializable {
    * @param row The row index.
    * @param col The column index.
    * @return The black map value.
-   * @throws BoardGridRowIndexOutOfBoundsException
-   * @throws BoardGridColIndexOutOfBoundsException
-   * @throws NullIndexValueException
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
    * 
    */
   public Integer getBlackMapAt(Integer row, Integer col)
@@ -274,9 +273,9 @@ public class Board implements Serializable {
    * 
    * @param row row index of removed tile
    * @param col col index of removed tile
-   * @throws BoardGridColIndexOutOfBoundsException
-   * @throws BoardGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
    */
   public void removeTileAt(Integer row, Integer col)
       throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException, NullIndexValueException {
@@ -296,9 +295,9 @@ public class Board implements Serializable {
    * @param row The row index.
    * @param col The column index.
    * @return The requested tile.
-   * @throws BoardGridRowIndexOutOfBoundsException
-   * @throws BoardGridColIndexOutOfBoundsException
-   * @throws NullIndexValueException
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
    * 
    */
   public Tile takeTileAt(Integer row, Integer col)
@@ -314,6 +313,11 @@ public class Board implements Serializable {
     return tile;
   }
 
+  /**
+   * Helper method used to determine if the board should be refilled or not.
+   * 
+   * @return Should board be refilled.
+   */
   public boolean isRefillNeeded() {
     for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
       for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {

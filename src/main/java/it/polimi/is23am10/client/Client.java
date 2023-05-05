@@ -33,8 +33,9 @@ public abstract class Client implements Runnable {
   /**
    * Protected constructor for client using Socket as communication method.
    * 
-   * @param pc player connector
-   * @param ui user interface
+   * @param pc Player connector.
+   * @param ui User interface.
+   * @throws UnknownHostException On localhost retrieval failure.
    */
   protected Client(IPlayerConnector pc, UserInterface ui) throws UnknownHostException {
     playerConnector = pc;

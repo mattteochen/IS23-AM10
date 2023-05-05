@@ -26,7 +26,7 @@ public final class IndexValidator {
    * 
    * @param row The index value to be evaluated.
    * @return The validation result.
-   * @throws NullIndexValueException
+   * @throws NullIndexValueException If the index provided is null.
    * 
    */
   public static boolean validRowIndex(Integer row, Integer maxValue) throws NullIndexValueException {
@@ -41,7 +41,7 @@ public final class IndexValidator {
    * 
    * @param col The index value to be evaluated.
    * @return The validation result.
-   * @throws NullIndexValueException
+   * @throws NullIndexValueException If the index provided is null.
    * 
    */
   public static boolean validColIndex(Integer col, Integer maxValue) throws NullIndexValueException {

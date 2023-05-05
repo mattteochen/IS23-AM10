@@ -239,26 +239,26 @@ public class PlayerTest {
    * Test to check that the updateScore() method
    * actually updates all scores.
    *
-   * @throws NullPlayerNameException
-   * @throws NullPlayerIdException
-   * @throws NullPlayerBookshelfException
-   * @throws NullPlayerScoreException
-   * @throws NullPlayerPrivateCardException
-   * @throws NullPlayerScoreBlocksException
-   * @throws DuplicatePlayerNameException
-   * @throws AlreadyInitiatedPatternException
-   * @throws NullPlayerNamesException
-   * @throws NullPointerException
-   * @throws WrongLengthBookshelfStringException
-   * @throws WrongCharBookshelfStringException
-   * @throws NotValidScoreBlockValueException
-   * @throws NullMatchedBlockCountException
-   * @throws NegativeMatchedBlockCountException
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
-   * @throws NullScoreBlockListException
-   * @throws NullAssignedPatternException
+   * @throws NullPlayerNameException If player name is null.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws NullPlayerNamesException If, while adding multiple players, the list of player names is null.
+   * @throws NullPointerException Generic NPE.
+   * @throws WrongLengthBookshelfStringException If when building a bookshelf based on string, it is of an invalid length.
+   * @throws WrongCharBookshelfStringException If when building a bookshelf based on string, it contains an invalid character.
+   * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
    */
   @Test
   public void updateScore_should_update_score()

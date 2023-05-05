@@ -65,23 +65,23 @@ public class GameHandler {
    *
    * @param firstPlayerName The match starting player name.
    * @param maxPlayersNum   The chosen max players for this match.
-   * @throws NullNumOfPlayersException
-   * @throws InvalidNumOfPlayersException
-   * @throws NullPlayerNamesException
-   * @throws AlreadyInitiatedPatternException
-   * @throws DuplicatePlayerNameException
-   * @throws NullPlayerScoreBlocksException
-   * @throws NullPlayerPrivateCardException
-   * @throws NullPlayerScoreException
-   * @throws NullPlayerBookshelfException
-   * @throws NullPlayerIdException
-   * @throws NullPlayerNameException
-   * @throws InvalidMaxPlayerException
-   * @throws NullMaxPlayerException
-   * @throws NullAssignedPatternException
-   * @throws FullGameException
-   * @throws NotValidScoreBlockValueException
-   * @throws PlayerNotFoundException
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullPlayerNamesException If, while adding multiple players, the list of player names is null.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerNameException If player name is null.
+   * @throws InvalidMaxPlayerException If value for maximum number of players in the game is not valid.
+   * @throws NullMaxPlayerException If no value for maximum number of players in the game is provided.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
+   * @throws FullGameException If game is full, on player trying to join.
+   * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
+   * @throws PlayerNotFoundException If the player with the name provided is not found.
    *
    */
   public GameHandler(String firstPlayerName, Integer maxPlayersNum)
@@ -118,7 +118,7 @@ public class GameHandler {
    * Will accept a built instance of {@link AbstractPlayerConnector}
    *
    * @param playerConnector The connector to be added to the current game.
-   * @throws NullPlayerConnector
+   * @throws NullPlayerConnector On null Player connector.
    *
    */
   public void addPlayerConnector(AbstractPlayerConnector playerConnector)
@@ -132,7 +132,7 @@ public class GameHandler {
   /**
    * Push a new game state to the message queue for each connected player.
    *
-   * @throws InterruptedException
+   * @throws InterruptedException On queue message insertion failure.
    *
    */
   public void pushGameState() throws InterruptedException {
