@@ -16,6 +16,10 @@
         {
             "command": "clean jacoco:prepare-agent install jacoco:report",
             "debug": false
+        },
+        {
+            "command": "javadoc:javadoc",
+            "debug": false
         }
     ],
     "java.checkstyle.version": "10.9.1",
