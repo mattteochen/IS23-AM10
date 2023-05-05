@@ -1,18 +1,16 @@
 package it.polimi.is23am10.server.controller;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
+import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
-import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
-import it.polimi.is23am10.server.controller.ServerControllerAction;
-import it.polimi.is23am10.server.controller.ServerControllerState;
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.server.model.factory.PlayerFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
@@ -22,10 +20,13 @@ import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
 import it.polimi.is23am10.server.model.game.exceptions.NullMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.PlayerNotFoundException;
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.server.model.items.scoreblock.exceptions.NotValidScoreBlockValueException;
+import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
@@ -40,11 +41,15 @@ import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.ErrorTypeString;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -547,5 +552,62 @@ class ServerControllerActionTest {
     assertEquals(2, msg.getAvailableGames().size());
     assertTrue(
         msg.getAvailableGames().containsAll(availableGames) && availableGames.containsAll(msg.getAvailableGames()));
+  }
+
+  @Test
+  void MOVE_TILES_should_CONSUME_MOVE_TILES_COMMAND() throws NullSocketConnectorException, NullGameHandlerInstance,
+      NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
+      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException,
+      BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException, NullIndexValueException {
+    Socket socket = new Socket();
+    PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
+
+    GameHandler handler = new GameHandler("Max", 2);
+    ServerControllerState.addGameHandler(handler);
+
+    AbstractCommand cmd = new AddPlayerCommand("Steve", handler.getGame().getGameId());
+    serverControllerAction.addPlayerConsumer.accept(logger, playerConnector, cmd);
+
+    Map<Coordinates, Coordinates> moves = new HashMap<>();
+    moves.put(new Coordinates(1, 3), new Coordinates(5, 0));
+    AbstractCommand move = new MoveTilesCommand(
+      handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max",
+      handler.getGame().getGameId(), moves);
+    assertFalse(handler.getGame().getGameBoard().getTileAt(1, 3).isEmpty());
+    playerConnector.getPlayer().setPlayerName(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max");
+    playerConnector.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve".getBytes() : "Max".getBytes()));
+    serverControllerAction.moveTilesConsumer.accept(logger, playerConnector, move);
+    assertEquals(TileType.EMPTY, handler.getGame().getGameBoard().getTileAt(1, 3).getType());
+  }
+
+  @Test
+  void MOVE_TILES_should_Throw_BoardGridColIndexOutOfBoundsException() throws NullSocketConnectorException, NullGameHandlerInstance,
+      NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
+      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException,
+      BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException, NullIndexValueException {
+    Socket socket = new Socket();
+    PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
+
+    GameHandler handler = new GameHandler("Max", 2);
+    ServerControllerState.addGameHandler(handler);
+
+    AbstractCommand cmd = new AddPlayerCommand("Steve", handler.getGame().getGameId());
+    serverControllerAction.addPlayerConsumer.accept(logger, playerConnector, cmd);
+
+    Map<Coordinates, Coordinates> moves = new HashMap<>();
+    moves.put(new Coordinates(1, 15), new Coordinates(5, 0));
+    AbstractCommand move = new MoveTilesCommand(
+      handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max",
+      handler.getGame().getGameId(), moves);
+    assertFalse(handler.getGame().getGameBoard().getTileAt(1, 3).isEmpty());
+    playerConnector.getPlayer().setPlayerName(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max");
+    playerConnector.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve".getBytes() : "Max".getBytes()));
+    assertFalse(handler.getGame().getGameBoard().getTileAt(1, 3).isEmpty());
   }
 }
