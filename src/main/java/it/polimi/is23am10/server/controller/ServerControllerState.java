@@ -1,6 +1,7 @@
 package it.polimi.is23am10.server.controller;
 
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
+import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
@@ -109,12 +110,19 @@ public final class ServerControllerState {
    *
    * @param playerConnector The connector object to be linked with a player.
    * @throws NullPlayerConnector On null Player connector.
+   * @throws DuplicatePlayerNameException On duplicate player name.
    *
    */
   public static final void addPlayerConnector(
-      AbstractPlayerConnector playerConnector) throws NullPlayerConnector {
+      AbstractPlayerConnector playerConnector) throws NullPlayerConnector, DuplicatePlayerNameException {
     if (playerConnector == null) {
       throw new NullPlayerConnector();
+    }
+    Optional<AbstractPlayerConnector> found = playersPool.stream()
+      .filter(p -> p.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))
+      .findFirst();
+    if (found.isPresent()) {
+      throw new DuplicatePlayerNameException("Player name already in use");
     }
     playersPool.add(playerConnector);
     logger.info("Added new player connector");

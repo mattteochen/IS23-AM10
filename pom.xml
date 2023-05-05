@@ -165,9 +165,6 @@
                 <goal>check</goal>
               </goals>
               <configuration>
-                <excludes>
-                  <exclude>it/polimi/is23am10/examples/*</exclude>
-                </excludes>
                 <rules>
                   <rule>
                     <element>BUNDLE</element>
@@ -183,6 +180,12 @@
               </configuration>
             </execution>
           </executions>
+          <configuration>
+            <excludes>
+              <exclude>**/examples/*</exclude>
+              <exclude>**/exceptions/*</exclude>
+            </excludes>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.openjfx</groupId>

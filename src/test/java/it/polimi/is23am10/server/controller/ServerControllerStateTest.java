@@ -4,7 +4,6 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import it.polimi.is23am10.server.controller.ServerControllerState;
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.PlayerFactory;
@@ -39,7 +38,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -121,23 +119,6 @@ class ServerControllerStateTest {
   }
 
   @Test
-  void ADD_PLAYER_CONNECTOR_should_NOT_HAVE_DUPLICATES()
-      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
-      NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
-      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
-      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, NullAssignedPatternException {
-
-    PlayerConnectorRmi playerConnector = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
-    playerConnector.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame));
-    playerConnector.setGameId(UUID.randomUUID());
-    ServerControllerState.addPlayerConnector(playerConnector);
-    assertEquals(1, ServerControllerState.getPlayersPool().size());
-    ServerControllerState.addPlayerConnector(playerConnector);
-    assertEquals(1, ServerControllerState.getPlayersPool().size());
-  }
-
-  @Test
   void ADD_PLAYER_CONNECTOR_should_THROW_NullGameHandlerInstance()
       throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
@@ -149,6 +130,22 @@ class ServerControllerStateTest {
     playerConnector.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame));
     playerConnector.setGameId(UUID.randomUUID());
     ServerControllerState.addPlayerConnector(playerConnector);
+    assertEquals(1, ServerControllerState.getPlayersPool().size());
+  }
+
+  @Test
+  void ADD_PLAYER_CONNECTOR_should_THROW_DuplicatePlayerNameException()
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+      NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullGameHandlerInstance,
+      NullSocketConnectorException, NullPlayerConnector, NullBlockingQueueException, FullGameException, NullAssignedPatternException {
+
+    PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(new Socket(), new LinkedBlockingQueue<>());
+    playerConnector.setPlayer(PlayerFactory.getNewPlayer("Steve", mockGame));
+    playerConnector.setGameId(UUID.randomUUID());
+    ServerControllerState.addPlayerConnector(playerConnector);
+    assertThrows(DuplicatePlayerNameException.class, () -> ServerControllerState.addPlayerConnector(playerConnector));
     assertEquals(1, ServerControllerState.getPlayersPool().size());
   }
 

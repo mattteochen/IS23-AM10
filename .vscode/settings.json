@@ -18,6 +18,10 @@
             "debug": false
         },
         {
+            "command": "clean compile assembly:single",
+            "debug": false
+        },
+        {
             "command": "javadoc:javadoc",
             "debug": false
         }
