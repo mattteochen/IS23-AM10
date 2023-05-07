@@ -31,7 +31,7 @@ public class PlayerConnectorSocket extends AbstractPlayerConnector {
    * @param connector The {@link Socket} instance linked to a player client.
    * @param msgQueue  The message queue instance.
    * @throws NullSocketConnectorException
-   * @throws NullBlockingQueueException
+   * @throws NullBlockingQueueException If providing a null queue when building player connector.
    *
    */
   public PlayerConnectorSocket(Socket connector, LinkedBlockingQueue<AbstractMessage> msgQueue)

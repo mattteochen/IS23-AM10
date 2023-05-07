@@ -1,5 +1,7 @@
 package it.polimi.is23am10.server.controller.exceptions;
 
+import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
+
 /**
  * Custom runtime exception to handle {@link Opcode} deserialization errors.
  *

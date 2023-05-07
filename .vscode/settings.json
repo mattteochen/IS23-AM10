@@ -20,6 +20,10 @@
         {
             "command": "clean compile assembly:single",
             "debug": false
+        },
+        {
+            "command": "javadoc:javadoc",
+            "debug": false
         }
     ],
     "java.checkstyle.version": "10.9.1",

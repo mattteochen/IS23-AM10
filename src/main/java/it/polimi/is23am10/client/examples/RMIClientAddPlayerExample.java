@@ -25,14 +25,13 @@ public class RMIClientAddPlayerExample {
   /**
    * Main method.
    *
-   * @throws RemoteException
-   * @throws NotBoundException
-   * @throws NullBlockingQueueException
-   * @throws NullSocketConnectorException
+   * @throws RemoteException On lookup failure.
+   * @throws NotBoundException On binding failure.
+   * @throws NullBlockingQueueException If providing a null queue when building player connector.
    *
    */
   public static void main(String[] args)
-      throws RemoteException, NotBoundException, NullSocketConnectorException, NullBlockingQueueException {
+      throws RemoteException, NotBoundException, NullBlockingQueueException {
     final Logger logger = LogManager.getLogger(RMIClientAddPlayerExample.class);
     Registry registry = LocateRegistry.getRegistry(AppConfig.getServerRmiPort());
     IServerControllerAction server = (IServerControllerAction) registry.lookup("IServerControllerAction");

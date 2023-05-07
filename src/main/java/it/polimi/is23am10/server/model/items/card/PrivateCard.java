@@ -34,7 +34,7 @@ public class PrivateCard
    * @param usedPrivatePatterns is a list of PrivatePattern used to store the
    *                            already
    *                            used one.
-   * @throws AlreadyInitiatedPatternException
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
    */
   public PrivateCard(List<PrivatePattern<Function<Bookshelf, Integer>>> usedPrivatePatterns)
       throws AlreadyInitiatedPatternException {
@@ -55,8 +55,8 @@ public class PrivateCard
    * 
    * @param matchedBlocksCount The value about how many matches the played has
    *                           achieved inside his/her private card.
-   * @throws NullMatchedBlockCountException
-   * @throws NegativeMatchedBlockCountException
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
    * 
    */
   public void setMatchedBlocksCount(Integer matchedBlocksCount)

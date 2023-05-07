@@ -55,9 +55,6 @@ public final class VirtualPlayer implements Serializable {
   /**
    * Public constructor. Builds VirtualPlayer out of {@link Player}
    * @param p instance of {@link Player} to "virtualize".
-   * @throws NullIndexValueException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws BookshelfGridColIndexOutOfBoundsException
    */
   public VirtualPlayer(Player p) {
     if (p != null) {

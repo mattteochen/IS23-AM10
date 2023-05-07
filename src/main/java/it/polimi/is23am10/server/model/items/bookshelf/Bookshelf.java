@@ -91,9 +91,9 @@ public class Bookshelf implements Serializable {
    *                        the
    *                        grid, there's a map to help us matching the char with
    *                        the {@link TileType}
-   * @throws WrongLengthBookshelfStringException
-   * @throws WrongCharBookshelfStringException
-   * @throws NullPointerException
+   * @throws WrongLengthBookshelfStringException If when building a bookshelf based on string, it is of an invalid length.
+   * @throws WrongCharBookshelfStringException If when building a bookshelf based on string, it contains an invalid character.
+   * @throws NullPointerException Generic NPE.
    */
   public Bookshelf(String bookshelfString)
       throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
@@ -131,9 +131,10 @@ public class Bookshelf implements Serializable {
    * @param row  The bookshelf grid row's value.
    * @param col  The bookshelf grid col's value.
    * @param tile The tile to be set.
-   * @throws NullIndexValueException
-   * @throws BookshelfGridColIndexOutOfBoundsException.
-   * @throws BookshelfGridRowIndexOutOfBoundsException.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullTileException If tile is null.
    * 
    */
   public void setBookshelfGridIndex(Integer row, Integer col, Tile tile)
@@ -167,9 +168,9 @@ public class Bookshelf implements Serializable {
    * @param row The bookshelf grid's row value.
    * @param col The bookshelf grid's col value.
    * @return The tile at the given indexes.
-   * @throws NullIndexValueException
-   * @throws BookshelfGridColIndexOutOfBoundsException.
-   * @throws BookshelfGridRowIndexOutOfBoundsException.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
    * 
    */
   public Tile getBookshelfGridAt(Integer row, Integer col)
@@ -200,13 +201,16 @@ public class Bookshelf implements Serializable {
     return true;
   }
 
+
   /**
    * Retrieve the number of {@link TileType#EMPTY} inside the bookshelf for a
    * given column.
    *
    * @param column The column to be checked
    * @return The number of {@link TileType#EMPTY}
-   * 
+   * @throws BookshelfGridColIndexOutOfBoundsException If bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If index value is null.
    */
   public int getFreeRowsInCol(int column)
       throws BookshelfGridColIndexOutOfBoundsException,

@@ -66,7 +66,7 @@ public class Server {
    * @param rmiServerControllerActionServer An built instance of the implementing
    *                                        class.
    * @param rmiRegistry                     A built instance of the RMI registry.
-   * @throws RemoteException
+   * @throws RemoteException On rebind failure.
    *
    */
   public Server(ServerSocket serverSocket, ExecutorService executorService,
@@ -83,10 +83,9 @@ public class Server {
    * infinity loop listens for clients connections.
    *
    * @param ctx An instance of the server configuration.
-   * @throws RemoteException
    *
    */
-  public void start(AppConfigContext ctx) throws RemoteException {
+  public void start(AppConfigContext ctx) {
     logger.info("Starting Spurious Dragon, try to kill me...");
     // https://www.youtube.com/watch?v=Jo6fKboqfMs&ab_channel=memesammler
 
@@ -109,7 +108,7 @@ public class Server {
   /**
    * Stop the serverSocket.
    *
-   * @throws IOException
+   * @throws IOException On socket closure failing.
    *
    */
   public void stop() throws IOException {

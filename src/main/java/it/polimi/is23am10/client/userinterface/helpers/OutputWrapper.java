@@ -167,9 +167,6 @@ public final class OutputWrapper {
    * @param vw         The virtualView.
    * @param cleanFirst Flag to set if message should be preceded by a console
    *                   clean.
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
    */
   public void show(VirtualView vw, boolean cleanFirst) {
 

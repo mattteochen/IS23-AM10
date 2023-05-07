@@ -138,9 +138,8 @@ public final class ServerControllerSocket implements Runnable {
    * Build the response message and sent it to the client when any game update is
    * available.
    *
-   * @throws IOException
-   * @throws InterruptedException
-   * @throws InvalidMessageTypeException
+   * @throws IOException On output stream failure.
+   * @throws InterruptedException On queue message retrieval failure.
    * 
    */
   protected void update() throws InterruptedException, IOException {
@@ -159,9 +158,9 @@ public final class ServerControllerSocket implements Runnable {
    * contained a derived type, this can be casted at runtime on the need.
    *
    * @return An instance of the command object.
-   * @throws IOException
-   * @throws JsonIOException
-   * @throws JsonSyntaxException
+   * @throws IOException On output stream failure.
+   * @throws JsonIOException On serialization failure due to I/O.
+   * @throws JsonSyntaxException On serialization failure due to malformed JSON. 
    * 
    */
   protected AbstractCommand buildCommand()

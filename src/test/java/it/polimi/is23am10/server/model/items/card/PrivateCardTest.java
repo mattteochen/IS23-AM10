@@ -24,7 +24,7 @@ class PrivateCardTest {
   /**
    * Green path test for constructor.
    *
-   * @throws AlreadyInitiatedPatternException
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
    */
   @Test
   public void constructor_should_create_PrivateCard() throws AlreadyInitiatedPatternException {
@@ -41,7 +41,7 @@ class PrivateCardTest {
    * Testing setPattern throwing exception, when trying
    * to set a new pattern on an already instantiated one.
    *
-   * @throws AlreadyInitiatedPatternException
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
    */
   @Test
   public void setPattern_should_throw_AlreadyInitiatedPatternException() throws AlreadyInitiatedPatternException {
@@ -55,7 +55,7 @@ class PrivateCardTest {
    * Testing exception when setting a null number of
    * matched blocks.
    *
-   * @throws AlreadyInitiatedPatternException
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
    */
   @Test
   public void setMatchedBlocksCount_should_throw_NullMatchedBlockCountException()
@@ -69,7 +69,7 @@ class PrivateCardTest {
    * Testing exception when setting a negative number of
    * matched blocks.
    *
-   * @throws AlreadyInitiatedPatternException
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
    */
   @Test
   public void setMatchedBlocksCount_should_throw_NegativeMatchedBlockCountException()

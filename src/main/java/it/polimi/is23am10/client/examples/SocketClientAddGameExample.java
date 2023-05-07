@@ -25,8 +25,8 @@ public class SocketClientAddGameExample {
   /**
    * Main method.
    *
-   * @throws InterruptedException
-   * @throws IOException
+   * @throws InterruptedException Thrown by timer.
+   * @throws IOException On readline failure.
    *
    */
   public static void main(String[] args)

@@ -33,8 +33,9 @@ public abstract class Client implements Runnable {
   /**
    * Protected constructor for client using Socket as communication method.
    * 
-   * @param pc player connector
-   * @param ui user interface
+   * @param pc Player connector.
+   * @param ui User interface.
+   * @throws UnknownHostException On localhost retrieval failure.
    */
   protected Client(IPlayerConnector pc, UserInterface ui) throws UnknownHostException {
     playerConnector = pc;
@@ -85,7 +86,7 @@ public abstract class Client implements Runnable {
   /**
    * Detected if the use has requested a clean disconnection.
    *
-   * @returns The disconnection flag.
+   * @return The disconnection flag.
    *
    */
   protected boolean hasRequestedDisconnection() {
@@ -93,9 +94,9 @@ public abstract class Client implements Runnable {
   }
 
   /**
-   * Parse the server payload.
+   * Show the message parsed.
    * 
-   * @param pc The socket player connector.
+   * @param msg The message to show.
    *
    */
   protected void showServerMessage(AbstractMessage msg) {
