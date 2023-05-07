@@ -89,8 +89,8 @@ public class RMIClient extends Client {
   }
 
   /**
-   * {@inheritdoc}.
-   * 
+   * {@inheritDoc}
+   *
    */
   @Override
   protected boolean hasJoined() {

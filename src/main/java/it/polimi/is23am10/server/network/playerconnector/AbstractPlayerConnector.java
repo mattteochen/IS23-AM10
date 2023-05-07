@@ -156,7 +156,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
   /**
    * Set the client last snooze time in ms.
    *
-   * @param The snooze ms.
+   * @param lastSnoozeMs The snooze ms.
    *
    */
   public void setLastSnoozeMs(long lastSnoozeMs) {

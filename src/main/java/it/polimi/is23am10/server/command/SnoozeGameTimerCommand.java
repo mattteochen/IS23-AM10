@@ -26,7 +26,7 @@ public class SnoozeGameTimerCommand extends AbstractCommand {
   /**
    * Constructor.
    *
-   * @param playerNamE The player name.
+   * @param playerName The player name.
    * 
    */
   public SnoozeGameTimerCommand(String playerName) {

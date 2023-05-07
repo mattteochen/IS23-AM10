@@ -145,8 +145,6 @@ public abstract class Client implements Runnable {
 
   /**
    * The timer schedule execution class.
-   * 
-   * @param pc The socket player connector.
    *
    */
   protected class AlarmTask extends TimerTask {
@@ -167,8 +165,7 @@ public abstract class Client implements Runnable {
     }
 
     /**
-     * {@inheritdoc}.
-     *
+     * {@inheritDoc}
      *
      */
     public void run() {

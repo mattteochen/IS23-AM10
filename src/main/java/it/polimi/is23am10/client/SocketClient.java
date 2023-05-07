@@ -60,8 +60,8 @@ public class SocketClient extends Client {
   };
 
   /**
-   * {@inheritdoc}.
-   * 
+   * {@inheritDoc}
+   *
    */
   @Override
   protected boolean hasJoined() {
