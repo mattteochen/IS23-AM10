@@ -105,7 +105,6 @@ public class RMIClient extends Client {
       } catch (IOException | InterruptedException e) {
         System.out.println("🛑 " + e.getMessage());
       } catch (NullPlayerNameException | NullPlayerIdException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
@@ -119,7 +118,7 @@ public class RMIClient extends Client {
   protected void handleGameSelection(AbstractPlayerConnector apc, BufferedReader br,
       String selectedPlayerName) throws IOException, InterruptedException, NullPlayerNameException {
         
-        // Executed if I still haven't selected a game
+      // Executed if I still haven't selected a game
       if (apc.getGameId() == null) {
       getAvailableGames(apc);
   
@@ -130,43 +129,62 @@ public class RMIClient extends Client {
       Integer maxPlayers = null;
       switch (command) {
         case "j":
-          String idx = fullCommand.split(" ")[1];
-          if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
-            UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
-            System.out.println("Joining game " + selectedGameId);
-            addPlayer(apc, selectedPlayerName, selectedGameId);
-            try {
-              lookupInit();
-            } catch(NotBoundException e) {
-              userInterface.displayError(new ErrorMessage("Failed to connect to the server, abortig the request", ErrorSeverity.CRITICAL));
-            }
-            runMessageHandler();
-            while(getGameIdRef() == null){
-            }
-            apc.setGameId(getGameIdRef());
-            System.out.println("Joined game "+ selectedGameId);
+          if (fullCommand.split(" ").length > 1) {
+            String idx = fullCommand.split(" ")[1];
+            if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
+              UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
+              System.out.println("Joining game " + selectedGameId);
+              addPlayer(apc, selectedPlayerName, selectedGameId);
+              try {
+                lookupInit();
+              } catch(NotBoundException e) {
+                userInterface.displayError(new ErrorMessage(
+                    "Failed to connect to the server, aborting the request",
+                    ErrorSeverity.CRITICAL));
+              }
+              runMessageHandler();
+              while (getGameIdRef() == null && !getHasDuplicateName()){}
+              if(getHasDuplicateName()) {
+                userInterface.displayError(new ErrorMessage("Failed to add player, retry", ErrorSeverity.CRITICAL));
+                break;
+              }
+              apc.setGameId(getGameIdRef());
+              System.out.println("Joined game "+ selectedGameId);
+            } else {
+              userInterface.displayError(
+                new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
+              }
           } else {
-            userInterface.displayError(new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
+            userInterface.displayError(
+                new ErrorMessage("Insert value of max players", ErrorSeverity.ERROR));
           }
           break;
         case "c":
-          String numMaxPlayers = fullCommand.split(" ")[1];
-          if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
-            maxPlayers = Integer.parseInt(numMaxPlayers);
-            System.out.println("Creating game");
-            startGame(apc, selectedPlayerName, maxPlayers);
-            try {
-              lookupInit();
-            } catch(NotBoundException e) {
-              userInterface.displayError(new ErrorMessage("Failed to connect to the server, abortig the request", ErrorSeverity.CRITICAL));
+          if (fullCommand.split(" ").length > 1){
+            String numMaxPlayers = fullCommand.split(" ")[1];
+            if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
+              maxPlayers = Integer.parseInt(numMaxPlayers);
+              System.out.println("Creating game");
+              startGame(apc, selectedPlayerName, maxPlayers);
+              try {
+                lookupInit();
+              } catch(NotBoundException e) {
+                userInterface.displayError(
+                    new ErrorMessage("Failed to connect to the server, aborting the request",
+                     ErrorSeverity.CRITICAL));
+              }
+              runMessageHandler();
+              while (getGameIdRef() == null){
+              }
+              apc.setGameId(getGameIdRef());
+              System.out.println("Created game");
+            } else {
+              userInterface.displayError(
+                new ErrorMessage("Failed to create game", ErrorSeverity.CRITICAL));
             }
-            runMessageHandler();
-            while(getGameIdRef() == null){
-            }
-            apc.setGameId(getGameIdRef());
-            System.out.println("Created game");
           } else {
-            userInterface.displayError(new ErrorMessage("Failed to create game", ErrorSeverity.CRITICAL));
+            userInterface.displayError(
+                new ErrorMessage("Insert value of max players", ErrorSeverity.ERROR));
           }
           break;
         case "q":
@@ -174,6 +192,7 @@ public class RMIClient extends Client {
           apc.setGameId(null);
           break;
         default:
+          break;
       }
     }
   }

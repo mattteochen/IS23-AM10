@@ -19,6 +19,10 @@ import com.google.gson.reflect.TypeToken;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
@@ -32,7 +36,12 @@ import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConne
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.CommandSyntaxValidator;
 import it.polimi.is23am10.utils.Coordinates;
+import it.polimi.is23am10.utils.ErrorTypeString;
 import it.polimi.is23am10.utils.MovesValidator;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
+import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
+import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 
 import com.google.gson.JsonDeserializationContext;
@@ -80,6 +89,12 @@ public abstract class Client implements Runnable {
    * 
    */
   private boolean requestedDisconnection;
+
+  /**
+   * Duplicate name error flag.
+   * 
+   */
+  private boolean hasDuplicateName;
 
   /**
    * A {@link Gson} instance to serialize and deserialize commands.
@@ -156,6 +171,9 @@ public abstract class Client implements Runnable {
         break;
       case ERROR_MESSAGE:
         userInterface.displayError((ErrorMessage) msg);
+        if(msg.getMessage().equals(ErrorTypeString.ERROR_ADDING_PLAYERS)){
+          setHasDuplicateName(true);
+        }
         break;
       case AVAILABLE_GAMES:
         Type listOfMyClassObject = new TypeToken<ArrayList<VirtualView>>() {}.getType();
@@ -197,6 +215,22 @@ public abstract class Client implements Runnable {
   */ 
   synchronized protected UUID getGameIdRef(){
     return gameIdRef;
+  }
+
+  /**
+   * Duplicate name flag setter.
+   * @param b flag
+   */
+  protected void setHasDuplicateName(boolean b){
+    this.hasDuplicateName = b;
+  }
+
+  /**
+   * Duplicate name flag getter.
+   * @return flag
+   */
+  protected boolean getHasDuplicateName(){
+    return hasDuplicateName;
   }
 
   /**
@@ -277,15 +311,19 @@ public abstract class Client implements Runnable {
 
     switch (command) {
       case "chat":
-        // This selects only the part between double quotes which is gonna be the message sent.
-        String msg = fullCommand.split("\"")[1];
-        // If the second string begins with double quotes,
-        // there's no receiver and the message is broadcast
-        if (fullCommand.split(" ")[1].startsWith("\"")) {
-          sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg));
-        } else {
-          String receiverName = fullCommand.split(" ")[1];
-          sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg, receiverName));
+        if(fullCommand.split(" ").length > 1){
+          if(fullCommand.split("\"").length > 1){
+            // This selects only the part between double quotes which is gonna be the message sent.
+            String msg = fullCommand.split("\"")[1];
+            // If the second string begins with double quotes,
+            // there's no receiver and the message is broadcast
+            if (fullCommand.split(" ")[1].startsWith("\"")) {
+              sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg));
+            } else {
+              String receiverName = fullCommand.split(" ")[1];
+              sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg, receiverName));
+            }
+          }
         }
         break;
       case "logout":
@@ -323,8 +361,8 @@ public abstract class Client implements Runnable {
                 Integer yBoardCoord = coordBoard.charAt(1) - '0';
                 Integer xBookshelfCoord = coordBookshelf.charAt(0) - '0';
                 Integer yBookshelfCoord = coordBookshelf.charAt(1) - '0';
-                Coordinates boardCoord = new Coordinates(xBoardCoord, yBoardCoord);
-                Coordinates bsCoord = new Coordinates(xBookshelfCoord, yBookshelfCoord);
+                Coordinates boardCoord = new Coordinates(yBoardCoord, xBoardCoord);
+                Coordinates bsCoord = new Coordinates(yBookshelfCoord, xBookshelfCoord);
                 moves.put(boardCoord,bsCoord);
               } else {
                 System.out.println("🛑 Invalid syntax of move command.");
@@ -337,14 +375,17 @@ public abstract class Client implements Runnable {
           if (moves.isEmpty()) {
             System.out.println("🛑 No valid moves found.");
           } else {
-            try{
               System.out.println("Chosen moves:" + moves);
-              MovesValidator.validateGameMoves(
-                  moves, virtualView.getActivePlayer().getBookshelf(), virtualView.getGameBoard());
+              try {
+                MovesValidator.validateGameMoves(
+                    moves, virtualView.getActivePlayer().getBookshelf(), virtualView.getGameBoard());
+              } catch (BoardGridRowIndexOutOfBoundsException | BoardGridColIndexOutOfBoundsException
+                  | BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
+                  | WrongMovesNumberException | WrongGameBoardPicksException | NullIndexValueException
+                  | WrongBookShelfPicksException e) {
+                System.out.println("Invalid move: " + e.getMessage());
+              }
               moveTiles(apc, moves);
-            } catch (Exception e) {
-              System.out.println("Invalid move!");
-            }
           }
           break;
         }else{
@@ -369,11 +410,11 @@ public abstract class Client implements Runnable {
     // Select only the string before the space if the client writes more words
     String selectedPlayerName = br.readLine().split(" ")[0];
     Player p = new Player();
+    apc.setPlayer(p);
     try {
-      p.setPlayerName(selectedPlayerName);
-      apc.setPlayer(p);
+      apc.getPlayer().setPlayerName(selectedPlayerName);
     } catch (NullPlayerNameException e) {
-      userInterface.displayError(new ErrorMessage("Null player name", p, ErrorSeverity.ERROR));
+      userInterface.displayError(new ErrorMessage("Null player name", ErrorSeverity.ERROR));
       return null;
     }
     return selectedPlayerName;
@@ -404,40 +445,50 @@ public abstract class Client implements Runnable {
       Integer maxPlayers = null;
       switch (command) {
         case "j":
+        if (fullCommand.split(" ").length > 1) {
           String idx = fullCommand.split(" ")[1];
           if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
-            UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
-            System.out.println("Joining game "+selectedGameId);
-            addPlayer(apc, selectedPlayerName, selectedGameId);
-            while(getGameIdRef() == null){
-            }
-            apc.setGameId(getGameIdRef());
-            System.out.println("Joined game "+selectedGameId);
+              UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
+              System.out.println("Joining game "+selectedGameId);
+              addPlayer(apc, selectedPlayerName, selectedGameId);
+              while (getGameIdRef() == null && !getHasDuplicateName()){}
+              if(getHasDuplicateName()) {
+                userInterface.displayError(new ErrorMessage("Failed to add player, retry", ErrorSeverity.CRITICAL));
+                break;
+              }
+              apc.setGameId(getGameIdRef());
+              System.out.println("Joined game "+selectedGameId);
           } else {
             userInterface.displayError(new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
           }
+        } else {
+          userInterface.displayError(
+                new ErrorMessage("Insert value of max players", ErrorSeverity.ERROR));
+        }
           break;
         case "c":
-          String numMaxPlayers = fullCommand.split(" ")[1];
-          if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
-            maxPlayers = Integer.parseInt(numMaxPlayers);
-            System.out.println("Creating game");
-            startGame(apc, selectedPlayerName, maxPlayers);
-            while(getGameIdRef() == null){
+          if (fullCommand.split(" ").length > 1) {
+            String numMaxPlayers = fullCommand.split(" ")[1];
+            if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
+              maxPlayers = Integer.parseInt(numMaxPlayers);
+              startGame(apc, selectedPlayerName, maxPlayers);
+              while (getGameIdRef() == null){
+              }
+              apc.setGameId(getGameIdRef());
+            } else {
+              userInterface.displayError(new ErrorMessage("Failed to create game", ErrorSeverity.CRITICAL));
             }
-            apc.setGameId(getGameIdRef());
-            System.out.println("Created game");
-            System.out.println(apc.getGameId());
-            System.out.println(apc.getPlayer().getPlayerName());
-          } else {
-            userInterface.displayError(new ErrorMessage("Failed to create game", ErrorSeverity.CRITICAL));
-          }
+        } else {
+          userInterface.displayError(
+                new ErrorMessage("Insert value of max players", ErrorSeverity.ERROR));
+        }
           break;
         case "q":
           apc.getPlayer().setPlayerName(null);
           apc.setGameId(null);
           break;
         default:
+          break;
       }
     }
   }
@@ -453,17 +504,19 @@ public abstract class Client implements Runnable {
    */
   protected void clientRunnerCore(AbstractPlayerConnector pc) throws IOException, NullPlayerNameException, InterruptedException, NullPlayerIdException {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    // Execute if the client is not connected to a game.
-    if (pc.getGameId() == null) {
-      userInterface.displaySplashScreen();
-      // First I'm gonna ask the player name
-      pc.setPlayer(new Player());
+    
+    // First I'm gonna ask the player name
+    if(pc.getPlayer() == null || pc.getPlayer().getPlayerName() == null){
       String pn = null;
-      while(pn == null || pn.equals("")) {
+      userInterface.displaySplashScreen();
+      while (pn == null || pn.equals("")) {
         pn = handlePlayerNameSelection(pc, br);
       }
-      pc.getPlayer().setPlayerName(pn);
       pc.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(pn.getBytes()));
+    }
+
+    // Execute if the client is not connected to a game.
+    if (pc.getGameId() == null) {
       handleGameSelection(pc, br, pc.getPlayer().getPlayerName());
     } else {
       // Executed if the client is connected to a game.

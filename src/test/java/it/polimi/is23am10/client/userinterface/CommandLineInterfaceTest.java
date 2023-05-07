@@ -40,7 +40,7 @@ import it.polimi.is23am10.server.model.score.Score;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
-@Disabled
+
 public class CommandLineInterfaceTest {
   private final PrintStream standardOut = System.out;
   private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
@@ -57,6 +57,7 @@ public class CommandLineInterfaceTest {
   }
 
   @Test
+  @Disabled
   void displaySplashScreen_should_display_splash_screen() {
     cli.displaySplashScreen();
     assertOutput(OutputLevel.INFO, CLIStrings.welcomeString.stripLeading() + "\n" + CLIStrings.joinOrCreateString);
@@ -178,9 +179,9 @@ public class CommandLineInterfaceTest {
 
   @Test
   void displayChatMessage_should_display_private_message() throws NullPlayerNameException, NullPlayerIdException {
-    String textMessage = "valar morghulis";
-    String playerName = "Jaqen H'ghar";
-    String receiverName = "Arya Stark";
+    String textMessage = "valar";
+    String playerName = "Jaqen";
+    String receiverName = "Arya";
     Player p = new Player();
     p.setPlayerID(UUID.nameUUIDFromBytes(playerName.getBytes()));
     p.setPlayerName(playerName);
@@ -189,7 +190,7 @@ public class CommandLineInterfaceTest {
     receiver.setPlayerID(UUID.nameUUIDFromBytes(receiverName.getBytes()));
     receiver.setPlayerName(receiverName);
     
-    ChatMessage m = new ChatMessage(p, textMessage, receiver);
+    ChatMessage m = new ChatMessage(p, textMessage, receiverName);
     cli.displayChatMessage(m);
 
     final String expectedString = String.format(CLIStrings.messageString, playerName, textMessage);

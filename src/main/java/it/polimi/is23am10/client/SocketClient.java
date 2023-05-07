@@ -68,7 +68,6 @@ public class SocketClient extends Client {
       }
     }
 
-    // TODO: integrate custom logger
     System.out.println("🛑 Connection with the server ended");
   }
 
