@@ -2,9 +2,12 @@ package it.polimi.is23am10.client;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.google.gson.Gson;
 
+import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
@@ -42,7 +45,28 @@ public abstract class Client implements Runnable {
     serverAddress = InetAddress.getLocalHost();
     gson = new Gson();
     requestedDisconnection = false;
+    alarm = new Timer();
   }
+
+  /**
+   * Check if the current client has joined a game or not.
+   *
+   * @return The requested flag.
+   *
+   */
+  protected abstract boolean hasJoined();
+
+  /**
+   * Client alarm interval in milliseconds.
+   * 
+   */
+  protected final int ALARM_INTERVAL_MS = 5000;
+
+  /**
+   * Client alarm initial delay in milliseconds.
+   * 
+   */
+  protected final int ALARM_INITIAL_DELAY_MS = 0;
 
   /**
    * Clean disconnection request.
@@ -83,6 +107,11 @@ public abstract class Client implements Runnable {
   protected UserInterface userInterface;
 
   /**
+   * Application timer.
+   */
+  protected Timer alarm;
+
+  /**
    * Detected if the use has requested a clean disconnection.
    *
    * @returns The disconnection flag.
@@ -110,6 +139,39 @@ public abstract class Client implements Runnable {
         userInterface.displayError((ErrorMessage) msg);
         break;
       default:
+    }
+  }
+
+  /**
+   * The timer schedule execution class.
+   * 
+   * @param pc The socket player connector.
+   *
+   */
+  protected class AlarmTask extends TimerTask {
+    /**
+     * The consumer to be executed.
+     *
+     */
+    AlarmConsumer task;
+
+    /**
+     * Constructor.
+     *
+     * @param task The consumer to be assigned.
+     *
+     */
+    public AlarmTask(AlarmConsumer task) {
+      this.task = task;
+    }
+
+    /**
+     * {@inheritdoc}.
+     *
+     *
+     */
+    public void run() {
+      task.start();
     }
   }
 }

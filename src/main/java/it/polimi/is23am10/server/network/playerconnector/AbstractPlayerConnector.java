@@ -7,7 +7,6 @@ import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlocking
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 
 import java.io.Serializable;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -43,6 +42,12 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
   protected BlockingQueue<AbstractMessage> msgQueue;
 
   /**
+   * The client last alarm snooze time in ms truggered by the alarm.
+   *
+   */
+  protected long lastSnoozeMs;
+
+  /**
    * Constructor.
    *
    *
@@ -56,6 +61,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
       throw new NullBlockingQueueException();
     }
     this.msgQueue = msgQueue;
+    this.lastSnoozeMs = System.currentTimeMillis();
   }
 
   /**
@@ -102,6 +108,16 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
   }
 
   /**
+   * Get the client last snooze time in ms.
+   *
+   * @return The ms of the last alarm snooze.
+   *
+   */
+  public long getLastSnoozeMs() {
+    return lastSnoozeMs;
+  }
+
+  /**
    * Add a message from the queue.
    * This blocks undefinably until the queue is available.
    * {@link Game} model instances should leverage this
@@ -135,6 +151,16 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
    */
   public synchronized void setPlayer(Player player) {
     this.player = player;
+  }
+
+  /**
+   * Set the client last snooze time in ms.
+   *
+   * @param The snooze ms.
+   *
+   */
+  public void setLastSnoozeMs(long lastSnoozeMs) {
+    this.lastSnoozeMs = lastSnoozeMs;
   }
 
   /**

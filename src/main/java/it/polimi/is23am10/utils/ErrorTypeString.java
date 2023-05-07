@@ -55,6 +55,12 @@ public final class ErrorTypeString {
   public static final String ERROR_ADDING_HANDLER = "Failed to add game handler";
 
   /**
+   * Message error in snoozing game time handler.
+   *
+   */
+  public static final String ERROR_SNOOZING_TIMER = "Failed snooze player timer";
+
+  /**
    * Message error in adding a new RMI server.
    *
    */
