@@ -26,8 +26,8 @@ class SharedCardTest {
   /**
    * Green path test for constructor.
    *
-   * @throws AlreadyInitiatedPatternException
-   * @throws NotValidScoreBlockValueException
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
    */
   @Test
   public void constructor_should_create_SharedCard() throws AlreadyInitiatedPatternException, NotValidScoreBlockValueException {
@@ -43,8 +43,8 @@ class SharedCardTest {
    * Testing setPattern throwing exception, when trying
    * to set a new pattern on an already instantiated one.
    *
-   * @throws AlreadyInitiatedPatternException
-   * @throws NotValidScoreBlockValueException
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
    */
   @Test
   public void setPattern_should_throw_AlreadyInitiatedPatternException() throws AlreadyInitiatedPatternException, NotValidScoreBlockValueException {
@@ -57,8 +57,8 @@ class SharedCardTest {
   /**
    * Testing exception when setting a null scoreBlock array.
    *
-   * @throws AlreadyInitiatedPatternException
-   * @throws NotValidScoreBlockValueException
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
    */
   @Test
   public void setScoreBlocks_should_throw_NullScoreBlockListException() throws AlreadyInitiatedPatternException, NotValidScoreBlockValueException {
@@ -70,9 +70,9 @@ class SharedCardTest {
   /**
    * Testing Green Path for setScoreBlocks.
    *
-   * @throws AlreadyInitiatedPatternException
-   * @throws NullScoreBlockListException
-   * @throws NotValidScoreBlockValueException
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
    */
   @Test
   public void setScoreBlocks_should_set_scoreblocks()

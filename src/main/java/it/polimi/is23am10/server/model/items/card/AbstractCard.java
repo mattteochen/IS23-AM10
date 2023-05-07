@@ -13,8 +13,6 @@ import it.polimi.is23am10.server.model.pattern.AbstractPattern;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  * 
- * @param T The type of the assigned
- *          {@link AbstractPattern}.
  */
 public abstract class AbstractCard<R, T extends AbstractPattern<R>> implements Serializable {
 
@@ -31,7 +29,7 @@ public abstract class AbstractCard<R, T extends AbstractPattern<R>> implements S
    * Only the derived class can set the pattern.
    *
    * @param pattern The pattern to assign.
-   * @throws AlreadyInitiatedPatternException.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one. If the pattern is already initiated.
    */
   protected void setPattern(T pattern) throws AlreadyInitiatedPatternException {
     if (this.pattern != null) {

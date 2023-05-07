@@ -30,9 +30,9 @@ public class BookshelfTest {
   /**
    * Testing empty constructor. It should set all tiles to empty.
    *
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
    */
   @Test
   public void constructor_should_create_Bookshelf()
@@ -53,10 +53,10 @@ public class BookshelfTest {
   /**
    * Testing copy constructor.
    *
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
-   * @throws NullTileException
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws NullTileException If the tile is null.
    */
   @Test
   public void copyConstructor_should_copy_Bookshelf()
@@ -107,12 +107,12 @@ public class BookshelfTest {
   /**
    * Testing the string-based constructor. Green path.
    *
-   * @throws NullPointerException
-   * @throws WrongLengthBookshelfStringException
-   * @throws WrongCharBookshelfStringException
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
+   * @throws NullPointerException Generic NPE.
+   * @throws WrongLengthBookshelfStringException If when building a bookshelf based on string, it is of an invalid length.
+   * @throws WrongCharBookshelfStringException If when building a bookshelf based on string, it contains an invalid character.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
    */
   @Test
   public void string_constructor_should_create_Bookshelf()
@@ -207,10 +207,10 @@ public class BookshelfTest {
   /**
    * Testing setBookshelfGridIndex + getBookShelfGridAt green path.
    *
-   * @throws NullTileException
-   * @throws NullIndexValueException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws BookshelfGridColIndexOutOfBoundsException
+   * @throws NullTileException If the tile is null.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
    */
   @Test
   public void getBookShelfGridAt_should_get_Tile()

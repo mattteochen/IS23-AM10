@@ -76,7 +76,7 @@ public interface IServerControllerAction extends Remote {
    *
    * @param connector The connector to a player.
    * @param command   The command to be executed.
-   * @throws RemoteException
+   * @throws RemoteException On RMI failure.
    *
    */
   void execute(AbstractPlayerConnector connector, AbstractCommand command) throws RemoteException;
@@ -86,8 +86,8 @@ public interface IServerControllerAction extends Remote {
    * This is intended to be used under the RMI connection protocol when the client's playerConnector has no power to read the msg queue.
    *
    * @param command   The command to be executed.
-   * @returns an {@link AvailableGamesMessage} responce.
-   * @throws RemoteException
+   * @return an {@link AvailableGamesMessage} response.
+   * @throws RemoteException On RMI failure.
    *
    */
   AvailableGamesMessage execute(GetAvailableGamesCommand command) throws RemoteException;

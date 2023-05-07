@@ -3,6 +3,8 @@ package it.polimi.is23am10.server.command;
 import it.polimi.is23am10.utils.Coordinates;
 import java.util.Map;
 import java.util.UUID;
+import it.polimi.is23am10.server.model.items.board.Board;
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
 
 /**
  * The move tiles command class definition.

@@ -21,11 +21,11 @@ public class PlayerConnectorRmi extends AbstractPlayerConnector {
    * Constructor.
    *
    * @param msgQueue The message queue instance.
-   * @throws NullBlockingQueueException
+   * @throws NullBlockingQueueException If providing a null queue when building player connector.
    *
    */
   public PlayerConnectorRmi(LinkedBlockingQueue<AbstractMessage> msgQueue)
-      throws NullSocketConnectorException, NullBlockingQueueException {
+      throws NullBlockingQueueException {
     super(msgQueue);
   }
 }

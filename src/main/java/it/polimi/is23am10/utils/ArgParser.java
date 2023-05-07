@@ -87,7 +87,7 @@ public class ArgParser {
    * @throws MissingParameterException            for missing param.
    * @throws InvalidPortNumberException           if port not in bounds.
    * @throws NumberFormatException                if int not found.
-   * @throws InvalidMaxConnectionsNumberException
+   * @throws InvalidMaxConnectionsNumberException if the max number of connections is invalid.
    * 
    */
   public static void parse(String[] args)

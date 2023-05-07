@@ -60,11 +60,11 @@ public class MovesValidator {
    * @param c     the coordinate to be checked
    * @param board the game board to check for empty tiles
    * @return true if there's an empty side, false otherwise
-   * @throws BoardGridRowIndexOutOfBoundsException if the row index is out of
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds. if the row index is out of
    *                                               bounds
-   * @throws BoardGridColIndexOutOfBoundsException if the column index is out of
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds. if the column index is out of
    *                                               bounds
-   * @throws NullIndexValueException               if the value at the given index
+   * @throws NullIndexValueException If the index provided is null.               if the value at the given index
    *                                               is null
    */
   private static boolean hasEmptySide(Coordinates c, Board board)
@@ -109,13 +109,13 @@ public class MovesValidator {
    *
    * @param moves     the map of coordinates representing the bookshelf picks
    * @param bookShelf the bookshelf to check the picks against
-   * @throws WrongBookShelfPicksException              if the bookshelf picks are
+   * @throws WrongBookShelfPicksException If the game moves are invalid because of bookshelf placement.              if the bookshelf picks are
    *                                                   invalid
-   * @throws BookshelfGridColIndexOutOfBoundsException if the column index is out
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds. if the column index is out
    *                                                   of bounds
-   * @throws BookshelfGridRowIndexOutOfBoundsException if the row index is out of
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds. if the row index is out of
    *                                                   bounds
-   * @throws NullIndexValueException                   if the value at the given
+   * @throws NullIndexValueException If the index provided is null.                   if the value at the given
    *                                                   index is null
    */
   protected static void validateBookShelfPicks(
@@ -169,13 +169,13 @@ public class MovesValidator {
    * @param moves the map of coordinates to coordinates representing the moves
    *              made on the board
    * @param board the game board to validate the moves on
-   * @throws WrongGameBoardPicksException          if the picks made on the board
+   * @throws WrongGameBoardPicksException If the game moves are invalid because of board picking.          if the picks made on the board
    *                                               are invalid
-   * @throws BoardGridRowIndexOutOfBoundsException if a row index in the moves is
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds. if a row index in the moves is
    *                                               out of bounds of the board
-   * @throws BoardGridColIndexOutOfBoundsException if a column index in the moves
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds. if a column index in the moves
    *                                               is out of bounds of the board
-   * @throws NullIndexValueException               if a null coordinate is present
+   * @throws NullIndexValueException If the index provided is null.               if a null coordinate is present
    *                                               in the moves
    */
   protected static void validateGameBoardPicks(
@@ -241,26 +241,26 @@ public class MovesValidator {
    *                  made on the board
    * @param bookshelf the bookshelf to validate the moves on
    * @param board     the game board to validate the moves on
-   * @throws WrongMovesNumberException                 if the number of moves made
+   * @throws WrongMovesNumberException If the game moves are in an illegal number.                 if the number of moves made
    *                                                   is less than 1 or greater
    *                                                   than 3
-   * @throws WrongGameBoardPicksException              if the picks made on the
+   * @throws WrongGameBoardPicksException If the game moves are invalid because of board picking.              if the picks made on the
    *                                                   board are invalid
-   * @throws BoardGridRowIndexOutOfBoundsException     if a row index in the moves
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.     if a row index in the moves
    *                                                   is out of bounds of the
    *                                                   board
-   * @throws BoardGridColIndexOutOfBoundsException     if a column index in the
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.     if a column index in the
    *                                                   moves is out of bounds of
    *                                                   the board
-   * @throws NullIndexValueException                   if a null coordinate is
+   * @throws NullIndexValueException If the index provided is null.                   if a null coordinate is
    *                                                   present in the moves
-   * @throws BookshelfGridColIndexOutOfBoundsException if a column index in the
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds. if a column index in the
    *                                                   moves is out of bounds of
    *                                                   the bookshelf
-   * @throws BookshelfGridRowIndexOutOfBoundsException if a row index in the moves
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds. if a row index in the moves
    *                                                   is out of bounds of the
    *                                                   bookshelf
-   * @throws WrongBookShelfPicksException              if the picks made on the
+   * @throws WrongBookShelfPicksException If the game moves are invalid because of bookshelf placement.              if the picks made on the
    *                                                   bookshelf are invalid
    */
   public static void validateGameMoves(

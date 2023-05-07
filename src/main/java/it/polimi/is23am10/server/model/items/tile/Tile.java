@@ -65,7 +65,7 @@ public class Tile implements Serializable {
   /**
    * The method that allows us to manually change the type of a specific Tile.
    * 
-   * @throws NullPointerException
+   * @throws NullPointerException Generic NPE.
    * 
    * @param tt The tile type we want to set for the tile.
    */

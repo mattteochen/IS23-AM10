@@ -1,5 +1,7 @@
 package it.polimi.is23am10.server.model.player.exceptions;
 
+import it.polimi.is23am10.server.model.player.Player;
+
 /**
  * Null player score exception.
  * Can be used public methods of {@link Player}.
