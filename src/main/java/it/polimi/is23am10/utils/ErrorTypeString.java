@@ -35,7 +35,7 @@ public final class ErrorTypeString {
    * Message error in executing a command.
    *
    */
-  public static final String ERROR_INTERRUPTED = "Failed to execute";
+  public static final String ERROR_INTERRUPTED = "Thread interruption";
 
   /**
    * Message error in executing a move chosen by the client.
@@ -55,8 +55,20 @@ public final class ErrorTypeString {
   public static final String ERROR_ADDING_HANDLER = "Failed to add game handler";
 
   /**
+   * Message error in snoozing game time handler.
+   *
+   */
+  public static final String ERROR_SNOOZING_TIMER = "Failed snooze player timer";
+
+  /**
    * Message error in adding a new RMI server.
    *
    */
   public static final String ERROR_RMI_EXPOSURE = "Failed to start RMI server";
+
+  /**
+   * Message error in game model fault.
+   *
+   */
+  public static final String ERROR_GAME_STATE = "Severe game state failure";
 }
