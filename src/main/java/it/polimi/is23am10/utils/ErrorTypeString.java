@@ -107,8 +107,26 @@ public final class ErrorTypeString {
   public static final String ERROR_ADDING_HANDLER = "Failed to add game handler";
 
   /**
+   * Message error on failure while pushing game updates in player queues.
+   *
+   */
+  public static final String ERROR_UPDATING_GAME = "Failed to deliver game snapshot to user.";
+
+  /**
    * Message error in adding a new RMI player connector.
    *
    */
   public static final String ERROR_RMI_EXPOSURE = "Failed to rebind RMI player connector";
+
+  /**
+   * Message error in snoozing game time handler.
+   *
+   */
+  public static final String ERROR_SNOOZING_TIMER = "Failed snooze player timer";
+
+  /**
+   * Message error in game model fault.
+   *
+   */
+  public static final String ERROR_GAME_STATE = "Severe game state failure";
 }

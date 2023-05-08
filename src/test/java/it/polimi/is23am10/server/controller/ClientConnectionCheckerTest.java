@@ -6,6 +6,7 @@ import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.game.Game;
 import it.polimi.is23am10.server.network.gamehandler.GameHandler;
+import it.polimi.is23am10.server.network.gamehandler.exceptions.GameSnapshotUpdateException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
@@ -62,7 +63,7 @@ class ClientConnectionCheckerTest {
   }
 
   @Test
-  void CHECK_ALL_PLAYERS_CONNECTION_should_PERFORM_CONNECTION_CHECK() throws NullSocketConnectorException, NullBlockingQueueException {
+  void CHECK_ALL_PLAYERS_CONNECTION_should_PERFORM_CONNECTION_CHECK() throws NullSocketConnectorException, NullBlockingQueueException, GameSnapshotUpdateException {
     Socket socket = new Socket();
     PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
     AbstractCommand cmd = new StartGameCommand("player", 2);
@@ -85,7 +86,7 @@ class ClientConnectionCheckerTest {
       NullPlayerPrivateCardException, NullPlayerScoreBlocksException,DuplicatePlayerNameException,
       AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException,
       NullNumOfPlayersException, NullAssignedPatternException, FullGameException,
-      PlayerNotFoundException, NotValidScoreBlockValueException, InterruptedException {
+      PlayerNotFoundException, NotValidScoreBlockValueException, InterruptedException, GameSnapshotUpdateException {
 
     AbstractPlayerConnector steve = new PlayerConnectorSocket(new Socket(), new LinkedBlockingQueue<>());
     AbstractPlayerConnector mike = new PlayerConnectorSocket(new Socket(), new LinkedBlockingQueue<>());
