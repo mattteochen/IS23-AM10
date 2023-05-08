@@ -5,7 +5,6 @@ import it.polimi.is23am10.server.model.factory.PlayerFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
-import it.polimi.is23am10.server.model.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidPlayersNumberException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;

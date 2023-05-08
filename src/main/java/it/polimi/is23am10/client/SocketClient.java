@@ -8,8 +8,11 @@ import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 
+import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
+import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
+import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 
@@ -22,6 +25,7 @@ import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class SocketClient extends Client {
+
   /**
    * Public constructor for client using Socket as communication method.
    * 
@@ -33,18 +37,58 @@ public class SocketClient extends Client {
   }
 
   /**
+   * Socket alarm snoozer.
+   * 
+   */
+  protected AlarmConsumer snoozer = () -> {
+    //TODO: refactor after this https://github.com/mattteochen/IS23-AM10/issues/121
+    //skip if the client has not joined the game: server won't have any connector for the current client
+    if (!hasJoined()) {
+      return;
+    }
+    try {
+      PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
+      SnoozeGameTimerCommand cmd = new SnoozeGameTimerCommand(playerConnectorSocket.getPlayer().getPlayerName());
+      String req = gson.toJson(cmd);
+      PrintWriter epson = new
+      PrintWriter(playerConnectorSocket.getConnector().getOutputStream(), true,
+      StandardCharsets.UTF_8);
+      epson.println(req);
+    } catch(IOException e) {
+      System.out.println("🛑 " + e.getMessage());
+    }
+  };
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected boolean hasJoined() {
+    //TODO: consider further checks as gameID
+    PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
+    return (playerConnectorSocket.getPlayer() != null &&
+      playerConnectorSocket.getPlayer().getPlayerName() != null);
+  }
+
+  /**
    * Client core cycle.
    * Send user requested commands and read updates.
    * 
    */
   @Override
   public void run() {
+
+    alarm.scheduleAtFixedRate(new AlarmTask(snoozer),
+      ALARM_INITIAL_DELAY_MS, ALARM_INTERVAL_MS);
+
     // PlayerConnector's msg queue is not used at this time as we don't have multi
     // source message inputs to handle,
     // hence there is no need to buffer them as at server level. Here we can just
     // live update the view upon receiving an update in a FIFO manner.
     // Consider using a lighter connector.
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
+
     while (playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()) {
 
       // TODO: implement user requests

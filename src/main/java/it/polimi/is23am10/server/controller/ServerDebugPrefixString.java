@@ -36,4 +36,10 @@ public final class ServerDebugPrefixString {
    *
    */
   public static final String MOVE_TILES_COMMAND_PREFIX = "MOVE_TILES ->";
+
+  /**
+   * {@link Opcode#GAME_TIMER} prefix string.
+   *
+   */
+  public static final String SNOOZE_TIMER_COMMAND_PREFIX = "SNOOZE_TIMER ->";
 }

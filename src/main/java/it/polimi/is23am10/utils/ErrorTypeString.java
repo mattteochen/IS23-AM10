@@ -46,13 +46,7 @@ public final class ErrorTypeString {
    * Message error on failure while pushing messages in player queues.
    *
    */
-  public static final String ERROR_INTERRUPTED = "Failed to deliver messages to user.";
-
-  /**
-   * Message error on failure while pushing game updates in player queues.
-   *
-   */
-  public static final String ERROR_UPDATING_GAME = "Failed to deliver game snapshot to user.";
+  public static final String ERROR_INTERRUPTED = "Thread interruption";
 
   /**
    * Message error in executing a move chosen by the client.

@@ -10,6 +10,7 @@ import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.server.model.factory.PlayerFactory;
@@ -610,5 +611,41 @@ class ServerControllerActionTest {
     playerConnector.getPlayer().setPlayerName(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max");
     playerConnector.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve".getBytes() : "Max".getBytes()));
     assertFalse(handler.getGame().getGameBoard().getTileAt(1, 3).isEmpty());
+  }
+
+  @Test
+  void SNOOZE_TIMER_CONSUMER_should_SNOOZE_TIMER()
+      throws NullSocketConnectorException, NullBlockingQueueException, InterruptedException {
+    Socket socket = new Socket();
+    PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
+    AbstractCommand cmd = new StartGameCommand("Steve", 2);
+    AbstractCommand snoozecmd = new SnoozeGameTimerCommand("Steve");
+
+    long snooze1 = playerConnector.getLastSnoozeMs();
+    serverControllerAction.startConsumer.accept(logger, playerConnector, cmd);
+
+    Thread.sleep(1000);
+
+    serverControllerAction.snoozeTimerConsumer.accept(logger, playerConnector, snoozecmd);
+    long snooze2 = playerConnector.getLastSnoozeMs();
+    assertTrue(snooze2 > snooze1);
+  }
+
+  @Test
+  void SNOOZE_TIMER_CONSUMER_should_NOT_SNOOZE_UNKNOWN_PLAYER_TIMER()
+      throws NullSocketConnectorException, NullBlockingQueueException, InterruptedException {
+    Socket socket = new Socket();
+    PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
+    AbstractCommand cmd = new StartGameCommand("Steve", 2);
+    AbstractCommand snoozecmd = new SnoozeGameTimerCommand("Stevee");
+
+    long snooze1 = playerConnector.getLastSnoozeMs();
+    serverControllerAction.startConsumer.accept(logger, playerConnector, cmd);
+
+    Thread.sleep(1000);
+
+    serverControllerAction.snoozeTimerConsumer.accept(logger, playerConnector, snoozecmd);
+    long snooze2 = playerConnector.getLastSnoozeMs();
+    assertTrue(snooze2 == snooze1);
   }
 }

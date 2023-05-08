@@ -5,8 +5,10 @@ import java.rmi.registry.Registry;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.command.AbstractCommand;
+import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
@@ -51,6 +53,24 @@ public class RMIClient extends Client {
   protected boolean hasJoined;
 
   /**
+   * Rmi alarm snoozer.
+   * 
+   */
+  protected AlarmConsumer snoozer = () -> {
+    //TODO: refactor after this https://github.com/mattteochen/IS23-AM10/issues/121
+    if (!hasJoined()) {
+      return;
+    }
+    try {
+      PlayerConnectorRmi playerConnectorRmi = (PlayerConnectorRmi) playerConnector;
+      SnoozeGameTimerCommand cmd = new SnoozeGameTimerCommand(playerConnectorRmi.getPlayer().getPlayerName());
+      serverControllerActionServer.execute(playerConnectorRmi, cmd);
+    } catch(RemoteException e) {
+      System.out.println("🛑 " + e.getMessage());
+    }
+  };
+
+  /**
    * Public constructor for client using RMI as communication method.
    * 
    * @param pc   Player connector.
@@ -66,6 +86,18 @@ public class RMIClient extends Client {
     playerConnectorServer = pcs;
     serverControllerActionServer = scas;
     rmiRegistry = reg;
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected boolean hasJoined() {
+    //TODO: consider further checks as gameID
+    PlayerConnectorRmi playerConnectorRmi = (PlayerConnectorRmi) playerConnector;
+    return (playerConnectorRmi.getPlayer() != null &&
+      playerConnectorRmi.getPlayer().getPlayerName() != null);
   }
 
   /**
@@ -86,6 +118,10 @@ public class RMIClient extends Client {
    */
   @Override
   public void run() {
+
+    alarm.scheduleAtFixedRate(new AlarmTask(snoozer),
+      ALARM_INITIAL_DELAY_MS, ALARM_INTERVAL_MS);
+
     final PlayerConnectorRmi playerConnectorRmi = (PlayerConnectorRmi) playerConnector;
 
     while (!hasRequestedDisconnection()) {
@@ -130,9 +166,6 @@ public class RMIClient extends Client {
         AbstractMessage msg = playerConnectorServer.getMessageFromQueue();
         if (msg != null) {
           showServerMessage(msg);
-        } else {
-          // TODO: replace with custom logger
-          System.out.println("🛑 Received null message");
         }
       } catch (InterruptedException | RemoteException e) {
         // TODO: replace with custom logger

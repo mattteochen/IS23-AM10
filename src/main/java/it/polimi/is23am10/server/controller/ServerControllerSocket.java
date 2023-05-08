@@ -14,10 +14,10 @@ import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
-import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
@@ -30,7 +30,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -204,6 +203,8 @@ public final class ServerControllerSocket implements Runnable {
           return context.deserialize(jsonObject, MoveTilesCommand.class);
         case "it.polimi.is23am10.server.command.GetAvailableGamesCommand":
           return context.deserialize(jsonObject, GetAvailableGamesCommand.class);
+        case "it.polimi.is23am10.server.command.SnoozeGameTimerCommand":
+          return context.deserialize(jsonObject, SnoozeGameTimerCommand.class);
         default:
           throw new JsonParseException("Unknown class name: " + className);
       }
