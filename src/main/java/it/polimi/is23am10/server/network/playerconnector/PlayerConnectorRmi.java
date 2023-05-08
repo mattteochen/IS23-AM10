@@ -4,7 +4,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
-import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 
 /**
  * The player connector class definition.

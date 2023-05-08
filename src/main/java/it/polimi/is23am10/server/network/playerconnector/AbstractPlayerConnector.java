@@ -7,7 +7,6 @@ import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlocking
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 
 import java.io.Serializable;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -88,6 +87,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
     if (msgQueue.isEmpty()) {
       return null;
     }
+    //synch is performed by the collection
     return (msgQueue.take());
   }
 
@@ -97,7 +97,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
    *
    */
   @Override
-  public int getMsgQueueSize() {
+  public synchronized int getMsgQueueSize() {
     return msgQueue.size();
   }
 
@@ -113,6 +113,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
    */
   public void addMessageToQueue(AbstractMessage message) throws InterruptedException {
     if (message != null) {
+      //sync is performed by the collection
       msgQueue.put(message);
     }
   }

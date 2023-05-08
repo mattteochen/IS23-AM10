@@ -210,7 +210,7 @@ class ServerControllerSocketTest {
     when(mockSocket.getOutputStream()).thenReturn(outputStream);
     controller.update();
     verify(playerConnector, times(1)).getMessageFromQueue();
-    verify(playerConnector, times(1)).getConnector();
+    verify(playerConnector, times(2)).getConnector();
     verify(mockSocket, times(1)).getOutputStream();
   }
 
