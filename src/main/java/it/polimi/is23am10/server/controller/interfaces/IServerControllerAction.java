@@ -4,6 +4,7 @@ import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
@@ -13,6 +14,7 @@ import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
@@ -56,6 +58,7 @@ import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -236,6 +239,10 @@ public interface IServerControllerAction extends Remote {
         // to avoid wrong parameters in connectors if any exception
         // will be thrown from the model.
         gameHandler.getGame().addPlayer(playerName);
+        //if started, handle active player
+        if (gameHandler.getGame().getStatus() == GameStatus.STARTED) {
+          gameHandler.updateCurrentPlayerHandler();
+        }
 
         final Player playerRef = gameHandler.getGame().getPlayerByName(playerName);
 
@@ -357,12 +364,23 @@ public interface IServerControllerAction extends Remote {
     try {
       MoveTilesCommand mtCommand = (MoveTilesCommand) command;
       GameHandler handler = ServerControllerState.getGameHandlerByUUID(mtCommand.getGameId());
+
+      //don't allow inactive players calls
+      if (!playerConnector.getPlayer().getIsConnected()) {
+        return null;
+      }
+
       // I check that the player performing the action is the one actually set as
       // active player
       if (handler.getGame().getActivePlayer().equals(playerConnector.getPlayer())) {
         handler.getGame().activePlayerMove(mtCommand.getMoves());
+
+        //update the current player handler stats
+        handler.updateCurrentPlayerHandler();
+
         handler.pushGameState();
       }
+
       logger.info("{} Operated Tile move for {} in game {}",
           ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
           handler.getGame().getActivePlayer().getPlayerName(),
@@ -397,6 +415,39 @@ public interface IServerControllerAction extends Remote {
               ErrorTypeString.ERROR_INTERRUPTED, e);
         }
       }
+    }
+    return null;
+  };
+
+  /**
+   * The {@link Opcode#GAME_TIMER} command callback worker.
+   *
+   */
+  final ControllerConsumer<Void, AbstractCommand> snoozeTimerConsumer = (logger, playerConnector, command) -> {
+    try {
+      SnoozeGameTimerCommand cmd = (SnoozeGameTimerCommand) command;
+      //retrive the playerconnector from the state pool.
+      Optional<AbstractPlayerConnector> pc = ServerControllerState.getPlayersPool().stream()
+        .filter(p -> p.getPlayer().getPlayerName().equals(cmd.getPlayerName()))
+        .findFirst();
+      if (pc.isEmpty()) {
+        logger.info("{} Can not snooze timer, unknown player name {}",
+            ServerDebugPrefixString.SNOOZE_TIMER_COMMAND_PREFIX,
+            cmd.getPlayerName());
+        return null;
+      }
+      //don't allow inactive players calls
+      if (!pc.get().getPlayer().getIsConnected()) {
+        return null;
+      }
+      pc.get().setLastSnoozeMs(System.currentTimeMillis());
+      logger.info("{} Operated timer snooze for {}",
+          ServerDebugPrefixString.SNOOZE_TIMER_COMMAND_PREFIX,
+          cmd.getPlayerName());
+    } catch (NullPointerException e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.SNOOZE_TIMER_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_SNOOZING_TIMER, e);
     }
     return null;
   };

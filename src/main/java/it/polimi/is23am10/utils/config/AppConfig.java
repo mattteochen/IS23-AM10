@@ -107,6 +107,11 @@ public final class AppConfig {
   private static String serverAddress = "localhost";
 
   /**
+   * The maximum inactivity time allowed to a player when playing a game turn.
+   */
+  private static long maxInactivityTimeMs = 1000 * 60 * 2;
+
+  /**
    * Server port setter.
    *
    * @param p port number.
@@ -207,6 +212,15 @@ public final class AppConfig {
   }
 
   /**
+   * Max inactivity time setter.
+   *
+   * @param time max inactivity time in ms.
+   */
+  public static void setMaxInactivityTimeMs(long time) {
+    maxInactivityTimeMs = time;
+  }
+
+  /**
    * Server port getter.
    *
    * @return The instantiated server port.
@@ -294,5 +308,15 @@ public final class AppConfig {
    */
   public static boolean getShowDebug() {
     return showDebug;
+  }
+
+  /**
+   * Max inactivity time getter.
+   *
+   * @return The max inactivity time.
+   * 
+   */
+  public static long getMaxInactivityTime() {
+    return maxInactivityTimeMs;
   }
 }
