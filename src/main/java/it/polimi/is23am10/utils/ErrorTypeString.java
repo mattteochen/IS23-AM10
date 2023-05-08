@@ -35,7 +35,7 @@ public final class ErrorTypeString {
    * Message error in executing a command.
    *
    */
-  public static final String ERROR_INTERRUPTED = "Failed to execute";
+  public static final String ERROR_INTERRUPTED = "Thread interruption";
 
   /**
    * Message error in executing a move chosen by the client.
@@ -65,4 +65,10 @@ public final class ErrorTypeString {
    *
    */
   public static final String ERROR_RMI_EXPOSURE = "Failed to start RMI server";
+
+  /**
+   * Message error in game model fault.
+   *
+   */
+  public static final String ERROR_GAME_STATE = "Severe game state failure";
 }

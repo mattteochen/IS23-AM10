@@ -17,6 +17,7 @@ import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
+import it.polimi.is23am10.utils.ErrorTypeString;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 /**
@@ -139,9 +140,9 @@ public final class ClientConnectionChecker implements Runnable {
       NullGameHandlerInstance | BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
       | NullIndexValueException | NullPlayerBookshelfException | NullScoreBlockListException | NullPointerException
       | NullMatchedBlockCountException | NegativeMatchedBlockCountException e) {
-      logger.error("Server status corrupted {}", e);
+      logger.error("{} {}", ErrorTypeString.ERROR_GAME_STATE, e);
     } catch(InterruptedException e) {
-      logger.error("Can not add message to player queue {}", e);
+      logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
     }
   }
 
@@ -169,7 +170,7 @@ public final class ClientConnectionChecker implements Runnable {
                 connectorRef.addMessageToQueue(new ErrorMessage("You have been disconnected due to inactivity", h.getPlayer(), ErrorSeverity.ERROR));
               } else {
                 logger.error(
-                  "Failed to push warning message, can not find player connector from player");
+                  "{}: Failed to push warning message, can not find player connector from player", ErrorTypeString.ERROR_GAME_STATE);
               }
 
               //call next turn if the disconnected player is the active player
@@ -182,7 +183,7 @@ public final class ClientConnectionChecker implements Runnable {
                   new ErrorMessage("You will be disconnected for inactivity in " + String.valueOf(MAX_TURN_INACTIVITY_MS/1000) + " seconds",
                     h.getPlayer(), ErrorSeverity.WARNING));
               } else {
-                logger.error("Failed to push warning message, can not find player connector from player");
+                logger.error("{}: Failed to push warning message, can not find player connector from player", ErrorTypeString.ERROR_GAME_STATE);
               }
             }
           }
@@ -192,9 +193,9 @@ public final class ClientConnectionChecker implements Runnable {
       NullGameHandlerInstance | BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
       | NullIndexValueException | NullPlayerBookshelfException | NullScoreBlockListException | NullPointerException
       | NullMatchedBlockCountException | NegativeMatchedBlockCountException e) {
-      logger.error("Server status corrupted {}", e);
+      logger.error("{} {}", ErrorTypeString.ERROR_GAME_STATE, e);
     } catch(InterruptedException e) {
-      logger.error("Can not add message to player queue {}", e);
+      logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
     }
   }
 
