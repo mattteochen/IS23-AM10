@@ -9,6 +9,8 @@ import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.Server;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
@@ -72,18 +74,27 @@ public class App {
         UserInterface userInterface = ctx.getShowGUI() ? new GraphicUserInterface() : new CommandLineInterface(ctx.getShowDebug());
         Client client;
         if (ctx.getUseRMI()) {
-          Registry registry = LocateRegistry.getRegistry(ctx.getServerRmiPort());
-          // TODO: Lookup for server controller action. Evaluate possible passing it over
-          PlayerConnectorRmi playerConnector = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
-          IServerControllerAction serverControllerActionServerRef = (IServerControllerAction) registry
-              .lookup(IServerControllerAction.class.getName());
-          client = new RMIClient(playerConnector, userInterface, null, serverControllerActionServerRef, registry);
+          try {
+            Registry registry = LocateRegistry.getRegistry(ctx.getServerRmiPort());
+            // TODO: Lookup for server controller action. Evaluate possible passing it over
+            PlayerConnectorRmi playerConnector = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
+            IServerControllerAction serverControllerActionServerRef = (IServerControllerAction) registry
+                .lookup(IServerControllerAction.class.getName());
+            client = new RMIClient(playerConnector, userInterface, null, serverControllerActionServerRef, registry);
+            client.run();
+          } catch (Exception e) {
+            userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
+          }
         } else {
-          Socket socket = new Socket(ctx.getServerAddress(), ctx.getServerSocketPort());
-          PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
-          client = new SocketClient(playerConnector, userInterface);
+          try {
+            Socket socket = new Socket(ctx.getServerAddress(), ctx.getServerSocketPort());
+            PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
+            client = new SocketClient(playerConnector, userInterface);
+            client.run();
+          } catch (Exception e) {
+            userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
+          }
         }
-        client.run();
       }
     } catch (NumberFormatException | InvalidArgumentException | MissingParameterException | InvalidPortNumberException
         | InvalidMaxConnectionsNumberException e) {
@@ -92,8 +103,6 @@ public class App {
       logger.error("Failed to retrieve server address");
     } catch (IOException e) {
       logger.error("Cannot launch server.", e);
-    } catch (NullBlockingQueueException | NullSocketConnectorException | NotBoundException e) {
-      logger.error("Cannot launch client.", e);
     }
   }
 }
