@@ -20,6 +20,7 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
+import it.polimi.is23am10.server.network.gamehandler.exceptions.GameSnapshotUpdateException;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.server.network.messages.GameMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
@@ -132,10 +133,10 @@ public class GameHandler {
   /**
    * Push a new game state to the message queue for each connected player.
    *
-   * @throws InterruptedException On queue message insertion failure.
+   * @throws GameSnapshotUpdateException On queue message insertion failure.
    *
    */
-  public void pushGameState() throws InterruptedException {
+  public void pushGameState() throws GameSnapshotUpdateException {
     // iterating over the Collections.synchronizedList requires synch.
     synchronized (playerConnectors) {
       for (AbstractPlayerConnector pc : playerConnectors) {
@@ -147,7 +148,11 @@ public class GameHandler {
           .forEach(p -> p.obfuscatePrivateCard());
         }
         // synch is performed by the blocking queue.
-        pc.addMessageToQueue(new GameMessage(gameCopy));
+        try {
+          pc.addMessageToQueue(new GameMessage(gameCopy));
+        } catch (InterruptedException e) {
+          throw new GameSnapshotUpdateException(game);
+        }
       }
     }
   }

@@ -95,7 +95,7 @@ public final class ServerControllerSocket implements Runnable {
    */
   @Override
   public void run() {
-    
+
     while (playerConnector != null && playerConnector.getConnector().isConnected()) {
       try {
         AbstractCommand command = buildCommand();
@@ -118,13 +118,12 @@ public final class ServerControllerSocket implements Runnable {
       ServerControllerState.getGameHandlerByUUID(
           playerConnector.getGameId()).getPlayerConnectors()
           .stream()
-          .filter(pc -> 
-          pc.getPlayer().getPlayerName() != playerConnector.getPlayer().getPlayerName())
+          .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))
           .forEach(pc -> {
             try {
               pc.addMessageToQueue(
-                  new ErrorMessage(playerConnector.getPlayer().getPlayerName() 
-                  + " disconnected from the game.", ErrorSeverity.WARNING));
+                  new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_DISCONNECT,
+                      playerConnector.getPlayer().getPlayerName()), ErrorSeverity.WARNING));
             } catch (InterruptedException e) {
               logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
             }
@@ -138,7 +137,7 @@ public final class ServerControllerSocket implements Runnable {
    * Build the response message and sent it to the client when any game update is
    * available.
    *
-   * @throws IOException On output stream failure.
+   * @throws IOException          On output stream failure.
    * @throws InterruptedException On queue message retrieval failure.
    * 
    */
@@ -158,9 +157,9 @@ public final class ServerControllerSocket implements Runnable {
    * contained a derived type, this can be casted at runtime on the need.
    *
    * @return An instance of the command object.
-   * @throws IOException On output stream failure.
-   * @throws JsonIOException On serialization failure due to I/O.
-   * @throws JsonSyntaxException On serialization failure due to malformed JSON. 
+   * @throws IOException         On output stream failure.
+   * @throws JsonIOException     On serialization failure due to I/O.
+   * @throws JsonSyntaxException On serialization failure due to malformed JSON.
    * 
    */
   protected AbstractCommand buildCommand()
