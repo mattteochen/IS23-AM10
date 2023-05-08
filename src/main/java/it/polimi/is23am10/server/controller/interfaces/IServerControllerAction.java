@@ -14,6 +14,7 @@ import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
@@ -238,6 +239,10 @@ public interface IServerControllerAction extends Remote {
         // to avoid wrong parameters in connectors if any exception
         // will be thrown from the model.
         gameHandler.getGame().addPlayer(playerName);
+        //if started, handle active player
+        if (gameHandler.getGame().getStatus() == GameStatus.STARTED) {
+          gameHandler.updateCurrentPlayerHandler();
+        }
 
         final Player playerRef = gameHandler.getGame().getPlayerByName(playerName);
 
@@ -369,8 +374,13 @@ public interface IServerControllerAction extends Remote {
       // active player
       if (handler.getGame().getActivePlayer().equals(playerConnector.getPlayer())) {
         handler.getGame().activePlayerMove(mtCommand.getMoves());
+
+        //update the current player handler stats
+        handler.updateCurrentPlayerHandler();
+
         handler.pushGameState();
       }
+
       logger.info("{} Operated Tile move for {} in game {}",
           ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
           handler.getGame().getActivePlayer().getPlayerName(),

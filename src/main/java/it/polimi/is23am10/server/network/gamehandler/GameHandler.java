@@ -14,6 +14,7 @@ import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayer
 import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.server.model.items.scoreblock.exceptions.NotValidScoreBlockValueException;
+import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
@@ -27,6 +28,7 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,6 +63,12 @@ public class GameHandler {
       Collections.synchronizedSet(new HashSet<>());
 
   /**
+   * The current player handler.
+   *
+   */
+  private CurrentPlayerHandler currentPlayerHandler;
+
+  /**
    * Constructor.
    *
    * @param firstPlayerName The match starting player name.
@@ -91,7 +99,52 @@ public class GameHandler {
       AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException,
       NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
     this.game = GameFactory.getNewGame(firstPlayerName, maxPlayersNum);
+    this.currentPlayerHandler = new CurrentPlayerHandler();
   }
+
+  /**
+   * Update the current player handler based on the game model updates.
+   *
+   */
+  public void updateCurrentPlayerHandler() {
+    currentPlayerHandler.setPlayer(game.getActivePlayer());
+    currentPlayerHandler.setStartPlayingTimeMs(System.currentTimeMillis());
+    currentPlayerHandler.setNotified(false);
+  }
+
+  /**
+   * Current player handler getter.
+   *
+   * @return The current player handler instance.
+   *
+   */
+  public CurrentPlayerHandler getCurrentPlayerHandler() {
+    return currentPlayerHandler;
+  }
+
+  /**
+   * Retrieve the {@link AbstractPlayerConnector} from a {@link Player} instance.
+   *
+   * @param player the player assinged to a connector to find.
+   *
+   */
+  public AbstractPlayerConnector getPlayerConnectorFromPlayer(Player player) {
+    if (player == null) {
+      return null;
+    }
+    Optional<AbstractPlayerConnector> res;
+    synchronized (playerConnectors) {
+      res = playerConnectors.stream()
+        .filter(p -> p.getPlayer().equals(player)) 
+        .findFirst();
+    }
+
+    if (res.isPresent()) {
+      return res.get();
+    }
+    return null;
+  }
+
 
   /**
    * Getter for {@link Game} instance.
@@ -139,6 +192,9 @@ public class GameHandler {
     // iterating over the Collections.synchronizedList requires synch.
     synchronized (playerConnectors) {
       for (AbstractPlayerConnector pc : playerConnectors) {
+        if (!pc.getPlayer().getIsConnected()) {
+          continue;
+        }
         VirtualView gameCopy = new VirtualView(game);
         if (game.getStatus() != GameStatus.ENDED) {
           gameCopy.getPlayers()

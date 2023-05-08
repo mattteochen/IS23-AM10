@@ -1,6 +1,6 @@
 package it.polimi.is23am10.server;
 
-import it.polimi.is23am10.server.controller.ClientActivityChecker;
+import it.polimi.is23am10.server.controller.ClientConnectionChecker;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
 import it.polimi.is23am10.server.controller.ServerControllerSocket;
@@ -90,7 +90,7 @@ public class Server {
     logger.info("Starting Spurious Dragon, try to kill me...");
     // https://www.youtube.com/watch?v=Jo6fKboqfMs&ab_channel=memesammler
 
-    executorService.execute(new ClientActivityChecker());
+    executorService.execute(new ClientConnectionChecker(ctx.getMaxInactivityTime()));
 
     // start the socket server
     while (!serverSocket.isClosed()) {
