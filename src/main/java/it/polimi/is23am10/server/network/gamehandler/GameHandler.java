@@ -107,9 +107,11 @@ public class GameHandler {
    *
    */
   public void updateCurrentPlayerHandler() {
-    currentPlayerHandler.setPlayer(game.getActivePlayer());
-    currentPlayerHandler.setStartPlayingTimeMs(System.currentTimeMillis());
-    currentPlayerHandler.setNotified(false);
+    synchronized(currentPlayerHandler) {
+      currentPlayerHandler.setPlayer(game.getActivePlayer());
+      currentPlayerHandler.setStartPlayingTimeMs(System.currentTimeMillis());
+      currentPlayerHandler.setNotified(false);
+    }
   }
 
   /**
@@ -119,7 +121,9 @@ public class GameHandler {
    *
    */
   public CurrentPlayerHandler getCurrentPlayerHandler() {
-    return currentPlayerHandler;
+    synchronized(currentPlayerHandler) {
+      return currentPlayerHandler;
+    }
   }
 
   /**
