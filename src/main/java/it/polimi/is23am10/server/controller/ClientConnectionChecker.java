@@ -113,6 +113,7 @@ public final class ClientConnectionChecker implements Runnable {
     if (handlerRef.getGame().getActivePlayer().equals(pc.getPlayer())) {
       handlerRef.getGame().nextTurn();
       handlerRef.pushGameState();
+      handlerRef.updateCurrentPlayerHandler();
     }
   }
 
