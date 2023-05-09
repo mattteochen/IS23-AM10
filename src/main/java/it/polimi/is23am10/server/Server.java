@@ -112,7 +112,7 @@ public class Server {
           logger.info("Received new connection " + "(" + getSocketClientsConnected() + "/" + ctx.getMaxConnections() + ")" );
         } else {
           serverSocket.accept();
-          logger.error("Server reached its maximum socket client connections capacity.");
+          logger.error("Socket connection cannot be established as the server has reached its maximum socket client connections capacity.");
         }
       } catch (IOException | NullSocketConnectorException | NullBlockingQueueException e) {
         logger.error("Failed to process connection", e);
