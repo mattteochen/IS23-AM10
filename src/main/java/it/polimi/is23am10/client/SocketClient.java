@@ -195,7 +195,7 @@ public class SocketClient extends Client {
    *
    * @param req The payload request.
    * @param apc The player connector instance.
-   * @throws IOException.
+   * 
    * 
    */
   protected void sendMessage(String req, AbstractPlayerConnector apc) throws IOException {

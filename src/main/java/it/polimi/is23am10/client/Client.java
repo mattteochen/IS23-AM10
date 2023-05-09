@@ -281,7 +281,6 @@ public abstract class Client implements Runnable {
   /**
    * Virtual view setter.
    * 
-   * @return virtual view
    */
   protected void setVirtualView(VirtualView vv) {
     this.virtualView = vv;
@@ -473,7 +472,6 @@ public abstract class Client implements Runnable {
    * Handling function for game selection.
    *
    * @param apc                abstract player connector
-   * @param selectedGameId     game id selected
    * @param br                 buffered reader
    * @param selectedPlayerName player name selected
    * @throws IOException
@@ -574,7 +572,8 @@ public abstract class Client implements Runnable {
    *
    * @param pc player connector instance.
    * @throws IOException
-   * @throws NullPlayerException
+   * @throws NullPlayerIdException
+   * @throws NullPlayerNameException
    * @throws InterruptedException
    * 
    */
