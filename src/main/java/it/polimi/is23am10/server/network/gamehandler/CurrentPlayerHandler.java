@@ -37,7 +37,7 @@ public class CurrentPlayerHandler {
    * @param p the player to be assigned.
    *
    */
-  public void setPlayer(Player p) {
+  public synchronized void setPlayer(Player p) {
     player = p;
   }
 
@@ -47,7 +47,7 @@ public class CurrentPlayerHandler {
    * @param time the player turn starting time in ms.
    *
    */
-  public void setStartPlayingTimeMs(long time) {
+  public synchronized void setStartPlayingTimeMs(long time) {
     startPlayingTimeMs = time;
   }
 
@@ -57,7 +57,7 @@ public class CurrentPlayerHandler {
    * @param f the notified flag to be set.
    *
    */
-  public void setNotified(boolean f) {
+  public synchronized void setNotified(boolean f) {
     notified = f;
   }
 
@@ -67,7 +67,7 @@ public class CurrentPlayerHandler {
    * @return the assigned player.
    *
    */
-  public Player getPlayer() {
+  public synchronized Player getPlayer() {
     return player;
   }
 
@@ -76,7 +76,7 @@ public class CurrentPlayerHandler {
    * @return the player turn starting time in ms.
    *
    */
-  public long getStartPlayingTimeMs() {
+  public synchronized long getStartPlayingTimeMs() {
     return startPlayingTimeMs;
   }
 
@@ -84,7 +84,7 @@ public class CurrentPlayerHandler {
    * The notified getter.
    *
    */
-  public boolean getNotified() {
+  public synchronized boolean getNotified() {
     return notified;
   }
 }

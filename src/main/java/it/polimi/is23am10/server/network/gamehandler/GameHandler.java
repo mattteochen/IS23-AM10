@@ -101,18 +101,17 @@ public class GameHandler {
       NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
     this.game = GameFactory.getNewGame(firstPlayerName, maxPlayersNum);
     this.currentPlayerHandler = new CurrentPlayerHandler();
+    updateCurrentPlayerHandler();
   }
 
   /**
    * Update the current player handler based on the game model updates.
    *
    */
-  public void updateCurrentPlayerHandler() {
-    synchronized(currentPlayerHandler) {
-      currentPlayerHandler.setPlayer(game.getActivePlayer());
-      currentPlayerHandler.setStartPlayingTimeMs(System.currentTimeMillis());
-      currentPlayerHandler.setNotified(false);
-    }
+  public synchronized void updateCurrentPlayerHandler() {
+    currentPlayerHandler.setPlayer(game.getActivePlayer());
+    currentPlayerHandler.setStartPlayingTimeMs(System.currentTimeMillis());
+    currentPlayerHandler.setNotified(false);
   }
 
   /**
@@ -121,10 +120,8 @@ public class GameHandler {
    * @return The current player handler instance.
    *
    */
-  public CurrentPlayerHandler getCurrentPlayerHandler() {
-    synchronized(currentPlayerHandler) {
-      return currentPlayerHandler;
-    }
+  public synchronized CurrentPlayerHandler getCurrentPlayerHandler() {
+    return currentPlayerHandler;
   }
 
   /**
