@@ -342,7 +342,7 @@ public abstract class Client implements Runnable {
    */
   protected void handleCommands(AbstractPlayerConnector apc, BufferedReader br) throws IOException {
 
-    String fullCommand = br.readLine();
+    String fullCommand = br.readLine().stripLeading();
     String command = fullCommand.split(" ")[0];
 
     switch (command) {
@@ -447,7 +447,8 @@ public abstract class Client implements Runnable {
   protected String handlePlayerNameSelection(AbstractPlayerConnector apc, BufferedReader br)
       throws IOException {
     // Select only the string before the space if the client writes more words
-    String selectedPlayerName = br.readLine().split(" ")[0];
+    String selectedPlayerName = br.readLine().stripLeading().split(" ")[0];
+    System.out.println(selectedPlayerName);
     Player p = new Player();
     apc.setPlayer(p);
     try {
@@ -487,7 +488,7 @@ public abstract class Client implements Runnable {
 
       System.out.println(CLIStrings.joinOrCreateString);
 
-      String fullCommand = br.readLine();
+      String fullCommand = br.readLine().stripLeading();
       String command = fullCommand.split(" ")[0];
       Integer maxPlayers = null;
       switch (command) {
@@ -558,7 +559,7 @@ public abstract class Client implements Runnable {
           }
           break;
         case "q":
-          apc.getPlayer().setPlayerName(null);
+          apc.setPlayer(new Player());
           apc.setGameId(null);
           break;
         default:
