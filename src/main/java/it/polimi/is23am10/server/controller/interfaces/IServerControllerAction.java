@@ -40,6 +40,7 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.network.gamehandler.GameHandler;
+import it.polimi.is23am10.server.network.gamehandler.exceptions.GameSnapshotUpdateException;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
@@ -84,9 +85,10 @@ public interface IServerControllerAction extends Remote {
 
   /**
    * Execute the client {@link GetAvailableGamesCommand}.
-   * This is intended to be used under the RMI connection protocol when the client's playerConnector has no power to read the msg queue.
+   * This is intended to be used under the RMI connection protocol when the
+   * client's playerConnector has no power to read the msg queue.
    *
-   * @param command   The command to be executed.
+   * @param command The command to be executed.
    * @return an {@link AvailableGamesMessage} response.
    * @throws RemoteException On RMI failure.
    *
@@ -133,49 +135,51 @@ public interface IServerControllerAction extends Remote {
 
       // send the game model update to all the connected players
       gameHandler.pushGameState();
-    } catch (NullNumOfPlayersException | NullPlayerNamesException | NullPlayerScoreBlocksException
-        | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
-        | NullPlayerIdException | NullPlayerNameException
-        | NullMaxPlayerException | AlreadyInitiatedPatternException
-        | NullAssignedPatternException | PlayerNotFoundException
-        | NotValidScoreBlockValueException e) {
-      logger.error("{} {} {}",
+
+      // Any failure at this stage is to be considered critical as it clearly compromises the game going forward.
+    } catch (NullMaxPlayerException | InvalidMaxPlayerException | NullPlayerNameException | NullPlayerIdException
+        | NullPlayerBookshelfException | NullPlayerScoreException | NullPlayerPrivateCardException
+        | NullPlayerScoreBlocksException | DuplicatePlayerNameException | AlreadyInitiatedPatternException
+        | NullPlayerNamesException | InvalidNumOfPlayersException | NullNumOfPlayersException
+        | NullAssignedPatternException | FullGameException | NotValidScoreBlockValueException
+        | PlayerNotFoundException e) {
+      logger.fatal("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, ErrorSeverity.ERROR);
-    } catch (InvalidNumOfPlayersException | InvalidMaxPlayerException | DuplicatePlayerNameException
-        | FullGameException e) {
-      logger.error("{} {} {}",
-          ServerDebugPrefixString.START_COMMAND_PREFIX,
-          ErrorTypeString.ERROR_ADDING_PLAYERS, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS, ErrorSeverity.ERROR);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, ErrorSeverity.CRITICAL);
     } catch (NullGameHandlerInstance e) {
-      logger.error("{} {} {}",
+      logger.fatal("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_HANDLER, e);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_SERVER_SIDE, ErrorSeverity.CRITICAL);
     } catch (NullPlayerConnector e) {
       // TODO: as we have a null connector, the model should expose something to
       // remove the player.
-      logger.error("{} {} {}",
+      logger.fatal("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_CONNECTOR, e);
       // Not adding the error here since it will not be possible to be sent
       // to player if there is no valid player connector.
-    } catch (InterruptedException e) {
-      logger.error("{} {} {}",
+    } catch (GameSnapshotUpdateException e) {
+      // Logging as fatal here as it's failing to send a game snapshot. Other
+      // message delivery failures will be considered errors.
+      logger.fatal("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
-          ErrorTypeString.ERROR_INTERRUPTED, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INTERRUPTED, ErrorSeverity.ERROR);
+          ErrorTypeString.ERROR_UPDATING_GAME, e);
+      // Not adding the error here since it will not be possible to be sent
+      // to player if it already failed delivering a game.
     } catch (RemoteException e) {
-      logger.error("{} {} {}",
+      logger.fatal("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_RMI_EXPOSURE, e);
+      // Not adding the error here since it will not be possible to be sent
+      // to player if there is no valid player connector.
     } finally {
       if (errorMsg != null) {
         try {
           playerConnector.addMessageToQueue(errorMsg);
         } catch (InterruptedException e) {
-          logger.error("{} {} {}",
+          logger.fatal("{} {} {}",
               ServerDebugPrefixString.START_COMMAND_PREFIX,
               ErrorTypeString.ERROR_INTERRUPTED, e);
         }
@@ -199,17 +203,16 @@ public interface IServerControllerAction extends Remote {
       final String playerName = ((AddPlayerCommand) command).getPlayerName();
       final UUID gameId = ((AddPlayerCommand) command).getGameId();
       final GameHandler gameHandler = ServerControllerState.getGameHandlerByUUID(gameId);
-      
-      /* 
-       * Checks if the client is trying to reconnect to the game , 
+
+      /*
+       * Checks if the client is trying to reconnect to the game ,
        * so if there's already an inactive Player in the game with that name,
        * if found one we're executing the if statement and replacing the old socket
-       * connector with a new one connected, otherwise the else branch is executed 
+       * connector with a new one connected, otherwise the else branch is executed
        * and the player is normally added to the game.
        */
       if (gameHandler.getGame().getPlayerNames().contains(playerName) &&
           !gameHandler.getGame().getPlayerByName(playerName).getIsConnected()) {
-        try {
           ((PlayerConnectorSocket) gameHandler.getPlayerConnectors()
               .stream()
               .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerName))
@@ -219,20 +222,15 @@ public interface IServerControllerAction extends Remote {
 
           gameHandler.getGame().getPlayerByName(playerName).setIsConnected(true);
           gameHandler.getPlayerConnectors()
-          .forEach(pc -> {
-            try {
-              pc.addMessageToQueue(
-                  new ErrorMessage(playerName + " reconnected to the game.", ErrorSeverity.WARNING));
-            } catch (InterruptedException e) {
-              logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
-            }
-          });
+              .forEach(pc -> {
+                try {
+                  pc.addMessageToQueue(
+                      new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_REJOIN, playerName), ErrorSeverity.WARNING));
+                } catch (InterruptedException e) {
+                  logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
+                }
+              });
 
-        } catch (NullSocketConnectorException e) {
-          logger.error("{} {} {}",
-              ServerDebugPrefixString.START_COMMAND_PREFIX,
-              ErrorTypeString.ERROR_ADDING_PLAYERS, e);
-        }
       } else {
         // add the new player in the game model.
         // note, it is essential that the the model is updated first
@@ -262,45 +260,55 @@ public interface IServerControllerAction extends Remote {
         ServerControllerRmiBindings.rebindPlayerConnector(playerConnector);
       }
 
-      logger.info("{} Added new player {} to game {}",
-          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
-          playerName, gameId);
+      logger.info("{} {}",
+          String.format(ErrorTypeString.WARNING_PLAYER_JOIN_SERVER, playerName, gameId),
+          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX);
+
+      playerConnector.addMessageToQueue(new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_JOIN, playerName), ErrorSeverity.WARNING));
 
       // send the game model update to all the connected players
       gameHandler.pushGameState();
     } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
         | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
         | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
-        | NullAssignedPatternException | PlayerNotFoundException e) {
+        | NullAssignedPatternException | PlayerNotFoundException | DuplicatePlayerNameException | NullGameHandlerInstance e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_PLAYERS, e);
       errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS, ErrorSeverity.ERROR);
-    } catch (DuplicatePlayerNameException | FullGameException e) {
+    } catch (FullGameException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
-          ErrorTypeString.ERROR_ADDING_PLAYERS, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS, ErrorSeverity.ERROR);
+          ErrorTypeString.ERROR_GAME_FULL, e);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_GAME_FULL, ErrorSeverity.ERROR);
     } catch (NullPlayerConnector e) {
       // TODO: as we have a null connector, the model should expose something to
       // remove the player.
       logger.error("{} {} {}",
-          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
+          ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_CONNECTOR, e);
+      // Not adding the error here since it will not be possible to be sent
+      // to player if there is no valid player connector.
     } catch (InterruptedException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INTERRUPTED, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INTERRUPTED, ErrorSeverity.ERROR);
-    } catch (NullGameHandlerInstance e) {
+    } catch (GameSnapshotUpdateException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
-          ErrorTypeString.ERROR_ADDING_HANDLER, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_ADDING_PLAYERS, ErrorSeverity.ERROR);
+          ErrorTypeString.ERROR_UPDATING_GAME, e);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_UPDATING_GAME, ErrorSeverity.ERROR);
     } catch (RemoteException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_RMI_EXPOSURE, e);
+      // Not adding the error here since it will not be possible to be sent
+      // to player if there is no valid player connector.
+    } catch (NullSocketConnectorException e) {
+      logger.error("{} {} {}",
+              ServerDebugPrefixString.START_COMMAND_PREFIX,
+              ErrorTypeString.ERROR_SOCKET_CONNECTOR, e);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_SERVER_SIDE, ErrorSeverity.ERROR);
     } finally {
       if (errorMsg != null) {
         try {
@@ -322,11 +330,11 @@ public interface IServerControllerAction extends Remote {
   final ControllerConsumer<Void, AbstractCommand> getAvailableGamesConsumer = (logger, playerConnector, command) -> {
 
     List<VirtualView> availableGames = ServerControllerState.getGamePools()
-    .stream()
-    .map(gh -> gh.getGame())
-    .filter(g -> g.getPlayers().size() < g.getMaxPlayer())
-    .map(g -> new VirtualView(g))
-    .collect(Collectors.toList());
+        .stream()
+        .map(gh -> gh.getGame())
+        .filter(g -> g.getPlayers().size() < g.getMaxPlayer())
+        .map(g -> new VirtualView(g))
+        .collect(Collectors.toList());
 
     try {
       playerConnector.addMessageToQueue(new AvailableGamesMessage(availableGames, playerConnector.getPlayer()));
@@ -343,13 +351,14 @@ public interface IServerControllerAction extends Remote {
    * Note that playerConnector field is expected to be null.
    *
    */
-  final ControllerConsumer<AvailableGamesMessage, GetAvailableGamesCommand> getAvailableGamesConsumerRmi = (logger, playerConnector, command) -> {
+  final ControllerConsumer<AvailableGamesMessage, GetAvailableGamesCommand> getAvailableGamesConsumerRmi = (logger,
+      playerConnector, command) -> {
     List<VirtualView> availableGames = ServerControllerState.getGamePools()
-    .stream()
-    .map(gh -> gh.getGame())
-    .filter(g -> g.getPlayers().size() < g.getMaxPlayer())
-    .map(g -> new VirtualView(g))
-    .collect(Collectors.toList());
+        .stream()
+        .map(gh -> gh.getGame())
+        .filter(g -> g.getPlayers().size() < g.getMaxPlayer())
+        .map(g -> new VirtualView(g))
+        .collect(Collectors.toList());
 
     return new AvailableGamesMessage(availableGames);
   };
@@ -400,11 +409,11 @@ public interface IServerControllerAction extends Remote {
           ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INVALID_MOVE, e);
       errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INVALID_MOVE, ErrorSeverity.ERROR);
-    } catch (InterruptedException e) {
+    } catch (GameSnapshotUpdateException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
-          ErrorTypeString.ERROR_INTERRUPTED, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_INTERRUPTED, ErrorSeverity.ERROR);
+          ErrorTypeString.ERROR_UPDATING_GAME, e);
+      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_UPDATING_GAME, ErrorSeverity.ERROR);
     } finally {
       if (errorMsg != null) {
         try {
