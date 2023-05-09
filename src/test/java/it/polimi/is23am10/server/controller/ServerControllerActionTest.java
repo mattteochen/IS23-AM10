@@ -177,7 +177,7 @@ class ServerControllerActionTest {
     assertEquals(0, ServerControllerState.getPlayersPool().size());
 
     AbstractMessage errorMsg = playerConnector.getMessageFromQueue();
-    assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.getMessage());
+    assertEquals(ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, errorMsg.getMessage());
   }
 
   @Test
@@ -219,7 +219,7 @@ class ServerControllerActionTest {
     assertEquals(oldPlayerConnectors + 1, ServerControllerState.getPlayersPool().size());
     assertTrue(handler.getPlayerConnectors().contains(playerConnector));
     assertTrue(handler.getGame().getPlayerNames().contains("Steve"));
-    assertEquals(1, playerConnector.getMsgQueueSize());
+    assertEquals(2, playerConnector.getMsgQueueSize());
   }
 
   @Test
@@ -303,7 +303,7 @@ class ServerControllerActionTest {
 
     assertEquals(1, alice.getMsgQueueSize());
     AbstractMessage errorMsg = alice.getMessageFromQueue();
-    assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.getMessage());
+    assertEquals(ErrorTypeString.ERROR_GAME_FULL, errorMsg.getMessage());
   }
 
   @Test
@@ -372,7 +372,7 @@ class ServerControllerActionTest {
 
     assertEquals(1,steveBrother.getMsgQueueSize());
     AbstractMessage errorMsg = steveBrother.getMessageFromQueue();
-    assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.getMessage());
+    assertEquals(ErrorTypeString.ERROR_GAME_FULL, errorMsg.getMessage());
   }
 
   @Test
@@ -438,13 +438,14 @@ class ServerControllerActionTest {
     
     /*
      * I'm here removing the other messages that alice has in her queue 
-     * (the two virtual views of the game) sent when the other player
+     * (the welcome and the two virtual views of the game) sent when the other player
      * connected to the game and then reconnected.
      * The last message will be the message informing that Steve reconnected.
      */
     alice.getMessageFromQueue().getMessage();
     alice.getMessageFromQueue().getMessage();
-    assertEquals("Steve reconnected to the game.", alice.getMessageFromQueue().getMessage());
+    alice.getMessageFromQueue().getMessage();
+    assertEquals(String.format(ErrorTypeString.WARNING_PLAYER_REJOIN, "Steve"), alice.getMessageFromQueue().getMessage());
   }
   
   void GET_AVAILABLE_GAMES_should_return_gameList()

@@ -49,6 +49,7 @@ import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import it.polimi.is23am10.utils.ErrorTypeString;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -318,7 +319,7 @@ class ServerControllerSocketTest {
       controller.run();
 
       assertFalse(mockPlayer.getIsConnected());
-      assertEquals("Steve disconnected from the game.", alivePlayerPC.getMessageFromQueue().getMessage());
+      assertEquals(String.format(ErrorTypeString.WARNING_PLAYER_DISCONNECT, "Steve"), alivePlayerPC.getMessageFromQueue().getMessage());
     }
 
   }

@@ -1,8 +1,13 @@
 package it.polimi.is23am10.utils;
 
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
+
 /**
- * Helper class to identify messages to be sent to client.
- * This will be the content of the message sent to client.
+ * Helper class to identify messages to be sent to client and to logger.
+ * Some messages might be sent to client only, hiding complexity where not
+ * needed, others might be sent to server only for same reasons. Please check each string's javadoc.
+ * 
+ * <p>The error convention used is the same as {@link ErrorSeverity}</p>
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -23,16 +28,22 @@ public final class ErrorTypeString {
    * Message error in initializing the game.
    *
    */
-  public static final String ERROR_INITIALIZING_NEW_GAME = "Failed to initialize new game";
+  public static final String ERROR_INITIALIZING_NEW_GAME = "Failed to initialize new game. Please try again.";
 
   /**
    * Message error in adding player to the game.
    *
    */
-  public static final String ERROR_ADDING_PLAYERS = "Failed to add player";
+  public static final String ERROR_ADDING_PLAYERS = "Failed to add player. Please consider re-joining.";
 
   /**
-   * Message error in executing a command.
+   * Message error in adding player to the game.
+   *
+   */
+  public static final String ERROR_JOINING = "Failed to add player. Please consider re-joining.";
+
+  /**
+   * Message error on failure while pushing messages in player queues.
    *
    */
   public static final String ERROR_INTERRUPTED = "Thread interruption";
@@ -41,12 +52,53 @@ public final class ErrorTypeString {
    * Message error in executing a move chosen by the client.
    *
    */
-  public static final String ERROR_INVALID_MOVE = "Failed to execute the move";
+  public static final String ERROR_INVALID_MOVE = "Failed to execute the moves. Please try again.";
+
+  /**
+   * Message error to be shown client-side when trying to join a game already full.
+   * 
+   */
+  public static final String ERROR_GAME_FULL = "This game is already full. Please join another game or create one.";
+
+  /**
+   * Message error to be shown client-side to hide server-side controller failures
+   * that the user can't help fixing (player connectors, gamehandlers, networking...).
+   * 
+   */
+  public static final String ERROR_SERVER_SIDE = "Generic server-side failure.";
+  
+  /**
+   * Message warning sent to all players to inform them of a new player
+   * joining the game.
+   */
+  public static final String WARNING_PLAYER_JOIN = "Player %s joined the game!";
+  
+  /**
+   * Message warning logged when new player is joining the game.
+   */
+  public static final String WARNING_PLAYER_JOIN_SERVER = "Player %s joined the game %s";
+
+  /**
+   * Message warning sent to all players to inform them of a new player
+   * joining the game.
+   */
+  public static final String WARNING_PLAYER_REJOIN = "Player %s rejoined the game! Welcome back.";
+
+  /**
+   * Message warning sent to all players to inform them of a player
+   * leaving the game.
+   */
+  public static final String WARNING_PLAYER_DISCONNECT = "Player %s disconnected from the game. Their turn will be skipped.";
 
   /**
    * Message error in adding player connector.
    */
   public static final String ERROR_ADDING_CONNECTOR = "Failed to add player connector";
+
+  /**
+   * Message error in retrieving socket connector.
+   */
+  public static final String ERROR_SOCKET_CONNECTOR = "Failed to get socket connector";
 
   /**
    * Message error in adding game handler.
@@ -55,16 +107,22 @@ public final class ErrorTypeString {
   public static final String ERROR_ADDING_HANDLER = "Failed to add game handler";
 
   /**
+   * Message error on failure while pushing game updates in player queues.
+   *
+   */
+  public static final String ERROR_UPDATING_GAME = "Failed to deliver game snapshot to user.";
+
+  /**
+   * Message error in adding a new RMI player connector.
+   *
+   */
+  public static final String ERROR_RMI_EXPOSURE = "Failed to rebind RMI player connector";
+
+  /**
    * Message error in snoozing game time handler.
    *
    */
   public static final String ERROR_SNOOZING_TIMER = "Failed snooze player timer";
-
-  /**
-   * Message error in adding a new RMI server.
-   *
-   */
-  public static final String ERROR_RMI_EXPOSURE = "Failed to start RMI server";
 
   /**
    * Message error in game model fault.

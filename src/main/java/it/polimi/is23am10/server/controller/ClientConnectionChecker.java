@@ -14,6 +14,7 @@ import it.polimi.is23am10.server.model.items.card.exceptions.NullScoreBlockListE
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.server.network.gamehandler.CurrentPlayerHandler;
 import it.polimi.is23am10.server.network.gamehandler.GameHandler;
+import it.polimi.is23am10.server.network.gamehandler.exceptions.GameSnapshotUpdateException;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
@@ -80,8 +81,18 @@ public final class ClientConnectionChecker implements Runnable {
   @Override
   public void run() {
     while(true) {
-      checkAllPlayers();
-      checkActivePlayersInactivity();
+      try {
+        checkAllPlayers();
+        checkActivePlayersInactivity();
+      } catch (GameSnapshotUpdateException e) {
+        // Logging as fatal here as it's failing to send a game snapshot. Other
+        // message delivery failures will be considered errors.
+        logger.fatal("{} {} {}",
+            ServerDebugPrefixString.START_COMMAND_PREFIX,
+            ErrorTypeString.ERROR_UPDATING_GAME, e);
+        // Not adding the error here since it will not be possible to be sent
+        // to player if it already failed delivering a game.
+      }
     } 
   }
 
@@ -99,12 +110,13 @@ public final class ClientConnectionChecker implements Runnable {
    * @throws NullPointerException Generic NPE.
    * @throws InterruptedException Thread interruption exception.
    * @throws NullGameHandlerInstance If it is not possible to retrieve a game handler referece by id.
+   * @throws GameSnapshotUpdateException If not able to push game update.
    *
    */
   protected void advanceGame(AbstractPlayerConnector pc)
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException, NullPointerException,
-      NullMatchedBlockCountException, NegativeMatchedBlockCountException, InterruptedException, NullGameHandlerInstance {
+      NullMatchedBlockCountException, NegativeMatchedBlockCountException, InterruptedException, NullGameHandlerInstance, GameSnapshotUpdateException {
     if (pc == null) {
       logger.error("Can not advance the game state after the active player disconnection, null player connector received");
       return;
@@ -120,9 +132,10 @@ public final class ClientConnectionChecker implements Runnable {
 
   /**
    * Perform connection check on all connected players.
+   * @throws GameSnapshotUpdateException
    *
    */
-  protected void checkAllPlayers() {
+  protected void checkAllPlayers() throws GameSnapshotUpdateException {
     try {
       pcs = ServerControllerState.getPlayersPool();
       synchronized(pcs) {
@@ -148,9 +161,10 @@ public final class ClientConnectionChecker implements Runnable {
 
   /**
    * Perform activity check on all the active players across all games.
+   * @throws GameSnapshotUpdateException
    *
    */
-  protected void checkActivePlayersInactivity() {
+  protected void checkActivePlayersInactivity() throws GameSnapshotUpdateException {
     try {
       ghs = ServerControllerState.getGamePools();
       synchronized(ghs) {
