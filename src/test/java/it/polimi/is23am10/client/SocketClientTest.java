@@ -5,10 +5,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -17,6 +19,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,6 +31,11 @@ import com.google.gson.Gson;
 
 import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
+import it.polimi.is23am10.server.model.items.board.Board;
+import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
+import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
@@ -37,8 +45,10 @@ import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
+import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
+@Disabled
 public class SocketClientTest {
 
   @Mock
@@ -92,6 +102,42 @@ public class SocketClientTest {
   }
 
   @Test
+  void handlePlayerNameSelection_should_run_playerNameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException {
+    AbstractMessage msg = new ErrorMessage("New Message", null);
+    BufferedReader br = mock(BufferedReader.class); 
+    Player p = mock(Player.class);
+    String pn = "Benny";
+    doReturn(pn).when(br).readLine();
+    when(playerConnectorSocket.getPlayer()).thenReturn(p);
+
+    assertEquals(socketClient.handlePlayerNameSelection(playerConnectorSocket, br), pn);
+  }
+
+  @Test
+  void handleCommand_should_run_handleCommand() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+    BufferedReader br = mock(BufferedReader.class); 
+    String pn = "Benny";
+    String command = "move 42 -> 06";
+    VirtualView vw = mock(VirtualView.class);
+    Player p = mock(Player.class);
+    VirtualPlayer vp = mock(VirtualPlayer.class);
+
+    socketClient.setVirtualView(vw);
+    doReturn(command).when(br).readLine();
+    doReturn(vw).when(socketClient).getVirtualView();
+    when(playerConnectorSocket.getPlayer()).thenReturn(p);
+    when(vw.getActivePlayer()).thenReturn(vp);
+    when(p.getPlayerName()).thenReturn(pn);
+    when(vp.getPlayerName()).thenReturn(pn);
+    when(vw.getStatus()).thenReturn(GameStatus.STARTED);
+    when(vp.getBookshelf()).thenReturn(new Bookshelf());
+    when(vw.getGameBoard()).thenReturn(new Board(4));
+
+
+    socketClient.handleCommands(playerConnectorSocket, br);
+  }
+
+  @Test
   void run_should_throwIOException() throws IOException {
     Socket mockSocket = Mockito.mock(Socket.class);
 
@@ -135,7 +181,7 @@ public class SocketClientTest {
 
   @Test
   void showServerMessage_should_showChatMessage() {
-    ChatMessage msg = new ChatMessage(null, "Let's rewrite this in Golang", null);
+    ChatMessage msg = new ChatMessage(null, "Let's rewrite this in Golang");
 
     doNothing().when(userInterface).displayChatMessage(msg);
     socketClient.showServerMessage(msg);

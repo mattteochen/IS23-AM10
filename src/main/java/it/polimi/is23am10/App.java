@@ -61,7 +61,6 @@ public class App {
     try {
       ArgParser.parse(args);
       AppConfigContext ctx = new AppConfigContext();
-
       if (ctx.getIsServer()) {
         // SERVER MODE
         Server server = new Server(new ServerSocket(ctx.getServerSocketPort()),
@@ -81,7 +80,6 @@ public class App {
             IServerControllerAction serverControllerActionServerRef = (IServerControllerAction) registry
                 .lookup(IServerControllerAction.class.getName());
             client = new RMIClient(playerConnector, userInterface, null, serverControllerActionServerRef, registry);
-            client.run();
           } catch (NotBoundException e) {
             userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
           } catch(NullBlockingQueueException e) {
@@ -92,13 +90,14 @@ public class App {
             Socket socket = new Socket(ctx.getServerAddress(), ctx.getServerSocketPort());
             PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
             client = new SocketClient(playerConnector, userInterface);
-            client.run();
+            client.runMessageHandler();
           } catch (UnknownHostException e) {
             userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
           } catch (NullBlockingQueueException | NullSocketConnectorException e) {
             userInterface.displayError(new ErrorMessage("Client start error. Shutting down", ErrorSeverity.CRITICAL));
           }
         }
+        client.run();        
       }
     } catch (NumberFormatException | InvalidArgumentException | MissingParameterException | InvalidPortNumberException
         | InvalidMaxConnectionsNumberException e) {

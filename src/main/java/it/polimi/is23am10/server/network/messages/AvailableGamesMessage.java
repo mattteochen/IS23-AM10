@@ -20,17 +20,20 @@ import it.polimi.is23am10.utils.ThreadLocalTypeAdapterFactory;
  */
 public final class AvailableGamesMessage extends AbstractMessage {
 
+    /**
+   * An utility to be used during deserialization processes.
+   * 
+   */
+  @SuppressWarnings("unused")
+  private final String className = this.getClass().getName();
+  
   /**
    * Gson object for serialization and deserialization
    */
   protected final transient Gson gson = new GsonBuilder()
-    .registerTypeAdapterFactory(new ThreadLocalTypeAdapterFactory())
-    .create();
-  
-  /**
-   * The list with available games.
-   */
-  private List<VirtualView> availableGames;
+.registerTypeAdapterFactory(new ThreadLocalTypeAdapterFactory())
+.create();
+
 
   /**
    * Player receiving the list.
@@ -45,20 +48,10 @@ public final class AvailableGamesMessage extends AbstractMessage {
    */
   public AvailableGamesMessage(List<VirtualView> availableGames, Player ...receivers) {
     msgType = MessageType.AVAILABLE_GAMES;
-    this.availableGames = availableGames;
     this.message = gson.toJson(availableGames);
     if (receivers != null && receivers.length > 0) {
       this.receiver = receivers[0];
     }
-  }
-
-  /**
-   * Available games getter.
-   * 
-   * @return available games list.
-   */
-  public List<VirtualView> getAvailableGames() {
-    return availableGames;
   }
 
   /**

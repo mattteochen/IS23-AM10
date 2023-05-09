@@ -15,6 +15,7 @@ import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
@@ -23,6 +24,7 @@ import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
+import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.ErrorTypeString;
 
 import java.io.BufferedReader;
@@ -68,6 +70,7 @@ public final class ServerControllerSocket implements Runnable {
    */
   protected Gson gson = new GsonBuilder()
       .registerTypeAdapter(AbstractCommand.class, new CommandDeserializer())
+      .registerTypeAdapter(Coordinates.class, new CoordinatesDeserializer())
       .create();
 
   /**
@@ -95,7 +98,7 @@ public final class ServerControllerSocket implements Runnable {
    */
   @Override
   public void run() {
-    
+
     while (playerConnector != null && playerConnector.getConnector().isConnected()) {
       try {
         AbstractCommand command = buildCommand();
@@ -118,13 +121,12 @@ public final class ServerControllerSocket implements Runnable {
       ServerControllerState.getGameHandlerByUUID(
           playerConnector.getGameId()).getPlayerConnectors()
           .stream()
-          .filter(pc -> 
-          pc.getPlayer().getPlayerName() != playerConnector.getPlayer().getPlayerName())
+          .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))
           .forEach(pc -> {
             try {
               pc.addMessageToQueue(
-                  new ErrorMessage(playerConnector.getPlayer().getPlayerName() 
-                  + " disconnected from the game.", ErrorSeverity.WARNING));
+                  new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_DISCONNECT,
+                      playerConnector.getPlayer().getPlayerName()), ErrorSeverity.WARNING));
             } catch (InterruptedException e) {
               logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
             }
@@ -138,16 +140,19 @@ public final class ServerControllerSocket implements Runnable {
    * Build the response message and sent it to the client when any game update is
    * available.
    *
-   * @throws IOException On output stream failure.
+   * @throws IOException          On output stream failure.
    * @throws InterruptedException On queue message retrieval failure.
    * 
    */
   protected void update() throws InterruptedException, IOException {
     AbstractMessage msg = playerConnector.getMessageFromQueue();
     if (msg != null) {
-      PrintWriter printer = new PrintWriter(playerConnector.getConnector().getOutputStream(), true,
-          StandardCharsets.UTF_8);
-      printer.println(gson.toJson(msg));
+      PrintWriter printer;
+      synchronized (playerConnector.getConnector()) {
+        printer = new PrintWriter(playerConnector.getConnector().getOutputStream(), true,
+            StandardCharsets.UTF_8);
+        printer.println(gson.toJson(msg));
+      }
       logger.info("{} sent to client {}", msg.getMessageType(), msg.getMessage());
     }
   }
@@ -158,18 +163,21 @@ public final class ServerControllerSocket implements Runnable {
    * contained a derived type, this can be casted at runtime on the need.
    *
    * @return An instance of the command object.
-   * @throws IOException On output stream failure.
-   * @throws JsonIOException On serialization failure due to I/O.
-   * @throws JsonSyntaxException On serialization failure due to malformed JSON. 
+   * @throws IOException         On output stream failure.
+   * @throws JsonIOException     On serialization failure due to I/O.
+   * @throws JsonSyntaxException On serialization failure due to malformed JSON.
    * 
    */
   protected AbstractCommand buildCommand()
       throws IOException, JsonIOException, JsonSyntaxException {
-    BufferedReader reader = new BufferedReader(
-        new InputStreamReader(playerConnector.getConnector().getInputStream()));
+    BufferedReader reader;
     String payload = null;
-    if (reader.ready()) {
-      payload = reader.readLine();
+    synchronized (playerConnector.getConnector()) {
+      reader = new BufferedReader(
+          new InputStreamReader(playerConnector.getConnector().getInputStream()));
+      if (reader.ready()) {
+        payload = reader.readLine();
+      }
     }
     if (payload != null) {
       logger.info("Socket buffer reader received {}", payload);
@@ -205,11 +213,29 @@ public final class ServerControllerSocket implements Runnable {
           return context.deserialize(jsonObject, MoveTilesCommand.class);
         case "it.polimi.is23am10.server.command.GetAvailableGamesCommand":
           return context.deserialize(jsonObject, GetAvailableGamesCommand.class);
+        case "it.polimi.is23am10.server.command.SendChatMessageCommand":
+          return context.deserialize(jsonObject, SendChatMessageCommand.class);
         case "it.polimi.is23am10.server.command.SnoozeGameTimerCommand":
           return context.deserialize(jsonObject, SnoozeGameTimerCommand.class);
         default:
           throw new JsonParseException("Unknown class name: " + className);
       }
+    }
+  }
+
+  /**
+   * Custom deserializer class definition for {@link Gson} usage.
+   * This works on {@link Coordinates} objects.
+   * 
+   */
+  class CoordinatesDeserializer implements JsonDeserializer<Coordinates> {
+    @Override
+    public Coordinates deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      JsonObject obj = json.getAsJsonObject();
+      int row = obj.get("row").getAsInt();
+      int col = obj.get("col").getAsInt();
+      return new Coordinates(row, col);
     }
   }
 }

@@ -21,6 +21,7 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
+import it.polimi.is23am10.server.network.gamehandler.exceptions.GameSnapshotUpdateException;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.server.network.messages.GameMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
@@ -100,18 +101,17 @@ public class GameHandler {
       NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
     this.game = GameFactory.getNewGame(firstPlayerName, maxPlayersNum);
     this.currentPlayerHandler = new CurrentPlayerHandler();
+    updateCurrentPlayerHandler();
   }
 
   /**
    * Update the current player handler based on the game model updates.
    *
    */
-  public void updateCurrentPlayerHandler() {
-    synchronized(currentPlayerHandler) {
-      currentPlayerHandler.setPlayer(game.getActivePlayer());
-      currentPlayerHandler.setStartPlayingTimeMs(System.currentTimeMillis());
-      currentPlayerHandler.setNotified(false);
-    }
+  public synchronized void updateCurrentPlayerHandler() {
+    currentPlayerHandler.setPlayer(game.getActivePlayer());
+    currentPlayerHandler.setStartPlayingTimeMs(System.currentTimeMillis());
+    currentPlayerHandler.setNotified(false);
   }
 
   /**
@@ -120,10 +120,8 @@ public class GameHandler {
    * @return The current player handler instance.
    *
    */
-  public CurrentPlayerHandler getCurrentPlayerHandler() {
-    synchronized(currentPlayerHandler) {
-      return currentPlayerHandler;
-    }
+  public synchronized CurrentPlayerHandler getCurrentPlayerHandler() {
+    return currentPlayerHandler;
   }
 
   /**
@@ -189,10 +187,10 @@ public class GameHandler {
   /**
    * Push a new game state to the message queue for each connected player.
    *
-   * @throws InterruptedException On queue message insertion failure.
+   * @throws GameSnapshotUpdateException On queue message insertion failure.
    *
    */
-  public void pushGameState() throws InterruptedException {
+  public void pushGameState() throws GameSnapshotUpdateException {
     // iterating over the Collections.synchronizedList requires synch.
     synchronized (playerConnectors) {
       for (AbstractPlayerConnector pc : playerConnectors) {
@@ -207,7 +205,11 @@ public class GameHandler {
           .forEach(p -> p.obfuscatePrivateCard());
         }
         // synch is performed by the blocking queue.
-        pc.addMessageToQueue(new GameMessage(gameCopy));
+        try {
+          pc.addMessageToQueue(new GameMessage(gameCopy));
+        } catch (InterruptedException e) {
+          throw new GameSnapshotUpdateException(game);
+        }
       }
     }
   }

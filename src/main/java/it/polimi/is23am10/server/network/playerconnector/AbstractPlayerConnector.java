@@ -94,6 +94,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
     if (msgQueue.isEmpty()) {
       return null;
     }
+    //synch is performed by the collection
     return (msgQueue.take());
   }
 
@@ -103,7 +104,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
    *
    */
   @Override
-  public int getMsgQueueSize() {
+  public synchronized int getMsgQueueSize() {
     return msgQueue.size();
   }
 
@@ -129,6 +130,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
    */
   public void addMessageToQueue(AbstractMessage message) throws InterruptedException {
     if (message != null) {
+      //sync is performed by the collection
       msgQueue.put(message);
     }
   }
@@ -149,6 +151,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
    * @param player The player to associate to the current player connector.
    *
    */
+  @Override
   public synchronized void setPlayer(Player player) {
     this.player = player;
   }
