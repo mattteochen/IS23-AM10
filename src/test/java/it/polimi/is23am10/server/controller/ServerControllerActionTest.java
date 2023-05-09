@@ -10,6 +10,7 @@ import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.server.model.factory.PlayerFactory;
@@ -478,6 +479,10 @@ class ServerControllerActionTest {
     assertEquals(1, playerConnector.getMsgQueueSize());
     AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue();
     assertNotNull(msg);
+    /*
+     * The following lines of tests are commented because of the changes in the deserialization
+     * of available games messages made. 
+     */
     //assertNotNull(msg.getAvailableGames());
     //assertEquals(3, msg.getAvailableGames().size());
     //assertTrue(
@@ -513,6 +518,10 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
     AvailableGamesMessage msg = serverControllerAction.getAvailableGamesConsumerRmi.accept(logger, null, gagCommand);
 
     assertNotNull(msg);
+    /*
+     * The following lines of tests are commented because of the changes in the deserialization
+     * of available games messages made. 
+     */
    // assertNotNull(msg.getAvailableGames());
    // assertEquals(3, msg.getAvailableGames().size());
     //assertTrue(
@@ -552,6 +561,11 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
     assertEquals(1, playerConnector.getMsgQueueSize());
     AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue();
     assertNotNull(msg);
+    /*
+     * The following lines of tests are commented because of the changes in the deserialization
+     * of available games messages made. 
+     */
+
     //assertNotNull(msg.getAvailableGames());
     //assertEquals(2, msg.getAvailableGames().size());
     //assertTrue(
@@ -613,5 +627,41 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
     playerConnector.getPlayer().setPlayerName(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max");
     playerConnector.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve".getBytes() : "Max".getBytes()));
     assertFalse(handler.getGame().getGameBoard().getTileAt(1, 3).isEmpty());
+  }
+
+  @Test
+  void SNOOZE_TIMER_CONSUMER_should_SNOOZE_TIMER()
+      throws NullSocketConnectorException, NullBlockingQueueException, InterruptedException {
+    Socket socket = new Socket();
+    PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
+    AbstractCommand cmd = new StartGameCommand("Steve", 2);
+    AbstractCommand snoozecmd = new SnoozeGameTimerCommand("Steve");
+
+    long snooze1 = playerConnector.getLastSnoozeMs();
+    serverControllerAction.startConsumer.accept(logger, playerConnector, cmd);
+
+    Thread.sleep(1000);
+
+    serverControllerAction.snoozeTimerConsumer.accept(logger, playerConnector, snoozecmd);
+    long snooze2 = playerConnector.getLastSnoozeMs();
+    assertTrue(snooze2 > snooze1);
+  }
+
+  @Test
+  void SNOOZE_TIMER_CONSUMER_should_NOT_SNOOZE_UNKNOWN_PLAYER_TIMER()
+      throws NullSocketConnectorException, NullBlockingQueueException, InterruptedException {
+    Socket socket = new Socket();
+    PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
+    AbstractCommand cmd = new StartGameCommand("Steve", 2);
+    AbstractCommand snoozecmd = new SnoozeGameTimerCommand("Stevee");
+
+    long snooze1 = playerConnector.getLastSnoozeMs();
+    serverControllerAction.startConsumer.accept(logger, playerConnector, cmd);
+
+    Thread.sleep(1000);
+
+    serverControllerAction.snoozeTimerConsumer.accept(logger, playerConnector, snoozecmd);
+    long snooze2 = playerConnector.getLastSnoozeMs();
+    assertTrue(snooze2 == snooze1);
   }
 }

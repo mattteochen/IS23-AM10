@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 
+import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
@@ -18,6 +19,9 @@ import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
+import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
+import it.polimi.is23am10.server.command.StartGameCommand;
+import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
@@ -33,6 +37,7 @@ import it.polimi.is23am10.utils.Coordinates;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class SocketClient extends Client {
+
   /**
    * Public constructor for client using Socket as communication method.
    * 
@@ -44,12 +49,51 @@ public class SocketClient extends Client {
   }
 
   /**
+   * Socket alarm snoozer.
+   * 
+   */
+  protected AlarmConsumer snoozer = () -> {
+    //TODO: refactor after this https://github.com/mattteochen/IS23-AM10/issues/121
+    //skip if the client has not joined the game: server won't have any connector for the current client
+    if (!hasJoined()) {
+      return;
+    }
+    try {
+      PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
+      SnoozeGameTimerCommand cmd = new SnoozeGameTimerCommand(playerConnectorSocket.getPlayer().getPlayerName());
+      String req = gson.toJson(cmd);
+      PrintWriter epson = new
+      PrintWriter(playerConnectorSocket.getConnector().getOutputStream(), true,
+      StandardCharsets.UTF_8);
+      epson.println(req);
+    } catch(IOException e) {
+      System.out.println("🛑 " + e.getMessage());
+    }
+  };
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected boolean hasJoined() {
+    //TODO: consider further checks as gameID
+    PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
+    return (playerConnectorSocket.getPlayer() != null &&
+      playerConnectorSocket.getPlayer().getPlayerName() != null);
+  }
+
+  /**
    * Client core cycle.
    * Send user requested commands and read updates.
    * 
    */
   @Override
   public void run() {
+
+    alarm.scheduleAtFixedRate(new AlarmTask(snoozer),
+      ALARM_INITIAL_DELAY_MS, ALARM_INTERVAL_MS);
+
     // PlayerConnector's msg queue is not used at this time as we don't have multi
     // source message inputs to handle,
     // hence there is no need to buffer them as at server level. Here we can just
@@ -76,7 +120,7 @@ public class SocketClient extends Client {
    * 
    * @param pc The socket player connector.
    * @return The parsed {@link AbstractMessage}.
-   * @throws IOException.
+   * @throws IOException Possibly thrown by readline.
    *
    */
   protected AbstractMessage parseServerMessage(PlayerConnectorSocket pc) throws IOException {

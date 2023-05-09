@@ -7,7 +7,6 @@ import it.polimi.is23am10.server.controller.interfaces.ControllerConsumer;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
-import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +37,8 @@ public class ServerControllerAction implements IServerControllerAction {
       Opcode.ADD_PLAYER, addPlayerConsumer,
       Opcode.MOVE_TILES, moveTilesConsumer,
       Opcode.GET_GAMES, getAvailableGamesConsumer,
-      Opcode.SEND_CHAT_MESSAGE, sendChatMessageConsumer);
+      Opcode.SEND_CHAT_MESSAGE, sendChatMessageConsumer,
+      Opcode.GAME_TIMER, snoozeTimerConsumer);
 
   /**
    * {@inheritDoc}

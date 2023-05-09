@@ -17,11 +17,33 @@ public abstract class AbstractCommand implements Serializable {
    * 
    */
   public enum Opcode {
+    /**
+     * Start a new game command.
+     */
     START,
+    /**
+     * Add a new player to existing game command.
+     */
     ADD_PLAYER,
+    /**
+     * Move tiles from board to user's bookshelf command.
+     */
     MOVE_TILES,
+    /**
+     * Retrieve existing games to join command.
+     */
     GET_GAMES,
+    /**
+     * Send chat message command
+     */
     SEND_CHAT_MESSAGE,
+    /**
+     * Game timer snooze command.
+     */
+    GAME_TIMER,
+    /**
+     * Null command.
+     */
     NULL
   }
 
@@ -33,6 +55,8 @@ public abstract class AbstractCommand implements Serializable {
 
   /**
    * The opcode instance for the current command instance.
+   * 
+   * @param opcode command op code.
    * 
    */
   protected AbstractCommand(Opcode opcode) {

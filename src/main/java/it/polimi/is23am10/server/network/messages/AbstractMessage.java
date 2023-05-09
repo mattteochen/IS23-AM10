@@ -21,9 +21,21 @@ public class AbstractMessage implements Serializable {
    * Enum for type of message sent.
    */
   public enum MessageType {
+    /**
+     * Message containing a VirtualView, representing a game snapshot.
+     */
     GAME_SNAPSHOT,
+    /**
+     * Message containing a chat textual exchange between players.
+     */
     CHAT_MESSAGE,
+    /**
+     * Message containing an error to display to the player.
+     */
     ERROR_MESSAGE,
+    /**
+     * Message containing the available games joinable by player.
+     */
     AVAILABLE_GAMES
   }
 

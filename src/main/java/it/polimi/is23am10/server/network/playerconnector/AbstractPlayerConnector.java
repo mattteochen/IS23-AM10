@@ -7,7 +7,6 @@ import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlocking
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 
 import java.io.Serializable;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -43,11 +42,17 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
   protected BlockingQueue<AbstractMessage> msgQueue;
 
   /**
+   * The client last alarm snooze time in ms truggered by the alarm.
+   *
+   */
+  protected long lastSnoozeMs;
+
+  /**
    * Constructor.
    *
    *
    * @param msgQueue The message queue instance.
-   * @throws NullBlockingQueueException
+   * @throws NullBlockingQueueException If providing a null queue when building player connector.
    *
    */
   protected AbstractPlayerConnector(LinkedBlockingQueue<AbstractMessage> msgQueue)
@@ -56,6 +61,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
       throw new NullBlockingQueueException();
     }
     this.msgQueue = msgQueue;
+    this.lastSnoozeMs = System.currentTimeMillis();
   }
 
   /**
@@ -102,13 +108,23 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
   }
 
   /**
+   * Get the client last snooze time in ms.
+   *
+   * @return The ms of the last alarm snooze.
+   *
+   */
+  public long getLastSnoozeMs() {
+    return lastSnoozeMs;
+  }
+
+  /**
    * Add a message from the queue.
    * This blocks undefinably until the queue is available.
    * {@link Game} model instances should leverage this
    * queue to send responses to the client (i.e. game updates).
    *
    * @param message The message to be added.
-   * @throws InterruptedException
+   * @throws InterruptedException On queue message insertion failure.
    *
    */
   public void addMessageToQueue(AbstractMessage message) throws InterruptedException {
@@ -136,6 +152,16 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
   @Override
   public synchronized void setPlayer(Player player) {
     this.player = player;
+  }
+
+  /**
+   * Set the client last snooze time in ms.
+   *
+   * @param lastSnoozeMs The snooze ms.
+   *
+   */
+  public void setLastSnoozeMs(long lastSnoozeMs) {
+    this.lastSnoozeMs = lastSnoozeMs;
   }
 
   /**

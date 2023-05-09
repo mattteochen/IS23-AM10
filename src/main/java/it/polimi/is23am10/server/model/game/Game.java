@@ -5,7 +5,6 @@ import it.polimi.is23am10.server.model.factory.PlayerFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
-import it.polimi.is23am10.server.model.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidPlayersNumberException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
@@ -90,7 +89,7 @@ public class Game implements Serializable {
   private Integer maxPlayers = MIN_PLAYER_NUM;
 
   /**
-   * List of {@Player} type.
+   * List of {@link Player} type.
    * This instance must never be null.
    * 
    */
@@ -113,13 +112,13 @@ public class Game implements Serializable {
   private Player winnerPlayer;
 
   /**
-   * The instance {@Board} type.
+   * The instance {@link Board} type.
    * 
    */
   private Board gameBoard;
 
   /**
-   * List of {@SharedCard} type containing two randomly selected
+   * List of {@link SharedCard} type containing two randomly selected
    * shared cards for this game.
    */
   private List<SharedCard> sharedCards;
@@ -192,7 +191,7 @@ public class Game implements Serializable {
    * Add a new consumed {@link SharedPattern}.
    *
    * @param pattern The {@link SharedPattern} to be added.
-   * @throws NullAssignedPatternException
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
    *
    */
   public void addAssignedSharedPattern(SharedPattern<Predicate<Bookshelf>> pattern)
@@ -207,7 +206,7 @@ public class Game implements Serializable {
    * Add a new consumed {@link PrivatePattern}.
    *
    * @param pattern The {@link PrivatePattern} to be added.
-   * @throws NullAssignedPatternException
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
    *
    */
   public void addAssignedPrivatePattern(PrivatePattern<Function<Bookshelf, Integer>> pattern)
@@ -222,7 +221,7 @@ public class Game implements Serializable {
    * Check if a maxPlayer value is correct.
    *
    * @param maxPlayers The value to be controlled.
-   * @throws NullMaxPlayerException.
+   * @throws NullMaxPlayerException If no value for maximum number of players in the game is provided..
    *
    */
   private boolean validMaxPlayers(Integer maxPlayers) throws NullMaxPlayerException {
@@ -236,8 +235,8 @@ public class Game implements Serializable {
    * The maxPlayers setter.
    *
    * @param maxPlayers The value to be assigned.
-   * @throws NullMaxPlayerException
-   * @throws InvalidMaxPlayerException.
+   * @throws NullMaxPlayerException If no value for maximum number of players in the game is provided.
+   * @throws InvalidMaxPlayerException If value for maximum number of players in the game is not valid.
    *
    */
   public void setMaxPlayers(Integer maxPlayers)
@@ -266,16 +265,16 @@ public class Game implements Serializable {
    * as position in players list is the order in the game.
    *
    * @param playerName The player's name.
-   * @throws NullPlayerNamesException
-   * @throws AlreadyInitiatedPatternException
-   * @throws DuplicatePlayerNameException
-   * @throws NullPlayerScoreBlocksException
-   * @throws NullPlayerPrivateCardException
-   * @throws NullPlayerScoreException
-   * @throws NullPlayerBookshelfException
-   * @throws NullPlayerIdException
-   * @throws NullPlayerNameException
-   * @throws NullAssignedPatternException
+   * @throws NullPlayerNamesException If, while adding multiple players, the list of player names is null.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerNameException If player name is null.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
    *
    */
   private void addPlayer(Player player) {
@@ -293,17 +292,17 @@ public class Game implements Serializable {
    *
    * @param playerName The player's name.
    * @return The instance of created player.
-   * @throws NullPlayerNamesException
-   * @throws AlreadyInitiatedPatternException
-   * @throws DuplicatePlayerNameException
-   * @throws NullPlayerScoreBlocksException
-   * @throws NullPlayerPrivateCardException
-   * @throws NullPlayerScoreException
-   * @throws NullPlayerBookshelfException
-   * @throws NullPlayerIdException
-   * @throws NullPlayerNameException
-   * @throws NullAssignedPatternException
-   * @throws FullGameException
+   * @throws NullPlayerNamesException If, while adding multiple players, the list of player names is null.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerNameException If player name is null.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
+   * @throws FullGameException If game is full, on player trying to join.
    */
   public Player addPlayer(String playerName)
       throws NullPlayerNamesException, NullPlayerNameException, NullPlayerIdException,
@@ -323,9 +322,9 @@ public class Game implements Serializable {
    * Function that adds multiple players to game.
    *
    * @param players List of players to add.
-   * @throws NullPlayerException
-   * @throws InvalidPlayersNumberException
-   * @throws DuplicatePlayerNameException
+   * @throws NullPlayerException If player object is null.
+   * @throws InvalidPlayersNumberException If number of players to add is invalid.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
    */
   public void addPlayers(List<Player> players)
       throws NullPlayerException, InvalidPlayersNumberException, DuplicatePlayerNameException {
@@ -348,8 +347,8 @@ public class Game implements Serializable {
   /**
    * GameBoard setter.
    *
-   * @throws InvalidNumOfPlayersException
-   * @throws NullNumOfPlayersException
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
    *
    */
   public void setGameBoard() throws InvalidNumOfPlayersException, NullNumOfPlayersException {
@@ -465,7 +464,7 @@ public class Game implements Serializable {
    *
    * @param playerName The player name we are looking for.
    * @return Player matching provided name.
-   * @throws PlayerNotFoundException
+   * @throws PlayerNotFoundException If the player with the name provided is not found.
    */
   public Player getPlayerByName(String playerName) throws NullPlayerNameException, PlayerNotFoundException {
     if (playerName == null) {
@@ -537,16 +536,14 @@ public class Game implements Serializable {
    * Method that computes active player's Score, updates the view,
    * checks if game is over and if not picks next player.
    *
-   * @throws NullScoreBlockListException
-   * @throws NullPlayerBookshelfException
-   * @throws NullIndexValueException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws NegativeMatchedBlockCountException
-   * @throws NullMatchedBlockCountException
-   * @throws NullPointerException
-   * @throws NullGameHandlerInstance
-   * @throws NullPlayerException
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
+   * @throws NullPointerException Generic NPE.
    */
   public void nextTurn()
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
@@ -580,9 +577,9 @@ public class Game implements Serializable {
    *
    * @param coord The coordinates of the tile.
    * @return The tile of the board the player wants to take.
-   * @throws BoardGridColIndexOutOfBoundsException
-   * @throws BoardGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
    */
   public Tile takeTileAction(Coordinates coord)
       throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
@@ -595,10 +592,10 @@ public class Game implements Serializable {
    *
    * @param t     Tile taken from the board.
    * @param coord Coordinates of the bookshelf.
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
-   * @throws NullTileException
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws NullTileException If the tile is null.
    */
   public void putTileAction(Tile t, Coordinates coord)
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
@@ -702,23 +699,21 @@ public class Game implements Serializable {
    *                            from board as key and the corresponding
    *                            coordinates of the active player bookshelf as
    *                            value.
-   * @throws BoardGridColIndexOutOfBoundsException
-   * @throws BoardGridRowIndexOutOfBoundsException
-   * @throws InvalidBoardTileSelectionException
-   * @throws NullIndexValueException
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws NullTileException
-   * @throws NullPointerException
-   * @throws NullPlayerBookshelfException
-   * @throws NullScoreBlockListException
-   * @throws NegativeMatchedBlockCountException
-   * @throws NullMatchedBlockCountException
-   * @throws WrongBookShelfPicksException
-   * @throws WrongGameBoardPicksException
-   * @throws WrongMovesNumberException
-   * @throws NullGameHandlerInstance
-   * @throws NullPlayerException
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullTileException If the tile is null.
+   * @throws NullPointerException Generic NPE.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
+   * @throws WrongBookShelfPicksException If the game moves are invalid because of bookshelf placement.
+   * @throws WrongGameBoardPicksException If the game moves are invalid because of board picking.
+   * @throws WrongMovesNumberException If the game moves are in an illegal number.
+   * @throws NullGameHandlerInstance If the game handler is null.
    */
   public void activePlayerMove(Map<Coordinates, Coordinates> selectedCoordinates)
       throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,

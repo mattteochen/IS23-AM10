@@ -21,6 +21,7 @@ public interface IPlayerConnector extends Remote {
    * Getter for the associated player.
    *
    * @return The player reference.
+   * @throws RemoteException On RMI failure.
    *
    */
   Player getPlayer() throws RemoteException;
@@ -37,6 +38,7 @@ public interface IPlayerConnector extends Remote {
    * Getter for the associated game id.
    *
    * @return The game id.
+   * @throws RemoteException On RMI failure.
    *
    */
   UUID getGameId() throws RemoteException;
@@ -45,7 +47,7 @@ public interface IPlayerConnector extends Remote {
    * Retrieve the message queue size.
    *
    * @return The blocking message queue size.
-   * @throws InterruptedException
+   * @throws RemoteException On RMI failure.
    *
    */
   int getMsgQueueSize() throws RemoteException;
@@ -55,7 +57,8 @@ public interface IPlayerConnector extends Remote {
    * This deletes the retrieved message.
    *
    * @return The oldest message if present.
-   * @throws InterruptedException
+   * @throws InterruptedException On msg queue failure.
+   * @throws RemoteException On RMI failure.
    *
    */
   AbstractMessage getMessageFromQueue() throws RemoteException, InterruptedException;

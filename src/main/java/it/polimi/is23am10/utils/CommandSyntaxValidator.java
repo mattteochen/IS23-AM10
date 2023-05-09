@@ -39,7 +39,11 @@ public class CommandSyntaxValidator {
       return false;
     }
     // Index out of bounds
-    if (Integer.parseInt(s) < 0 || Integer.parseInt(s) >= n) {
+    try {
+      if (Integer.parseInt(s) < 0 || Integer.parseInt(s) >= n) {
+        return false;
+      }
+    } catch (NumberFormatException e) {
       return false;
     }
     return true;

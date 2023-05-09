@@ -15,6 +15,7 @@ import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.SendChatMessageCommand;
+import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
@@ -139,9 +140,8 @@ public final class ServerControllerSocket implements Runnable {
    * Build the response message and sent it to the client when any game update is
    * available.
    *
-   * @throws IOException
-   * @throws InterruptedException
-   * @throws InvalidMessageTypeException
+   * @throws IOException On output stream failure.
+   * @throws InterruptedException On queue message retrieval failure.
    * 
    */
   protected void update() throws InterruptedException, IOException {
@@ -160,9 +160,9 @@ public final class ServerControllerSocket implements Runnable {
    * contained a derived type, this can be casted at runtime on the need.
    *
    * @return An instance of the command object.
-   * @throws IOException
-   * @throws JsonIOException
-   * @throws JsonSyntaxException
+   * @throws IOException On output stream failure.
+   * @throws JsonIOException On serialization failure due to I/O.
+   * @throws JsonSyntaxException On serialization failure due to malformed JSON. 
    * 
    */
   protected AbstractCommand buildCommand()
@@ -209,6 +209,8 @@ public final class ServerControllerSocket implements Runnable {
           return context.deserialize(jsonObject, GetAvailableGamesCommand.class);
         case "it.polimi.is23am10.server.command.SendChatMessageCommand":
           return context.deserialize(jsonObject, SendChatMessageCommand.class);
+        case "it.polimi.is23am10.server.command.SnoozeGameTimerCommand":
+          return context.deserialize(jsonObject, SnoozeGameTimerCommand.class);
         default:
           throw new JsonParseException("Unknown class name: " + className);
       }

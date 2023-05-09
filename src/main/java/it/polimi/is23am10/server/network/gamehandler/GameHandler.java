@@ -14,6 +14,7 @@ import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayer
 import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.server.model.items.scoreblock.exceptions.NotValidScoreBlockValueException;
+import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
@@ -27,6 +28,7 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,27 +63,33 @@ public class GameHandler {
       Collections.synchronizedSet(new HashSet<>());
 
   /**
+   * The current player handler.
+   *
+   */
+  private CurrentPlayerHandler currentPlayerHandler;
+
+  /**
    * Constructor.
    *
    * @param firstPlayerName The match starting player name.
    * @param maxPlayersNum   The chosen max players for this match.
-   * @throws NullNumOfPlayersException
-   * @throws InvalidNumOfPlayersException
-   * @throws NullPlayerNamesException
-   * @throws AlreadyInitiatedPatternException
-   * @throws DuplicatePlayerNameException
-   * @throws NullPlayerScoreBlocksException
-   * @throws NullPlayerPrivateCardException
-   * @throws NullPlayerScoreException
-   * @throws NullPlayerBookshelfException
-   * @throws NullPlayerIdException
-   * @throws NullPlayerNameException
-   * @throws InvalidMaxPlayerException
-   * @throws NullMaxPlayerException
-   * @throws NullAssignedPatternException
-   * @throws FullGameException
-   * @throws NotValidScoreBlockValueException
-   * @throws PlayerNotFoundException
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullPlayerNamesException If, while adding multiple players, the list of player names is null.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerNameException If player name is null.
+   * @throws InvalidMaxPlayerException If value for maximum number of players in the game is not valid.
+   * @throws NullMaxPlayerException If no value for maximum number of players in the game is provided.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
+   * @throws FullGameException If game is full, on player trying to join.
+   * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
+   * @throws PlayerNotFoundException If the player with the name provided is not found.
    *
    */
   public GameHandler(String firstPlayerName, Integer maxPlayersNum)
@@ -91,7 +99,56 @@ public class GameHandler {
       AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException,
       NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
     this.game = GameFactory.getNewGame(firstPlayerName, maxPlayersNum);
+    this.currentPlayerHandler = new CurrentPlayerHandler();
   }
+
+  /**
+   * Update the current player handler based on the game model updates.
+   *
+   */
+  public void updateCurrentPlayerHandler() {
+    synchronized(currentPlayerHandler) {
+      currentPlayerHandler.setPlayer(game.getActivePlayer());
+      currentPlayerHandler.setStartPlayingTimeMs(System.currentTimeMillis());
+      currentPlayerHandler.setNotified(false);
+    }
+  }
+
+  /**
+   * Current player handler getter.
+   *
+   * @return The current player handler instance.
+   *
+   */
+  public CurrentPlayerHandler getCurrentPlayerHandler() {
+    synchronized(currentPlayerHandler) {
+      return currentPlayerHandler;
+    }
+  }
+
+  /**
+   * Retrieve the {@link AbstractPlayerConnector} from a {@link Player} instance.
+   *
+   * @param player the player assinged to a connector to find.
+   *
+   */
+  public AbstractPlayerConnector getPlayerConnectorFromPlayer(Player player) {
+    if (player == null) {
+      return null;
+    }
+    Optional<AbstractPlayerConnector> res;
+    synchronized (playerConnectors) {
+      res = playerConnectors.stream()
+        .filter(p -> p.getPlayer().equals(player)) 
+        .findFirst();
+    }
+
+    if (res.isPresent()) {
+      return res.get();
+    }
+    return null;
+  }
+
 
   /**
    * Getter for {@link Game} instance.
@@ -118,7 +175,7 @@ public class GameHandler {
    * Will accept a built instance of {@link AbstractPlayerConnector}
    *
    * @param playerConnector The connector to be added to the current game.
-   * @throws NullPlayerConnector
+   * @throws NullPlayerConnector On null Player connector.
    *
    */
   public void addPlayerConnector(AbstractPlayerConnector playerConnector)
@@ -132,13 +189,16 @@ public class GameHandler {
   /**
    * Push a new game state to the message queue for each connected player.
    *
-   * @throws InterruptedException
+   * @throws InterruptedException On queue message insertion failure.
    *
    */
   public void pushGameState() throws InterruptedException {
     // iterating over the Collections.synchronizedList requires synch.
     synchronized (playerConnectors) {
       for (AbstractPlayerConnector pc : playerConnectors) {
+        if (!pc.getPlayer().getIsConnected()) {
+          continue;
+        }
         VirtualView gameCopy = new VirtualView(game);
         if (game.getStatus() != GameStatus.ENDED) {
           gameCopy.getPlayers()

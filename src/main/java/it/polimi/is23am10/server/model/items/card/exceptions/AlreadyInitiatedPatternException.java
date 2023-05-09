@@ -1,5 +1,8 @@
 package it.polimi.is23am10.server.model.items.card.exceptions;
 
+import it.polimi.is23am10.server.model.items.card.AbstractCard;
+import it.polimi.is23am10.server.model.pattern.AbstractPattern;
+
 /**
  * Custom exception for duplicate {@link AbstractCard} {@link AbstractPattern}
  * initialization.

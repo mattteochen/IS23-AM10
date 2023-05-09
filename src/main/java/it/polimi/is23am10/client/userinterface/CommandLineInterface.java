@@ -43,9 +43,6 @@ public final class CommandLineInterface implements UserInterface {
       ow.warning(CLIStrings.noGamesString, false);
     } else {
       ow.info(CLIStrings.listGamesString, true);
-     // availableGames
-     //     .forEach(ag -> ow.info(String.format(CLIStrings.availableGameString,
-     //         availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId()), false));
      for (VirtualView ag : availableGames){
       ow.info(String.format(CLIStrings.availableGameString,
               availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId()), false);

@@ -42,4 +42,10 @@ public final class ServerDebugPrefixString {
    *
    */
   public static final String SEND_CHAT_MESSAGE_COMMAND_PREFIX = "SEND_CHAT_MESSAGE ->";
+  
+  /**  
+   * {@link Opcode#GAME_TIMER} prefix string.
+   *
+   */
+  public static final String SNOOZE_TIMER_COMMAND_PREFIX = "SNOOZE_TIMER ->";
 }

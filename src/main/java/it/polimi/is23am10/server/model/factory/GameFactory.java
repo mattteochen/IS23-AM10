@@ -49,22 +49,22 @@ public final class GameFactory {
    *                           game.
    * @param maxPlayerNum       The desired maximum player number, specified by the
    *                           first player.
-   * @throws NullMaxPlayerException
-   * @throws InvalidMaxPlayerException
-   * @throws NullPlayerNameException
-   * @throws NullPlayerIdException
-   * @throws NullPlayerBookshelfException
-   * @throws NullPlayerScoreException
-   * @throws NullPlayerPrivateCardException
-   * @throws NullPlayerScoreBlocksException
-   * @throws DuplicatePlayerNameException
-   * @throws AlreadyInitiatedPatternException
-   * @throws NullPlayerNamesException
-   * @throws InvalidNumOfPlayersException
-   * @throws NullNumOfPlayersException
-   * @throws NullAssignedPatternException
-   * @throws NotValidScoreBlockValueException
-   * @throws PlayerNotFoundException
+   * @throws NullMaxPlayerException If no value for maximum number of players in the game is provided.
+   * @throws InvalidMaxPlayerException If value for maximum number of players in the game is not valid.
+   * @throws NullPlayerNameException If player name is null.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws NullPlayerNamesException If, while adding multiple players, the list of player names is null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
+   * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
+   * @throws PlayerNotFoundException If the player with the name provided is not found.
    * 
    */
   public static Game getNewGame(String startingPlayerName, Integer maxPlayerNum)

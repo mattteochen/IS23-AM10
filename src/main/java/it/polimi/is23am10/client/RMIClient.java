@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.server.command.AbstractCommand;
@@ -16,6 +17,7 @@ import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.SendChatMessageCommand;
+import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
@@ -60,6 +62,25 @@ public class RMIClient extends Client {
    */
   protected IPlayerConnector playerConnectorServer;
 
+
+  /**
+   * Rmi alarm snoozer.
+   * 
+   */
+  protected AlarmConsumer snoozer = () -> {
+    //TODO: refactor after this https://github.com/mattteochen/IS23-AM10/issues/121
+    if (!hasJoined()) {
+      return;
+    }
+    try {
+      PlayerConnectorRmi playerConnectorRmi = (PlayerConnectorRmi) playerConnector;
+      SnoozeGameTimerCommand cmd = new SnoozeGameTimerCommand(playerConnectorRmi.getPlayer().getPlayerName());
+      serverControllerActionServer.execute(playerConnectorRmi, cmd);
+    } catch(RemoteException e) {
+      System.out.println("🛑 " + e.getMessage());
+    }
+  };
+
   /**
    * Public constructor for client using RMI as communication method.
    * 
@@ -78,13 +99,24 @@ public class RMIClient extends Client {
   }
 
   /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  protected boolean hasJoined() {
+    //TODO: consider further checks as gameID
+    PlayerConnectorRmi playerConnectorRmi = (PlayerConnectorRmi) playerConnector;
+    return (playerConnectorRmi.getPlayer() != null &&
+      playerConnectorRmi.getPlayer().getPlayerName() != null);
+  }
+
+  /**
    * Perform all the needed lookups.
    * A gentle reminder that the {@link IPlayerConnector} bind can only be found
    * after a join or creation action.
    *
-   * @param pc The player connector.
-   * 
    */
+  @Override
   protected void lookupInit() throws RemoteException, NotBoundException {
     playerConnectorServer = (IPlayerConnector) rmiRegistry
         .lookup(ServerControllerRmiBindings.getPlayerConnectorRebindId((PlayerConnectorRmi) playerConnector));
@@ -98,104 +130,22 @@ public class RMIClient extends Client {
    */
   @Override
   public void run() {
+
+    alarm.scheduleAtFixedRate(new AlarmTask(snoozer),
+      ALARM_INITIAL_DELAY_MS, ALARM_INTERVAL_MS);
+
     final PlayerConnectorRmi playerConnectorRmi = (PlayerConnectorRmi) playerConnector;
     while (!hasRequestedDisconnection()) {
       try {
         clientRunnerCore(playerConnectorRmi);
       } catch (IOException | InterruptedException e) {
-        System.out.println("🛑 " + e.getMessage());
+        userInterface.displayError(new ErrorMessage("Interrupted exception", ErrorSeverity.ERROR));
       } catch (NullPlayerNameException | NullPlayerIdException e) {
-        e.printStackTrace();
+        userInterface.displayError(new ErrorMessage("Failed to add player, retry", ErrorSeverity.ERROR));
       }
     }
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
-  @Override
-  protected void handleGameSelection(AbstractPlayerConnector apc, BufferedReader br,
-      String selectedPlayerName) throws IOException, InterruptedException, NullPlayerNameException {
-        
-      // Executed if I still haven't selected a game
-      if (apc.getGameId() == null) {
-      getAvailableGames(apc);
-  
-      System.out.println(CLIStrings.joinOrCreateString);
-  
-      String fullCommand = br.readLine();
-      String command = fullCommand.split(" ")[0];
-      Integer maxPlayers = null;
-      switch (command) {
-        case "j":
-          if (fullCommand.split(" ").length > 1) {
-            String idx = fullCommand.split(" ")[1];
-            if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
-              UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
-              System.out.println("Joining game " + selectedGameId);
-              addPlayer(apc, selectedPlayerName, selectedGameId);
-              try {
-                lookupInit();
-              } catch(NotBoundException e) {
-                userInterface.displayError(new ErrorMessage(
-                    "Failed to connect to the server, aborting the request",
-                    ErrorSeverity.CRITICAL));
-              }
-              runMessageHandler();
-              while (getGameIdRef() == null && !getHasDuplicateName()){}
-              if(getHasDuplicateName()) {
-                userInterface.displayError(new ErrorMessage("Failed to add player, retry", ErrorSeverity.CRITICAL));
-                break;
-              }
-              apc.setGameId(getGameIdRef());
-              System.out.println("Joined game "+ selectedGameId);
-            } else {
-              userInterface.displayError(
-                new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
-              }
-          } else {
-            userInterface.displayError(
-                new ErrorMessage("Insert value of max players", ErrorSeverity.ERROR));
-          }
-          break;
-        case "c":
-          if (fullCommand.split(" ").length > 1){
-            String numMaxPlayers = fullCommand.split(" ")[1];
-            if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
-              maxPlayers = Integer.parseInt(numMaxPlayers);
-              System.out.println("Creating game");
-              startGame(apc, selectedPlayerName, maxPlayers);
-              try {
-                lookupInit();
-              } catch(NotBoundException e) {
-                userInterface.displayError(
-                    new ErrorMessage("Failed to connect to the server, aborting the request",
-                     ErrorSeverity.CRITICAL));
-              }
-              runMessageHandler();
-              while (getGameIdRef() == null){
-              }
-              apc.setGameId(getGameIdRef());
-              System.out.println("Created game");
-            } else {
-              userInterface.displayError(
-                new ErrorMessage("Failed to create game", ErrorSeverity.CRITICAL));
-            }
-          } else {
-            userInterface.displayError(
-                new ErrorMessage("Insert value of max players", ErrorSeverity.ERROR));
-          }
-          break;
-        case "q":
-          apc.getPlayer().setPlayerName(null);
-          apc.setGameId(null);
-          break;
-        default:
-          break;
-      }
-    }
-  }
 
    /**
    * {@inheritDoc}
@@ -265,11 +215,9 @@ public class RMIClient extends Client {
             showServerMessage(msg);
           }
         } catch (InterruptedException | RemoteException e) {
-          // TODO: replace with custom logger
-          System.out.println("🛑 Failed to retrive message from server, bad context state " + e.getMessage());
+          userInterface.displayError(new ErrorMessage("Failed to retrive message from server, bad context state:" + e.getMessage(), ErrorSeverity.CRITICAL));
         } catch (NullPointerException e) {
-          // TODO: replace with custom logger
-          System.out.println("🛑 Null pointer " + e.getMessage());
+          userInterface.displayError(new ErrorMessage("Null pointer:" + e.getMessage(), ErrorSeverity.CRITICAL));
         }
       }
     });

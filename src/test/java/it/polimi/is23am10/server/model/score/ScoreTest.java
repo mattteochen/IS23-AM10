@@ -56,13 +56,13 @@ class ScoreTest {
      * This test comes directly from the rulebook.
      * Check Rulebook - page 2 - Final count example.
      *
-     * @throws WrongCharBookshelfStringException
-     * @throws WrongLengthBookshelfStringException
-     * @throws NullPointerException
-     * @throws NullIndexValueException
-     * @throws BookshelfGridRowIndexOutOfBoundsException
-     * @throws BookshelfGridColIndexOutOfBoundsException
-     * @throws NullPlayerBookshelfException
+     * @throws WrongCharBookshelfStringException If when building a bookshelf based on string, it contains an invalid character.
+     * @throws WrongLengthBookshelfStringException If when building a bookshelf based on string, it is of an invalid length.
+     * @throws NullPointerException Generic NPE.
+     * @throws NullIndexValueException If the index provided is null.
+     * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+     * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+     * @throws NullPlayerBookshelfException If bookshelf is null.
      */
     @Test
     public void setBookshelfPoints_should_set_exampleBS()
@@ -88,14 +88,14 @@ class ScoreTest {
      * This test checks that an empty bookshelf
      * returns a zero score.
      *
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
+     * @throws NullPointerException Generic NPE.
+     * @throws WrongLengthBookshelfStringException If when building a bookshelf based on string, it is of an invalid length.
+     * @throws WrongCharBookshelfStringException If when building a bookshelf based on string, it contains an invalid character.
      * 
-     * @throws BookshelfGridColIndexOutOfBoundsException
-     * @throws BookshelfGridRowIndexOutOfBoundsException
-     * @throws NullIndexValueException
-     * @throws NullPlayerBookshelfException
+     * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+     * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+     * @throws NullIndexValueException If the index provided is null.
+     * @throws NullPlayerBookshelfException If bookshelf is null.
      */
     @Test
     public void setBookshelfPoints_should_set_emptyBS()
@@ -115,14 +115,14 @@ class ScoreTest {
      * This tests checks that groups bigger than {@link Score#MAX_GROUP_SIZE}
      * only count as {@link Score#MAX_GROUP_SIZE}-big groups.
      *
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
+     * @throws NullPointerException Generic NPE.
+     * @throws WrongLengthBookshelfStringException If when building a bookshelf based on string, it is of an invalid length.
+     * @throws WrongCharBookshelfStringException If when building a bookshelf based on string, it contains an invalid character.
      * 
-     * @throws BookshelfGridColIndexOutOfBoundsException
-     * @throws BookshelfGridRowIndexOutOfBoundsException
-     * @throws NullIndexValueException
-     * @throws NullPlayerBookshelfException
+     * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+     * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+     * @throws NullIndexValueException If the index provided is null.
+     * @throws NullPlayerBookshelfException If bookshelf is null.
      */
     @Test
     public void setBookshelfPoints_should_set_bigGroupsBS()
@@ -150,14 +150,14 @@ class ScoreTest {
      * This tests checks that groups smaller than {@link Score#MIN_GROUP_SIZE}
      * get ignored.
      *
-     * @throws NullPointerException
-     * @throws WrongLengthBookshelfStringException
-     * @throws WrongCharBookshelfStringException
+     * @throws NullPointerException Generic NPE.
+     * @throws WrongLengthBookshelfStringException If when building a bookshelf based on string, it is of an invalid length.
+     * @throws WrongCharBookshelfStringException If when building a bookshelf based on string, it contains an invalid character.
      * 
-     * @throws BookshelfGridColIndexOutOfBoundsException
-     * @throws BookshelfGridRowIndexOutOfBoundsException
-     * @throws NullIndexValueException
-     * @throws NullPlayerBookshelfException
+     * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+     * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+     * @throws NullIndexValueException If the index provided is null.
+     * @throws NullPlayerBookshelfException If bookshelf is null.
      */
     @Test
     public void setBookshelfPoints_should_set_smallGroupsBS()
@@ -195,8 +195,8 @@ class ScoreTest {
     /**
      * Test to check green path. Scoreblocks are present and valid
      *
-     * @throws NotValidScoreBlockValueException
-     * @throws NullScoreBlockListException
+     * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
+     * @throws NullScoreBlockListException If the list of scoreblocks is null.
      */
     @Test
     public void setScoreBlockPoints_should_set() throws NotValidScoreBlockValueException, NullScoreBlockListException {
@@ -217,8 +217,8 @@ class ScoreTest {
      * Test to check that an empty list of scoreblocks
      * results in a zero-score.
      *
-     * @throws NotValidScoreBlockValueException
-     * @throws NullScoreBlockListException
+     * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
+     * @throws NullScoreBlockListException If the list of scoreblocks is null.
      */
     @Test
     public void setScoreBlockPoints_should_set_empty()
@@ -250,11 +250,11 @@ class ScoreTest {
     /**
      * Test to check green path. Private
      *
-     * @throws NotValidScoreBlockValueException
-     * @throws NullScoreBlockListException
-     * @throws AlreadyInitiatedPatternException
-     * @throws NegativeMatchedBlockCountException
-     * @throws NullMatchedBlockCountException
+     * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
+     * @throws NullScoreBlockListException If the list of scoreblocks is null.
+     * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+     * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+     * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
      */
     @ParameterizedTest
     @ValueSource(ints = { 0, 1, 2, 3, 4, 5, 6 })

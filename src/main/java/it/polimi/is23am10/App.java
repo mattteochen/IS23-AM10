@@ -77,14 +77,13 @@ public class App {
           IServerControllerAction serverControllerActionServerRef = (IServerControllerAction) registry
               .lookup(IServerControllerAction.class.getName());
           client = new RMIClient(playerConnector, userInterface, null, serverControllerActionServerRef, registry);
-          client.run();
         } else {
           Socket socket = new Socket(ctx.getServerAddress(), ctx.getServerSocketPort());
           PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
           client = new SocketClient(playerConnector, userInterface);
           client.runMessageHandler();
-          client.run();
         }
+        client.run();
       }
     } catch (NumberFormatException | InvalidArgumentException | MissingParameterException | InvalidPortNumberException
         | InvalidMaxConnectionsNumberException e) {
