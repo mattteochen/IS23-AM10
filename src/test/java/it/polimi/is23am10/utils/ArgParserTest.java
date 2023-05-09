@@ -36,6 +36,31 @@ public class ArgParserTest {
   }
 
   @Test
+  void set_max_inactivity_time_argument_should_set_max_inactivity_time()
+      throws InvalidArgumentException, MissingParameterException, NumberFormatException,
+      InvalidPortNumberException, InvalidMaxConnectionsNumberException {
+    final long time = 1000 * 60 * 10;
+    final String[] mockCommand = {
+        ArgParser.MAX_CLIENT_INACTIVITY_TIME, String.valueOf(time)
+    };
+    ArgParser.parse(mockCommand);
+    assertEquals(time, AppConfig.getMaxInactivityTime());
+
+    AppConfigContext ctx = new AppConfigContext();
+    assertEquals(time, ctx.getMaxInactivityTime());
+  }
+
+  @Test
+  void missing_time_argument_should_throw_missing_parameter_exception()
+      throws InvalidArgumentException, MissingParameterException {
+    final String[] mockCommand = {
+        ArgParser.MAX_CLIENT_INACTIVITY_TIME
+    };
+
+    assertThrows(MissingParameterException.class, () -> ArgParser.parse(mockCommand));
+  }
+
+  @Test
   void set_rmi_port_argument_should_set_server_port()
       throws InvalidArgumentException, MissingParameterException, NumberFormatException,
       InvalidPortNumberException, InvalidMaxConnectionsNumberException {

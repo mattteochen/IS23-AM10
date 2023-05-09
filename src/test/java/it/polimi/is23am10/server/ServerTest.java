@@ -74,7 +74,7 @@ class ServerTest {
     server.start(ctx);
     assertEquals(ServerStatus.STARTED, server.status());
 
-    verify(executorService, Mockito.times(1)).execute(any());
+    verify(executorService, Mockito.times(2)).execute(any());
   }
 
   @Test
