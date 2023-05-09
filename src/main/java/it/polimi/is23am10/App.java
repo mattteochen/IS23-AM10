@@ -75,15 +75,16 @@ public class App {
         if (ctx.getUseRMI()) {
           try {
             Registry registry = LocateRegistry.getRegistry(ctx.getServerRmiPort());
-            // TODO: Lookup for server controller action. Evaluate possible passing it over
             PlayerConnectorRmi playerConnector = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
             IServerControllerAction serverControllerActionServerRef = (IServerControllerAction) registry
                 .lookup(IServerControllerAction.class.getName());
             client = new RMIClient(playerConnector, userInterface, null, serverControllerActionServerRef, registry);
           } catch (NotBoundException e) {
             userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
+            return;
           } catch(NullBlockingQueueException e) {
-            userInterface.displayError(new ErrorMessage("Client start error. Shutting down", ErrorSeverity.CRITICAL));
+            userInterface.displayError(new ErrorMessage("Client module error. Shutting down", ErrorSeverity.CRITICAL));
+            return;
           }
         } else {
           try {
@@ -93,11 +94,13 @@ public class App {
             client.runMessageHandler();
           } catch (UnknownHostException e) {
             userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
+            return;
           } catch (NullBlockingQueueException | NullSocketConnectorException e) {
-            userInterface.displayError(new ErrorMessage("Client start error. Shutting down", ErrorSeverity.CRITICAL));
+            userInterface.displayError(new ErrorMessage("Client module error. Shutting down", ErrorSeverity.CRITICAL));
+            return;
           }
         }
-        client.run();        
+        client.run(); 
       }
     } catch (NumberFormatException | InvalidArgumentException | MissingParameterException | InvalidPortNumberException
         | InvalidMaxConnectionsNumberException e) {
