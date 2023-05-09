@@ -108,6 +108,7 @@ public class RMIClientTest {
     assertNotNull(rmiClient);
   }
 
+  //TODO: investigate mockito
   @Test
   @Disabled
   void run_should_runCoreCycle() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException {

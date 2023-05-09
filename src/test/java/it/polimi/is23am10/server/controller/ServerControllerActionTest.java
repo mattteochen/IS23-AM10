@@ -450,7 +450,6 @@ class ServerControllerActionTest {
   }
   
   @Test
-  @Disabled
   void GET_AVAILABLE_GAMES_should_return_gameList()
       throws NullSocketConnectorException, NullBlockingQueueException, NullMaxPlayerException,
       InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
@@ -466,8 +465,6 @@ class ServerControllerActionTest {
     GameHandler h2 = new GameHandler("frank zappa", 3);
     GameHandler h3 = new GameHandler("nicoletta", 4);
 
-    List<VirtualView> availableGames = List.of(new VirtualView(h1.getGame()), new VirtualView(h2.getGame()),
-        new VirtualView(h3.getGame()));
 
     ServerControllerState.addGameHandler(h1);
     ServerControllerState.addGameHandler(h2);
@@ -480,18 +477,9 @@ class ServerControllerActionTest {
     assertEquals(1, playerConnector.getMsgQueueSize());
     AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue();
     assertNotNull(msg);
-    /*
-     * The following lines of tests are commented because of the changes in the deserialization
-     * of available games messages made. 
-     */
-    //assertNotNull(msg.getAvailableGames());
-    //assertEquals(3, msg.getAvailableGames().size());
-    //assertTrue(
-    //    msg.getAvailableGames().containsAll(availableGames) && availableGames.containsAll(msg.getAvailableGames()));
   }
 
   @Test
-@Disabled  
 void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
       throws NullSocketConnectorException, NullBlockingQueueException, NullMaxPlayerException,
       InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
@@ -519,14 +507,6 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
     AvailableGamesMessage msg = serverControllerAction.getAvailableGamesConsumerRmi.accept(logger, null, gagCommand);
 
     assertNotNull(msg);
-    /*
-     * The following lines of tests are commented because of the changes in the deserialization
-     * of available games messages made. 
-     */
-   // assertNotNull(msg.getAvailableGames());
-   // assertEquals(3, msg.getAvailableGames().size());
-    //assertTrue(
-    //    msg.getAvailableGames().containsAll(availableGames) && availableGames.containsAll(msg.getAvailableGames()));
   }
 
   @Test

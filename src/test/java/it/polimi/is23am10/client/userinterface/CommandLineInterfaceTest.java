@@ -57,10 +57,9 @@ public class CommandLineInterfaceTest {
   }
 
   @Test
-  @Disabled
   void displaySplashScreen_should_display_splash_screen() {
     cli.displaySplashScreen();
-    assertOutput(OutputLevel.INFO, CLIStrings.welcomeString.stripLeading() + "\n" + CLIStrings.joinOrCreateString);
+    assertOutput(OutputLevel.INFO, CLIStrings.welcomeString.stripLeading() + "\n" + CLIStrings.insertPlayerNameString);
   }
 
   @Test

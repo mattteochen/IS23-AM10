@@ -37,7 +37,6 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  */
 public class AvailableGamesMessageTest {
   @Test
-  @Disabled
   public void constructor_should_create_AvailableGamesMessage() 
     throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
     NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException, 
@@ -56,8 +55,5 @@ public class AvailableGamesMessageTest {
     
     assertNotNull(agm.getMessageType()); 
     assertEquals(MessageType.AVAILABLE_GAMES, agm.getMessageType());
-    
-    //assertNotNull(agm.getAvailableGames()); 
-    //assertTrue(agm.getAvailableGames().containsAll(games) && games.containsAll(agm.getAvailableGames()));
   }
 }
