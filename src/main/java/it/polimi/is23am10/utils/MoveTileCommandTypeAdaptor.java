@@ -45,7 +45,7 @@ class CustomKeyDeserializer implements JsonDeserializer<Coordinates> {
 }
   
 /**
- * Custom deserializer class definition for {@link Gson} usage.
+ * Custom deserializer class definition for Gson usage.
  * This works {@link Map} with {@link Coordinates} as keys.
  * 
  */
