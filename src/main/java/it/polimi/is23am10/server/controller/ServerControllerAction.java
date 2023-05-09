@@ -37,6 +37,7 @@ public class ServerControllerAction implements IServerControllerAction {
       Opcode.ADD_PLAYER, addPlayerConsumer,
       Opcode.MOVE_TILES, moveTilesConsumer,
       Opcode.GET_GAMES, getAvailableGamesConsumer,
+      Opcode.SEND_CHAT_MESSAGE, sendChatMessageConsumer,
       Opcode.GAME_TIMER, snoozeTimerConsumer);
 
   /**

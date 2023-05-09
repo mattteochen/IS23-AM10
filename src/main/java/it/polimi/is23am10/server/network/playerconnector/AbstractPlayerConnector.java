@@ -151,6 +151,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
    * @param player The player to associate to the current player connector.
    *
    */
+  @Override
   public synchronized void setPlayer(Player player) {
     this.player = player;
   }

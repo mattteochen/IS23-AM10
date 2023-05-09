@@ -34,6 +34,10 @@ public abstract class AbstractCommand implements Serializable {
      */
     GET_GAMES,
     /**
+     * Send chat message command
+     */
+    SEND_CHAT_MESSAGE,
+    /**
      * Game timer snooze command.
      */
     GAME_TIMER,

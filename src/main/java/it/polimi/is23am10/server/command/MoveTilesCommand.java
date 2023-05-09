@@ -1,8 +1,11 @@
 package it.polimi.is23am10.server.command;
 
 import it.polimi.is23am10.utils.Coordinates;
+import it.polimi.is23am10.utils.MoveTileCommandTypeAdaptor;
+
 import java.util.Map;
 import java.util.UUID;
+import com.google.gson.annotations.JsonAdapter;
 import it.polimi.is23am10.server.model.items.board.Board;
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
 
@@ -26,6 +29,7 @@ public class MoveTilesCommand extends AbstractCommand {
    * on the {@link Board} to the destination position to move
    * that same tile inside user's {@link Bookshelf}.
    */
+  @JsonAdapter(MoveTileCommandTypeAdaptor.class)
   private Map<Coordinates, Coordinates> moves;
 
   /**

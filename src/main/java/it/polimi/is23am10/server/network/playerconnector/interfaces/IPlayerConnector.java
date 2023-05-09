@@ -27,6 +27,14 @@ public interface IPlayerConnector extends Remote {
   Player getPlayer() throws RemoteException;
 
   /**
+   * Setter for the associated player.
+   *
+   * @param p The player to be set.
+   *
+   */
+  void setPlayer(Player p) throws RemoteException;
+
+  /**
    * Getter for the associated game id.
    *
    * @return The game id.

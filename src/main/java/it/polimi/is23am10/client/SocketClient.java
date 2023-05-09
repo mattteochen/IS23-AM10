@@ -7,14 +7,28 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.UUID;
 
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
+import it.polimi.is23am10.server.command.AddPlayerCommand;
+import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
+import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SendChatMessageCommand;
+import it.polimi.is23am10.server.command.StartGameCommand;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
+import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
+import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
+import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
+import it.polimi.is23am10.utils.Coordinates;
 
 /**
  * A client using Socket as communication method.
@@ -90,39 +104,16 @@ public class SocketClient extends Client {
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
 
     while (playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()) {
-
-      // TODO: implement user requests
-      // if any new user request, process it (if virtual view has not declared that it
-      // is this player turn, skip).
-
-      // Some hints for the above's implementer: This is a start game request demo, enable this to test, to be removed for the real client request.
-      // TODO: remove when not needed anymore
-      /*
-       * try {
-       * StartGameCommand command = new StartGameCommand("Socket client", 4);
-       * String req = gson.toJson(command);
-       * PrintWriter epson = new
-       * PrintWriter(playerConnectorSocket.getConnector().getOutputStream(), true,
-       * StandardCharsets.UTF_8);
-       * epson.println(req);
-       * } catch(Exception e) {
-       * System.out.println("🛑 " + e.getMessage());
-       * }
-       */
-
-      // retrieve and show server messages
       try {
-        AbstractMessage serverMessage = parseServerMessage(playerConnectorSocket);
-        if (serverMessage != null) {
-          showServerMessage(serverMessage);
-        }
-      } catch (IOException e) {
-        // TODO: integrate custom logger
-        System.out.println("🛑 Failed to retrieve information from server, your game context may not be updated");
+        clientRunnerCore(playerConnectorSocket);
+      } catch (IOException | InterruptedException e) {
+        System.out.println("🛑 " + e.getMessage());
+      } catch (NullPlayerNameException | NullPlayerIdException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
     }
 
-    // TODO: integrate custom logger
     System.out.println("🛑 Connection with the server ended");
   }
 
@@ -139,5 +130,101 @@ public class SocketClient extends Client {
     BufferedReader br = new BufferedReader(new InputStreamReader(dis));
     String payload = br.readLine();
     return payload == null ? null : gson.fromJson(payload, AbstractMessage.class);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  void getAvailableGames(AbstractPlayerConnector apc)
+      throws IOException, InterruptedException {
+    GetAvailableGamesCommand command = new GetAvailableGamesCommand();
+    String req = gson.toJson(command);
+    sendMessage(req, apc);
+  };
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  void startGame(AbstractPlayerConnector apc, String playerName, int maxPlayerNum) throws IOException {
+    StartGameCommand command = new StartGameCommand(playerName, maxPlayerNum);
+    String req = gson.toJson(command);
+    sendMessage(req, apc);
+  };
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  void addPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException {
+    AddPlayerCommand command = new AddPlayerCommand(playerName, gameId);
+    String req = gson.toJson(command);
+    sendMessage(req, apc);
+  };
+
+   /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves) throws IOException {
+    MoveTilesCommand command = new MoveTilesCommand(apc.getPlayer().getPlayerName(), apc.getGameId(), moves);
+    String req = gson.toJson(command);
+    System.out.println(req);
+    sendMessage(req, apc);
+  };
+
+    
+  /**
+   * {@inheritDoc}
+   * 
+   */
+   @Override
+  void sendChatMessage(AbstractPlayerConnector apc, ChatMessage msg) throws IOException {
+    SendChatMessageCommand command = new SendChatMessageCommand(msg);
+    String req = gson.toJson(command);
+    sendMessage(req, apc);
+  }
+
+  /**
+   * Write a message throw the socket.
+   *
+   * @param req The payload request.
+   * @param apc The player connector instance.
+   * 
+   * 
+   */
+  protected void sendMessage(String req, AbstractPlayerConnector apc) throws IOException {
+    PrintWriter epson = new PrintWriter(((PlayerConnectorSocket) apc).getConnector().getOutputStream(), true,
+        StandardCharsets.UTF_8);
+    epson.println(req);
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  public void runMessageHandler(){
+    PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
+    Thread messageHandler = new Thread(()->{
+      while(playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()){
+        // retrieve and show server messages, it includes chat messages
+        try {
+          AbstractMessage serverMessage = parseServerMessage(playerConnectorSocket);
+          if (serverMessage != null) {
+            showServerMessage(serverMessage);
+          }
+        } catch (IOException e) {
+          // TODO: integrate custom logger
+          System.out.println("🛑 Failed to retrieve information from server, your game context may not be updated");
+        }
+      }
+    });
+    messageHandler.start();
   }
 }

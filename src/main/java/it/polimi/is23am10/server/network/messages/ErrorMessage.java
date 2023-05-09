@@ -14,6 +14,13 @@ import it.polimi.is23am10.server.model.player.Player;
  */
 public final class ErrorMessage extends AbstractMessage {
 
+    /**
+   * An utility to be used during deserialization processes.
+   * 
+   */
+  @SuppressWarnings("unused")
+  private final String className = this.getClass().getName();
+  
   /**
    * Not mandatory. Not null if direct message.
    */

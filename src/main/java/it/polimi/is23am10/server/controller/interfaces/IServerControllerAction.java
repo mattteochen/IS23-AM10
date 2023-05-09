@@ -4,6 +4,7 @@ import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
@@ -42,7 +43,9 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreExceptio
 import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.GameSnapshotUpdateException;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
+import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
@@ -364,6 +367,58 @@ public interface IServerControllerAction extends Remote {
   };
 
   /**
+   * The {@link Opcode#SEND_CHAT_MESSAGE} command callback worker.
+   *
+   */
+  final ControllerConsumer<Void,AbstractCommand> sendChatMessageConsumer = (logger, playerConnector, command) -> {
+    try {
+      if (playerConnector == null) {
+        throw new NullPlayerConnector();
+      }
+      SendChatMessageCommand scmCommand = (SendChatMessageCommand) command;
+      GameHandler handler = ServerControllerState.getGameHandlerByUUID(playerConnector.getGameId());
+
+      if (scmCommand.getChatMessage().isBroadcast()) {
+        handler.getPlayerConnectors()
+            .stream()
+            .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))
+            .forEach(pc -> {
+              try {
+                pc.addMessageToQueue(scmCommand.getChatMessage());
+              } catch (InterruptedException e) {
+                logger.error("{} {} {}",
+                    ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
+                    ErrorTypeString.ERROR_INTERRUPTED, e);
+              }
+            });
+      } else {
+        String receiverName = scmCommand.getChatMessage().getReceiverName();
+
+        handler.getPlayerConnectors()
+            .stream()
+            .filter(pc -> pc.getPlayer().getPlayerName().equals(receiverName))
+            .findFirst()
+            .get()
+            .addMessageToQueue(scmCommand.getChatMessage());
+      }
+    } catch (InterruptedException e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_INTERRUPTED, e);
+    } catch (NullGameHandlerInstance e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_ADDING_HANDLER, e);
+    } catch (NullPlayerConnector e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_ADDING_CONNECTOR, e);
+    }
+
+    return null;
+  };
+
+  /**
    * The {@link Opcode#MOVE_TILES} command callback worker.
    *
    */
@@ -388,6 +443,15 @@ public interface IServerControllerAction extends Remote {
         handler.updateCurrentPlayerHandler();
 
         handler.pushGameState();
+        logger.info("{} Operated Tile move for {} in game {}",
+            ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
+            handler.getGame().getActivePlayer().getPlayerName(),
+            handler.getGame().getGameId());
+      } else {
+        logger.info("{} Ignored Tile move for {} in game {}",
+            ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
+            handler.getGame().getActivePlayer().getPlayerName(),
+            handler.getGame().getGameId());
       }
 
       logger.info("{} Operated Tile move for {} in game {}",

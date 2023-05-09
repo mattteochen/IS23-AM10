@@ -14,6 +14,7 @@ import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
@@ -22,6 +23,7 @@ import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
+import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.ErrorTypeString;
 
 import java.io.BufferedReader;
@@ -67,6 +69,7 @@ public final class ServerControllerSocket implements Runnable {
    */
   protected Gson gson = new GsonBuilder()
       .registerTypeAdapter(AbstractCommand.class, new CommandDeserializer())
+      .registerTypeAdapter(Coordinates.class, new CoordinatesDeserializer())
       .create();
 
   /**
@@ -209,11 +212,29 @@ public final class ServerControllerSocket implements Runnable {
           return context.deserialize(jsonObject, MoveTilesCommand.class);
         case "it.polimi.is23am10.server.command.GetAvailableGamesCommand":
           return context.deserialize(jsonObject, GetAvailableGamesCommand.class);
+        case "it.polimi.is23am10.server.command.SendChatMessageCommand":
+          return context.deserialize(jsonObject, SendChatMessageCommand.class);
         case "it.polimi.is23am10.server.command.SnoozeGameTimerCommand":
           return context.deserialize(jsonObject, SnoozeGameTimerCommand.class);
         default:
           throw new JsonParseException("Unknown class name: " + className);
       }
+    }
+  }
+
+  /**
+   * Custom deserializer class definition for {@link Gson} usage.
+   * This works on {@link Coordinates} objects.
+   * 
+   */
+  class CoordinatesDeserializer implements JsonDeserializer<Coordinates> {
+    @Override
+    public Coordinates deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+      JsonObject obj = json.getAsJsonObject();
+      int row = obj.get("row").getAsInt();
+      int col = obj.get("col").getAsInt();
+      return new Coordinates(row, col);
     }
   }
 }
