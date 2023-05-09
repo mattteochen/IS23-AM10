@@ -81,6 +81,7 @@ public class RMIClient extends Client {
     }
   };
 
+
   /**
    * Public constructor for client using RMI as communication method.
    * 
