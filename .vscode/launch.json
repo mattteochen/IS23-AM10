@@ -12,7 +12,7 @@
     },
     {
       "type": "java",
-      "name": "Launch Server",
+      "name": "SERVER",
       "request": "launch",
       "mainClass": "it.polimi.is23am10.App",
       "args": "--is-server",
@@ -20,7 +20,7 @@
     },
     {
       "type": "java",
-      "name": "Launch Client (Socket)",
+      "name": "SOCKET",
       "request": "launch",
       "mainClass": "it.polimi.is23am10.App",
       "args": "",
@@ -28,7 +28,7 @@
     },
     {
       "type": "java",
-      "name": "Launch Server (RMI)",
+      "name": "RMI",
       "request": "launch",
       "mainClass": "it.polimi.is23am10.App",
       "args": "--use-rmi",
