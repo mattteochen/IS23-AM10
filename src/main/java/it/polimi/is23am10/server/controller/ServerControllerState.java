@@ -69,6 +69,7 @@ public final class ServerControllerState {
     if (handler == null) {
       throw new NullGameHandlerInstance();
     }
+    //synch performed by the collection
     gamePool.add(handler);
     logger.info(
         "Added new game handler with id {}", handler.getGame().getGameId());
@@ -95,11 +96,13 @@ public final class ServerControllerState {
     }
     if (target.isPresent()) {
       GameHandler targetHandler = target.get();
-      targetHandler.getPlayerConnectors()
-          .stream()
-          // point of optimization, can be parallelized
-          .forEach(connector ->
-              removePlayerByGame(connector.getGameId(), connector.getPlayer()));
+      synchronized (targetHandler) {
+        targetHandler.getPlayerConnectors()
+            .stream()
+            // point of optimization, can be parallelized
+            .forEach(connector ->
+                removePlayerByGame(connector.getGameId(), connector.getPlayer()));
+      }
       gamePool.remove(targetHandler);
       logger.info("Removed game handler with id {}", id);
     }
@@ -118,12 +121,16 @@ public final class ServerControllerState {
     if (playerConnector == null) {
       throw new NullPlayerConnector();
     }
-    Optional<AbstractPlayerConnector> found = playersPool.stream()
-      .filter(p -> p.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))
-      .findFirst();
+    Optional<AbstractPlayerConnector> found;
+    synchronized(playersPool) {
+      found = playersPool.stream()
+        .filter(p -> p.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))
+        .findFirst();
+    }
     if (found.isPresent()) {
       throw new DuplicatePlayerNameException("Player name already in use");
     }
+    //synch is performed by the collection
     playersPool.add(playerConnector);
     logger.info("Added new player connector");
   }
@@ -153,7 +160,10 @@ public final class ServerControllerState {
       AbstractPlayerConnector targetConnector = target.get();
       if (targetConnector.getClass() == PlayerConnectorSocket.class) {
         try {
-          ((PlayerConnectorSocket) targetConnector).getConnector().close();
+          PlayerConnectorSocket ps = (PlayerConnectorSocket) targetConnector;
+          synchronized (ps.getConnector()) {
+            ps.getConnector().close();
+          }
         } catch (IOException e) {
           logger.error("Failed to close socket connection", e);
         }

@@ -146,9 +146,12 @@ public final class ServerControllerSocket implements Runnable {
   protected void update() throws InterruptedException, IOException {
     AbstractMessage msg = playerConnector.getMessageFromQueue();
     if (msg != null) {
-      PrintWriter printer = new PrintWriter(playerConnector.getConnector().getOutputStream(), true,
-          StandardCharsets.UTF_8);
-      printer.println(gson.toJson(msg));
+      PrintWriter printer;
+      synchronized (playerConnector.getConnector()) {
+        printer = new PrintWriter(playerConnector.getConnector().getOutputStream(), true,
+            StandardCharsets.UTF_8);
+        printer.println(gson.toJson(msg));
+      }
       logger.info("{} sent to client {}", msg.getMessageType(), msg.getMessage());
     }
   }
@@ -166,11 +169,14 @@ public final class ServerControllerSocket implements Runnable {
    */
   protected AbstractCommand buildCommand()
       throws IOException, JsonIOException, JsonSyntaxException {
-    BufferedReader reader = new BufferedReader(
-        new InputStreamReader(playerConnector.getConnector().getInputStream()));
+    BufferedReader reader;
     String payload = null;
-    if (reader.ready()) {
-      payload = reader.readLine();
+    synchronized (playerConnector.getConnector()) {
+      reader = new BufferedReader(
+          new InputStreamReader(playerConnector.getConnector().getInputStream()));
+      if (reader.ready()) {
+        payload = reader.readLine();
+      }
     }
     if (payload != null) {
       logger.info("Socket buffer reader received {}", payload);
