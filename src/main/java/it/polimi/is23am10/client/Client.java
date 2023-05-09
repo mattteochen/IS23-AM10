@@ -153,7 +153,7 @@ public abstract class Client implements Runnable {
    * Interface used for communicating with the user. Can be either
    * graphical or textual. Only output methods are exposed by interface.
    */
-  protected UserInterface userInterface;
+  public UserInterface userInterface;
 
   /**
    * List of available games set when a message from getAvailableGames is

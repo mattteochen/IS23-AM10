@@ -9,6 +9,8 @@ import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.Server;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
@@ -71,29 +73,40 @@ public class App {
         UserInterface userInterface = ctx.getShowGUI() ? new GraphicUserInterface() : new CommandLineInterface(ctx.getShowDebug());
         Client client;
         if (ctx.getUseRMI()) {
-          Registry registry = LocateRegistry.getRegistry(ctx.getServerRmiPort());
-          // TODO: Lookup for server controller action. Evaluate possible passing it over
-          PlayerConnectorRmi playerConnector = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
-          IServerControllerAction serverControllerActionServerRef = (IServerControllerAction) registry
-              .lookup(IServerControllerAction.class.getName());
-          client = new RMIClient(playerConnector, userInterface, null, serverControllerActionServerRef, registry);
+          try {
+            Registry registry = LocateRegistry.getRegistry(ctx.getServerRmiPort());
+            PlayerConnectorRmi playerConnector = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
+            IServerControllerAction serverControllerActionServerRef = (IServerControllerAction) registry
+                .lookup(IServerControllerAction.class.getName());
+            client = new RMIClient(playerConnector, userInterface, null, serverControllerActionServerRef, registry);
+          } catch (NotBoundException e) {
+            userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
+            return;
+          } catch(NullBlockingQueueException e) {
+            userInterface.displayError(new ErrorMessage("Client module error. Shutting down", ErrorSeverity.CRITICAL));
+            return;
+          }
         } else {
-          Socket socket = new Socket(ctx.getServerAddress(), ctx.getServerSocketPort());
-          PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
-          client = new SocketClient(playerConnector, userInterface);
-          client.runMessageHandler();
+          try {
+            Socket socket = new Socket(ctx.getServerAddress(), ctx.getServerSocketPort());
+            PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
+            client = new SocketClient(playerConnector, userInterface);
+            client.runMessageHandler();
+          } catch (UnknownHostException e) {
+            userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
+            return;
+          } catch (NullBlockingQueueException | NullSocketConnectorException e) {
+            userInterface.displayError(new ErrorMessage("Client module error. Shutting down", ErrorSeverity.CRITICAL));
+            return;
+          }
         }
-        client.run();
+        client.run(); 
       }
     } catch (NumberFormatException | InvalidArgumentException | MissingParameterException | InvalidPortNumberException
         | InvalidMaxConnectionsNumberException e) {
       logger.error("Cannot parse CLI arguments.", e);
-    } catch (UnknownHostException e) {
-      logger.error("Failed to retrieve server address");
     } catch (IOException e) {
       logger.error("Cannot launch server.", e);
-    } catch (NullBlockingQueueException | NullSocketConnectorException | NotBoundException e) {
-      logger.error("Cannot launch client.", e);
     }
   }
 }

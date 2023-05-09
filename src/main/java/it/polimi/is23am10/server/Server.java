@@ -53,6 +53,12 @@ public class Server {
   protected ServerSocket serverSocket;
 
   /**
+   * Socket socket clients connected.
+   *
+   */
+  protected static int socketClientsConnected = 0;
+
+  /**
    * Server thread executor service manager.
    *
    */
@@ -95,13 +101,19 @@ public class Server {
     // start the socket server
     while (!serverSocket.isClosed()) {
       try {
-        Socket client = serverSocket.accept();
-        client.setKeepAlive(ctx.getKeepAlive());
-        logger.info("Received new connection");
-        executorService.execute(new ServerControllerSocket(
+        if (getSocketClientsConnected() < ctx.getMaxConnections()) {
+          Socket client = serverSocket.accept();
+          client.setKeepAlive(ctx.getKeepAlive());
+          setSocketClientConnected(getSocketClientsConnected() + 1);
+          executorService.execute(new ServerControllerSocket(
             new PlayerConnectorSocket(client,
-                new LinkedBlockingQueue<>()),
+            new LinkedBlockingQueue<>()),
             new ServerControllerAction()));
+          logger.info("Received new connection " + "(" + getSocketClientsConnected() + "/" + ctx.getMaxConnections() + ")" );
+        } else {
+          serverSocket.accept();
+          logger.error("Socket connection cannot be established as the server has reached its maximum socket client connections capacity.");
+        }
       } catch (IOException | NullSocketConnectorException | NullBlockingQueueException e) {
         logger.error("Failed to process connection", e);
       }
@@ -130,5 +142,25 @@ public class Server {
     return serverSocket == null || serverSocket.isClosed()
         ? ServerStatus.STOPPED
         : ServerStatus.STARTED;
+  }
+
+  /**
+   * Get the current number of clients connected to the socket.
+   *
+   * @return The connect clients number.
+   *
+   */
+  public static int getSocketClientsConnected(){
+    return socketClientsConnected;
+  }
+
+  /**
+   * Set the current number of clients connected to the socket.
+   *
+   * @param scc The connect clients number.
+   *
+   */
+  public static void setSocketClientConnected(int scc){
+    socketClientsConnected = scc;
   }
 }
