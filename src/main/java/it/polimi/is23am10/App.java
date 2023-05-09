@@ -82,8 +82,10 @@ public class App {
                 .lookup(IServerControllerAction.class.getName());
             client = new RMIClient(playerConnector, userInterface, null, serverControllerActionServerRef, registry);
             client.run();
-          } catch (Exception e) {
+          } catch (NotBoundException e) {
             userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
+          } catch(NullBlockingQueueException e) {
+            userInterface.displayError(new ErrorMessage("Client start error. Shutting down", ErrorSeverity.CRITICAL));
           }
         } else {
           try {
@@ -91,16 +93,16 @@ public class App {
             PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
             client = new SocketClient(playerConnector, userInterface);
             client.run();
-          } catch (Exception e) {
+          } catch (UnknownHostException e) {
             userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
+          } catch (NullBlockingQueueException | NullSocketConnectorException e) {
+            userInterface.displayError(new ErrorMessage("Client start error. Shutting down", ErrorSeverity.CRITICAL));
           }
         }
       }
     } catch (NumberFormatException | InvalidArgumentException | MissingParameterException | InvalidPortNumberException
         | InvalidMaxConnectionsNumberException e) {
       logger.error("Cannot parse CLI arguments.", e);
-    } catch (UnknownHostException e) {
-      logger.error("Failed to retrieve server address");
     } catch (IOException e) {
       logger.error("Cannot launch server.", e);
     }

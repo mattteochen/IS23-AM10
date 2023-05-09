@@ -144,10 +144,22 @@ public class Server {
         : ServerStatus.STARTED;
   }
 
+  /**
+   * Get the current number of clients connected to the socket.
+   *
+   * @return The connect clients number.
+   *
+   */
   public static int getSocketClientsConnected(){
     return socketClientsConnected;
   }
 
+  /**
+   * Set the current number of clients connected to the socket.
+   *
+   * @param scc The connect clients number.
+   *
+   */
   public static void setSocketClientConnected(int scc){
     socketClientsConnected = scc;
   }
