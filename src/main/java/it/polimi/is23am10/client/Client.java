@@ -74,6 +74,24 @@ import com.google.gson.JsonParseException;
 public abstract class Client implements Runnable {
 
   /**
+   * Custom lock object.
+   * 
+   */
+  private Object gameRefLock = new Object();
+
+  /**
+   * Custom lock object.
+   * 
+   */
+  private Object hasDuplicateLock = new Object();
+
+  /**
+   * Custom lock object.
+   * 
+   */
+  private Object virtualViewLock = new Object();
+
+  /**
    * Protected constructor for client using Socket as communication method.
    * 
    * @param pc Player connector.
@@ -196,8 +214,10 @@ public abstract class Client implements Runnable {
         VirtualView v = gson.fromJson(msg.getMessage(), VirtualView.class);
         setVirtualView(v);
         // do not overwrite game id
-        if (gameIdRef == null) {
-          setGameIdRef(v.getGameId());
+        synchronized (gameRefLock) {
+          if (gameIdRef == null) {
+            setGameIdRef(v.getGameId());
+          }
         }
         userInterface.displayVirtualView(v);
         break;
@@ -240,15 +260,19 @@ public abstract class Client implements Runnable {
    * @param id game id ref
    */
   protected void setGameIdRef(UUID id) {
-    this.gameIdRef = id;
+    synchronized (gameRefLock) {
+      this.gameIdRef = id;
+    }
   }
 
   /**
    * GameIdRef getter.
    *
    */
-  synchronized protected UUID getGameIdRef() {
-    return gameIdRef;
+  protected UUID getGameIdRef() {
+    synchronized (gameRefLock) {
+      return gameIdRef;
+    }
   }
 
   /**
@@ -257,7 +281,9 @@ public abstract class Client implements Runnable {
    * @param b flag
    */
   protected void setHasDuplicateName(boolean b) {
-    this.hasDuplicateName = b;
+    synchronized (hasDuplicateLock) {
+      this.hasDuplicateName = b;
+    }
   }
 
   /**
@@ -265,8 +291,10 @@ public abstract class Client implements Runnable {
    * 
    * @return flag
    */
-  protected boolean getHasDuplicateName() {
-    return hasDuplicateName;
+  synchronized protected boolean getHasDuplicateName() {
+    synchronized (hasDuplicateLock) {
+      return hasDuplicateName;
+    }
   }
 
   /**
@@ -275,7 +303,9 @@ public abstract class Client implements Runnable {
    * @return virtual view
    */
   protected VirtualView getVirtualView() {
-    return virtualView;
+    synchronized (virtualViewLock) {
+      return virtualView;
+    }
   }
 
   /**
@@ -283,7 +313,9 @@ public abstract class Client implements Runnable {
    * 
    */
   protected void setVirtualView(VirtualView vv) {
-    this.virtualView = vv;
+    synchronized (virtualViewLock) {
+      this.virtualView = vv;
+    }
   }
 
   /**
@@ -332,6 +364,15 @@ public abstract class Client implements Runnable {
    * @throws IOException
    */
   abstract void sendChatMessage(AbstractPlayerConnector apc, ChatMessage msg) throws IOException;
+
+  /**
+   * Abstract function that snoozes virtual alarm.
+   * 
+   * @param apc abstract player connector
+   * @param msg chat message
+   * @throws IOException
+   */
+  abstract void snoozeAlarm() throws IOException;
 
   /**
    * Handling function for move tiles command.
@@ -448,7 +489,6 @@ public abstract class Client implements Runnable {
       throws IOException {
     // Select only the string before the space if the client writes more words
     String selectedPlayerName = br.readLine().stripLeading().split(" ")[0];
-    System.out.println(selectedPlayerName);
     Player p = new Player();
     apc.setPlayer(p);
     try {
@@ -477,15 +517,15 @@ public abstract class Client implements Runnable {
    * @param selectedPlayerName player name selected
    * @throws IOException
    * @throws InterruptedException
-   * @throws NullPlayerNameException
    */
   protected void handleGameSelection(AbstractPlayerConnector apc, BufferedReader br,
-      String selectedPlayerName) throws IOException, InterruptedException, NullPlayerNameException {
+      String selectedPlayerName) throws IOException, InterruptedException {
 
     // Executed if I still haven't selected a game
     if (apc.getGameId() == null) {
       getAvailableGames(apc);
 
+      //TODO: use userinterface
       System.out.println(CLIStrings.joinOrCreateString);
 
       String fullCommand = br.readLine().stripLeading();
@@ -574,12 +614,11 @@ public abstract class Client implements Runnable {
    * @param pc player connector instance.
    * @throws IOException
    * @throws NullPlayerIdException
-   * @throws NullPlayerNameException
    * @throws InterruptedException
    * 
    */
   protected void clientRunnerCore(AbstractPlayerConnector pc)
-      throws IOException, NullPlayerNameException, InterruptedException, NullPlayerIdException {
+      throws IOException, InterruptedException, NullPlayerIdException {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     // First I'm gonna ask the player name

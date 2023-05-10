@@ -1,7 +1,6 @@
 package it.polimi.is23am10.client;
 
 import java.io.IOException;
-import java.io.BufferedReader;
 import java.net.UnknownHostException;
 import java.rmi.registry.Registry;
 import java.util.Map;
@@ -11,7 +10,6 @@ import java.rmi.RemoteException;
 
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
-import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
@@ -23,7 +21,6 @@ import it.polimi.is23am10.server.controller.ServerControllerAction;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
-import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
@@ -31,7 +28,6 @@ import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
-import it.polimi.is23am10.utils.CommandSyntaxValidator;
 import it.polimi.is23am10.utils.Coordinates;
 
 /**
@@ -68,16 +64,14 @@ public class RMIClient extends Client {
    * 
    */
   protected AlarmConsumer snoozer = () -> {
-    //TODO: refactor after this https://github.com/mattteochen/IS23-AM10/issues/121
     if (!hasJoined()) {
       return;
     }
     try {
-      PlayerConnectorRmi playerConnectorRmi = (PlayerConnectorRmi) playerConnector;
-      SnoozeGameTimerCommand cmd = new SnoozeGameTimerCommand(playerConnectorRmi.getPlayer().getPlayerName());
-      serverControllerActionServer.execute(playerConnectorRmi, cmd);
+      snoozeAlarm();
     } catch(RemoteException e) {
-      System.out.println("🛑 " + e.getMessage());
+      userInterface.displayError(
+        new ErrorMessage("Internal job failed, you might loose game connection", ErrorSeverity.ERROR));
     }
   };
 
@@ -105,10 +99,10 @@ public class RMIClient extends Client {
    */
   @Override
   protected boolean hasJoined() {
-    //TODO: consider further checks as gameID
     PlayerConnectorRmi playerConnectorRmi = (PlayerConnectorRmi) playerConnector;
-    return (playerConnectorRmi.getPlayer() != null &&
-      playerConnectorRmi.getPlayer().getPlayerName() != null);
+    return (playerConnectorRmi.getPlayer() != null
+      && playerConnectorRmi.getPlayer().getPlayerName() != null
+      && gameIdRef != null);
   }
 
   /**
@@ -139,10 +133,8 @@ public class RMIClient extends Client {
     while (!hasRequestedDisconnection()) {
       try {
         clientRunnerCore(playerConnectorRmi);
-      } catch (IOException | InterruptedException e) {
-        userInterface.displayError(new ErrorMessage("Interrupted exception", ErrorSeverity.ERROR));
-      } catch (NullPlayerNameException | NullPlayerIdException e) {
-        userInterface.displayError(new ErrorMessage("Failed to add player, retry", ErrorSeverity.ERROR));
+      } catch (IOException | InterruptedException | NullPlayerIdException e) {
+        userInterface.displayError(new ErrorMessage("Internal module error, please report this message:" + e.getMessage(), ErrorSeverity.CRITICAL));
       }
     }
   }
@@ -157,6 +149,18 @@ public class RMIClient extends Client {
     throws RemoteException {
     AbstractMessage msg = serverControllerActionServer.execute(new GetAvailableGamesCommand());
     showServerMessage(msg);
+  }
+
+   /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  void snoozeAlarm()
+    throws RemoteException {
+    PlayerConnectorRmi playerConnectorRmi = (PlayerConnectorRmi) playerConnector;
+    SnoozeGameTimerCommand cmd = new SnoozeGameTimerCommand(playerConnectorRmi.getPlayer().getPlayerName());
+    serverControllerActionServer.execute(playerConnectorRmi, cmd);
   }
 
    /**
@@ -215,10 +219,8 @@ public class RMIClient extends Client {
           if (msg != null) {
             showServerMessage(msg);
           }
-        } catch (InterruptedException | RemoteException e) {
-          userInterface.displayError(new ErrorMessage("Failed to retrive message from server, bad context state:" + e.getMessage(), ErrorSeverity.CRITICAL));
-        } catch (NullPointerException e) {
-          userInterface.displayError(new ErrorMessage("Null pointer:" + e.getMessage(), ErrorSeverity.CRITICAL));
+        } catch (InterruptedException | RemoteException | NullPointerException e) {
+          userInterface.displayError(new ErrorMessage("Internal module error, please report this message:" + e.getMessage(), ErrorSeverity.CRITICAL));
         }
       }
     });

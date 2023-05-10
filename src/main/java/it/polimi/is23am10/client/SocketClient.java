@@ -18,14 +18,11 @@ import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
-import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
-import it.polimi.is23am10.server.command.StartGameCommand;
-import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
-import it.polimi.is23am10.server.command.StartGameCommand;
-import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.utils.Coordinates;
@@ -55,21 +52,15 @@ public class SocketClient extends Client {
    * 
    */
   protected AlarmConsumer snoozer = () -> {
-    //TODO: refactor after this https://github.com/mattteochen/IS23-AM10/issues/121
     //skip if the client has not joined the game: server won't have any connector for the current client
     if (!hasJoined()) {
       return;
     }
     try {
-      PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
-      SnoozeGameTimerCommand cmd = new SnoozeGameTimerCommand(playerConnectorSocket.getPlayer().getPlayerName());
-      String req = gson.toJson(cmd);
-      PrintWriter epson = new
-      PrintWriter(playerConnectorSocket.getConnector().getOutputStream(), true,
-      StandardCharsets.UTF_8);
-      epson.println(req);
+      snoozeAlarm();
     } catch(IOException e) {
-      System.out.println("🛑 " + e.getMessage());
+      userInterface.displayError(
+        new ErrorMessage("Internal job failed, you might loose game connection", ErrorSeverity.ERROR));
     }
   };
 
@@ -79,10 +70,10 @@ public class SocketClient extends Client {
    */
   @Override
   protected boolean hasJoined() {
-    //TODO: consider further checks as gameID
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
-    return (playerConnectorSocket.getPlayer() != null &&
-      playerConnectorSocket.getPlayer().getPlayerName() != null);
+    return (playerConnectorSocket.getPlayer() != null
+      && playerConnectorSocket.getPlayer().getPlayerName() != null
+      && gameIdRef != null);
   }
 
   /**
@@ -106,15 +97,11 @@ public class SocketClient extends Client {
     while (playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()) {
       try {
         clientRunnerCore(playerConnectorSocket);
-      } catch (IOException | InterruptedException e) {
-        System.out.println("🛑 " + e.getMessage());
-      } catch (NullPlayerNameException | NullPlayerIdException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+      } catch (IOException | InterruptedException | NullPlayerIdException e) {
+        userInterface.displayError(
+          new ErrorMessage("Internal module error, please report this message:" + e.getMessage(), ErrorSeverity.CRITICAL));
       }
     }
-
-    System.out.println("🛑 Connection with the server ended");
   }
 
   /**
@@ -126,10 +113,12 @@ public class SocketClient extends Client {
    *
    */
   protected AbstractMessage parseServerMessage(PlayerConnectorSocket pc) throws IOException {
-    DataInputStream dis = new DataInputStream(pc.getConnector().getInputStream());
-    BufferedReader br = new BufferedReader(new InputStreamReader(dis));
-    String payload = br.readLine();
-    return payload == null ? null : gson.fromJson(payload, AbstractMessage.class);
+    synchronized (pc.getConnector()) {
+      DataInputStream dis = new DataInputStream(pc.getConnector().getInputStream());
+      BufferedReader br = new BufferedReader(new InputStreamReader(dis));
+      String payload = br.readLine();
+      return payload == null ? null : gson.fromJson(payload, AbstractMessage.class);
+    }
   }
 
   /**
@@ -142,6 +131,19 @@ public class SocketClient extends Client {
     GetAvailableGamesCommand command = new GetAvailableGamesCommand();
     String req = gson.toJson(command);
     sendMessage(req, apc);
+  };
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  void snoozeAlarm()
+      throws IOException {
+    PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
+    SnoozeGameTimerCommand cmd = new SnoozeGameTimerCommand(playerConnectorSocket.getPlayer().getPlayerName());
+    String req = gson.toJson(cmd);
+    sendMessage(req, playerConnectorSocket);
   };
 
   /**
@@ -219,9 +221,9 @@ public class SocketClient extends Client {
           if (serverMessage != null) {
             showServerMessage(serverMessage);
           }
-        } catch (IOException e) {
-          // TODO: integrate custom logger
-          System.out.println("🛑 Failed to retrieve information from server, your game context may not be updated");
+        } catch (IOException | NullPointerException e) {
+          userInterface.displayError(
+            new ErrorMessage("Internal module error, please report this message:" + e.getMessage(), ErrorSeverity.CRITICAL));
         }
       }
     });
