@@ -50,6 +50,7 @@ import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
+import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.ErrorTypeString;
@@ -64,6 +65,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
 /**
@@ -124,9 +126,13 @@ public interface IServerControllerAction extends Remote {
       // add the new player connector instance on the player pool.
       ServerControllerState.addPlayerConnector(playerConnector);
 
-      // if RMI, rebind the connector
+      // if RMI, rebind the connector proxy
       if (playerConnector.getClass() == PlayerConnectorRmi.class) {
-        ServerControllerRmiBindings.rebindPlayerConnector(playerConnector);
+        AbstractPlayerConnector proxy = new PlayerConnectorRmi(new LinkedBlockingQueue<AbstractMessage>());
+        proxy.setPlayer(new Player(playerRef));
+        proxy.setGameId(UUID.fromString(gameHandler.getGame().getGameId().toString()));
+        ServerControllerState.addRmiProxyConnector(proxy.getPlayer().getPlayerID(), proxy);
+        ServerControllerRmiBindings.rebindPlayerConnector(proxy);
       }
 
       // add the new player connector to the game handler.
@@ -145,7 +151,7 @@ public interface IServerControllerAction extends Remote {
         | NullPlayerScoreBlocksException | DuplicatePlayerNameException | AlreadyInitiatedPatternException
         | NullPlayerNamesException | InvalidNumOfPlayersException | NullNumOfPlayersException
         | NullAssignedPatternException | FullGameException | NotValidScoreBlockValueException
-        | PlayerNotFoundException e) {
+        | PlayerNotFoundException | NullBlockingQueueException e) {
       logger.fatal("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, e);
@@ -256,12 +262,17 @@ public interface IServerControllerAction extends Remote {
 
         // add the new player connector instance on the player pool.
         ServerControllerState.addPlayerConnector(playerConnector);
+
+        // if RMI, rebind the connector proxy
+        if (playerConnector.getClass() == PlayerConnectorRmi.class) {
+          AbstractPlayerConnector proxy = new PlayerConnectorRmi(new LinkedBlockingQueue<AbstractMessage>());
+          proxy.setPlayer(new Player(playerRef));
+          proxy.setGameId(UUID.fromString(gameHandler.getGame().getGameId().toString()));
+          ServerControllerState.addRmiProxyConnector(proxy.getPlayer().getPlayerID(), proxy);
+          ServerControllerRmiBindings.rebindPlayerConnector(proxy);
+        }
       }
 
-      // if RMI, rebind the connector
-      if (playerConnector.getClass() == PlayerConnectorRmi.class) {
-        ServerControllerRmiBindings.rebindPlayerConnector(playerConnector);
-      }
 
       logger.info("{} {}",
           String.format(ErrorTypeString.WARNING_PLAYER_JOIN_SERVER, playerName, gameId),
@@ -274,7 +285,7 @@ public interface IServerControllerAction extends Remote {
     } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
         | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
         | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
-        | NullAssignedPatternException | PlayerNotFoundException | DuplicatePlayerNameException | NullGameHandlerInstance e) {
+        | NullAssignedPatternException | PlayerNotFoundException | DuplicatePlayerNameException | NullGameHandlerInstance | NullBlockingQueueException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_PLAYERS, e);

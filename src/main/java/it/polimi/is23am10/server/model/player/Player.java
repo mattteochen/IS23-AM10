@@ -34,6 +34,23 @@ import java.util.UUID;
 public class Player implements Serializable {
 
   /**
+   * Copy constructor for Player class.
+   *
+   * @param player The player object to be copied.
+   */
+  public Player(Player player) {
+    this.playerId = player.playerId;
+    this.playerName = player.playerName;
+  }
+
+  /**
+   * Constructor for Player class.
+   *
+   */
+  public Player() {
+  }
+
+  /**
    * A randomly generated {@link UUID} id.
    * 
    */
