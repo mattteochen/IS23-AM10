@@ -214,10 +214,8 @@ public abstract class Client implements Runnable {
         VirtualView v = gson.fromJson(msg.getMessage(), VirtualView.class);
         setVirtualView(v);
         // do not overwrite game id
-        synchronized (gameRefLock) {
-          if (gameIdRef == null) {
-            setGameIdRef(v.getGameId());
-          }
+        if (getGameIdRef() == null) {
+          setGameIdRef(v.getGameId());
         }
         userInterface.displayVirtualView(v);
         break;
@@ -291,7 +289,7 @@ public abstract class Client implements Runnable {
    * 
    * @return flag
    */
-  synchronized protected boolean getHasDuplicateName() {
+  protected boolean getHasDuplicateName() {
     synchronized (hasDuplicateLock) {
       return hasDuplicateName;
     }
