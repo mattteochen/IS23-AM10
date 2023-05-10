@@ -275,8 +275,8 @@ public interface IServerControllerAction extends Remote {
 
 
       logger.info("{} {}",
-          String.format(ErrorTypeString.WARNING_PLAYER_JOIN_SERVER, playerName, gameId),
-          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX);
+          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
+          String.format(ErrorTypeString.WARNING_PLAYER_JOIN_SERVER, playerName, gameId));
 
       playerConnector.addMessageToQueue(new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_JOIN, playerName), ErrorSeverity.WARNING));
 
@@ -436,18 +436,32 @@ public interface IServerControllerAction extends Remote {
   final ControllerConsumer<Void, AbstractCommand> moveTilesConsumer = (logger, playerConnector, command) -> {
     ErrorMessage errorMsg = null;
 
+    Optional<AbstractPlayerConnector> pcRef = ServerControllerState.getPlayersPool().stream()
+      .filter(p -> p.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()) && p.getGameId().equals(playerConnector.getGameId()))
+      .findFirst();
+
+    if (pcRef.isEmpty()) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_GAME_STATE,
+          "Can not find the requested player connector ref: " + playerConnector.getPlayer().getPlayerName() + " in game: " + playerConnector.getGameId());
+      return null;
+    }
+    
+    AbstractPlayerConnector pc = pcRef.get();
+
     try {
       MoveTilesCommand mtCommand = (MoveTilesCommand) command;
       GameHandler handler = ServerControllerState.getGameHandlerByUUID(mtCommand.getGameId());
 
       //don't allow inactive players calls
-      if (!playerConnector.getPlayer().getIsConnected()) {
+      if (!pc.getPlayer().getIsConnected()) {
         return null;
       }
 
       // I check that the player performing the action is the one actually set as
       // active player
-      if (handler.getGame().getActivePlayer().equals(playerConnector.getPlayer())) {
+      if (handler.getGame().getActivePlayer().equals(pc.getPlayer())) {
         handler.getGame().activePlayerMove(mtCommand.getMoves());
 
         //update the current player handler stats
@@ -459,16 +473,11 @@ public interface IServerControllerAction extends Remote {
             handler.getGame().getActivePlayer().getPlayerName(),
             handler.getGame().getGameId());
       } else {
-        logger.info("{} Ignored Tile move for {} in game {}",
+        logger.warn("{} Ignored Tile move for {} in game {}",
             ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
             handler.getGame().getActivePlayer().getPlayerName(),
             handler.getGame().getGameId());
       }
-
-      logger.info("{} Operated Tile move for {} in game {}",
-          ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
-          handler.getGame().getActivePlayer().getPlayerName(),
-          handler.getGame().getGameId());
     } catch (NullGameHandlerInstance e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
@@ -492,7 +501,7 @@ public interface IServerControllerAction extends Remote {
     } finally {
       if (errorMsg != null) {
         try {
-          playerConnector.addMessageToQueue(errorMsg);
+          pc.addMessageToQueue(errorMsg);
         } catch (InterruptedException e) {
           logger.error("{} {} {}",
               ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
