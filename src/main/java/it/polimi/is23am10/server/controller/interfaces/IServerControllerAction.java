@@ -124,6 +124,7 @@ public interface IServerControllerAction extends Remote {
       // add the new game handler instance on the game pool.
       ServerControllerState.addGameHandler(gameHandler);
       // add the new player connector instance on the player pool.
+      playerConnector.setLastSnoozeMs(System.currentTimeMillis());
       ServerControllerState.addPlayerConnector(playerConnector);
 
       // if RMI, rebind the connector proxy
@@ -258,6 +259,7 @@ public interface IServerControllerAction extends Remote {
         playerConnector.setPlayer(playerRef);
 
         // add the new player connector instance to the game's player pool.
+        playerConnector.setLastSnoozeMs(System.currentTimeMillis());
         gameHandler.addPlayerConnector(playerConnector);
 
         // add the new player connector instance on the player pool.
