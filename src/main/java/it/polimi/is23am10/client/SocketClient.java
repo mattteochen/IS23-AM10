@@ -14,6 +14,7 @@ import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
+import it.polimi.is23am10.server.command.LogOutCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
@@ -52,15 +53,16 @@ public class SocketClient extends Client {
    * 
    */
   protected AlarmConsumer snoozer = () -> {
-    //skip if the client has not joined the game: server won't have any connector for the current client
+    // skip if the client has not joined the game: server won't have any connector
+    // for the current client
     if (!hasJoined()) {
       return;
     }
     try {
       snoozeAlarm();
-    } catch(IOException e) {
+    } catch (IOException e) {
       userInterface.displayError(
-        new ErrorMessage("Internal job failed, you might loose game connection", ErrorSeverity.ERROR));
+          new ErrorMessage("Internal job failed, you might loose game connection", ErrorSeverity.ERROR));
     }
   };
 
@@ -72,8 +74,8 @@ public class SocketClient extends Client {
   protected boolean hasJoined() {
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
     return (playerConnectorSocket.getPlayer() != null
-      && playerConnectorSocket.getPlayer().getPlayerName() != null
-      && gameIdRef != null);
+        && playerConnectorSocket.getPlayer().getPlayerName() != null
+        && gameIdRef != null);
   }
 
   /**
@@ -85,7 +87,7 @@ public class SocketClient extends Client {
   public void run() {
 
     alarm.scheduleAtFixedRate(new AlarmTask(snoozer),
-      ALARM_INITIAL_DELAY_MS, ALARM_INTERVAL_MS);
+        ALARM_INITIAL_DELAY_MS, ALARM_INTERVAL_MS);
 
     // PlayerConnector's msg queue is not used at this time as we don't have multi
     // source message inputs to handle,
@@ -99,7 +101,8 @@ public class SocketClient extends Client {
         clientRunnerCore(playerConnectorSocket);
       } catch (IOException | InterruptedException | NullPlayerIdException e) {
         userInterface.displayError(
-          new ErrorMessage("Internal module error, please report this message:" + e.getMessage(), ErrorSeverity.CRITICAL));
+            new ErrorMessage("Internal module error, please report this message:" + e.getMessage(),
+                ErrorSeverity.CRITICAL));
       }
     }
   }
@@ -162,13 +165,24 @@ public class SocketClient extends Client {
    *
    */
   @Override
+  void logoutPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException {
+    LogOutCommand command = new LogOutCommand(playerName, gameId);
+    String req = gson.toJson(command);
+    sendMessage(req, apc);
+  };
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
   void addPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException {
     AddPlayerCommand command = new AddPlayerCommand(playerName, gameId);
     String req = gson.toJson(command);
     sendMessage(req, apc);
   };
 
-   /**
+  /**
    * {@inheritDoc}
    *
    */
@@ -180,12 +194,11 @@ public class SocketClient extends Client {
     sendMessage(req, apc);
   };
 
-    
   /**
    * {@inheritDoc}
    * 
    */
-   @Override
+  @Override
   void sendChatMessage(AbstractPlayerConnector apc, ChatMessage msg) throws IOException {
     SendChatMessageCommand command = new SendChatMessageCommand(msg);
     String req = gson.toJson(command);
@@ -211,10 +224,10 @@ public class SocketClient extends Client {
    *
    */
   @Override
-  public void runMessageHandler(){
+  public void runMessageHandler() {
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
-    Thread messageHandler = new Thread(()->{
-      while(playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()){
+    Thread messageHandler = new Thread(() -> {
+      while (playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()) {
         // retrieve and show server messages, it includes chat messages
         try {
           AbstractMessage serverMessage = parseServerMessage(playerConnectorSocket);
@@ -223,7 +236,8 @@ public class SocketClient extends Client {
           }
         } catch (IOException | NullPointerException e) {
           userInterface.displayError(
-            new ErrorMessage("Internal module error, please report this message:" + e.getMessage(), ErrorSeverity.CRITICAL));
+              new ErrorMessage("Internal module error, please report this message:" + e.getMessage(),
+                  ErrorSeverity.CRITICAL));
         }
       }
     });
