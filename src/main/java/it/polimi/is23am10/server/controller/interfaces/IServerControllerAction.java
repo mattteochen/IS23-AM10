@@ -130,7 +130,7 @@ public interface IServerControllerAction extends Remote {
       if (playerConnector.getClass() == PlayerConnectorRmi.class) {
         AbstractPlayerConnector proxy = new PlayerConnectorRmi(new LinkedBlockingQueue<AbstractMessage>());
         proxy.setPlayer(new Player(playerRef));
-        proxy.setGameId(UUID.fromString(gameHandler.getGame().getGameId().toString()));
+        proxy.setGameId(gameHandler.getGame().getGameId());
         ServerControllerState.addRmiProxyConnector(proxy.getPlayer().getPlayerID(), proxy);
         ServerControllerRmiBindings.rebindPlayerConnector(proxy);
       }
@@ -267,7 +267,7 @@ public interface IServerControllerAction extends Remote {
         if (playerConnector.getClass() == PlayerConnectorRmi.class) {
           AbstractPlayerConnector proxy = new PlayerConnectorRmi(new LinkedBlockingQueue<AbstractMessage>());
           proxy.setPlayer(new Player(playerRef));
-          proxy.setGameId(UUID.fromString(gameHandler.getGame().getGameId().toString()));
+          proxy.setGameId(gameHandler.getGame().getGameId());
           ServerControllerState.addRmiProxyConnector(proxy.getPlayer().getPlayerID(), proxy);
           ServerControllerRmiBindings.rebindPlayerConnector(proxy);
         }
