@@ -48,4 +48,10 @@ public final class ServerDebugPrefixString {
    *
    */
   public static final String SNOOZE_TIMER_COMMAND_PREFIX = "SNOOZE_TIMER ->";
+
+  /**  
+   * {@link Opcode#LOG_OUT} prefix string.
+   *
+   */
+  public static final String LOG_OUT_COMMAND_PREFIX = "LOG_OUT ->";
 }
