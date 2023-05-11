@@ -428,7 +428,7 @@ public abstract class Client implements Runnable {
              * or if it is the fourth move, it will be ignored.
              * 
              */
-            if ((fullCommand.split(" ").length - (nMove + 1) * 3 + 1) >= 0) {
+            if ((fullCommand.split(" ").length - (nMove + 1) * 3 + 1) > 0) {
               String coordBoard = fullCommand.split(" ")[nMove * 3 + 1];
               String arrow = fullCommand.split(" ")[nMove * 3 + 2];
               String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 3];
@@ -445,6 +445,7 @@ public abstract class Client implements Runnable {
                 moves.put(boardCoord, bsCoord);
               } else {
                 userInterface.displayError(new ErrorMessage("Invalid syntax of move command.", ErrorSeverity.ERROR));
+                break;
               }
             } else {
               break;
@@ -457,13 +458,13 @@ public abstract class Client implements Runnable {
             try {
               MovesValidator.validateGameMoves(
                   moves, virtualView.getActivePlayer().getBookshelf(), virtualView.getGameBoard());
+              moveTiles(apc, moves);
             } catch (BoardGridRowIndexOutOfBoundsException | BoardGridColIndexOutOfBoundsException
                 | BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
                 | WrongMovesNumberException | WrongGameBoardPicksException | NullIndexValueException
                 | WrongBookShelfPicksException e) {
               userInterface.displayError(new ErrorMessage("Invalid move:" + e.getMessage(), ErrorSeverity.ERROR));
             }
-            moveTiles(apc, moves);
           }
           break;
         } else {
