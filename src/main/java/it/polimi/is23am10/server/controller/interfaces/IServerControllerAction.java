@@ -6,8 +6,8 @@ import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
-import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
+import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
 import it.polimi.is23am10.server.controller.ServerControllerState;
 import it.polimi.is23am10.server.controller.ServerDebugPrefixString;
@@ -541,6 +541,44 @@ public interface IServerControllerAction extends Remote {
       logger.error("{} {} {}",
           ServerDebugPrefixString.SNOOZE_TIMER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_SNOOZING_TIMER, e);
+    }
+    return null;
+  };
+
+  /**
+   * The {@link Opcode#LOG_OUT} command callback worker.
+   * 
+   */
+  final ControllerConsumer<Void, AbstractCommand> logoutConsumer = (logger, playerConnector, command) -> {
+    try {
+      // Retrieve the playerConnector from the state pool.
+      Optional<AbstractPlayerConnector> pcRef = ServerControllerState.getPlayersPool().stream()
+        .filter(p -> p.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()) && p.getGameId().equals(playerConnector.getGameId()))
+        .findFirst();
+
+      if (pcRef.isEmpty()) {
+        logger.error("{} {} {}",
+            ServerDebugPrefixString.LOG_OUT_COMMAND_PREFIX,
+            ErrorTypeString.ERROR_GAME_STATE,
+            "Can not find the requested player connector ref: " + playerConnector.getPlayer().getPlayerName() + " in game: " + playerConnector.getGameId());
+        return null;
+      }
+
+      AbstractPlayerConnector pc = pcRef.get();
+      // Disconnect the player
+      pc.getPlayer().setIsConnected(false);
+      // Remove the player from the active players pool
+      ServerControllerState.getPlayersPool().remove(pc);
+
+      logger.info("{} Operated logout for {} in game {}",
+          ServerDebugPrefixString.LOG_OUT_COMMAND_PREFIX,
+          pc.getPlayer().getPlayerName(),
+          pc.getGameId());
+
+    } catch (Exception e) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.LOG_OUT_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_LOG_OUT, e);
     }
     return null;
   };
