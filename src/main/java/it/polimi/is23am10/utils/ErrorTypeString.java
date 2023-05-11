@@ -129,4 +129,10 @@ public final class ErrorTypeString {
    *
    */
   public static final String ERROR_GAME_STATE = "Severe game state failure";
+
+  /**
+   * Message error in logout.
+   *
+   */
+  public static final String ERROR_LOG_OUT = "Failed to logout player";
 }
