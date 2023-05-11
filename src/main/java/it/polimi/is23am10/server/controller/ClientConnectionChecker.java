@@ -141,7 +141,7 @@ public final class ClientConnectionChecker implements Runnable {
       synchronized(pcs) {
         for (AbstractPlayerConnector pc : pcs) {
           if (pc.getPlayer().getIsConnected() && expired(pc.getLastSnoozeMs(), System.currentTimeMillis(), MAX_SNOOZE_TIMEOUT_MS)) {
-            logger.info("Detected connection loss for {}, disconnecting the player", pc.getPlayer().getPlayerName());
+            logger.warn("Detected connection loss for {}, disconnecting the player", pc.getPlayer().getPlayerName());
             pc.getPlayer().setIsConnected(false);
 
             //call next turn if the disconnected player is the active player
@@ -178,7 +178,7 @@ public final class ClientConnectionChecker implements Runnable {
             AbstractPlayerConnector connectorRef = gh.getPlayerConnectorFromPlayer(h.getPlayer());
             //already notified, perform disconnectoion
             if (h.getNotified()) {
-              logger.info("Detected turn inactivity for {}, disconnecting the player", h.getPlayer().getPlayerName());
+              logger.warn("Detected turn inactivity for {}, disconnecting the player", h.getPlayer().getPlayerName());
               h.getPlayer().setIsConnected(false);
               if (connectorRef != null) {
                 connectorRef.addMessageToQueue(new ErrorMessage("You have been disconnected due to inactivity", h.getPlayer(), ErrorSeverity.ERROR));
@@ -192,6 +192,7 @@ public final class ClientConnectionChecker implements Runnable {
             //notify disconnection warning
             } else {
               h.setNotified(true);
+              h.setStartPlayingTimeMs(System.currentTimeMillis());
               if (connectorRef != null) {
                 connectorRef.addMessageToQueue(
                   new ErrorMessage("You will be disconnected for inactivity in " + String.valueOf(MAX_TURN_INACTIVITY_MS/1000) + " seconds",
