@@ -23,6 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
+import it.polimi.is23am10.server.model.game.Game;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
@@ -183,8 +184,8 @@ public abstract class Client implements Runnable {
    * Game id reference.
    */
   protected UUID gameIdRef;
-  
-  /* 
+
+  /*
    * Application timer.
    */
   protected Timer alarm;
@@ -373,6 +374,14 @@ public abstract class Client implements Runnable {
   abstract void snoozeAlarm() throws IOException;
 
   /**
+   * Abstract function for the logout command.
+   * 
+   * @param apc abstract player connector.
+   * @throws IOException
+   */
+  abstract void logoutPlayer(AbstractPlayerConnector apc, String playeName, UUID gameId) throws IOException;
+
+  /**
    * Handling function for move tiles command.
    * 
    * @param apc abstract player connector
@@ -403,7 +412,9 @@ public abstract class Client implements Runnable {
         }
         break;
       case "logout":
-        // TODO: add logout command
+        String playerName = apc.getPlayer().getPlayerName();
+        UUID gameId = apc.getGameId();
+        logoutPlayer(apc, playerName, gameId);
         break;
       case "move":
         if (getVirtualView() == null) {
@@ -523,7 +534,7 @@ public abstract class Client implements Runnable {
     if (apc.getGameId() == null) {
       getAvailableGames(apc);
 
-      //TODO: use userinterface
+      // TODO: use userinterface
       System.out.println(CLIStrings.joinOrCreateString);
 
       String fullCommand = br.readLine().stripLeading();
