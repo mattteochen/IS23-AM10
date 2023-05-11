@@ -10,7 +10,9 @@ import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -49,6 +51,13 @@ public final class ServerControllerState {
    */
   private static Set<AbstractPlayerConnector> playersPool =
       Collections.synchronizedSet(new HashSet<>());
+
+  /**
+   * References to rmi connectors proxies. The link is made through the unique playerIds.
+   *
+   */
+  private static Map<UUID, AbstractPlayerConnector> rmiConnectorsProxies = 
+    Collections.synchronizedMap(new HashMap<>());
 
   /**
    * Private constructor.
@@ -213,5 +222,26 @@ public final class ServerControllerState {
    */
   public static synchronized Set<GameHandler> getGamePools() {
     return gamePool;
+  }
+
+  /**
+   * Add a new rmi connector reference.
+   *
+   * @param id The player id.
+   * @param pc The proxy connector.
+   *
+   */
+  public static void addRmiProxyConnector(UUID id, AbstractPlayerConnector pc) {
+    rmiConnectorsProxies.put(id, pc);
+  }
+
+  /**
+   * Retrieve the rmi connector proxy associated to a player id.
+   *
+   * @return The rmi connector proxy.
+   *
+   */
+  public static AbstractPlayerConnector getRmiProxyConnector(UUID id) {
+    return rmiConnectorsProxies.get(id);
   }
 }
