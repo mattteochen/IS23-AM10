@@ -1,5 +1,6 @@
 package it.polimi.is23am10.server.command;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
@@ -46,12 +47,40 @@ public class LogOutCommand extends AbstractCommand {
   }
 
   /**
+   * Logged out player name getter.
+   *
+   * @return The player name.
+   * 
+   */
+  public String getPlayerName() {
+    return playerName;
+  }
+
+  /**
+   * Logged out player gameId getter.
+   *
+   * @return The game ID.
+   * 
+   */
+  public UUID getGameId() {
+    return gameId;
+  }
+
+  /**
    * {@inheritDoc}
    *
    */
   @Override
   public boolean equals(Object obj) {
-    return (obj instanceof LogOutCommand);
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || getClass() != obj.getClass()) {
+      return false;
+    }
+    LogOutCommand loc = (LogOutCommand) obj;
+    return Objects.equals(playerName, loc.playerName) &&
+            Objects.equals(gameId, loc.getGameId());
   }
 
   /**
