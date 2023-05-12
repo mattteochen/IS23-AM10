@@ -173,7 +173,7 @@ public final class ServerControllerRmiBindings {
   public static void rebindServerControllerAction(IServerControllerAction sca) throws RemoteException {
     ServerControllerRmiBindings.setServerControllerActionServer(sca);
     ServerControllerRmiBindings
-        .setServerControllerActionStub((IServerControllerAction) UnicastRemoteObject.exportObject(sca, 9003));
+        .setServerControllerActionStub((IServerControllerAction) UnicastRemoteObject.exportObject(sca, DONT_CARE));
     ServerControllerRmiBindings.getRmiRegistry().rebind(IServerControllerAction.class.getName(),
         ServerControllerRmiBindings.getServerControllerActionRmiStub());
   }

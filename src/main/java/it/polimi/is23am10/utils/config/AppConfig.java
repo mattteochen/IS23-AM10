@@ -57,7 +57,7 @@ public final class AppConfig {
    * The server config rmi port.
    * 
    */
-  private static Integer serverRmiPort = 9002;
+  private static Integer serverRmiPort = 1099;
 
   /**
    * The max allowed connection for this server instance.
