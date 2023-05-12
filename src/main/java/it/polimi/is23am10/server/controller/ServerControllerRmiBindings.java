@@ -147,7 +147,7 @@ public final class ServerControllerRmiBindings {
    *
    */
   public static String getPlayerConnectorRebindId(AbstractPlayerConnector pc) {
-    return pc.getClass().getName() + "/" + pc.getPlayer().getPlayerName();
+    return "rmi://68.219.239.114/" + pc.getClass().getName() + "/" + pc.getPlayer().getPlayerName();
   }
 
   /**
@@ -174,7 +174,7 @@ public final class ServerControllerRmiBindings {
     ServerControllerRmiBindings.setServerControllerActionServer(sca);
     ServerControllerRmiBindings
         .setServerControllerActionStub((IServerControllerAction) UnicastRemoteObject.exportObject(sca, DONT_CARE));
-    ServerControllerRmiBindings.getRmiRegistry().rebind(IServerControllerAction.class.getName(),
+    ServerControllerRmiBindings.getRmiRegistry().rebind("rmi://68.219.239.114/" + IServerControllerAction.class.getName(),
         ServerControllerRmiBindings.getServerControllerActionRmiStub());
   }
 }
