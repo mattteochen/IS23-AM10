@@ -298,6 +298,24 @@ public abstract class Client implements Runnable {
   }
 
   /**
+   * User interface setter.
+   * 
+   * @param ui user interface.
+   */
+  protected void setUserInterface(UserInterface ui) {
+    this.userInterface = ui;
+  }
+
+  /**
+   * User interface getter.
+   * 
+   * @return user interface.
+   */
+  protected UserInterface getUserInterface() {
+    return userInterface;
+  }
+
+  /**
    * Virtual view getter.
    * 
    * @return virtual view
