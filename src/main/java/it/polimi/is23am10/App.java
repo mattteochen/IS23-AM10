@@ -74,7 +74,7 @@ public class App {
         Client client;
         if (ctx.getUseRMI()) {
           try {
-            Registry registry = LocateRegistry.getRegistry(ctx.getServerRmiPort());
+            Registry registry = LocateRegistry.getRegistry(ctx.getServerAddress(), ctx.getServerRmiPort());
             PlayerConnectorRmi playerConnector = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
             IServerControllerAction serverControllerActionServerRef = (IServerControllerAction) registry
                 .lookup(IServerControllerAction.class.getName());
