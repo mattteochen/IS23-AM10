@@ -31,7 +31,6 @@ import com.google.gson.Gson;
 
 import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
-import it.polimi.is23am10.client.userinterface.exceptions.NoUserInputsException;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.items.board.Board;
 import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
@@ -103,7 +102,7 @@ public class SocketClientTest {
   }
 
   @Test
-  void handlePlayerNameSelection_should_run_playerNameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NoUserInputsException {
+  void handlePlayerNameSelection_should_run_playerNameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException {
     AbstractMessage msg = new ErrorMessage("New Message", null);
     Player p = mock(Player.class);
     String pn = "Benny";
@@ -118,7 +117,7 @@ public class SocketClientTest {
   }
 
   @Test
-  void handleCommand_should_run_handleCommand() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, InvalidNumOfPlayersException, NullNumOfPlayersException, NoUserInputsException {
+  void handleCommand_should_run_handleCommand() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, InvalidNumOfPlayersException, NullNumOfPlayersException {
     String pn = "Benny";
     String command = "move 42 -> 06";
     VirtualView vw = mock(VirtualView.class);

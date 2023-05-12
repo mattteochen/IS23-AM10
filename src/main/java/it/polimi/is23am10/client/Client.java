@@ -23,7 +23,6 @@ import com.google.gson.reflect.TypeToken;
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
-import it.polimi.is23am10.client.userinterface.exceptions.NoUserInputsException;
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;

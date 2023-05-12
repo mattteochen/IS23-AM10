@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import it.polimi.is23am10.client.userinterface.exceptions.NoUserInputsException;
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.client.userinterface.helpers.OutputWrapper;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;

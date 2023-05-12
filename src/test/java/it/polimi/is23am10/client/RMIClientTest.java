@@ -37,7 +37,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
-import it.polimi.is23am10.client.userinterface.exceptions.NoUserInputsException;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.items.board.Board;
@@ -126,7 +125,7 @@ public class RMIClientTest {
   }
 
   @Test
-  void handlePlayerNameSelection_should_run_playerNameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException, NoUserInputsException {
+  void handlePlayerNameSelection_should_run_playerNameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException {
     AbstractMessage msg = new ErrorMessage("New Message", null);
     Player p = mock(Player.class);
     String pn = "Benny";
@@ -144,7 +143,7 @@ public class RMIClientTest {
 
   @Test
   @Disabled
-  void handleGameSelection_should_run_gameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException, NotBoundException, NoUserInputsException {
+  void handleGameSelection_should_run_gameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException, NotBoundException {
     List<VirtualView> ag = List.of(mock(VirtualView.class));
     String pn = "Benny";
     String command = "c 2";
@@ -165,7 +164,7 @@ public class RMIClientTest {
   }
 
   @Test
-  void handleCommand_should_run_handleCommand() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException, NotBoundException, InvalidNumOfPlayersException, NullNumOfPlayersException, BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException, NoUserInputsException {
+  void handleCommand_should_run_handleCommand() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException, NotBoundException, InvalidNumOfPlayersException, NullNumOfPlayersException, BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
     String pn = "Benny";
     String command = "move 42 -> 06";
     VirtualView vw = mock(VirtualView.class);
