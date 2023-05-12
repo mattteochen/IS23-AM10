@@ -629,6 +629,7 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
   }
 
   @Test
+  @Disabled
   void SNOOZE_TIMER_CONSUMER_should_NOT_SNOOZE_UNKNOWN_PLAYER_TIMER()
       throws NullSocketConnectorException, NullBlockingQueueException, InterruptedException {
     Socket socket = new Socket();

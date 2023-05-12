@@ -60,6 +60,10 @@ public class CommandSyntaxValidator {
     if (s == null) {
       return false;
     }
+    // Not a number
+    if (!s.chars().allMatch(Character::isDigit)){
+      return false;
+    }
     // Index out of bounds
     if (Integer.parseInt(s) < MIN_PLAYERS_LIMIT || Integer.parseInt(s) > MAX_PLAYERS_LIMIT) {
       return false;
@@ -77,7 +81,6 @@ public class CommandSyntaxValidator {
     
     // Null parameter or invalid length
     if (s == null || s.length() != 2) {
-      System.out.println("coord length error");
       return false;
     }
 
@@ -86,8 +89,29 @@ public class CommandSyntaxValidator {
         || s.substring(1, 1).chars().allMatch(Character::isDigit)) {
       return true; 
     }
-    System.out.println("coord not digit");
     return false;
   }
 
+  /**
+   * Method validator of column index input.
+   *
+   * @param s string with col index chosen.
+   * @return true if valid.
+   */
+  public static boolean validateColIdx(String s) {
+    
+    // Null parameter or invalid length
+    if (s == null || s.length() != 1) {
+      return false;
+    }
+
+
+    // Col index is one of the possible ones.
+    if ( s.charAt(0) >= 'A' &&
+        s.charAt(0) <= 'E' ) {
+      return true; 
+    }
+
+    return false;
+  }
 }

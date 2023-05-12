@@ -43,6 +43,7 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.CommandSyntaxValidator;
 import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.ErrorTypeString;
+import it.polimi.is23am10.utils.MoveCommandHelper;
 import it.polimi.is23am10.utils.MovesValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
@@ -210,8 +211,8 @@ public abstract class Client implements Runnable {
    * Game id reference.
    */
   protected UUID gameIdRef;
-  
-  /* 
+
+  /*
    * Application timer.
    */
   protected Timer alarm;
@@ -442,26 +443,26 @@ public abstract class Client implements Runnable {
    * @throws IOException
    */
   protected void handleCommands(AbstractPlayerConnector apc) throws IOException {
-    
+
     if (clientStatus == ClientGameStatus.GAME_SELECTION) {
       clientStatus = ClientGameStatus.PLAYING;
     }
-    
+
     String fullCommand = userInterface.getUserInput();
 
-    if(fullCommand != null){
+    if (fullCommand != null) {
       String command = fullCommand.stripLeading().split(" ")[0];
-  
+
       switch (command) {
         case "chat":
-          if (fullCommand.split(" ").length > 1) {
-            if (fullCommand.split("\"").length > 1) {
+          if (fullCommand.stripLeading().split(" ").length > 1) {
+            if (fullCommand.stripLeading().split("\"").length > 1) {
               // This selects only the part between double quotes which is gonna be the
               // message sent.
               String msg = fullCommand.split("\"")[1];
               // If the second string begins with double quotes,
               // there's no receiver and the message is broadcast
-              if (fullCommand.split(" ")[1].startsWith("\"")) {
+              if (fullCommand.stripLeading().split(" ")[1].startsWith("\"")) {
                 sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg));
               } else {
                 String receiverName = fullCommand.split(" ")[1];
@@ -481,38 +482,44 @@ public abstract class Client implements Runnable {
           if (apc.getPlayer().getPlayerName()
               .equals(getVirtualView().getActivePlayer().getPlayerName())
               && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS) {
+
             Map<Coordinates, Coordinates> moves = new HashMap<Coordinates, Coordinates>();
-  
-            // reads a string containing coordinates of a tile
-            for (int nMove = 0; nMove < 3; nMove++) {
+            List<Coordinates> boardCoords = new ArrayList();
+            List<Coordinates> bsCoords = new ArrayList();
+
+            // Reads a string containing coordinates of a tile and the column index
+            String[] moveArgs = fullCommand.stripLeading().split(" ");
+            for (int maxArgs = 0; maxArgs < 4 && moveArgs.length - (maxArgs + 1) > 0; maxArgs++) {
+
               /*
-               * This checks the correct number of moves we are playing,
-               * since the single move syntax is "ab -> cd ef -> gh" we want
-               * that we have groups of three strings for each move: "ab" "->" "cd".
-               * To do so I'm checking that the numbers of strings in the full line
-               * (fullCommand)
-               * has 3 more strings for each supposed move.
-               * If I have for example the last move which is "eb ->", so if it's incomplete,
-               * or if it is the fourth move, it will be ignored.
-               * 
+               * If we receive a board coordinate input add it to the list, otherwise if it is
+               * a
+               * column index we are at the end of the move command and we convert that idx
+               * to the right bookshelf coordinates. Then we add the mapping between board
+               * coordinates
+               * and bookshelf coordinates.
                */
-              if ((fullCommand.split(" ").length - (nMove + 1) * 3 + 1) > 0) {
-                String coordBoard = fullCommand.split(" ")[nMove * 3 + 1];
-                String arrow = fullCommand.split(" ")[nMove * 3 + 2];
-                String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 3];
-  
-                if (CommandSyntaxValidator.validateCoord(coordBoard)
-                    && CommandSyntaxValidator.validateCoord(coordBookshelf)
-                    && arrow.equals("->")) {
-                  Integer xBoardCoord = coordBoard.charAt(0) - '0';
-                  Integer yBoardCoord = coordBoard.charAt(1) - '0';
-                  Integer xBookshelfCoord = coordBookshelf.charAt(0) - '0';
-                  Integer yBookshelfCoord = coordBookshelf.charAt(1) - '0';
-                  Coordinates boardCoord = new Coordinates(yBoardCoord, xBoardCoord);
-                  Coordinates bsCoord = new Coordinates(yBookshelfCoord, xBookshelfCoord);
-                  moves.put(boardCoord, bsCoord);
-                } else {
-                  userInterface.displayError(new ErrorMessage("Invalid syntax of move command.", ErrorSeverity.ERROR));
+              if (CommandSyntaxValidator.validateCoord(moveArgs[maxArgs + 1])) {
+                String coordBoard = moveArgs[maxArgs + 1];
+                Integer colBoardCoord = coordBoard.charAt(0) - '0';
+                Integer rowBoardCoord = coordBoard.charAt(1) - '0';
+                boardCoords.add(new Coordinates(rowBoardCoord, colBoardCoord));
+              } else if (CommandSyntaxValidator.validateColIdx(moveArgs[maxArgs + 1])) {
+                String idx = moveArgs[maxArgs + 1];
+                try {
+                  // Transform idx to list of coords
+                  // NB: boardCoords.size() is the number of moves done
+                  bsCoords = MoveCommandHelper.fromColIdxToCoord(idx, getVirtualView().getActivePlayer().getBookshelf(),
+                  boardCoords.size());
+                  // I put the coords into the map
+                  for (int i = 0; i < boardCoords.size(); i++) {
+                    moves.put(boardCoords.get(i), bsCoords.get(i));
+                  }
+                  break;
+                } catch (BookshelfGridColIndexOutOfBoundsException
+                    | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException
+                    | WrongBookShelfPicksException e) {
+                  userInterface.displayError(new ErrorMessage(e.getMessage(), ErrorSeverity.ERROR));
                   break;
                 }
               } else {
@@ -532,6 +539,7 @@ public abstract class Client implements Runnable {
                   | WrongMovesNumberException | WrongGameBoardPicksException | NullIndexValueException
                   | WrongBookShelfPicksException e) {
                 userInterface.displayError(new ErrorMessage("Invalid move:" + e.getMessage(), ErrorSeverity.ERROR));
+                break;
               }
             }
             break;
@@ -555,7 +563,7 @@ public abstract class Client implements Runnable {
   protected String handlePlayerNameSelection(AbstractPlayerConnector apc)
       throws IOException {
     // Select only the string before the space if the client writes more words
-    String selectedPlayerName= userInterface.getUserInput();
+    String selectedPlayerName = userInterface.getUserInput();
     if (selectedPlayerName != null) {
       selectedPlayerName = selectedPlayerName.stripLeading();
       Player p = new Player();
@@ -594,15 +602,16 @@ public abstract class Client implements Runnable {
 
     // Executed if I still haven't selected a game
     if (apc.getGameId() == null) {
-      
+
       // We use the check over client status to perform one-time actions
-      // like displaying stuff and sending 
-      if(clientStatus == ClientGameStatus.INIT) {
+      // like displaying stuff and sending
+      if (clientStatus == ClientGameStatus.INIT) {
         userInterface.displayGameJoinGuide();
         clientStatus = ClientGameStatus.GAME_SELECTION;
         getAvailableGames(apc);
       }
 
+      // TODO: use userinterface
       String fullCommand = userInterface.getUserInput();
       if (fullCommand != null) {
         String command = fullCommand.stripLeading().split(" ")[0];
