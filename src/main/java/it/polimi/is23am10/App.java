@@ -72,6 +72,7 @@ public class App {
         // CLIENT MODE
         UserInterface userInterface = ctx.getShowGUI() ? new GraphicUserInterface() : new CommandLineInterface(ctx.getShowDebug());
         Client client;
+        Thread messageHandlerThread;
         if (ctx.getUseRMI()) {
           try {
             Registry registry = LocateRegistry.getRegistry(ctx.getServerRmiPort());
@@ -79,6 +80,7 @@ public class App {
             IServerControllerAction serverControllerActionServerRef = (IServerControllerAction) registry
                 .lookup(IServerControllerAction.class.getName());
             client = new RMIClient(playerConnector, userInterface, null, serverControllerActionServerRef, registry);
+            messageHandlerThread = ((RMIClient) client).runMessageHandler();
           } catch (NotBoundException e) {
             userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
             return;
@@ -91,7 +93,7 @@ public class App {
             Socket socket = new Socket(ctx.getServerAddress(), ctx.getServerSocketPort());
             PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
             client = new SocketClient(playerConnector, userInterface);
-            client.runMessageHandler();
+            messageHandlerThread = ((SocketClient) client).runMessageHandler();
           } catch (UnknownHostException e) {
             userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
             return;
@@ -100,6 +102,13 @@ public class App {
             return;
           }
         }
+
+        try {
+          messageHandlerThread.join();
+        } catch (InterruptedException e) {
+          userInterface.displayError(new ErrorMessage("Message handler thread was interrupted.", ErrorSeverity.CRITICAL));
+        }
+
         client.run(); 
       }
     } catch (NumberFormatException | InvalidArgumentException | MissingParameterException | InvalidPortNumberException
