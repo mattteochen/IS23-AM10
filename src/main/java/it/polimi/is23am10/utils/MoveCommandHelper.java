@@ -26,7 +26,20 @@ public class MoveCommandHelper {
   private MoveCommandHelper() {
   }
 
-
+  /**
+   * Method that takes the column input of the player bookshelf and returns the list of the 
+   * first available empty coordinates.
+   * 
+   * @param idx column index.
+   * @param bs player bookshelf.
+   * @param nMoves number of moves made and of empty coords to check.
+   *
+   * @return list of first available empty coordinates of the bookshelf
+   * @throws BookshelfGridColIndexOutOfBoundsException
+   * @throws BookshelfGridRowIndexOutOfBoundsException
+   * @throws NullIndexValueException
+   * @throws WrongBookShelfPicksException
+   */
   public static List<Coordinates> fromColIdxToCoord(String idx, Bookshelf bs , Integer nMoves) throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, WrongBookShelfPicksException{
     List<Coordinates> bsCoord = new ArrayList<>();
     Integer columnIdx = idx.charAt(0) - 'A';

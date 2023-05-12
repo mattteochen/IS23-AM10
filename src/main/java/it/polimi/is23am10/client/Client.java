@@ -42,6 +42,7 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.CommandSyntaxValidator;
 import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.ErrorTypeString;
+import it.polimi.is23am10.utils.MoveCommandHelper;
 import it.polimi.is23am10.utils.MovesValidator;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
@@ -183,8 +184,8 @@ public abstract class Client implements Runnable {
    * Game id reference.
    */
   protected UUID gameIdRef;
-  
-  /* 
+
+  /*
    * Application timer.
    */
   protected Timer alarm;
@@ -413,41 +414,45 @@ public abstract class Client implements Runnable {
         if (apc.getPlayer().getPlayerName()
             .equals(getVirtualView().getActivePlayer().getPlayerName())
             && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS) {
+
           Map<Coordinates, Coordinates> moves = new HashMap<Coordinates, Coordinates>();
+          List<Coordinates> boardCoords = new ArrayList();
+          List<Coordinates> bsCoords = new ArrayList();
 
-          // reads a string containing coordinates of a tile
-          for (int nMove = 0; nMove < 3; nMove++) {
-            /*
-             * This checks the correct number of moves we are playing,
-             * since the single move syntax is "ab -> cd ef -> gh" we want
-             * that we have groups of three strings for each move: "ab" "->" "cd".
-             * To do so I'm checking that the numbers of strings in the full line
-             * (fullCommand)
-             * has 3 more strings for each supposed move.
-             * If I have for example the last move which is "eb ->", so if it's incomplete,
-             * or if it is the fourth move, it will be ignored.
-             * 
-             */
-            if ((fullCommand.split(" ").length - (nMove + 1) * 3 + 1) > 0) {
-              String coordBoard = fullCommand.split(" ")[nMove * 3 + 1];
-              String arrow = fullCommand.split(" ")[nMove * 3 + 2];
-              String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 3];
+          // Reads a string containing coordinates of a tile and the column index
+          for (int maxArgs = 0; maxArgs < 4 && fullCommand.split(" ").length - (maxArgs + 1) > 0; maxArgs++) {
 
-              if (CommandSyntaxValidator.validateCoord(coordBoard)
-                  && CommandSyntaxValidator.validateCoord(coordBookshelf)
-                  && arrow.equals("->")) {
-                Integer xBoardCoord = coordBoard.charAt(0) - '0';
-                Integer yBoardCoord = coordBoard.charAt(1) - '0';
-                Integer xBookshelfCoord = coordBookshelf.charAt(0) - '0';
-                Integer yBookshelfCoord = coordBookshelf.charAt(1) - '0';
-                Coordinates boardCoord = new Coordinates(yBoardCoord, xBoardCoord);
-                Coordinates bsCoord = new Coordinates(yBookshelfCoord, xBookshelfCoord);
-                moves.put(boardCoord, bsCoord);
-              } else {
-                userInterface.displayError(new ErrorMessage("Invalid syntax of move command.", ErrorSeverity.ERROR));
+            /* 
+            * If we receive a board coordinate input add it to the list, otherwise if it is a 
+            * column index we are at the end of the move command and we convert that idx
+            * to the right bookshelf coordinates. Then we add the mapping between board coordinates
+            * and bookshelf coordinates. 
+            */
+            if (CommandSyntaxValidator.validateCoord(fullCommand.split(" ")[maxArgs + 1])) {
+              String coordBoard = fullCommand.split(" ")[maxArgs + 1];
+              Integer colBoardCoord = coordBoard.charAt(0) - '0';
+              Integer rowBoardCoord = coordBoard.charAt(1) - '0';
+              boardCoords.add(new Coordinates(rowBoardCoord, colBoardCoord));
+            } else if (CommandSyntaxValidator.validateColIdx(fullCommand.split(" ")[maxArgs + 1])) {
+              String idx = fullCommand.split(" ")[maxArgs + 1];
+              try {
+                // Transform idx to list of coords
+                // NB: boardCoords.size() is the number of moves done
+                bsCoords = MoveCommandHelper.fromColIdxToCoord(idx, getVirtualView().getActivePlayer().getBookshelf(),
+                    boardCoords.size());
+                // I put the coords into the map
+                for (int i = 0; i < boardCoords.size(); i++) {
+                  moves.put(boardCoords.get(i), bsCoords.get(i));
+                }
+                break;
+              } catch (BookshelfGridColIndexOutOfBoundsException
+                  | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException
+                  | WrongBookShelfPicksException e) {
+                userInterface.displayError(new ErrorMessage(e.getMessage(), ErrorSeverity.ERROR));
                 break;
               }
             } else {
+              userInterface.displayError(new ErrorMessage("Invalid syntax of move command.", ErrorSeverity.ERROR));
               break;
             }
           }
@@ -524,7 +529,7 @@ public abstract class Client implements Runnable {
     if (apc.getGameId() == null) {
       getAvailableGames(apc);
 
-      //TODO: use userinterface
+      // TODO: use userinterface
       System.out.println(CLIStrings.joinOrCreateString);
 
       String fullCommand = br.readLine().stripLeading();
