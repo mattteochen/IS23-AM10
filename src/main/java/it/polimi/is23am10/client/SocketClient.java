@@ -213,7 +213,7 @@ public class SocketClient extends Client {
   public Thread runMessageHandler(){
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
     Thread messageHandler = new Thread(()->{
-      while(playerConnectorSocket.getConnector().isConnected() && hasRequestedDisconnection()){
+      while(playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()){
         // retrieve and show server messages, it includes chat messages
         try {
           AbstractMessage serverMessage = parseServerMessage(playerConnectorSocket);

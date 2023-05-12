@@ -213,7 +213,7 @@ public class RMIClient extends Client {
   @Override
   public Thread runMessageHandler(){
     Thread messageHandler = new Thread(()->{
-      while(hasRequestedDisconnection()){
+      while(!hasRequestedDisconnection()){
         try {
           AbstractMessage msg = playerConnectorServer.getMessageFromQueue();
           if (msg != null) {
