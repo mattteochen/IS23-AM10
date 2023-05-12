@@ -480,7 +480,7 @@ public abstract class Client implements Runnable {
           }
           break;
         case "logout":
-          setRequestedDisconnection(false);
+          setRequestedDisconnection(true);
           break;
         case "move":
           if (getVirtualView() == null) {
