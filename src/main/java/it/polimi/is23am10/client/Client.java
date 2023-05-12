@@ -589,7 +589,6 @@ public abstract class Client implements Runnable {
    * Handling function for game selection.
    *
    * @param apc                abstract player connector
-   * @param br                 buffered reader
    * @param selectedPlayerName player name selected
    * @throws IOException
    * @throws InterruptedException
