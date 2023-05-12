@@ -23,10 +23,9 @@ public interface UserInterface {
    * Method used to retrieve the strings the user might have sent trough their 
    * input interface. GUI adds these strings on button clicks while CLI adds them on return.
    * 
-   * @return The first item in the list.
-   * @throws NoUserInputsException
+   * @return The first item in the list. Null if empty.
    */
-  String getUserInput() throws NoUserInputsException;
+  String getUserInput();
   
   /**
    * Method called when first running the game.

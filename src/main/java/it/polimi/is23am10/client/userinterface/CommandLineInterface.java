@@ -28,29 +28,42 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  */
 public final class CommandLineInterface implements UserInterface {
 
+  /**
+   * Output Wrapper, entrypoint for all UI output functions.
+   * 
+   */
   public final OutputWrapper ow;
+
+  /**
+   * Queue containing all the inputs the user sent trough readline.
+   * Content to be consumed by client controller on premise.
+   * 
+   */
   private final BlockingQueue<String> userInputList;
+
+  /**
+   * Buffered reader used by async read thread to get user input.
+   * 
+   */
   private final BufferedReader br;
 
-  private boolean isOpen;
 
+  /**
+   * Public constructor for CLI.
+   * 
+   * @param showDebug parameter to be used for debug purposes.
+   */
   public CommandLineInterface(boolean showDebug) {
     ow = new OutputWrapper(showDebug);
     userInputList = new LinkedBlockingQueue<String>();
     br = new BufferedReader(new InputStreamReader(System.in));
-    isOpen = true;
   }
 
   /**
    * {@inheritDoc}
    */
-  public String getUserInput() throws NoUserInputsException {
-    if (userInputList.size() > 0) {
-      return userInputList.poll();
-    }
-    else {
-      throw new NoUserInputsException();
-    }
+  public String getUserInput() {
+    return userInputList.poll();
   }
 
   /**
@@ -155,7 +168,7 @@ public final class CommandLineInterface implements UserInterface {
   public void runInputHandler() {
     final Thread inputHandler = new Thread(() -> {
       try {
-        while(isOpen) {
+        while(true) {
           String newLine = br.readLine();
           if (newLine != null && !newLine.equals("")) {
             userInputList.add(newLine);

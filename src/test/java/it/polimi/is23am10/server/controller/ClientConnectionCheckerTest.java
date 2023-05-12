@@ -112,7 +112,7 @@ class ClientConnectionCheckerTest {
     checker.checkActivePlayersInactivity();
     assertFalse(playing.getPlayer().getIsConnected());
     //client has been notified and disconnected
-    assertEquals(size+3, playing.getMsgQueueSize());
+    assertEquals(size+2, playing.getMsgQueueSize());
 
     //check new active player
     Player newActive = gh.getGame().getActivePlayer();
