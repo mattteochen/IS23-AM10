@@ -455,14 +455,14 @@ public abstract class Client implements Runnable {
   
       switch (command) {
         case "chat":
-          if (fullCommand.split(" ").length > 1) {
-            if (fullCommand.split("\"").length > 1) {
+          if (fullCommand.stripLeading().split(" ").length > 1) {
+            if (fullCommand.stripLeading().split("\"").length > 1) {
               // This selects only the part between double quotes which is gonna be the
               // message sent.
               String msg = fullCommand.split("\"")[1];
               // If the second string begins with double quotes,
               // there's no receiver and the message is broadcast
-              if (fullCommand.split(" ")[1].startsWith("\"")) {
+              if (fullCommand.stripLeading().split(" ")[1].startsWith("\"")) {
                 sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg));
               } else {
                 String receiverName = fullCommand.split(" ")[1];
