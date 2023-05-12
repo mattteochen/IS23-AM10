@@ -108,7 +108,7 @@ class ClientConnectionCheckerTest {
     //client has been notified
     assertTrue(playing.getPlayer().getIsConnected());
     assertEquals(size+1, playing.getMsgQueueSize());
-    Thread.sleep(2000);
+    Thread.sleep(6000);
     checker.checkActivePlayersInactivity();
     assertFalse(playing.getPlayer().getIsConnected());
     //client has been notified and disconnected
