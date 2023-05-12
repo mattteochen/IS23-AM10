@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="1080.0" fitWidth="1920.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@parquet.jpg" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="440.0" fitWidth="1206.0" layoutX="754.0" layoutY="61.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Desktop/PoliMi/WeBeepSync/PROGETTO%20INGSW/Documentazione%20e%20grafiche%20gioco/17_MyShelfie_BGA/Publisher%20material/Title%202000x618px.png" />
+         </image>
+      </ImageView>
+      <TextField alignment="CENTER" layoutX="929.0" layoutY="469.0" prefHeight="89.0" prefWidth="850.0" promptText="Enter your username here...">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </TextField>
+      <Button layoutX="1003.0" layoutY="604.0" mnemonicParsing="false" prefHeight="93.0" prefWidth="316.0" text="Create new game">
+         <font>
+            <Font size="32.0" />
+         </font>
+      </Button>
+      <Button layoutX="1395.0" layoutY="603.0" mnemonicParsing="false" prefHeight="93.0" prefWidth="316.0" text="Join existing game">
+         <font>
+            <Font size="32.0" />
+         </font>
+      </Button>
+      <ImageView fitHeight="872.0" fitWidth="1004.0" layoutX="-28.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Desktop/PoliMi/WeBeepSync/PROGETTO%20INGSW/Documentazione%20e%20grafiche%20gioco/17_MyShelfie_BGA/Publisher%20material/Box%20280x280px.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="1748.0" layoutY="907.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../Desktop/PoliMi/WeBeepSync/PROGETTO%20INGSW/Documentazione%20e%20grafiche%20gioco/17_MyShelfie_BGA/Publisher%20material/Publisher.png" />
+         </image>
+      </ImageView>
+      <Text layoutX="888.0" layoutY="898.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Prova finale - Ingegneria del Software">
+         <font>
+            <Font size="40.0" />
+         </font>
+      </Text>
+      <Text layoutX="887.0" layoutY="937.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Politecnico di Milano - A.A. 2022-23">
+         <font>
+            <Font size="40.0" />
+         </font>
+      </Text>
+      <Text layoutX="889.0" layoutY="978.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Gruppo 10 (Sez. Margara)">
+         <font>
+            <Font size="40.0" />
+         </font>
+      </Text>
+      <Text layoutX="890.0" layoutY="1015.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Amandonico, Buccoliero, Cavallero, Chen">
+         <font>
+            <Font size="40.0" />
+         </font>
+      </Text>
+   </children>
+</Pane>

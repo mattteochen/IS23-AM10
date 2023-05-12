@@ -1,13 +1,20 @@
 package it.polimi.is23am10.client.userinterface;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.client.userinterface.helpers.OutputWrapper;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
 /**
@@ -20,10 +27,42 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  */
 public final class CommandLineInterface implements UserInterface {
 
+  /**
+   * Output Wrapper, entrypoint for all UI output functions.
+   * 
+   */
   public final OutputWrapper ow;
 
+  /**
+   * Queue containing all the inputs the user sent trough readline.
+   * Content to be consumed by client controller on premise.
+   * 
+   */
+  private final BlockingQueue<String> userInputList;
+
+  /**
+   * Buffered reader used by async read thread to get user input.
+   * 
+   */
+  private final BufferedReader br;
+
+
+  /**
+   * Public constructor for CLI.
+   * 
+   * @param showDebug parameter to be used for debug purposes.
+   */
   public CommandLineInterface(boolean showDebug) {
     ow = new OutputWrapper(showDebug);
+    userInputList = new LinkedBlockingQueue<String>();
+    br = new BufferedReader(new InputStreamReader(System.in));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public String getUserInput() {
+    return userInputList.poll();
   }
 
   /**
@@ -32,6 +71,16 @@ public final class CommandLineInterface implements UserInterface {
   public void displaySplashScreen() {
     ow.info(CLIStrings.welcomeString, true);
     ow.info(CLIStrings.insertPlayerNameString, false);
+    runInputHandler();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public void displayGameJoinGuide() {
+    ow.info(CLIStrings.joinOrCreateString, true);
+    ow.info(CLIStrings.joinExisting, false);
+    ow.info(CLIStrings.createGame, false);
   }
 
   /**
@@ -42,7 +91,7 @@ public final class CommandLineInterface implements UserInterface {
     if (availableGames.isEmpty()) {
       ow.warning(CLIStrings.noGamesString, false);
     } else {
-      ow.info(CLIStrings.listGamesString, true);
+      ow.info(CLIStrings.listGamesString, false);
      for (VirtualView ag : availableGames){
       ow.info(String.format(CLIStrings.availableGameString,
               availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId()), false);
@@ -109,6 +158,26 @@ public final class CommandLineInterface implements UserInterface {
       default:
         break;
     }
+  }
+
+  /**
+   * CLI method to retrieve user input and add it to the queue
+   * for it to be consumed when needed by controller. 
+   */
+  public void runInputHandler() {
+    final Thread inputHandler = new Thread(() -> {
+      try {
+        while(true) {
+          String newLine = br.readLine();
+          if (newLine != null && !newLine.equals("")) {
+            userInputList.add(newLine);
+          }
+        }
+      } catch (IOException e) {
+        displayError(new ErrorMessage(CLIStrings.inputError, ErrorSeverity.ERROR));
+      }
+    });
+    inputHandler.start();
   }
 
 }

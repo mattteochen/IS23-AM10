@@ -104,26 +104,31 @@ public class SocketClientTest {
   @Test
   void handlePlayerNameSelection_should_run_playerNameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException {
     AbstractMessage msg = new ErrorMessage("New Message", null);
-    BufferedReader br = mock(BufferedReader.class); 
     Player p = mock(Player.class);
     String pn = "Benny";
-    doReturn(pn).when(br).readLine();
+    UserInterface ui = mock(UserInterface.class);
+
+    socketClient.setUserInterface(ui);
+    doReturn(ui).when(socketClient).getUserInterface();
+    when(ui.getUserInput()).thenReturn(pn);
     when(playerConnectorSocket.getPlayer()).thenReturn(p);
 
-    assertEquals(socketClient.handlePlayerNameSelection(playerConnectorSocket, br), pn);
+    assertEquals(socketClient.handlePlayerNameSelection(playerConnectorSocket), pn);
   }
 
   @Test
   void handleCommand_should_run_handleCommand() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, InvalidNumOfPlayersException, NullNumOfPlayersException {
-    BufferedReader br = mock(BufferedReader.class); 
     String pn = "Benny";
     String command = "move 42 -> 06";
     VirtualView vw = mock(VirtualView.class);
     Player p = mock(Player.class);
     VirtualPlayer vp = mock(VirtualPlayer.class);
+    UserInterface ui = mock(UserInterface.class);
 
+    socketClient.setUserInterface(ui);
+    doReturn(ui).when(socketClient).getUserInterface();
+    when(ui.getUserInput()).thenReturn(command);
     socketClient.setVirtualView(vw);
-    doReturn(command).when(br).readLine();
     doReturn(vw).when(socketClient).getVirtualView();
     when(playerConnectorSocket.getPlayer()).thenReturn(p);
     when(vw.getActivePlayer()).thenReturn(vp);
@@ -134,7 +139,7 @@ public class SocketClientTest {
     when(vw.getGameBoard()).thenReturn(new Board(4));
 
 
-    socketClient.handleCommands(playerConnectorSocket, br);
+    socketClient.handleCommands(playerConnectorSocket);
   }
 
   @Test
