@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
+import it.polimi.is23am10.server.command.LogOutCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
@@ -138,7 +139,7 @@ class ServerControllerActionTest {
     assertEquals(0, ServerControllerState.getGamePools().size());
     assertEquals(0, ServerControllerState.getPlayersPool().size());
 
-    assertEquals(1,playerConnector.getMsgQueueSize());
+    assertEquals(1, playerConnector.getMsgQueueSize());
     AbstractMessage errorMsg = playerConnector.getMessageFromQueue();
     assertEquals(ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, errorMsg.getMessage());
   }
@@ -328,8 +329,8 @@ class ServerControllerActionTest {
 
     assertEquals(null, playerConnector.getPlayer());
     assertEquals(null, playerConnector.getGameId());
-        
-    assertEquals(1,playerConnector.getMsgQueueSize());
+
+    assertEquals(1, playerConnector.getMsgQueueSize());
     AbstractMessage errorMsg = playerConnector.getMessageFromQueue();
     assertEquals(ErrorTypeString.ERROR_ADDING_PLAYERS, errorMsg.getMessage());
   }
@@ -371,7 +372,7 @@ class ServerControllerActionTest {
     serverControllerAction.addPlayerConsumer.accept(logger, steveBrother, steveBrotherCmd);
     assertEquals(oldPlayerConnectors + 1, ServerControllerState.getPlayersPool().size());
 
-    assertEquals(1,steveBrother.getMsgQueueSize());
+    assertEquals(1, steveBrother.getMsgQueueSize());
     AbstractMessage errorMsg = steveBrother.getMessageFromQueue();
     assertEquals(ErrorTypeString.ERROR_GAME_FULL, errorMsg.getMessage());
   }
@@ -406,29 +407,29 @@ class ServerControllerActionTest {
     Socket socket = new Socket();
     GameHandler handler = new GameHandler("Max", 3);
     ServerControllerState.addGameHandler(handler);
-    
+
     PlayerConnectorSocket alice = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
     AbstractCommand aliceCmd = new AddPlayerCommand("Alice", handler.getGame().getGameId());
-    
+
     serverControllerAction.addPlayerConsumer.accept(logger, alice, aliceCmd);
 
     PlayerConnectorSocket steve = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
     AbstractCommand steveCmd = new AddPlayerCommand("Steve", handler.getGame().getGameId());
-    
+
     serverControllerAction.addPlayerConsumer.accept(logger, steve, steveCmd);
-    
+
     steve.getConnector().close();
     steve.getPlayer().setIsConnected(false);
-    
+
     assertFalse(steve.getConnector().isConnected());
     assertFalse(steve.getPlayer().getIsConnected());
     assertEquals(handler.getGame().getPlayerByName("Steve"), steve.getPlayer());
     assertTrue(handler.getGame().getPlayerNames().contains("Steve"));
-    
-    Socket newSocket = new Socket(); 
+
+    Socket newSocket = new Socket();
     PlayerConnectorSocket steveReconnecting = new PlayerConnectorSocket(newSocket, new LinkedBlockingQueue<>());
     AbstractCommand steveReconnectingCmd = new AddPlayerCommand("Steve", handler.getGame().getGameId());
-    
+
     serverControllerAction.addPlayerConsumer.accept(logger, steveReconnecting, steveReconnectingCmd);
 
     assertTrue(handler.getPlayerConnectors().contains(steve));
@@ -436,19 +437,21 @@ class ServerControllerActionTest {
     assertEquals("Steve", steve.getPlayer().getPlayerName());
     assertEquals(handler.getGame().getGameId(), steve.getGameId());
     assertEquals(3, handler.getGame().getPlayers().size());
-    
+
     /*
-     * I'm here removing the other messages that alice has in her queue 
-     * (the welcome and the two virtual views of the game) sent when the other player
+     * I'm here removing the other messages that alice has in her queue
+     * (the welcome and the two virtual views of the game) sent when the other
+     * player
      * connected to the game and then reconnected.
      * The last message will be the message informing that Steve reconnected.
      */
     alice.getMessageFromQueue().getMessage();
     alice.getMessageFromQueue().getMessage();
     alice.getMessageFromQueue().getMessage();
-    assertEquals(String.format(ErrorTypeString.WARNING_PLAYER_REJOIN, "Steve"), alice.getMessageFromQueue().getMessage());
+    assertEquals(String.format(ErrorTypeString.WARNING_PLAYER_REJOIN, "Steve"),
+        alice.getMessageFromQueue().getMessage());
   }
-  
+
   @Test
   void GET_AVAILABLE_GAMES_should_return_gameList()
       throws NullSocketConnectorException, NullBlockingQueueException, NullMaxPlayerException,
@@ -465,7 +468,6 @@ class ServerControllerActionTest {
     GameHandler h2 = new GameHandler("frank zappa", 3);
     GameHandler h3 = new GameHandler("nicoletta", 4);
 
-
     ServerControllerState.addGameHandler(h1);
     ServerControllerState.addGameHandler(h2);
     ServerControllerState.addGameHandler(h3);
@@ -480,7 +482,7 @@ class ServerControllerActionTest {
   }
 
   @Test
-void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
+  void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
       throws NullSocketConnectorException, NullBlockingQueueException, NullMaxPlayerException,
       InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
       NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
@@ -543,14 +545,16 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
     AvailableGamesMessage msg = (AvailableGamesMessage) playerConnector.getMessageFromQueue();
     assertNotNull(msg);
     /*
-     * The following lines of tests are commented because of the changes in the deserialization
-     * of available games messages made. 
+     * The following lines of tests are commented because of the changes in the
+     * deserialization
+     * of available games messages made.
      */
 
-    //assertNotNull(msg.getAvailableGames());
-    //assertEquals(2, msg.getAvailableGames().size());
-    //assertTrue(
-    //    msg.getAvailableGames().containsAll(availableGames) && availableGames.containsAll(msg.getAvailableGames()));
+    // assertNotNull(msg.getAvailableGames());
+    // assertEquals(2, msg.getAvailableGames().size());
+    // assertTrue(
+    // msg.getAvailableGames().containsAll(availableGames) &&
+    // availableGames.containsAll(msg.getAvailableGames()));
   }
 
   @Test
@@ -573,17 +577,20 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
     Map<Coordinates, Coordinates> moves = new HashMap<>();
     moves.put(new Coordinates(1, 3), new Coordinates(5, 0));
     AbstractCommand move = new MoveTilesCommand(
-      handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max",
-      handler.getGame().getGameId(), moves);
+        handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max",
+        handler.getGame().getGameId(), moves);
     assertFalse(handler.getGame().getGameBoard().getTileAt(1, 3).isEmpty());
-    playerConnector.getPlayer().setPlayerName(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max");
-    playerConnector.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve".getBytes() : "Max".getBytes()));
+    playerConnector.getPlayer()
+        .setPlayerName(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max");
+    playerConnector.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(
+        handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve".getBytes() : "Max".getBytes()));
     serverControllerAction.moveTilesConsumer.accept(logger, playerConnector, move);
     assertEquals(TileType.EMPTY, handler.getGame().getGameBoard().getTileAt(1, 3).getType());
   }
 
   @Test
-  void MOVE_TILES_should_Throw_BoardGridColIndexOutOfBoundsException() throws NullSocketConnectorException, NullGameHandlerInstance,
+  void MOVE_TILES_should_Throw_BoardGridColIndexOutOfBoundsException()
+      throws NullSocketConnectorException, NullGameHandlerInstance,
       NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
@@ -602,11 +609,13 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
     Map<Coordinates, Coordinates> moves = new HashMap<>();
     moves.put(new Coordinates(1, 15), new Coordinates(5, 0));
     AbstractCommand move = new MoveTilesCommand(
-      handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max",
-      handler.getGame().getGameId(), moves);
+        handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max",
+        handler.getGame().getGameId(), moves);
     assertFalse(handler.getGame().getGameBoard().getTileAt(1, 3).isEmpty());
-    playerConnector.getPlayer().setPlayerName(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max");
-    playerConnector.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve".getBytes() : "Max".getBytes()));
+    playerConnector.getPlayer()
+        .setPlayerName(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max");
+    playerConnector.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(
+        handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve".getBytes() : "Max".getBytes()));
     assertFalse(handler.getGame().getGameBoard().getTileAt(1, 3).isEmpty());
   }
 
@@ -644,5 +653,42 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
     serverControllerAction.snoozeTimerConsumer.accept(logger, playerConnector, snoozecmd);
     long snooze2 = playerConnector.getLastSnoozeMs();
     assertTrue(snooze2 == snooze1);
+  }
+
+  @Test
+  void LOGOUT_PLAYER_should_CONSUME_LOGOUT_PLAYER_COMMAND()
+      throws NullSocketConnectorException, NullGameHandlerInstance,
+      NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullBlockingQueueException,
+      NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
+    Socket socket = new Socket();
+    PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
+
+    GameHandler handler = new GameHandler("Max", 2);
+    ServerControllerState.addGameHandler(handler);
+
+    AbstractCommand cmd = new AddPlayerCommand("Steve", handler.getGame().getGameId());
+
+    final int oldPlayerConnectors = ServerControllerState.getPlayersPool().size();
+
+    assertEquals(null, playerConnector.getPlayer());
+    assertEquals(null, playerConnector.getGameId());
+
+    serverControllerAction.addPlayerConsumer.accept(logger, playerConnector, cmd);
+
+    assertEquals(oldPlayerConnectors+1, ServerControllerState.getPlayersPool().size());
+
+    assertEquals("Steve", playerConnector.getPlayer().getPlayerName());
+    assertEquals(handler.getGame().getGameId(), playerConnector.getGameId());
+    assertTrue(handler.getPlayerConnectors().contains(playerConnector));
+    assertTrue(handler.getGame().getPlayerNames().contains("Steve"));
+
+    cmd = new LogOutCommand("Steve", handler.getGame().getGameId());
+
+    serverControllerAction.logoutConsumer.accept(logger, playerConnector, cmd);
+
+    assertEquals(oldPlayerConnectors, ServerControllerState.getPlayersPool().size());
   }
 }
