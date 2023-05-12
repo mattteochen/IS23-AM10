@@ -174,7 +174,6 @@ public class SocketClient extends Client {
   void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves) throws IOException {
     MoveTilesCommand command = new MoveTilesCommand(apc.getPlayer().getPlayerName(), apc.getGameId(), moves);
     String req = gson.toJson(command);
-    System.out.println(req);
     sendMessage(req, apc);
   };
 

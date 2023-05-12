@@ -20,6 +20,14 @@ public final class GraphicUserInterface implements UserInterface{
   /**
    * {@inheritDoc}
    */
+  public String getUserInput() {
+    return "test";
+    // TODO Auto-generated method stub
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public void displaySplashScreen() {
     // TODO Auto-generated method stub
   }
@@ -57,6 +65,15 @@ public final class GraphicUserInterface implements UserInterface{
    * {@inheritDoc}
    */
   public void displayErrorMessage(AbstractMessage message) {
+    // TODO Auto-generated method stub
+  }
+  
+  /**
+   *
+   * {@inheritDoc}
+   */
+  @Override
+  public void displayGameJoinGuide() {
     // TODO Auto-generated method stub
   }
 }

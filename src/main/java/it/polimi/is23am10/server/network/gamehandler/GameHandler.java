@@ -194,9 +194,10 @@ public class GameHandler {
     // iterating over the Collections.synchronizedList requires synch.
     synchronized (playerConnectors) {
       for (AbstractPlayerConnector pc : playerConnectors) {
-        if (!pc.getPlayer().getIsConnected()) {
-          continue;
-        }
+        // commenting this for testing
+        // if (!pc.getPlayer().getIsConnected()) {
+        //   continue;
+        // }
         VirtualView gameCopy = new VirtualView(game);
         if (game.getStatus() != GameStatus.ENDED) {
           gameCopy.getPlayers()

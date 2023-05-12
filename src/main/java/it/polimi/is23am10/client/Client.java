@@ -21,7 +21,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
+import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
+import it.polimi.is23am10.client.userinterface.exceptions.NoUserInputsException;
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
@@ -89,6 +91,7 @@ public abstract class Client implements Runnable {
         .create();
     requestedDisconnection = false;
     alarm = new Timer();
+    clientStatus = ClientGameStatus.INIT;
   }
 
   /**
@@ -134,6 +137,31 @@ public abstract class Client implements Runnable {
    * 
    */
   protected InetAddress serverAddress;
+
+  /**
+   * The three possible states in which the client can be.
+   * 
+   */
+  public enum ClientGameStatus {
+    /**
+     * Starting state. Player hasn't selected name yet.
+     */
+    INIT,
+    /**
+     * Player selected name but not yet the game.
+     */
+    GAME_SELECTION,
+    /**
+     * Player is in the game.
+     */
+    PLAYING
+  }
+
+  /**
+   * Current status of the client.
+   * 
+   */
+  protected ClientGameStatus clientStatus;
 
   /**
    * Player connector. Allows the client to communicate with the server
@@ -287,6 +315,24 @@ public abstract class Client implements Runnable {
   }
 
   /**
+   * Client status getter.
+   * 
+   * @return status.
+   */
+  public ClientGameStatus getClientStatus() {
+    return clientStatus;
+  }
+
+  /**
+   * Client status setter.
+   * 
+   * @param clientStatus new status of client.
+   */
+  public void setClientStatus(ClientGameStatus clientStatus) {
+    this.clientStatus = clientStatus;
+  }
+
+  /**
    * Abstract method that send command to get all available games.
    * 
    * @param apc abstract player connector
@@ -337,13 +383,18 @@ public abstract class Client implements Runnable {
    * Handling function for move tiles command.
    * 
    * @param apc abstract player connector
-   * @param br  buffered reader
    * @throws IOException
    */
-  protected void handleCommands(AbstractPlayerConnector apc, BufferedReader br) throws IOException {
+  protected void handleCommands(AbstractPlayerConnector apc) throws IOException {
+    String fullCommand;
+    String command;
 
-    String fullCommand = br.readLine().stripLeading();
-    String command = fullCommand.split(" ")[0];
+    try {
+      fullCommand = userInterface.getUserInput().stripLeading();
+      command = fullCommand.split(" ")[0];
+    } catch (NoUserInputsException e) {
+      return;
+    }
 
     switch (command) {
       case "chat":
@@ -440,15 +491,18 @@ public abstract class Client implements Runnable {
    * Handling function for name selection.
    *
    * @param apc abstract player connector
-   * @param br  buffered reader
    * @return player name selected
    * @throws IOException
    */
-  protected String handlePlayerNameSelection(AbstractPlayerConnector apc, BufferedReader br)
+  protected String handlePlayerNameSelection(AbstractPlayerConnector apc)
       throws IOException {
     // Select only the string before the space if the client writes more words
-    String selectedPlayerName = br.readLine().stripLeading().split(" ")[0];
-    System.out.println(selectedPlayerName);
+    String selectedPlayerName;
+    try {
+      selectedPlayerName = userInterface.getUserInput().stripLeading();
+    } catch (NoUserInputsException e) {
+      return null;
+    }
     Player p = new Player();
     apc.setPlayer(p);
     try {
@@ -479,17 +533,30 @@ public abstract class Client implements Runnable {
    * @throws InterruptedException
    * @throws NullPlayerNameException
    */
-  protected void handleGameSelection(AbstractPlayerConnector apc, BufferedReader br,
+  protected void handleGameSelection(AbstractPlayerConnector apc,
       String selectedPlayerName) throws IOException, InterruptedException, NullPlayerNameException {
 
     // Executed if I still haven't selected a game
     if (apc.getGameId() == null) {
-      getAvailableGames(apc);
+      
+      // We use the check over client status to perform one-time actions
+      // like displaying stuff and sending 
+      if(clientStatus == ClientGameStatus.INIT) {
+        userInterface.displayGameJoinGuide();
+        clientStatus = ClientGameStatus.GAME_SELECTION;
+        getAvailableGames(apc);
+      }
 
-      System.out.println(CLIStrings.joinOrCreateString);
+      String fullCommand;
+      String command;
 
-      String fullCommand = br.readLine().stripLeading();
-      String command = fullCommand.split(" ")[0];
+      try {
+        fullCommand = userInterface.getUserInput().stripLeading();
+        command = fullCommand.split(" ")[0];
+      } catch (NoUserInputsException e) {
+        return;
+      }
+
       Integer maxPlayers = null;
       switch (command) {
         case "j":
@@ -580,24 +647,23 @@ public abstract class Client implements Runnable {
    */
   protected void clientRunnerCore(AbstractPlayerConnector pc)
       throws IOException, NullPlayerNameException, InterruptedException, NullPlayerIdException {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     // First I'm gonna ask the player name
     if (pc.getPlayer() == null || pc.getPlayer().getPlayerName() == null) {
       String pn = null;
       userInterface.displaySplashScreen();
       while (pn == null || pn.equals("")) {
-        pn = handlePlayerNameSelection(pc, br);
+        pn = handlePlayerNameSelection(pc);
       }
       pc.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(pn.getBytes()));
     }
 
     // Execute if the client is not connected to a game.
     if (pc.getGameId() == null) {
-      handleGameSelection(pc, br, pc.getPlayer().getPlayerName());
+      handleGameSelection(pc, pc.getPlayer().getPlayerName());
     } else {
       // Executed if the client is connected to a game.
-      handleCommands(pc, br);
+      handleCommands(pc);
     }
   }
 
