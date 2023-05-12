@@ -241,7 +241,7 @@ public abstract class Client implements Runnable {
    * Abstract method that creates and run the message handler.
    * 
    */
-  public abstract void runMessageHandler();
+  public abstract Thread runMessageHandler();
 
   /**
    * Available games param setter.
@@ -250,6 +250,15 @@ public abstract class Client implements Runnable {
    */
   protected void setAvailableGames(List<VirtualView> ag) {
     this.availableGames = ag;
+  }
+
+  /**
+   * RequestedDisconnection setter. 
+   *
+   * @param b boolean to set.
+   */
+  protected void setRequestedDisconnection(Boolean b) {
+    this.requestedDisconnection = b;
   }
 
   /**
@@ -355,16 +364,6 @@ public abstract class Client implements Runnable {
   abstract void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves) throws IOException;
 
   /**
-   * Abstract method for the player's logout.
-   * 
-   * @param apc        abstract player connector.
-   * @param playerName string player name.
-   * @param gameId     selected gameId.
-   * @throws IOException
-   */
-  abstract void logoutPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException;
-
-  /**
    * Abstract function that send chat message
    * 
    * @param apc abstract player connector
@@ -413,9 +412,8 @@ public abstract class Client implements Runnable {
         }
         break;
       case "logout":
-        String playerName = apc.getPlayer().getPlayerName();
-        UUID gameId = apc.getGameId();
-        logoutPlayer(apc, playerName, gameId);
+        setRequestedDisconnection(false);
+        // TODO: messagio di uscita
         break;
       case "move":
         if (getVirtualView() == null) {
