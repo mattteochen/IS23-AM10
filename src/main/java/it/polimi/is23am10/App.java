@@ -63,7 +63,7 @@ public class App {
       AppConfigContext ctx = new AppConfigContext();
       if (ctx.getIsServer()) {
         // SERVER MODE
-        System.setProperty("java.rmi.server.hostname", ctx.getServerAddress());
+        // System.setProperty("java.rmi.server.hostname", ctx.getServerAddress());
         Server server = new Server(new ServerSocket(ctx.getServerSocketPort()),
             Executors.newFixedThreadPool(ctx.getMaxConnections()), new ServerControllerAction(),
             LocateRegistry.createRegistry(ctx.getServerRmiPort()));
