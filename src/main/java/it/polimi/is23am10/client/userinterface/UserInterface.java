@@ -17,12 +17,26 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public interface UserInterface {
+
+  /**
+   * Method used to retrieve the strings the user might have sent trough their 
+   * input interface. GUI adds these strings on button clicks while CLI adds them on return.
+   * 
+   * @return The first item in the list. Null if empty.
+   */
+  String getUserInput();
   
   /**
    * Method called when first running the game.
    * 
    */
   void displaySplashScreen();
+
+  /**
+   * Method to display a quick help guide to explain how
+   * to join the games or create one. In GUI enables buttons.
+   */
+  void displayGameJoinGuide();
 
   /**
    * Method called when the user wants to join an existing

@@ -23,7 +23,9 @@ public final class CLIStrings {
       Politecnico di Milano - Software Engineering Project - Group IS23AM10
       
     """;
-  public final static String joinOrCreateString = "To start, choose if [j]oining an existing match or [c]reating one. If joining a game you should specify the game index, if creating a new one specify the number of maximum players.";
+  public final static String joinOrCreateString = "Great! Please choose how to proceed. You can create a new game or join an existing one.";
+  public final static String joinExisting = " - To join an existing game run the command `j [idx]` specifying by the index of the game.";
+  public final static String createGame = " - To create a new game run the command `c [2-4]` specifying the number of players.";
   public final static String noGamesString = "No available game to join at the moment. Please create one.";
   public final static String insertPlayerNameString = "Insert your player name here:";
   public final static String listGamesString = "Here a list of the available games. Join one by typing the relative index.";
@@ -78,7 +80,8 @@ public final class CLIStrings {
       + "d | %-" + OutputWrapper.XXL_PADDING + "d | %-" + OutputWrapper.L_PADDING + "s | %-" + OutputWrapper.M_PADDING
       + "d | %-" + OutputWrapper.S_PADDING + "s";
   public final static String line = "-";
-  public final static String bookshelfError = "🛑 Wrong bookshelf coordinates!";
+  public final static String bookshelfError = "Wrong bookshelf coordinates!";
+  public final static String inputError = "Can't read your commands. Please re-join.";
   public final static String sharedCardsHeader = "\t%-" + OutputWrapper.XL_PADDING + "s | %-";
   public final static String sharedCardHeaderDescription = "s ";
   public final static String sharedCardsBody = "\t#%-" + OutputWrapper.XL_PADDING + "d| %-";

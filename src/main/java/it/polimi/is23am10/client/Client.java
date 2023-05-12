@@ -21,6 +21,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
+import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
@@ -107,6 +108,7 @@ public abstract class Client implements Runnable {
         .create();
     requestedDisconnection = false;
     alarm = new Timer();
+    clientStatus = ClientGameStatus.INIT;
   }
 
   /**
@@ -152,6 +154,31 @@ public abstract class Client implements Runnable {
    * 
    */
   protected InetAddress serverAddress;
+
+  /**
+   * The three possible states in which the client can be.
+   * 
+   */
+  public enum ClientGameStatus {
+    /**
+     * Starting state. Player hasn't selected name yet.
+     */
+    INIT,
+    /**
+     * Player selected name but not yet the game.
+     */
+    GAME_SELECTION,
+    /**
+     * Player is in the game.
+     */
+    PLAYING
+  }
+
+  /**
+   * Current status of the client.
+   * 
+   */
+  protected ClientGameStatus clientStatus;
 
   /**
    * Player connector. Allows the client to communicate with the server
@@ -305,6 +332,24 @@ public abstract class Client implements Runnable {
   }
 
   /**
+   * User interface setter.
+   * 
+   * @param ui user interface.
+   */
+  protected void setUserInterface(UserInterface ui) {
+    this.userInterface = ui;
+  }
+
+  /**
+   * User interface getter.
+   * 
+   * @return user interface.
+   */
+  protected UserInterface getUserInterface() {
+    return userInterface;
+  }
+
+  /**
    * Virtual view getter.
    * 
    * @return virtual view
@@ -323,6 +368,24 @@ public abstract class Client implements Runnable {
     synchronized (virtualViewLock) {
       this.virtualView = vv;
     }
+  }
+
+  /**
+   * Client status getter.
+   * 
+   * @return status.
+   */
+  public ClientGameStatus getClientStatus() {
+    return clientStatus;
+  }
+
+  /**
+   * Client status setter.
+   * 
+   * @param clientStatus new status of client.
+   */
+  public void setClientStatus(ClientGameStatus clientStatus) {
+    this.clientStatus = clientStatus;
   }
 
   /**
@@ -385,104 +448,109 @@ public abstract class Client implements Runnable {
    * Handling function for move tiles command.
    * 
    * @param apc abstract player connector
-   * @param br  buffered reader
    * @throws IOException
    */
-  protected void handleCommands(AbstractPlayerConnector apc, BufferedReader br) throws IOException {
+  protected void handleCommands(AbstractPlayerConnector apc) throws IOException {
+    
+    if (clientStatus == ClientGameStatus.GAME_SELECTION) {
+      clientStatus = ClientGameStatus.PLAYING;
+    }
+    
+    String fullCommand = userInterface.getUserInput();
 
-    String fullCommand = br.readLine().stripLeading();
-    String command = fullCommand.split(" ")[0];
-
-    switch (command) {
-      case "chat":
-        if (fullCommand.split(" ").length > 1) {
-          if (fullCommand.split("\"").length > 1) {
-            // This selects only the part between double quotes which is gonna be the
-            // message sent.
-            String msg = fullCommand.split("\"")[1];
-            // If the second string begins with double quotes,
-            // there's no receiver and the message is broadcast
-            if (fullCommand.split(" ")[1].startsWith("\"")) {
-              sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg));
-            } else {
-              String receiverName = fullCommand.split(" ")[1];
-              sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg, receiverName));
+    if(fullCommand != null){
+      String command = fullCommand.stripLeading().split(" ")[0];
+  
+      switch (command) {
+        case "chat":
+          if (fullCommand.split(" ").length > 1) {
+            if (fullCommand.split("\"").length > 1) {
+              // This selects only the part between double quotes which is gonna be the
+              // message sent.
+              String msg = fullCommand.split("\"")[1];
+              // If the second string begins with double quotes,
+              // there's no receiver and the message is broadcast
+              if (fullCommand.split(" ")[1].startsWith("\"")) {
+                sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg));
+              } else {
+                String receiverName = fullCommand.split(" ")[1];
+                sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg, receiverName));
+              }
             }
           }
-        }
-        break;
-      case "logout":
-        setRequestedDisconnection(false);
-        // TODO: messagio di uscita
-        break;
-      case "move":
-        if (getVirtualView() == null) {
-          userInterface.displayError(new ErrorMessage("Wait the game to be loaded", ErrorSeverity.ERROR));
           break;
-        }
-        if (apc.getPlayer().getPlayerName()
-            .equals(getVirtualView().getActivePlayer().getPlayerName())
-            && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS) {
-          Map<Coordinates, Coordinates> moves = new HashMap<Coordinates, Coordinates>();
-
-          // reads a string containing coordinates of a tile
-          for (int nMove = 0; nMove < 3; nMove++) {
-            /*
-             * This checks the correct number of moves we are playing,
-             * since the single move syntax is "ab -> cd ef -> gh" we want
-             * that we have groups of three strings for each move: "ab" "->" "cd".
-             * To do so I'm checking that the numbers of strings in the full line
-             * (fullCommand)
-             * has 3 more strings for each supposed move.
-             * If I have for example the last move which is "eb ->", so if it's incomplete,
-             * or if it is the fourth move, it will be ignored.
-             * 
-             */
-            if ((fullCommand.split(" ").length - (nMove + 1) * 3 + 1) > 0) {
-              String coordBoard = fullCommand.split(" ")[nMove * 3 + 1];
-              String arrow = fullCommand.split(" ")[nMove * 3 + 2];
-              String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 3];
-
-              if (CommandSyntaxValidator.validateCoord(coordBoard)
-                  && CommandSyntaxValidator.validateCoord(coordBookshelf)
-                  && arrow.equals("->")) {
-                Integer xBoardCoord = coordBoard.charAt(0) - '0';
-                Integer yBoardCoord = coordBoard.charAt(1) - '0';
-                Integer xBookshelfCoord = coordBookshelf.charAt(0) - '0';
-                Integer yBookshelfCoord = coordBookshelf.charAt(1) - '0';
-                Coordinates boardCoord = new Coordinates(yBoardCoord, xBoardCoord);
-                Coordinates bsCoord = new Coordinates(yBookshelfCoord, xBookshelfCoord);
-                moves.put(boardCoord, bsCoord);
+        case "logout":
+          // TODO: add logout command
+          break;
+        case "move":
+          if (getVirtualView() == null) {
+            userInterface.displayError(new ErrorMessage("Wait the game to be loaded", ErrorSeverity.ERROR));
+            break;
+          }
+          if (apc.getPlayer().getPlayerName()
+              .equals(getVirtualView().getActivePlayer().getPlayerName())
+              && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS) {
+            Map<Coordinates, Coordinates> moves = new HashMap<Coordinates, Coordinates>();
+  
+            // reads a string containing coordinates of a tile
+            for (int nMove = 0; nMove < 3; nMove++) {
+              /*
+               * This checks the correct number of moves we are playing,
+               * since the single move syntax is "ab -> cd ef -> gh" we want
+               * that we have groups of three strings for each move: "ab" "->" "cd".
+               * To do so I'm checking that the numbers of strings in the full line
+               * (fullCommand)
+               * has 3 more strings for each supposed move.
+               * If I have for example the last move which is "eb ->", so if it's incomplete,
+               * or if it is the fourth move, it will be ignored.
+               * 
+               */
+              if ((fullCommand.split(" ").length - (nMove + 1) * 3 + 1) > 0) {
+                String coordBoard = fullCommand.split(" ")[nMove * 3 + 1];
+                String arrow = fullCommand.split(" ")[nMove * 3 + 2];
+                String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 3];
+  
+                if (CommandSyntaxValidator.validateCoord(coordBoard)
+                    && CommandSyntaxValidator.validateCoord(coordBookshelf)
+                    && arrow.equals("->")) {
+                  Integer xBoardCoord = coordBoard.charAt(0) - '0';
+                  Integer yBoardCoord = coordBoard.charAt(1) - '0';
+                  Integer xBookshelfCoord = coordBookshelf.charAt(0) - '0';
+                  Integer yBookshelfCoord = coordBookshelf.charAt(1) - '0';
+                  Coordinates boardCoord = new Coordinates(yBoardCoord, xBoardCoord);
+                  Coordinates bsCoord = new Coordinates(yBookshelfCoord, xBookshelfCoord);
+                  moves.put(boardCoord, bsCoord);
+                } else {
+                  userInterface.displayError(new ErrorMessage("Invalid syntax of move command.", ErrorSeverity.ERROR));
+                  break;
+                }
               } else {
-                userInterface.displayError(new ErrorMessage("Invalid syntax of move command.", ErrorSeverity.ERROR));
                 break;
               }
+            }
+            // Checks if no valid moves were added
+            if (moves.isEmpty()) {
+              userInterface.displayError(new ErrorMessage("No valid moves found.", ErrorSeverity.ERROR));
             } else {
-              break;
+              try {
+                MovesValidator.validateGameMoves(
+                    moves, virtualView.getActivePlayer().getBookshelf(), virtualView.getGameBoard());
+                moveTiles(apc, moves);
+              } catch (BoardGridRowIndexOutOfBoundsException | BoardGridColIndexOutOfBoundsException
+                  | BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
+                  | WrongMovesNumberException | WrongGameBoardPicksException | NullIndexValueException
+                  | WrongBookShelfPicksException e) {
+                userInterface.displayError(new ErrorMessage("Invalid move:" + e.getMessage(), ErrorSeverity.ERROR));
+              }
             }
-          }
-          // Checks if no valid moves were added
-          if (moves.isEmpty()) {
-            userInterface.displayError(new ErrorMessage("No valid moves found.", ErrorSeverity.ERROR));
+            break;
           } else {
-            try {
-              MovesValidator.validateGameMoves(
-                  moves, virtualView.getActivePlayer().getBookshelf(), virtualView.getGameBoard());
-              moveTiles(apc, moves);
-            } catch (BoardGridRowIndexOutOfBoundsException | BoardGridColIndexOutOfBoundsException
-                | BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
-                | WrongMovesNumberException | WrongGameBoardPicksException | NullIndexValueException
-                | WrongBookShelfPicksException e) {
-              userInterface.displayError(new ErrorMessage("Invalid move:" + e.getMessage(), ErrorSeverity.ERROR));
-            }
+            userInterface.displayError(new ErrorMessage("Not your turn.", ErrorSeverity.WARNING));
           }
           break;
-        } else {
-          userInterface.displayError(new ErrorMessage("Not your turn.", ErrorSeverity.WARNING));
-        }
-        break;
-      default:
-        break;
+        default:
+          break;
+      }
     }
   }
 
@@ -490,23 +558,27 @@ public abstract class Client implements Runnable {
    * Handling function for name selection.
    *
    * @param apc abstract player connector
-   * @param br  buffered reader
    * @return player name selected
    * @throws IOException
    */
-  protected String handlePlayerNameSelection(AbstractPlayerConnector apc, BufferedReader br)
+  protected String handlePlayerNameSelection(AbstractPlayerConnector apc)
       throws IOException {
     // Select only the string before the space if the client writes more words
-    String selectedPlayerName = br.readLine().stripLeading().split(" ")[0];
-    Player p = new Player();
-    apc.setPlayer(p);
-    try {
-      apc.getPlayer().setPlayerName(selectedPlayerName);
-    } catch (NullPlayerNameException e) {
-      userInterface.displayError(new ErrorMessage("Null player name", ErrorSeverity.ERROR));
+    String selectedPlayerName= userInterface.getUserInput();
+    if (selectedPlayerName != null) {
+      selectedPlayerName = selectedPlayerName.stripLeading();
+      Player p = new Player();
+      apc.setPlayer(p);
+      try {
+        apc.getPlayer().setPlayerName(selectedPlayerName);
+      } catch (NullPlayerNameException e) {
+        userInterface.displayError(new ErrorMessage("Null player name", ErrorSeverity.ERROR));
+        return null;
+      }
+      return selectedPlayerName;
+    } else {
       return null;
     }
-    return selectedPlayerName;
   }
 
   /**
@@ -522,97 +594,102 @@ public abstract class Client implements Runnable {
    * Handling function for game selection.
    *
    * @param apc                abstract player connector
-   * @param br                 buffered reader
    * @param selectedPlayerName player name selected
    * @throws IOException
    * @throws InterruptedException
    */
-  protected void handleGameSelection(AbstractPlayerConnector apc, BufferedReader br,
+  protected void handleGameSelection(AbstractPlayerConnector apc,
       String selectedPlayerName) throws IOException, InterruptedException {
 
     // Executed if I still haven't selected a game
     if (apc.getGameId() == null) {
-      getAvailableGames(apc);
+      
+      // We use the check over client status to perform one-time actions
+      // like displaying stuff and sending 
+      if(clientStatus == ClientGameStatus.INIT) {
+        userInterface.displayGameJoinGuide();
+        clientStatus = ClientGameStatus.GAME_SELECTION;
+        getAvailableGames(apc);
+      }
 
-      //TODO: use userinterface
-      System.out.println(CLIStrings.joinOrCreateString);
-
-      String fullCommand = br.readLine().stripLeading();
-      String command = fullCommand.split(" ")[0];
-      Integer maxPlayers = null;
-      switch (command) {
-        case "j":
-          if (fullCommand.split(" ").length > 1) {
-            String idx = fullCommand.split(" ")[1];
-            if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
-              UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
-              addPlayer(apc, selectedPlayerName, selectedGameId);
-              try {
-                lookupInit();
-              } catch (NotBoundException e) {
-                userInterface.displayError(new ErrorMessage(
-                    "Failed to connect to the server, aborting the request",
-                    ErrorSeverity.CRITICAL));
-              }
-              runMessageHandler();
-              /*
-               * Since the gameId ref is set when the message handler receives a GAME_SNAPSHOT
-               * message
-               * and since that GAME_SNAPSHOT message is received only when the player is
-               * added correctly to the game (so there's not duplicate name exception),
-               * here we know that even if the duplicateName flag is set after a few seconds,
-               * the player will not be added by mistake because it exits the while loop
-               * because of the gameId flag.
-               */
-              while (getGameIdRef() == null && !getHasDuplicateName()) {
-              }
-              if (getHasDuplicateName()) {
-                userInterface.displayError(new ErrorMessage("Failed to add player, retry", ErrorSeverity.CRITICAL));
-                setHasDuplicateName(false);
-                break;
-              }
-              apc.setGameId(getGameIdRef());
-            } else {
-              userInterface.displayError(
-                  new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
-            }
-          } else {
-            userInterface.displayError(
-                new ErrorMessage("Insert value of max players", ErrorSeverity.ERROR));
-          }
-          break;
-        case "c":
-          if (fullCommand.split(" ").length > 1) {
-            String numMaxPlayers = fullCommand.split(" ")[1];
-            if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
-              maxPlayers = Integer.parseInt(numMaxPlayers);
-              startGame(apc, selectedPlayerName, maxPlayers);
-              try {
-                lookupInit();
-              } catch (NotBoundException e) {
+      String fullCommand = userInterface.getUserInput();
+      if (fullCommand != null) {
+        String command = fullCommand.stripLeading().split(" ")[0];
+        Integer maxPlayers = null;
+        switch (command) {
+          case "j":
+            if (fullCommand.split(" ").length > 1) {
+              String idx = fullCommand.split(" ")[1];
+              if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
+                UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
+                addPlayer(apc, selectedPlayerName, selectedGameId);
+                try {
+                  lookupInit();
+                } catch (NotBoundException e) {
+                  userInterface.displayError(new ErrorMessage(
+                      "Failed to connect to the server, aborting the request",
+                      ErrorSeverity.CRITICAL));
+                }
+                runMessageHandler();
+                /*
+                 * Since the gameId ref is set when the message handler receives a GAME_SNAPSHOT
+                 * message
+                 * and since that GAME_SNAPSHOT message is received only when the player is
+                 * added correctly to the game (so there's not duplicate name exception),
+                 * here we know that even if the duplicateName flag is set after a few seconds,
+                 * the player will not be added by mistake because it exits the while loop
+                 * because of the gameId flag.
+                 */
+                while (getGameIdRef() == null && !getHasDuplicateName()) {
+                }
+                if (getHasDuplicateName()) {
+                  userInterface.displayError(new ErrorMessage("Failed to add player, retry", ErrorSeverity.CRITICAL));
+                  setHasDuplicateName(false);
+                  break;
+                }
+                apc.setGameId(getGameIdRef());
+              } else {
                 userInterface.displayError(
-                    new ErrorMessage("Failed to connect to the server, aborting the request",
-                        ErrorSeverity.CRITICAL));
+                    new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
               }
-              runMessageHandler();
-              while (getGameIdRef() == null) {
-              }
-              apc.setGameId(getGameIdRef());
             } else {
               userInterface.displayError(
-                  new ErrorMessage("Failed to create game", ErrorSeverity.CRITICAL));
+                  new ErrorMessage("Insert value of max players", ErrorSeverity.ERROR));
             }
-          } else {
-            userInterface.displayError(
-                new ErrorMessage("Insert value of max players", ErrorSeverity.ERROR));
-          }
-          break;
-        case "q":
-          apc.setPlayer(new Player());
-          apc.setGameId(null);
-          break;
-        default:
-          break;
+            break;
+          case "c":
+            if (fullCommand.split(" ").length > 1) {
+              String numMaxPlayers = fullCommand.split(" ")[1];
+              if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
+                maxPlayers = Integer.parseInt(numMaxPlayers);
+                startGame(apc, selectedPlayerName, maxPlayers);
+                try {
+                  lookupInit();
+                } catch (NotBoundException e) {
+                  userInterface.displayError(
+                      new ErrorMessage("Failed to connect to the server, aborting the request",
+                          ErrorSeverity.CRITICAL));
+                }
+                runMessageHandler();
+                while (getGameIdRef() == null) {
+                }
+                apc.setGameId(getGameIdRef());
+              } else {
+                userInterface.displayError(
+                    new ErrorMessage("Failed to create game", ErrorSeverity.CRITICAL));
+              }
+            } else {
+              userInterface.displayError(
+                  new ErrorMessage("Insert value of max players", ErrorSeverity.ERROR));
+            }
+            break;
+          case "q":
+            apc.setPlayer(new Player());
+            apc.setGameId(null);
+            break;
+          default:
+            break;
+        }
       }
     }
   }
@@ -628,24 +705,23 @@ public abstract class Client implements Runnable {
    */
   protected void clientRunnerCore(AbstractPlayerConnector pc)
       throws IOException, InterruptedException, NullPlayerIdException {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     // First I'm gonna ask the player name
     if (pc.getPlayer() == null || pc.getPlayer().getPlayerName() == null) {
       String pn = null;
       userInterface.displaySplashScreen();
       while (pn == null || pn.equals("")) {
-        pn = handlePlayerNameSelection(pc, br);
+        pn = handlePlayerNameSelection(pc);
       }
       pc.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(pn.getBytes()));
     }
 
     // Execute if the client is not connected to a game.
     if (pc.getGameId() == null) {
-      handleGameSelection(pc, br, pc.getPlayer().getPlayerName());
+      handleGameSelection(pc, pc.getPlayer().getPlayerName());
     } else {
       // Executed if the client is connected to a game.
-      handleCommands(pc, br);
+      handleCommands(pc);
     }
   }
 
