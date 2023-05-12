@@ -13,7 +13,6 @@ import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
-import it.polimi.is23am10.server.command.LogOutCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
@@ -175,17 +174,6 @@ public class RMIClient extends Client {
     serverControllerActionServer.execute(apc, command);
   }
 
-  /**
-   * {@inheritDoc}
-   * 
-   */
-  @Override
-  void logoutPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId)
-      throws IOException {
-    AbstractCommand command = new LogOutCommand(playerName, gameId);
-    serverControllerActionServer.execute(apc, command);
-  }
-
    /**
    * {@inheritDoc}
    *
@@ -223,9 +211,9 @@ public class RMIClient extends Client {
    * To be started after the {@link RMIClient#lookupInit}.
    */
   @Override
-  public void runMessageHandler(){
+  public Thread runMessageHandler(){
     Thread messageHandler = new Thread(()->{
-      while(!hasRequestedDisconnection()){
+      while(hasRequestedDisconnection()){
         try {
           AbstractMessage msg = playerConnectorServer.getMessageFromQueue();
           if (msg != null) {
@@ -237,5 +225,6 @@ public class RMIClient extends Client {
       }
     });
     messageHandler.start();
+    return messageHandler;
   }
 }

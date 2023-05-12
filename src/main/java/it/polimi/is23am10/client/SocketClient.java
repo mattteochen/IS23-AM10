@@ -14,7 +14,6 @@ import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
-import it.polimi.is23am10.server.command.LogOutCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
@@ -163,17 +162,6 @@ public class SocketClient extends Client {
    *
    */
   @Override
-  void logoutPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException {
-    LogOutCommand command = new LogOutCommand(playerName, gameId);
-    String req = gson.toJson(command);
-    sendMessage(req, apc);
-  };
-
-  /**
-   * {@inheritDoc}
-   *
-   */
-  @Override
   void addPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException {
     AddPlayerCommand command = new AddPlayerCommand(playerName, gameId);
     String req = gson.toJson(command);
@@ -223,10 +211,10 @@ public class SocketClient extends Client {
    *
    */
   @Override
-  public void runMessageHandler(){
+  public Thread runMessageHandler(){
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
     Thread messageHandler = new Thread(()->{
-      while(playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()){
+      while(playerConnectorSocket.getConnector().isConnected() && hasRequestedDisconnection()){
         // retrieve and show server messages, it includes chat messages
         try {
           AbstractMessage serverMessage = parseServerMessage(playerConnectorSocket);
@@ -240,5 +228,6 @@ public class SocketClient extends Client {
       }
     });
     messageHandler.start();
+    return messageHandler;
   }
 }
