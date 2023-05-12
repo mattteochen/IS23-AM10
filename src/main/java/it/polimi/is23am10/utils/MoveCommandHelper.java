@@ -44,16 +44,16 @@ public class MoveCommandHelper {
     List<Coordinates> bsCoord = new ArrayList<>();
     Integer columnIdx = idx.charAt(0) - 'A';
     Integer rowCount = 0;
+    // If I got to the tile on top and there's no space left
+    if(bs.getFreeRowsInCol(columnIdx) < nMoves){
+      throw new WrongBookShelfPicksException(
+        "Invalid bookshelf picks, selected a column with no sufficient space");
+    }
 
     for(int row = bs.getBookshelfGrid()[0].length ; rowCount < nMoves && row >= 0 ; row--){
       if(bs.getBookshelfGridAt(row, columnIdx).getType() == TileType.EMPTY){
         bsCoord.add(new Coordinates(row, columnIdx));
         rowCount++;
-      }
-      // If I got to the tile on top and there's no space left
-      if(row == 0 && rowCount < nMoves){
-        throw new WrongBookShelfPicksException(
-          "Invalid bookshelf picks, selected a column with no sufficient space");
       }
     }
 

@@ -443,16 +443,16 @@ public abstract class Client implements Runnable {
    * @throws IOException
    */
   protected void handleCommands(AbstractPlayerConnector apc) throws IOException {
-    
+
     if (clientStatus == ClientGameStatus.GAME_SELECTION) {
       clientStatus = ClientGameStatus.PLAYING;
     }
-    
+
     String fullCommand = userInterface.getUserInput();
 
-    if(fullCommand != null){
+    if (fullCommand != null) {
       String command = fullCommand.stripLeading().split(" ")[0];
-  
+
       switch (command) {
         case "chat":
           if (fullCommand.stripLeading().split(" ").length > 1) {
@@ -480,49 +480,52 @@ public abstract class Client implements Runnable {
             break;
           }
           if (apc.getPlayer().getPlayerName()
-            .equals(getVirtualView().getActivePlayer().getPlayerName())
-            && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS) {
+              .equals(getVirtualView().getActivePlayer().getPlayerName())
+              && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS) {
 
-          Map<Coordinates, Coordinates> moves = new HashMap<Coordinates, Coordinates>();
-          List<Coordinates> boardCoords = new ArrayList();
-          List<Coordinates> bsCoords = new ArrayList();
+            Map<Coordinates, Coordinates> moves = new HashMap<Coordinates, Coordinates>();
+            List<Coordinates> boardCoords = new ArrayList();
+            List<Coordinates> bsCoords = new ArrayList();
 
-          // Reads a string containing coordinates of a tile and the column index
-          for (int maxArgs = 0; maxArgs < 4 && fullCommand.split(" ").length - (maxArgs + 1) > 0; maxArgs++) {
+            // Reads a string containing coordinates of a tile and the column index
+            String[] moveArgs = fullCommand.stripLeading().split(" ");
+            for (int maxArgs = 0; maxArgs < 4 && moveArgs.length - (maxArgs + 1) > 0; maxArgs++) {
 
-            /* 
-            * If we receive a board coordinate input add it to the list, otherwise if it is a 
-            * column index we are at the end of the move command and we convert that idx
-            * to the right bookshelf coordinates. Then we add the mapping between board coordinates
-            * and bookshelf coordinates. 
-            */
-            if (CommandSyntaxValidator.validateCoord(fullCommand.split(" ")[maxArgs + 1])) {
-              String coordBoard = fullCommand.split(" ")[maxArgs + 1];
-              Integer colBoardCoord = coordBoard.charAt(0) - '0';
-              Integer rowBoardCoord = coordBoard.charAt(1) - '0';
-              boardCoords.add(new Coordinates(rowBoardCoord, colBoardCoord));
-            } else if (CommandSyntaxValidator.validateColIdx(fullCommand.split(" ")[maxArgs + 1])) {
-              String idx = fullCommand.split(" ")[maxArgs + 1];
-              try {
-                // Transform idx to list of coords
-                // NB: boardCoords.size() is the number of moves done
-                bsCoords = MoveCommandHelper.fromColIdxToCoord(idx, getVirtualView().getActivePlayer().getBookshelf(),
-                    boardCoords.size());
-                // I put the coords into the map
-                for (int i = 0; i < boardCoords.size(); i++) {
-                  moves.put(boardCoords.get(i), bsCoords.get(i));
+              /*
+               * If we receive a board coordinate input add it to the list, otherwise if it is
+               * a
+               * column index we are at the end of the move command and we convert that idx
+               * to the right bookshelf coordinates. Then we add the mapping between board
+               * coordinates
+               * and bookshelf coordinates.
+               */
+              if (CommandSyntaxValidator.validateCoord(moveArgs[maxArgs + 1])) {
+                String coordBoard = moveArgs[maxArgs + 1];
+                Integer colBoardCoord = coordBoard.charAt(0) - '0';
+                Integer rowBoardCoord = coordBoard.charAt(1) - '0';
+                boardCoords.add(new Coordinates(rowBoardCoord, colBoardCoord));
+              } else if (CommandSyntaxValidator.validateColIdx(moveArgs[maxArgs + 1])) {
+                String idx = moveArgs[maxArgs + 1];
+                try {
+                  // Transform idx to list of coords
+                  // NB: boardCoords.size() is the number of moves done
+                  bsCoords = MoveCommandHelper.fromColIdxToCoord(idx, getVirtualView().getActivePlayer().getBookshelf(),
+                  boardCoords.size());
+                  // I put the coords into the map
+                  for (int i = 0; i < boardCoords.size(); i++) {
+                    moves.put(boardCoords.get(i), bsCoords.get(i));
+                  }
+                  break;
+                } catch (BookshelfGridColIndexOutOfBoundsException
+                    | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException
+                    | WrongBookShelfPicksException e) {
+                  userInterface.displayError(new ErrorMessage(e.getMessage(), ErrorSeverity.ERROR));
+                  break;
                 }
-                break;
-              } catch (BookshelfGridColIndexOutOfBoundsException
-                  | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException
-                  | WrongBookShelfPicksException e) {
-                userInterface.displayError(new ErrorMessage(e.getMessage(), ErrorSeverity.ERROR));
+              } else {
                 break;
               }
-            } else {
-                break;
             }
-          }
             // Checks if no valid moves were added
             if (moves.isEmpty()) {
               userInterface.displayError(new ErrorMessage("No valid moves found.", ErrorSeverity.ERROR));
@@ -560,7 +563,7 @@ public abstract class Client implements Runnable {
   protected String handlePlayerNameSelection(AbstractPlayerConnector apc)
       throws IOException {
     // Select only the string before the space if the client writes more words
-    String selectedPlayerName= userInterface.getUserInput();
+    String selectedPlayerName = userInterface.getUserInput();
     if (selectedPlayerName != null) {
       selectedPlayerName = selectedPlayerName.stripLeading();
       Player p = new Player();
@@ -599,10 +602,10 @@ public abstract class Client implements Runnable {
 
     // Executed if I still haven't selected a game
     if (apc.getGameId() == null) {
-      
+
       // We use the check over client status to perform one-time actions
-      // like displaying stuff and sending 
-      if(clientStatus == ClientGameStatus.INIT) {
+      // like displaying stuff and sending
+      if (clientStatus == ClientGameStatus.INIT) {
         userInterface.displayGameJoinGuide();
         clientStatus = ClientGameStatus.GAME_SELECTION;
         getAvailableGames(apc);
@@ -612,48 +615,48 @@ public abstract class Client implements Runnable {
       String fullCommand = userInterface.getUserInput();
       if (fullCommand != null) {
         String command = fullCommand.stripLeading().split(" ")[0];
-      Integer maxPlayers = null;
-      switch (command) {
-        case "j":
-          if (fullCommand.split(" ").length > 1) {
-            String idx = fullCommand.split(" ")[1];
-            if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
-              UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
-              addPlayer(apc, selectedPlayerName, selectedGameId);
-              try {
-                lookupInit();
-              } catch (NotBoundException e) {
-                userInterface.displayError(new ErrorMessage(
-                    "Failed to connect to the server, aborting the request",
-                    ErrorSeverity.CRITICAL));
+        Integer maxPlayers = null;
+        switch (command) {
+          case "j":
+            if (fullCommand.split(" ").length > 1) {
+              String idx = fullCommand.split(" ")[1];
+              if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
+                UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
+                addPlayer(apc, selectedPlayerName, selectedGameId);
+                try {
+                  lookupInit();
+                } catch (NotBoundException e) {
+                  userInterface.displayError(new ErrorMessage(
+                      "Failed to connect to the server, aborting the request",
+                      ErrorSeverity.CRITICAL));
+                }
+                runMessageHandler();
+                /*
+                 * Since the gameId ref is set when the message handler receives a GAME_SNAPSHOT
+                 * message
+                 * and since that GAME_SNAPSHOT message is received only when the player is
+                 * added correctly to the game (so there's not duplicate name exception),
+                 * here we know that even if the duplicateName flag is set after a few seconds,
+                 * the player will not be added by mistake because it exits the while loop
+                 * because of the gameId flag.
+                 */
+                while (getGameIdRef() == null && !getHasDuplicateName()) {
+                }
+                if (getHasDuplicateName()) {
+                  userInterface.displayError(new ErrorMessage("Failed to add player, retry", ErrorSeverity.CRITICAL));
+                  setHasDuplicateName(false);
+                  break;
+                }
+                apc.setGameId(getGameIdRef());
+              } else {
+                userInterface.displayError(
+                    new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
               }
-              runMessageHandler();
-              /*
-               * Since the gameId ref is set when the message handler receives a GAME_SNAPSHOT
-               * message
-               * and since that GAME_SNAPSHOT message is received only when the player is
-               * added correctly to the game (so there's not duplicate name exception),
-               * here we know that even if the duplicateName flag is set after a few seconds,
-               * the player will not be added by mistake because it exits the while loop
-               * because of the gameId flag.
-               */
-              while (getGameIdRef() == null && !getHasDuplicateName()) {
-              }
-              if (getHasDuplicateName()) {
-                userInterface.displayError(new ErrorMessage("Failed to add player, retry", ErrorSeverity.CRITICAL));
-                setHasDuplicateName(false);
-                break;
-              }
-              apc.setGameId(getGameIdRef());
             } else {
               userInterface.displayError(
-                  new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
+                  new ErrorMessage("Insert value of max players", ErrorSeverity.ERROR));
             }
-          } else {
-            userInterface.displayError(
-                new ErrorMessage("Insert value of max players", ErrorSeverity.ERROR));
-          }
-          break;
+            break;
           case "c":
             if (fullCommand.split(" ").length > 1) {
               String numMaxPlayers = fullCommand.split(" ")[1];

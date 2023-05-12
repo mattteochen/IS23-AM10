@@ -107,11 +107,8 @@ public class CommandSyntaxValidator {
 
 
     // Col index is one of the possible ones.
-    if (s.charAt(0) == 'A' 
-        ||  s.charAt(0) == 'B' 
-        ||  s.charAt(0) == 'C' 
-        ||  s.charAt(0) == 'D' 
-        ||  s.charAt(0) == 'E') {
+    if ( s.charAt(0) >= 'A' &&
+        s.charAt(0) <= 'E' ) {
       return true; 
     }
 
