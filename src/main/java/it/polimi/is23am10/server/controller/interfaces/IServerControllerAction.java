@@ -50,6 +50,7 @@ import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
+import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.ErrorTypeString;
@@ -64,6 +65,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
 /**
@@ -122,11 +124,16 @@ public interface IServerControllerAction extends Remote {
       // add the new game handler instance on the game pool.
       ServerControllerState.addGameHandler(gameHandler);
       // add the new player connector instance on the player pool.
+      playerConnector.setLastSnoozeMs(System.currentTimeMillis());
       ServerControllerState.addPlayerConnector(playerConnector);
 
-      // if RMI, rebind the connector
+      // if RMI, rebind the connector proxy
       if (playerConnector.getClass() == PlayerConnectorRmi.class) {
-        ServerControllerRmiBindings.rebindPlayerConnector(playerConnector);
+        AbstractPlayerConnector proxy = new PlayerConnectorRmi(new LinkedBlockingQueue<AbstractMessage>());
+        proxy.setPlayer(new Player(playerRef));
+        proxy.setGameId(gameHandler.getGame().getGameId());
+        ServerControllerState.addRmiProxyConnector(proxy.getPlayer().getPlayerID(), proxy);
+        ServerControllerRmiBindings.rebindPlayerConnector(proxy);
       }
 
       // add the new player connector to the game handler.
@@ -145,7 +152,7 @@ public interface IServerControllerAction extends Remote {
         | NullPlayerScoreBlocksException | DuplicatePlayerNameException | AlreadyInitiatedPatternException
         | NullPlayerNamesException | InvalidNumOfPlayersException | NullNumOfPlayersException
         | NullAssignedPatternException | FullGameException | NotValidScoreBlockValueException
-        | PlayerNotFoundException e) {
+        | PlayerNotFoundException | NullBlockingQueueException e) {
       logger.fatal("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, e);
@@ -252,20 +259,26 @@ public interface IServerControllerAction extends Remote {
         playerConnector.setPlayer(playerRef);
 
         // add the new player connector instance to the game's player pool.
+        playerConnector.setLastSnoozeMs(System.currentTimeMillis());
         gameHandler.addPlayerConnector(playerConnector);
 
         // add the new player connector instance on the player pool.
         ServerControllerState.addPlayerConnector(playerConnector);
+
+        // if RMI, rebind the connector proxy
+        if (playerConnector.getClass() == PlayerConnectorRmi.class) {
+          AbstractPlayerConnector proxy = new PlayerConnectorRmi(new LinkedBlockingQueue<AbstractMessage>());
+          proxy.setPlayer(new Player(playerRef));
+          proxy.setGameId(gameHandler.getGame().getGameId());
+          ServerControllerState.addRmiProxyConnector(proxy.getPlayer().getPlayerID(), proxy);
+          ServerControllerRmiBindings.rebindPlayerConnector(proxy);
+        }
       }
 
-      // if RMI, rebind the connector
-      if (playerConnector.getClass() == PlayerConnectorRmi.class) {
-        ServerControllerRmiBindings.rebindPlayerConnector(playerConnector);
-      }
 
       logger.info("{} {}",
-          String.format(ErrorTypeString.WARNING_PLAYER_JOIN_SERVER, playerName, gameId),
-          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX);
+          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
+          String.format(ErrorTypeString.WARNING_PLAYER_JOIN_SERVER, playerName, gameId));
 
       playerConnector.addMessageToQueue(new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_JOIN, playerName), ErrorSeverity.WARNING));
 
@@ -274,7 +287,7 @@ public interface IServerControllerAction extends Remote {
     } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
         | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
         | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
-        | NullAssignedPatternException | PlayerNotFoundException | DuplicatePlayerNameException | NullGameHandlerInstance e) {
+        | NullAssignedPatternException | PlayerNotFoundException | DuplicatePlayerNameException | NullGameHandlerInstance | NullBlockingQueueException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_PLAYERS, e);
@@ -425,18 +438,32 @@ public interface IServerControllerAction extends Remote {
   final ControllerConsumer<Void, AbstractCommand> moveTilesConsumer = (logger, playerConnector, command) -> {
     ErrorMessage errorMsg = null;
 
+    Optional<AbstractPlayerConnector> pcRef = ServerControllerState.getPlayersPool().stream()
+      .filter(p -> p.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()) && p.getGameId().equals(playerConnector.getGameId()))
+      .findFirst();
+
+    if (pcRef.isEmpty()) {
+      logger.error("{} {} {}",
+          ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
+          ErrorTypeString.ERROR_GAME_STATE,
+          "Can not find the requested player connector ref: " + playerConnector.getPlayer().getPlayerName() + " in game: " + playerConnector.getGameId());
+      return null;
+    }
+    
+    AbstractPlayerConnector pc = pcRef.get();
+
     try {
       MoveTilesCommand mtCommand = (MoveTilesCommand) command;
       GameHandler handler = ServerControllerState.getGameHandlerByUUID(mtCommand.getGameId());
 
       //don't allow inactive players calls
-      if (!playerConnector.getPlayer().getIsConnected()) {
+      if (!pc.getPlayer().getIsConnected()) {
         return null;
       }
 
       // I check that the player performing the action is the one actually set as
       // active player
-      if (handler.getGame().getActivePlayer().equals(playerConnector.getPlayer())) {
+      if (handler.getGame().getActivePlayer().equals(pc.getPlayer())) {
         handler.getGame().activePlayerMove(mtCommand.getMoves());
 
         //update the current player handler stats
@@ -448,16 +475,11 @@ public interface IServerControllerAction extends Remote {
             handler.getGame().getActivePlayer().getPlayerName(),
             handler.getGame().getGameId());
       } else {
-        logger.info("{} Ignored Tile move for {} in game {}",
+        logger.warn("{} Ignored Tile move for {} in game {}",
             ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
             handler.getGame().getActivePlayer().getPlayerName(),
             handler.getGame().getGameId());
       }
-
-      logger.info("{} Operated Tile move for {} in game {}",
-          ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
-          handler.getGame().getActivePlayer().getPlayerName(),
-          handler.getGame().getGameId());
     } catch (NullGameHandlerInstance e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
@@ -481,7 +503,7 @@ public interface IServerControllerAction extends Remote {
     } finally {
       if (errorMsg != null) {
         try {
-          playerConnector.addMessageToQueue(errorMsg);
+          pc.addMessageToQueue(errorMsg);
         } catch (InterruptedException e) {
           logger.error("{} {} {}",
               ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,

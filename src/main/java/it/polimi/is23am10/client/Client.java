@@ -76,6 +76,24 @@ import com.google.gson.JsonParseException;
 public abstract class Client implements Runnable {
 
   /**
+   * Custom lock object.
+   * 
+   */
+  private Object gameRefLock = new Object();
+
+  /**
+   * Custom lock object.
+   * 
+   */
+  private Object hasDuplicateLock = new Object();
+
+  /**
+   * Custom lock object.
+   * 
+   */
+  private Object virtualViewLock = new Object();
+
+  /**
    * Protected constructor for client using Socket as communication method.
    * 
    * @param pc Player connector.
@@ -224,7 +242,7 @@ public abstract class Client implements Runnable {
         VirtualView v = gson.fromJson(msg.getMessage(), VirtualView.class);
         setVirtualView(v);
         // do not overwrite game id
-        if (gameIdRef == null) {
+        if (getGameIdRef() == null) {
           setGameIdRef(v.getGameId());
         }
         userInterface.displayVirtualView(v);
@@ -268,15 +286,19 @@ public abstract class Client implements Runnable {
    * @param id game id ref
    */
   protected void setGameIdRef(UUID id) {
-    this.gameIdRef = id;
+    synchronized (gameRefLock) {
+      this.gameIdRef = id;
+    }
   }
 
   /**
    * GameIdRef getter.
    *
    */
-  synchronized protected UUID getGameIdRef() {
-    return gameIdRef;
+  protected UUID getGameIdRef() {
+    synchronized (gameRefLock) {
+      return gameIdRef;
+    }
   }
 
   /**
@@ -285,7 +307,9 @@ public abstract class Client implements Runnable {
    * @param b flag
    */
   protected void setHasDuplicateName(boolean b) {
-    this.hasDuplicateName = b;
+    synchronized (hasDuplicateLock) {
+      this.hasDuplicateName = b;
+    }
   }
 
   /**
@@ -294,7 +318,9 @@ public abstract class Client implements Runnable {
    * @return flag
    */
   protected boolean getHasDuplicateName() {
-    return hasDuplicateName;
+    synchronized (hasDuplicateLock) {
+      return hasDuplicateName;
+    }
   }
 
   /**
@@ -321,7 +347,9 @@ public abstract class Client implements Runnable {
    * @return virtual view
    */
   protected VirtualView getVirtualView() {
-    return virtualView;
+    synchronized (virtualViewLock) {
+      return virtualView;
+    }
   }
 
   /**
@@ -329,7 +357,9 @@ public abstract class Client implements Runnable {
    * 
    */
   protected void setVirtualView(VirtualView vv) {
-    this.virtualView = vv;
+    synchronized (virtualViewLock) {
+      this.virtualView = vv;
+    }
   }
 
   /**
@@ -398,6 +428,15 @@ public abstract class Client implements Runnable {
   abstract void sendChatMessage(AbstractPlayerConnector apc, ChatMessage msg) throws IOException;
 
   /**
+   * Abstract function that snoozes virtual alarm.
+   * 
+   * @param apc abstract player connector
+   * @param msg chat message
+   * @throws IOException
+   */
+  abstract void snoozeAlarm() throws IOException;
+
+  /**
    * Handling function for move tiles command.
    * 
    * @param apc abstract player connector
@@ -406,6 +445,10 @@ public abstract class Client implements Runnable {
   protected void handleCommands(AbstractPlayerConnector apc) throws IOException {
     String fullCommand;
     String command;
+
+    if (clientStatus == ClientGameStatus.GAME_SELECTION) {
+      clientStatus = ClientGameStatus.PLAYING;
+    }
 
     try {
       fullCommand = userInterface.getUserInput().stripLeading();
@@ -458,7 +501,7 @@ public abstract class Client implements Runnable {
              * or if it is the fourth move, it will be ignored.
              * 
              */
-            if ((fullCommand.split(" ").length - (nMove + 1) * 3 + 1) >= 0) {
+            if ((fullCommand.split(" ").length - (nMove + 1) * 3 + 1) > 0) {
               String coordBoard = fullCommand.split(" ")[nMove * 3 + 1];
               String arrow = fullCommand.split(" ")[nMove * 3 + 2];
               String coordBookshelf = fullCommand.split(" ")[nMove * 3 + 3];
@@ -475,6 +518,7 @@ public abstract class Client implements Runnable {
                 moves.put(boardCoord, bsCoord);
               } else {
                 userInterface.displayError(new ErrorMessage("Invalid syntax of move command.", ErrorSeverity.ERROR));
+                break;
               }
             } else {
               break;
@@ -487,13 +531,13 @@ public abstract class Client implements Runnable {
             try {
               MovesValidator.validateGameMoves(
                   moves, virtualView.getActivePlayer().getBookshelf(), virtualView.getGameBoard());
+              moveTiles(apc, moves);
             } catch (BoardGridRowIndexOutOfBoundsException | BoardGridColIndexOutOfBoundsException
                 | BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
                 | WrongMovesNumberException | WrongGameBoardPicksException | NullIndexValueException
                 | WrongBookShelfPicksException e) {
               userInterface.displayError(new ErrorMessage("Invalid move:" + e.getMessage(), ErrorSeverity.ERROR));
             }
-            moveTiles(apc, moves);
           }
           break;
         } else {
@@ -549,10 +593,9 @@ public abstract class Client implements Runnable {
    * @param selectedPlayerName player name selected
    * @throws IOException
    * @throws InterruptedException
-   * @throws NullPlayerNameException
    */
   protected void handleGameSelection(AbstractPlayerConnector apc,
-      String selectedPlayerName) throws IOException, InterruptedException, NullPlayerNameException {
+      String selectedPlayerName) throws IOException, InterruptedException {
 
     // Executed if I still haven't selected a game
     if (apc.getGameId() == null) {
@@ -659,12 +702,11 @@ public abstract class Client implements Runnable {
    * @param pc player connector instance.
    * @throws IOException
    * @throws NullPlayerIdException
-   * @throws NullPlayerNameException
    * @throws InterruptedException
    * 
    */
   protected void clientRunnerCore(AbstractPlayerConnector pc)
-      throws IOException, NullPlayerNameException, InterruptedException, NullPlayerIdException {
+      throws IOException, InterruptedException, NullPlayerIdException {
 
     // First I'm gonna ask the player name
     if (pc.getPlayer() == null || pc.getPlayer().getPlayerName() == null) {

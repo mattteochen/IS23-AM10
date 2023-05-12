@@ -148,6 +148,10 @@ public final class CommandLineInterface implements UserInterface {
     }
   }
 
+  /**
+   * CLI method to retrieve user input and add it to the queue
+   * for it to be consumed when needed by controller. 
+   */
   public void runInputHandler() {
     final Thread inputHandler = new Thread(() -> {
       try {
