@@ -108,16 +108,14 @@ public class RMIClientTest {
     assertNotNull(rmiClient);
   }
 
-  //TODO: investigate mockito
   @Test
   @Disabled
   void run_should_runCoreCycle() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException {
     AbstractMessage msg = new ErrorMessage("New Message", null);
-    BufferedReader br = mock(BufferedReader.class);
 
     doReturn(false, true).when(rmiClient).hasRequestedDisconnection();
-    doReturn("ale").when(rmiClient).handlePlayerNameSelection(playerConnectorRmi, br);
-    doNothing().when(rmiClient).handleGameSelection(playerConnectorRmi, br, "ale");
+    doReturn("ale").when(rmiClient).handlePlayerNameSelection(playerConnectorRmi);
+    doNothing().when(rmiClient).handleGameSelection(playerConnectorRmi, "ale");
     when(playerConnectorServer.getMessageFromQueue()).thenReturn(msg);
     doNothing().when(rmiClient).showServerMessage(msg);
 
@@ -129,48 +127,55 @@ public class RMIClientTest {
   @Test
   void handlePlayerNameSelection_should_run_playerNameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException {
     AbstractMessage msg = new ErrorMessage("New Message", null);
-    BufferedReader br = mock(BufferedReader.class); 
     Player p = mock(Player.class);
     String pn = "Benny";
-    doReturn(pn).when(br).readLine();
+    UserInterface ui = mock(UserInterface.class);
+
+    rmiClient.setUserInterface(ui);
+    doReturn(ui).when(rmiClient).getUserInterface();
+    when(ui.getUserInput()).thenReturn(pn);
     when(playerConnectorRmi.getPlayer()).thenReturn(p);
     when(playerConnectorServer.getMessageFromQueue()).thenReturn(msg);
     doNothing().when(rmiClient).showServerMessage(msg);
 
-    assertEquals(rmiClient.handlePlayerNameSelection(playerConnectorRmi, br), pn);
+    assertEquals(rmiClient.handlePlayerNameSelection(playerConnectorRmi), pn);
   }
 
   @Test
   @Disabled
   void handleGameSelection_should_run_gameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException, NotBoundException {
-    BufferedReader br = mock(BufferedReader.class); 
     List<VirtualView> ag = List.of(mock(VirtualView.class));
     String pn = "Benny";
     String command = "c 2";
     UUID gId = UUID.randomUUID();
+    UserInterface ui = mock(UserInterface.class);
 
+    rmiClient.setUserInterface(ui);
+    doReturn(ui).when(rmiClient).getUserInterface();
+    when(ui.getUserInput()).thenReturn(command);
     rmiClient.setAvailableGames(ag);
     doNothing().when(rmiClient).getAvailableGames(playerConnectorRmi);
     doNothing().when(rmiClient).lookupInit();
-    doReturn(command).when(br).readLine();
     when(rmiClient.getGameIdRef()).thenReturn(gId,gId);
 
-    rmiClient.handleGameSelection(playerConnectorRmi, br, pn);
+    rmiClient.handleGameSelection(playerConnectorRmi, pn);
 
     assertEquals(gId, playerConnectorRmi.getGameId());
   }
 
   @Test
   void handleCommand_should_run_handleCommand() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException, NotBoundException, InvalidNumOfPlayersException, NullNumOfPlayersException, BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
-    BufferedReader br = mock(BufferedReader.class); 
     String pn = "Benny";
     String command = "move 42 -> 06";
     VirtualView vw = mock(VirtualView.class);
     Player p = mock(Player.class);
     VirtualPlayer vp = mock(VirtualPlayer.class);
+    UserInterface ui = mock(UserInterface.class);
 
+    rmiClient.setUserInterface(ui);
+    doReturn(ui).when(rmiClient).getUserInterface();
+    when(ui.getUserInput()).thenReturn(command);
     rmiClient.setVirtualView(vw);
-    doReturn(command).when(br).readLine();
     doReturn(vw).when(rmiClient).getVirtualView();
     when(playerConnectorRmi.getPlayer()).thenReturn(p);
     when(vw.getActivePlayer()).thenReturn(vp);
@@ -181,7 +186,7 @@ public class RMIClientTest {
     when(vw.getGameBoard()).thenReturn(new Board(4));
 
 
-    rmiClient.handleCommands(playerConnectorRmi, br);
+    rmiClient.handleCommands(playerConnectorRmi);
   }
 
 }
