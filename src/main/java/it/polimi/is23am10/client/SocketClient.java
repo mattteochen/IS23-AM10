@@ -14,6 +14,7 @@ import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
+import it.polimi.is23am10.server.command.LogOutCommand;
 import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
@@ -153,6 +154,17 @@ public class SocketClient extends Client {
   @Override
   void startGame(AbstractPlayerConnector apc, String playerName, int maxPlayerNum) throws IOException {
     StartGameCommand command = new StartGameCommand(playerName, maxPlayerNum);
+    String req = gson.toJson(command);
+    sendMessage(req, apc);
+  };
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  void logoutPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException {
+    LogOutCommand command = new LogOutCommand(playerName, gameId);
     String req = gson.toJson(command);
     sendMessage(req, apc);
   };

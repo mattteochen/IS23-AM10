@@ -42,6 +42,11 @@ public abstract class AbstractCommand implements Serializable {
      */
     GAME_TIMER,
     /**
+     * Logout command.
+     * 
+     */
+    LOG_OUT,
+    /**
      * Null command.
      */
     NULL

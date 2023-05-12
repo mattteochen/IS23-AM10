@@ -355,6 +355,16 @@ public abstract class Client implements Runnable {
   abstract void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves) throws IOException;
 
   /**
+   * Abstract method for the player's logout.
+   * 
+   * @param apc        abstract player connector.
+   * @param playerName string player name.
+   * @param gameId     selected gameId.
+   * @throws IOException
+   */
+  abstract void logoutPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException;
+
+  /**
    * Abstract function that send chat message
    * 
    * @param apc abstract player connector
@@ -403,7 +413,9 @@ public abstract class Client implements Runnable {
         }
         break;
       case "logout":
-        // TODO: add logout command
+        String playerName = apc.getPlayer().getPlayerName();
+        UUID gameId = apc.getGameId();
+        logoutPlayer(apc, playerName, gameId);
         break;
       case "move":
         if (getVirtualView() == null) {
