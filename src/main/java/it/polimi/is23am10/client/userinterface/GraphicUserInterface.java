@@ -1,7 +1,13 @@
 package it.polimi.is23am10.client.userinterface;
 
 import java.util.List;
+import java.util.Map;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
+ 
+import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory;
+import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory.SCENE;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
@@ -15,7 +21,23 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public final class GraphicUserInterface implements UserInterface{
+public final class GraphicUserInterface extends Application implements UserInterface{
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void start(Stage stage) {
+    GuiFactory.mainStage = stage;
+    GuiFactory.stages = Map.of(
+      SCENE.SPLASH_SCREEN, GuiFactory.getSplashScreenScene(),
+      SCENE.ENTER_GAME_SELECTION, GuiFactory.getEnterGameSelectionScene()
+    ); 
+
+    stage.setTitle("MyShelfie");
+    stage.setScene(GuiFactory.stages.get(SCENE.SPLASH_SCREEN));
+    stage.show();
+  }
 
   /**
    * {@inheritDoc}
@@ -29,7 +51,8 @@ public final class GraphicUserInterface implements UserInterface{
    * {@inheritDoc}
    */
   public void displaySplashScreen() {
-    // TODO Auto-generated method stub
+    //this will perform javaFX init process and show the welcome screen
+    launch();
   }
 
   /**
