@@ -381,5 +381,28 @@ public class GameTest {
       assertFalse(g.getStatus() == GameStatus.ENDED);
       assertNull(g.getWinnerPlayer());
     }
+
+    @Test
+    public void checkWin_should_give_extra_point_only_to_winner()
+        throws NullPlayerBookshelfException, NullPointerException,
+        WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
+        NullPlayerException, BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullScoreBlockListException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+      g.setActivePlayer(p1);
+      Bookshelf fullBookshelf = new Bookshelf(
+          "CCCCC"
+              + "CCCCC"
+              + "PPPPP"
+              + "PPPPP"
+              + "CCCCC"
+              + "TTTTT");
+      g.getActivePlayer().setBookshelf(fullBookshelf);
+      g.checkEndGame();
+      assertTrue(g.getStatus() == GameStatus.LAST_ROUND);
+
+      g.getActivePlayer().setBookshelf(fullBookshelf);
+      g.nextTurn();
+      assertEquals(1,p1.getScore().getExtraPoint());
+      assertEquals(0,p2.getScore().getExtraPoint());
+    }
   }
 }
