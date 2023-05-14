@@ -630,7 +630,6 @@ public abstract class Client implements Runnable {
                       "Failed to connect to the server, aborting the request",
                       ErrorSeverity.CRITICAL));
                 }
-                runMessageHandler();
                 /*
                  * Since the gameId ref is set when the message handler receives a GAME_SNAPSHOT
                  * message

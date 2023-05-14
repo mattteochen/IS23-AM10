@@ -116,6 +116,7 @@ public class RMIClient extends Client {
     playerConnectorServer = (IPlayerConnector) rmiRegistry
         .lookup(ServerControllerRmiBindings.getPlayerConnectorRebindId((PlayerConnectorRmi) playerConnector));
     playerConnectorServer.setPlayer(playerConnector.getPlayer());
+    runMessageHandler();
   }
 
   /**
