@@ -1,23 +1,13 @@
 package it.polimi.is23am10.client;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
-
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
@@ -26,13 +16,14 @@ import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridRowIndexO
 import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.server.model.player.Player;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
-import it.polimi.is23am10.server.network.messages.ErrorMessage;
-import it.polimi.is23am10.server.network.messages.GameMessage;
-import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
+import it.polimi.is23am10.server.network.messages.GameMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
@@ -45,59 +36,55 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
-import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
-
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 
 /**
- * An abstract class representing the app running in client mode. Holds the
- * three
- * elements needed for proper functioning:
+ * An abstract class representing the app running in client mode. Holds the three elements needed
+ * for proper functioning:
+ *
  * <ul>
- * <li>Networking: Player Connector</li>
- * <li>Game state: VirtualView</li>
- * <li>UI/UX: UserInterface</li>
+ *   <li>Networking: Player Connector
+ *   <li>Game state: VirtualView
+ *   <li>UI/UX: UserInterface
  * </ul>
- * 
+ *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
- * 
  */
 public abstract class Client implements Runnable {
 
-  /**
-   * Custom lock object.
-   * 
-   */
+  /** Custom lock object. */
   private Object gameRefLock = new Object();
 
-  /**
-   * Custom lock object.
-   * 
-   */
+  /** Custom lock object. */
   private Object hasDuplicateLock = new Object();
 
-  /**
-   * Custom lock object.
-   * 
-   */
+  /** Custom lock object. */
   private Object virtualViewLock = new Object();
 
-  /**
-   * Custom lock object.
-   * 
-   */
+  /** Custom lock object. */
   private static Object availableServersLock = new Object();
+
+  /** Custom lock object. */
+  private static Object playerConnectorLock = new Object();
 
   /**
    * Protected constructor for client using Socket as communication method.
-   * 
+   *
    * @param pc Player connector.
    * @param ui User interface.
    * @throws UnknownHostException On localhost retrieval failure.
@@ -106,9 +93,10 @@ public abstract class Client implements Runnable {
     playerConnector = pc;
     userInterface = ui;
     serverAddress = InetAddress.getLocalHost();
-    gson = new GsonBuilder()
-        .registerTypeAdapter(AbstractMessage.class, new MessageDeserializer())
-        .create();
+    gson =
+        new GsonBuilder()
+            .registerTypeAdapter(AbstractMessage.class, new MessageDeserializer())
+            .create();
     requestedDisconnection = false;
     alarm = new Timer();
     clientStatus = ClientGameStatus.INIT;
@@ -118,100 +106,75 @@ public abstract class Client implements Runnable {
    * Check if the current client has joined a game or not.
    *
    * @return The requested flag.
-   *
    */
   protected abstract boolean hasJoined();
 
-  /**
-   * Client alarm interval in milliseconds.
-   * 
-   */
+  /** Client alarm interval in milliseconds. */
   protected final int ALARM_INTERVAL_MS = 5000;
 
-  /**
-   * Client alarm initial delay in milliseconds.
-   * 
-   */
+  /** Client alarm initial delay in milliseconds. */
   protected final int ALARM_INITIAL_DELAY_MS = 0;
 
-  /**
-   * Clean disconnection request.
-   * 
-   */
+  /** Clean disconnection request. */
   private boolean requestedDisconnection;
 
-  /**
-   * Duplicate name error flag.
-   * 
-   */
+  /** Duplicate name error flag. */
   private boolean hasDuplicateName;
 
-  /**
-   * A {@link Gson} instance to serialize and deserialize commands.
-   * 
-   */
+  /** A {@link Gson} instance to serialize and deserialize commands. */
   protected Gson gson;
 
-  /**
-   * The server host IP address.
-   * 
-   */
+  /** The server host IP address. */
   protected InetAddress serverAddress;
 
-  /**
-   * The three possible states in which the client can be.
-   * 
-   */
+  /** The three possible states in which the client can be. */
   public enum ClientGameStatus {
-    /**
-     * Starting state. Player hasn't selected name yet.
-     */
+    /** Starting state. Player hasn't selected name yet. */
     INIT,
-    /**
-     * Player selected name but not yet the game.
-     */
+    /** Player selected name but not yet the game. */
     GAME_SELECTION,
-    /**
-     * Player is in the game.
-     */
+    /** Player is in the game. */
     PLAYING
   }
 
-  /**
-   * Current status of the client.
-   * 
-   */
+  /** Current status of the client. */
   protected ClientGameStatus clientStatus;
 
   /**
-   * Player connector. Allows the client to communicate with the server
-   * and receive updates (game snapshots, chat messages)
+   * Player connector. Allows the client to communicate with the server and receive updates (game
+   * snapshots, chat messages)
    */
-  protected IPlayerConnector playerConnector;
+  protected static IPlayerConnector playerConnector;
 
   /**
-   * Instance of the game currently played on client.
-   * Initially null, filled when joining games, updated constantly
-   * at each turn with the updated instance arriving in playerConnector's queue
+   * Retrieve the player connector intance.
+   *
+   * @return The {@link IPlayerConnector}.
+   */
+  // TODO: add getter
+  public static IPlayerConnector getPlayerConnector() {
+    synchronized (playerConnectorLock) {
+      return playerConnector;
+    }
+  }
+
+  /**
+   * Instance of the game currently played on client. Initially null, filled when joining games,
+   * updated constantly at each turn with the updated instance arriving in playerConnector's queue
    * Completely replaced when starting new games.
    */
   protected VirtualView virtualView;
 
   /**
-   * Interface used for communicating with the user. Can be either
-   * graphical or textual. Only output methods are exposed by interface.
+   * Interface used for communicating with the user. Can be either graphical or textual. Only output
+   * methods are exposed by interface.
    */
   public UserInterface userInterface;
 
-  /**
-   * List of available games set when a message from getAvailableGames is
-   * received.
-   */
+  /** List of available games set when a message from getAvailableGames is received. */
   protected static List<VirtualView> availableGames;
 
-  /**
-   * Game id reference.
-   */
+  /** Game id reference. */
   protected UUID gameIdRef;
 
   /*
@@ -223,7 +186,6 @@ public abstract class Client implements Runnable {
    * Detected if the use has requested a clean disconnection.
    *
    * @return The disconnection flag.
-   *
    */
   protected boolean hasRequestedDisconnection() {
     return requestedDisconnection;
@@ -231,9 +193,8 @@ public abstract class Client implements Runnable {
 
   /**
    * Show the received message to the client.
-   * 
-   * @param msg The message. Its dynamic type is inferred by {@link Gson}.
    *
+   * @param msg The message. Its dynamic type is inferred by {@link Gson}.
    */
   protected void showServerMessage(AbstractMessage msg) {
     switch (msg.getMessageType()) {
@@ -256,8 +217,7 @@ public abstract class Client implements Runnable {
         }
         break;
       case AVAILABLE_GAMES:
-        Type listOfMyClassObject = new TypeToken<ArrayList<VirtualView>>() {
-        }.getType();
+        Type listOfMyClassObject = new TypeToken<ArrayList<VirtualView>>() {}.getType();
         List<VirtualView> availableGamesList = gson.fromJson(msg.getMessage(), listOfMyClassObject);
         setActiveGameServers(availableGamesList);
         userInterface.displayAvailableGames(availableGamesList);
@@ -267,15 +227,12 @@ public abstract class Client implements Runnable {
     }
   }
 
-  /**
-   * Abstract method that creates and run the message handler.
-   * 
-   */
+  /** Abstract method that creates and run the message handler. */
   public abstract void runMessageHandler();
 
   /**
    * Available games param setter.
-   * 
+   *
    * @param ag list of available games
    */
   protected void setActiveGameServers(List<VirtualView> ag) {
@@ -286,7 +243,7 @@ public abstract class Client implements Runnable {
 
   /**
    * Available games param getter.
-   * 
+   *
    * @return The list of available games
    */
   public static List<VirtualView> getActiveGameServers() {
@@ -297,7 +254,7 @@ public abstract class Client implements Runnable {
 
   /**
    * GameIdRef setter.
-   * 
+   *
    * @param id game id ref
    */
   protected void setGameIdRef(UUID id) {
@@ -306,10 +263,7 @@ public abstract class Client implements Runnable {
     }
   }
 
-  /**
-   * GameIdRef getter.
-   *
-   */
+  /** GameIdRef getter. */
   protected UUID getGameIdRef() {
     synchronized (gameRefLock) {
       return gameIdRef;
@@ -318,7 +272,7 @@ public abstract class Client implements Runnable {
 
   /**
    * Duplicate name flag setter.
-   * 
+   *
    * @param b flag
    */
   protected void setHasDuplicateName(boolean b) {
@@ -329,7 +283,7 @@ public abstract class Client implements Runnable {
 
   /**
    * Duplicate name flag getter.
-   * 
+   *
    * @return flag
    */
   protected boolean getHasDuplicateName() {
@@ -340,7 +294,7 @@ public abstract class Client implements Runnable {
 
   /**
    * User interface setter.
-   * 
+   *
    * @param ui user interface.
    */
   protected void setUserInterface(UserInterface ui) {
@@ -349,7 +303,7 @@ public abstract class Client implements Runnable {
 
   /**
    * User interface getter.
-   * 
+   *
    * @return user interface.
    */
   protected UserInterface getUserInterface() {
@@ -358,7 +312,7 @@ public abstract class Client implements Runnable {
 
   /**
    * Virtual view getter.
-   * 
+   *
    * @return virtual view
    */
   protected VirtualView getVirtualView() {
@@ -367,10 +321,7 @@ public abstract class Client implements Runnable {
     }
   }
 
-  /**
-   * Virtual view setter.
-   * 
-   */
+  /** Virtual view setter. */
   protected void setVirtualView(VirtualView vv) {
     synchronized (virtualViewLock) {
       this.virtualView = vv;
@@ -379,7 +330,7 @@ public abstract class Client implements Runnable {
 
   /**
    * Client status getter.
-   * 
+   *
    * @return status.
    */
   public ClientGameStatus getClientStatus() {
@@ -388,7 +339,7 @@ public abstract class Client implements Runnable {
 
   /**
    * Client status setter.
-   * 
+   *
    * @param clientStatus new status of client.
    */
   public void setClientStatus(ClientGameStatus clientStatus) {
@@ -397,45 +348,49 @@ public abstract class Client implements Runnable {
 
   /**
    * Abstract method that send command to get all available games.
-   * 
+   *
    * @param apc abstract player connector
    * @throws IOException
    * @throws InterruptedException
    */
-  abstract void getAvailableGames(AbstractPlayerConnector apc) throws IOException, InterruptedException;
+  abstract void getAvailableGames(AbstractPlayerConnector apc)
+      throws IOException, InterruptedException;
 
   /**
    * Abstract method that send command to start a new game.
-   * 
-   * @param apc          abstract player connector
-   * @param playerName   selected player name
+   *
+   * @param apc abstract player connector
+   * @param playerName selected player name
    * @param maxPlayerNum max number of players selected
    * @throws IOException
    */
-  abstract void startGame(AbstractPlayerConnector apc, String playerName, int maxPlayerNum) throws IOException;
+  abstract void startGame(AbstractPlayerConnector apc, String playerName, int maxPlayerNum)
+      throws IOException;
 
   /**
    * Abstract method that send command to add a new player.
-   * 
-   * @param apc        abstract player connector
+   *
+   * @param apc abstract player connector
    * @param playerName selected player name
-   * @param gameId     selected game id
+   * @param gameId selected game id
    * @throws IOException
    */
-  abstract void addPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException;
+  abstract void addPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId)
+      throws IOException;
 
   /**
    * Abstract method that send command to move tiles.
-   * 
-   * @param apc   abstract player connector
+   *
+   * @param apc abstract player connector
    * @param moves map of moves
    * @throws IOException
    */
-  abstract void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves) throws IOException;
+  abstract void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves)
+      throws IOException;
 
   /**
    * Abstract function that send chat message
-   * 
+   *
    * @param apc abstract player connector
    * @param msg chat message
    * @throws IOException
@@ -444,7 +399,7 @@ public abstract class Client implements Runnable {
 
   /**
    * Abstract function that snoozes virtual alarm.
-   * 
+   *
    * @param apc abstract player connector
    * @param msg chat message
    * @throws IOException
@@ -453,7 +408,7 @@ public abstract class Client implements Runnable {
 
   /**
    * Handling function for move tiles command.
-   * 
+   *
    * @param apc abstract player connector
    * @throws IOException
    */
@@ -491,11 +446,13 @@ public abstract class Client implements Runnable {
           break;
         case "move":
           if (getVirtualView() == null) {
-            userInterface.displayError(new ErrorMessage("Wait the game to be loaded", ErrorSeverity.ERROR));
+            userInterface.displayError(
+                new ErrorMessage("Wait the game to be loaded", ErrorSeverity.ERROR));
             break;
           }
-          if (apc.getPlayer().getPlayerName()
-              .equals(getVirtualView().getActivePlayer().getPlayerName())
+          if (apc.getPlayer()
+                  .getPlayerName()
+                  .equals(getVirtualView().getActivePlayer().getPlayerName())
               && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS) {
 
             Map<Coordinates, Coordinates> moves = new HashMap<Coordinates, Coordinates>();
@@ -524,15 +481,19 @@ public abstract class Client implements Runnable {
                 try {
                   // Transform idx to list of coords
                   // NB: boardCoords.size() is the number of moves done
-                  bsCoords = MoveCommandHelper.fromColIdxToCoord(idx, getVirtualView().getActivePlayer().getBookshelf(),
-                  boardCoords.size());
+                  bsCoords =
+                      MoveCommandHelper.fromColIdxToCoord(
+                          idx,
+                          getVirtualView().getActivePlayer().getBookshelf(),
+                          boardCoords.size());
                   // I put the coords into the map
                   for (int i = 0; i < boardCoords.size(); i++) {
                     moves.put(boardCoords.get(i), bsCoords.get(i));
                   }
                   break;
                 } catch (BookshelfGridColIndexOutOfBoundsException
-                    | BookshelfGridRowIndexOutOfBoundsException | NullIndexValueException
+                    | BookshelfGridRowIndexOutOfBoundsException
+                    | NullIndexValueException
                     | WrongBookShelfPicksException e) {
                   userInterface.displayError(new ErrorMessage(e.getMessage(), ErrorSeverity.ERROR));
                   break;
@@ -543,17 +504,25 @@ public abstract class Client implements Runnable {
             }
             // Checks if no valid moves were added
             if (moves.isEmpty()) {
-              userInterface.displayError(new ErrorMessage("No valid moves found.", ErrorSeverity.ERROR));
+              userInterface.displayError(
+                  new ErrorMessage("No valid moves found.", ErrorSeverity.ERROR));
             } else {
               try {
                 MovesValidator.validateGameMoves(
-                    moves, virtualView.getActivePlayer().getBookshelf(), virtualView.getGameBoard());
+                    moves,
+                    virtualView.getActivePlayer().getBookshelf(),
+                    virtualView.getGameBoard());
                 moveTiles(apc, moves);
-              } catch (BoardGridRowIndexOutOfBoundsException | BoardGridColIndexOutOfBoundsException
-                  | BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
-                  | WrongMovesNumberException | WrongGameBoardPicksException | NullIndexValueException
+              } catch (BoardGridRowIndexOutOfBoundsException
+                  | BoardGridColIndexOutOfBoundsException
+                  | BookshelfGridColIndexOutOfBoundsException
+                  | BookshelfGridRowIndexOutOfBoundsException
+                  | WrongMovesNumberException
+                  | WrongGameBoardPicksException
+                  | NullIndexValueException
                   | WrongBookShelfPicksException e) {
-                userInterface.displayError(new ErrorMessage("Invalid move:" + e.getMessage(), ErrorSeverity.ERROR));
+                userInterface.displayError(
+                    new ErrorMessage("Invalid move:" + e.getMessage(), ErrorSeverity.ERROR));
                 break;
               }
             }
@@ -575,8 +544,7 @@ public abstract class Client implements Runnable {
    * @return player name selected
    * @throws IOException
    */
-  protected String handlePlayerNameSelection(AbstractPlayerConnector apc)
-      throws IOException {
+  protected String handlePlayerNameSelection(AbstractPlayerConnector apc) throws IOException {
     // Select only the string before the space if the client writes more words
     String selectedPlayerName = userInterface.getUserInput();
     if (selectedPlayerName != null) {
@@ -597,23 +565,22 @@ public abstract class Client implements Runnable {
 
   /**
    * Empty mock of lookup init for Socket client which is overrided in RMI client
-   * 
+   *
    * @throws RemoteException
    * @throws NotBoundException
    */
-  protected void lookupInit() throws RemoteException, NotBoundException {
-  }
+  protected void lookupInit() throws RemoteException, NotBoundException {}
 
   /**
    * Handling function for game selection.
    *
-   * @param apc                abstract player connector
+   * @param apc abstract player connector
    * @param selectedPlayerName player name selected
    * @throws IOException
    * @throws InterruptedException
    */
-  protected void handleGameSelection(AbstractPlayerConnector apc,
-      String selectedPlayerName) throws IOException, InterruptedException {
+  protected void handleGameSelection(AbstractPlayerConnector apc, String selectedPlayerName)
+      throws IOException, InterruptedException {
 
     // Executed if I still haven't selected a game
     if (apc.getGameId() == null) {
@@ -641,9 +608,10 @@ public abstract class Client implements Runnable {
                 try {
                   lookupInit();
                 } catch (NotBoundException e) {
-                  userInterface.displayError(new ErrorMessage(
-                      "Failed to connect to the server, aborting the request",
-                      ErrorSeverity.CRITICAL));
+                  userInterface.displayError(
+                      new ErrorMessage(
+                          "Failed to connect to the server, aborting the request",
+                          ErrorSeverity.CRITICAL));
                 }
                 runMessageHandler();
                 /*
@@ -655,10 +623,10 @@ public abstract class Client implements Runnable {
                  * the player will not be added by mistake because it exits the while loop
                  * because of the gameId flag.
                  */
-                while (getGameIdRef() == null && !getHasDuplicateName()) {
-                }
+                while (getGameIdRef() == null && !getHasDuplicateName()) {}
                 if (getHasDuplicateName()) {
-                  userInterface.displayError(new ErrorMessage("Failed to add player, retry", ErrorSeverity.CRITICAL));
+                  userInterface.displayError(
+                      new ErrorMessage("Failed to add player, retry", ErrorSeverity.CRITICAL));
                   setHasDuplicateName(false);
                   break;
                 }
@@ -682,12 +650,12 @@ public abstract class Client implements Runnable {
                   lookupInit();
                 } catch (NotBoundException e) {
                   userInterface.displayError(
-                      new ErrorMessage("Failed to connect to the server, aborting the request",
+                      new ErrorMessage(
+                          "Failed to connect to the server, aborting the request",
                           ErrorSeverity.CRITICAL));
                 }
                 runMessageHandler();
-                while (getGameIdRef() == null) {
-                }
+                while (getGameIdRef() == null) {}
                 apc.setGameId(getGameIdRef());
                 System.out.println("lesgoooooooo");
               } else {
@@ -717,7 +685,6 @@ public abstract class Client implements Runnable {
    * @throws IOException
    * @throws NullPlayerIdException
    * @throws InterruptedException
-   * 
    */
   protected void clientRunnerCore(AbstractPlayerConnector pc)
       throws IOException, InterruptedException, NullPlayerIdException {
@@ -742,9 +709,8 @@ public abstract class Client implements Runnable {
   }
 
   /**
-   * Custom deserializer class definition for {@link Gson} usage.
-   * This works on polymorphic {@link AbstractMessage} objects.
-   * 
+   * Custom deserializer class definition for {@link Gson} usage. This works on polymorphic {@link
+   * AbstractMessage} objects.
    */
   class MessageDeserializer implements JsonDeserializer<AbstractMessage> {
     @Override
@@ -775,31 +741,21 @@ public abstract class Client implements Runnable {
     }
   }
 
-  /**
-   * The timer schedule execution class.
-   *
-   */
+  /** The timer schedule execution class. */
   protected class AlarmTask extends TimerTask {
-    /**
-     * The consumer to be executed.
-     *
-     */
+    /** The consumer to be executed. */
     AlarmConsumer task;
 
     /**
      * Constructor.
      *
      * @param task The consumer to be assigned.
-     *
      */
     public AlarmTask(AlarmConsumer task) {
       this.task = task;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     */
+    /** {@inheritDoc} */
     public void run() {
       task.start();
     }

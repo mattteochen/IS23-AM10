@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import it.polimi.is23am10.client.Client;
 import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory;
 import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory.SCENE;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
@@ -66,7 +67,8 @@ public final class GraphicUserInterface extends Application implements UserInter
     Map<SCENE, Scene> m = Map.of(
       SCENE.SPLASH_SCREEN, GuiFactory.getSplashScreenScene(),
       SCENE.ENTER_GAME_SELECTION, GuiFactory.getEnterGameSelectionScene(),
-      SCENE.CREATE_GAME, GuiFactory.getCreateNewGameSelectionScene()
+      SCENE.CREATE_GAME, GuiFactory.getCreateNewGameSelectionScene(),
+      SCENE.WAIT_GAME, GuiFactory.getWaitGameScene()
       //JOIN_GAME scene must be created when we receive available games from server, hence in {@link GraphicUserInterface#displayAvailableGames}
     ); 
     GuiFactory.stages.putAll(m);
@@ -102,7 +104,19 @@ public final class GraphicUserInterface extends Application implements UserInter
    * {@inheritDoc}
    */
   public void displayVirtualView(VirtualView vw) {
-    // TODO Auto-generated method stub
+    if (vw.getStatus() == GameStatus.ENDED) {
+    } else {
+      if (vw.getStatus() == GameStatus.WAITING_FOR_PLAYERS) {
+        GuiFactory.changeScene(
+          () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.WAIT_GAME))
+        );
+      } else {
+        GuiFactory.stages.put(SCENE.GAME_SNAPSHOT, GuiFactory.getGameSnapshotScene(vw));
+        GuiFactory.changeScene(
+          () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.GAME_SNAPSHOT))
+        );
+      }
+    }
   }
 
   /**
