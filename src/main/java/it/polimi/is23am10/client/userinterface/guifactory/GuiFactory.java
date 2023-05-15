@@ -10,6 +10,8 @@ import it.polimi.is23am10.client.userinterface.GraphicUserInterface;
 import it.polimi.is23am10.client.userinterface.helpers.CommandsBuilder;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -28,6 +30,7 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.ColorAdjust;
 
@@ -487,14 +490,16 @@ public final class GuiFactory {
         buttons.add(getGameIdButton(String.valueOf(i), vvs.get(i)));
       }
 
+      ListView<Button> listView = new ListView<>();
+
       HBox hbox = new HBox();
       hbox.setAlignment(Pos.CENTER);
       hbox.setSpacing(30);
       if (buttons.size() > 0) {
-        hbox.getChildren().addAll(buttons);
-      } else {
-        hbox.getChildren().add(getLabel("No available servers!", FontWeight.BOLD, 30, Color.RED));
+        listView.setItems(FXCollections.observableArrayList(buttons));
+        listView.setPrefWidth(400);
       }
+      hbox.getChildren().add(buttons.size() > 0 ? listView : getLabel("No available servers!", FontWeight.BOLD, 30, Color.RED));
       VBox vbox = new VBox();
       vbox.setAlignment(Pos.CENTER);
       vbox.setSpacing(10);
