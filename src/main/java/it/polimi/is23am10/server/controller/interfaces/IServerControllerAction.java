@@ -221,18 +221,11 @@ public interface IServerControllerAction extends Remote {
        * connector with a new one connected, otherwise the else branch is executed
        * and the player is normally added to the game.
        */
-      if (gameHandler.getGame().getPlayerNames().contains(playerName) &&
+      if (ServerControllerState.getPlayersPool().stream().map(p -> p.getPlayer().getPlayerName()).collect(Collectors.toList()).contains(playerName) &&
           !gameHandler.getGame().getPlayerByName(playerName).getIsConnected()) {
-            if (playerConnector.getClass() == PlayerConnectorSocket.class) {
-              ((PlayerConnectorSocket) gameHandler.getPlayerConnectors()
-                  .stream()
-                  .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerName))
-                  .findFirst()
-                  .get())
-                  .setConnector(((PlayerConnectorSocket) playerConnector).getConnector());
-            } 
+          ServerControllerState.removePlayerByGame(gameId, gameHandler.getGame().getPlayerByName(playerName));
+          gameHandler.removePlayerByGame(gameId, gameHandler.getGame().getPlayerByName(playerName));
 
-          gameHandler.getGame().getPlayerByName(playerName).setIsConnected(true);
           gameHandler.getPlayerConnectors()
               .forEach(pc -> {
                 try {
@@ -242,50 +235,51 @@ public interface IServerControllerAction extends Remote {
                   logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
                 }
               });
-
-      } else {
+      }else{
         // add the new player in the game model.
         // note, it is essential that the the model is updated first
         // to avoid wrong parameters in connectors if any exception
         // will be thrown from the model.
         gameHandler.getGame().addPlayer(playerName);
-        //if started, handle active player
-        if (gameHandler.getGame().getStatus() == GameStatus.STARTED) {
-          gameHandler.updateCurrentPlayerHandler();
-        }
-
-        final Player playerRef = gameHandler.getGame().getPlayerByName(playerName);
-
-        // populate the connector with the game and player reference.
-        playerConnector.setGameId(gameId);
-        playerConnector.setPlayer(playerRef);
-
-        // add the new player connector instance to the game's player pool.
-        playerConnector.setLastSnoozeMs(System.currentTimeMillis());
-        gameHandler.addPlayerConnector(playerConnector);
-
-        // add the new player connector instance on the player pool.
-        ServerControllerState.addPlayerConnector(playerConnector);
-
-        // if RMI, rebind the connector proxy
-        if (playerConnector.getClass() == PlayerConnectorRmi.class) {
-          AbstractPlayerConnector proxy = new PlayerConnectorRmi(new LinkedBlockingQueue<AbstractMessage>());
-          proxy.setPlayer(new Player(playerRef));
-          proxy.setGameId(gameHandler.getGame().getGameId());
-          ServerControllerState.addRmiProxyConnector(proxy.getPlayer().getPlayerID(), proxy);
-          ServerControllerRmiBindings.rebindPlayerConnector(proxy);
-        }
       }
 
+      System.out.println("adding to the game " + gameHandler.getGame().getPlayerByName(playerName).getPlayerName());
+      //if started, handle active player
+      if (gameHandler.getGame().getStatus() == GameStatus.STARTED) {
+        gameHandler.updateCurrentPlayerHandler();
+      }
 
-      logger.info("{} {}",
-          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
-          String.format(ErrorTypeString.WARNING_PLAYER_JOIN_SERVER, playerName, gameId));
+      final Player playerRef = gameHandler.getGame().getPlayerByName(playerName);
 
-      playerConnector.addMessageToQueue(new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_JOIN, playerName), ErrorSeverity.WARNING));
+      // populate the connector with the game and player reference.
+      playerConnector.setGameId(gameId);
+      playerConnector.setPlayer(playerRef);
 
-      // send the game model update to all the connected players
-      gameHandler.pushGameState();
+      // add the new player connector instance to the game's player pool.
+      playerConnector.setLastSnoozeMs(System.currentTimeMillis());
+
+      gameHandler.addPlayerConnector(playerConnector);
+
+      // add the new player connector instance on the player pool.
+      ServerControllerState.addPlayerConnector(playerConnector);
+
+      // if RMI, rebind the connector proxy
+      if (playerConnector.getClass() == PlayerConnectorRmi.class) {
+        AbstractPlayerConnector proxy = new PlayerConnectorRmi(new LinkedBlockingQueue<AbstractMessage>());
+        proxy.setPlayer(new Player(playerRef));
+        proxy.setGameId(gameHandler.getGame().getGameId());
+        ServerControllerState.addRmiProxyConnector(proxy.getPlayer().getPlayerID(), proxy);
+        ServerControllerRmiBindings.rebindPlayerConnector(proxy);
+      }
+    
+    logger.info("{} {}",
+        ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
+        String.format(ErrorTypeString.WARNING_PLAYER_JOIN_SERVER, playerName, gameId));
+
+    playerConnector.addMessageToQueue(new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_JOIN, playerName), ErrorSeverity.WARNING));
+
+    // send the game model update to all the connected players
+    gameHandler.pushGameState();
     } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
         | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
         | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
@@ -322,11 +316,6 @@ public interface IServerControllerAction extends Remote {
           ErrorTypeString.ERROR_RMI_EXPOSURE, e);
       // Not adding the error here since it will not be possible to be sent
       // to player if there is no valid player connector.
-    } catch (NullSocketConnectorException e) {
-      logger.error("{} {} {}",
-              ServerDebugPrefixString.START_COMMAND_PREFIX,
-              ErrorTypeString.ERROR_SOCKET_CONNECTOR, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_SERVER_SIDE, ErrorSeverity.ERROR);
     } finally {
       if (errorMsg != null) {
         try {

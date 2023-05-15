@@ -26,12 +26,16 @@ import it.polimi.is23am10.server.network.gamehandler.exceptions.GameSnapshotUpda
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.server.network.messages.GameMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -218,6 +222,42 @@ public class GameHandler {
           throw new GameSnapshotUpdateException(game);
         }
       }
+    }
+  }
+
+  /**
+   * Method that remove player by the game handler
+   * 
+   * @param gameId game id.
+   * @param player player to be removed.
+   */
+  public void removePlayerByGame(UUID gameId, Player player){
+    if (gameId == null || player == null) {
+      return;
+    }
+
+    Optional<AbstractPlayerConnector> target;
+
+    synchronized (playerConnectors) {
+      target = getPlayerConnectors().stream()
+          .filter(connector ->
+              connector.getGameId().equals(gameId) && connector.getPlayer().equals(player))
+          .findFirst();
+    }
+    if (target.isPresent()) {
+      AbstractPlayerConnector targetConnector = target.get();
+      if (targetConnector.getClass() == PlayerConnectorSocket.class) {
+        try {
+          PlayerConnectorSocket ps = (PlayerConnectorSocket) targetConnector;
+          synchronized (ps.getConnector()) {
+            ps.getConnector().close();
+          }
+        } catch (IOException e) {
+          logger.error("Failed to close socket connection", e);
+        }
+      }
+      playerConnectors.remove(targetConnector);
+      logger.info("Removed player {} connector from game {}", player, gameId);
     }
   }
 
