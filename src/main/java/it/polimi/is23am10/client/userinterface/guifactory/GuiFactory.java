@@ -1,13 +1,21 @@
 package it.polimi.is23am10.client.userinterface.guifactory;
 
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
-import it.polimi.is23am10.client.userinterface.guistate.GuiState;
+import it.polimi.is23am10.client.userinterface.GraphicUserInterface;
+import it.polimi.is23am10.client.userinterface.helpers.CommandsBuilder;
+import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -77,7 +85,9 @@ public final class GuiFactory {
    */
   public enum SCENE {
     SPLASH_SCREEN,
-    ENTER_GAME_SELECTION
+    ENTER_GAME_SELECTION,
+    CREATE_GAME,
+    JOIN_GAME
   }
 
   private static final int SCENE_WIDTH = 1140;
@@ -86,14 +96,25 @@ public final class GuiFactory {
 
   public static Stage mainStage;
 
-  public static Map<SCENE, Scene> stages;
+  public static Map<SCENE, Scene> stages = Collections.synchronizedMap(new HashMap<>());
 
   private static ButtonCallBack confirmNameCallBack = (s, tfs) -> {
-    GuiState.setPlayerName(tfs[0].getText());
-    mainStage.setScene(s);
+    System.out.println("TextField " + tfs[0].getText());
+    GraphicUserInterface.addMsgQueue(tfs[0].getText());
   };
 
-  private static TextFieldCallBack savePlayerNameCallBack = (s) -> GuiState.setPlayerName(s);
+  private static ButtonCallBack confirmPlayerNumCallBack = (s, tfs) -> {
+    System.out.println("TextField " + tfs[0].getText());
+    GraphicUserInterface.addMsgQueue(CommandsBuilder.buildCreateGameCmd(tfs[0].getText()));
+  };
+
+  private static ButtonCallBack joinGameCallBack = (s, tfs) -> {
+    changeScene(() -> mainStage.setScene(stages.get(SCENE.JOIN_GAME)));
+  };
+
+  private static ButtonCallBack createNewGameCallBack = (s, tfs) -> {
+    changeScene(() -> mainStage.setScene(stages.get(SCENE.CREATE_GAME)));
+  };
 
   /**
    * Creates a {@link BackgroundImage} with the specified image path and brightness.
@@ -134,9 +155,12 @@ public final class GuiFactory {
    * @param size The font size of the label.
    * @return The created Label object.
    */
-  protected static Label getLabel(String content, FontWeight weight, int size) {
+  protected static Label getLabel(String content, FontWeight weight, int size, Color ...colors) {
     Label l =  new Label(content);
     l.setFont(Font.font("Arial", weight, size));
+    if (colors != null && colors.length > 0) {
+      l.setTextFill(colors[0]);
+    }
     return l;
   }
 
@@ -179,6 +203,15 @@ public final class GuiFactory {
   }
 
   /**
+   * Perform a scene change.
+   * 
+   * @param r The callback to be executed.
+   */
+  public static void changeScene(Runnable r) {
+    Platform.runLater(r);
+  }
+
+  /**
    * Creates the splash screen scene.
    * The splash screen scene consists of a stack pane with a background and an input name widget.
    * The background image is retrieved from the SplashScreenFactory class.
@@ -209,6 +242,34 @@ public final class GuiFactory {
 
     root.setBackground(new Background(EnterGameSelectionScreenFactory.getSelectionBg()));
     root.getChildren().add(EnterGameSelectionScreenFactory.getSelectionWidget());
+
+    return new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
+  }
+
+  /**
+   * Creates and returns a new JavaFX Scene for the create new game selection screen.
+   *
+   * @return The JavaFX Scene for the create new game selection screen.
+   */
+  public static Scene getCreateNewGameSelectionScene() {
+    StackPane root = new StackPane();
+
+    root.setBackground(new Background(NewGameFactory.getBg()));
+    root.getChildren().add(NewGameFactory.getCreateGameWidget());
+
+    return new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
+  }
+
+  /**
+   * Creates and returns a new JavaFX Scene for the join game selection screen.
+   *
+   * @return The JavaFX Scene for the join game selection screen.
+   */
+  public static Scene getCreateJoinScene(List<VirtualView> vvs) {
+    StackPane root = new StackPane();
+
+    root.setBackground(new Background(JoinGameFactory.getBg()));
+    root.getChildren().add(JoinGameFactory.getJoinGameWidget(vvs));
 
     return new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
   }
@@ -251,7 +312,7 @@ public final class GuiFactory {
      * @return The created TextField object for entering the name.
      */
     protected static TextField getInputNameTextField() {
-      textField = getTextField("Type here", 300, 300, FontWeight.NORMAL, 20, savePlayerNameCallBack);
+      textField = getTextField("Type here", 300, 300, FontWeight.NORMAL, 20, null);
       return textField;
     }
 
@@ -303,11 +364,141 @@ public final class GuiFactory {
       HBox hbox = new HBox();
       hbox.setAlignment(Pos.CENTER);
       hbox.setSpacing(10);
-      hbox.getChildren().addAll(getButton("Create new game", null), getButton("Join game", null));
+      hbox.getChildren().addAll(getButton("Create new game", createNewGameCallBack), getButton("Join game", joinGameCallBack));
       VBox vbox = new VBox();
       vbox.setAlignment(Pos.CENTER);
       vbox.setSpacing(10);
       vbox.getChildren().addAll(getSelectionOptionLabel(), hbox);
+      return vbox;
+    }
+  }
+
+  /**
+   * The NewGameFactory class provides static methods to create various UI components
+   * for setting up a new game.
+   */
+  class NewGameFactory {
+    private static final String SPLASH_SCREEN_IMG_PATH = "file:welcome_bg.jpg";
+
+    /**
+     * A map of text fields associated with player numbers.
+     */
+    protected static Map<String, TextField> textFields = Map.of(
+      "2", new TextField(),
+      "3", new TextField(),
+      "4", new TextField()
+    );
+
+    /**
+     * Retrieves the background image.
+     *
+     * @return The background image.
+     */
+    protected static BackgroundImage getBg() {
+      return getBgImg(SPLASH_SCREEN_IMG_PATH, 0.5);
+    }
+
+    /**
+     * Creates a label for inputting the player number.
+     *
+     * @return The label for inputting the player number.
+     */
+    protected static Label getInputPlayerNumberLabel() {
+      return getLabel("Choose max players number", FontWeight.BOLD, 40);
+    }
+
+    /**
+     * Creates a button for selecting the player number.
+     *
+     * @param n The player number to set on the button.
+     * @return The button for selecting the player number.
+     */
+    protected static Button getPlayerNumButton(String n) {
+      TextField tf = textFields.get(n);
+      tf.setText(n);
+      return getButton(n, confirmPlayerNumCallBack, tf);
+    }
+
+    /**
+     * Creates a VBox container with input widgets for setting up a new game.
+     *
+     * @return The VBox container with input widgets for setting up a new game.
+     */
+    protected static VBox getCreateGameWidget() {
+      HBox hbox = new HBox();
+      hbox.setAlignment(Pos.CENTER);
+      hbox.setSpacing(30);
+      hbox.getChildren().addAll(getPlayerNumButton("2"), getPlayerNumButton("3"), getPlayerNumButton("4"));
+      VBox vbox = new VBox();
+      vbox.setAlignment(Pos.CENTER);
+      vbox.setSpacing(10);
+      vbox.getChildren().addAll(getInputPlayerNumberLabel(), hbox);
+      return vbox;
+    }
+  }
+
+  /**
+   * The JoinGameFactory class provides static methods to create various UI components
+   * for setting up a game to join.
+   */
+  class JoinGameFactory {
+    private static final String SPLASH_SCREEN_IMG_PATH = "file:welcome_bg.jpg";
+
+    /**
+     * Retrieves the background image.
+     *
+     * @return The background image.
+     */
+    protected static BackgroundImage getBg() {
+      return getBgImg(SPLASH_SCREEN_IMG_PATH, 0.5);
+    }
+
+    /**
+     * Creates a label for inputting the server selection.
+     *
+     * @return The label for inputting the game server selection.
+     */
+    protected static Label getInputJoinGameLabel() {
+      return getLabel("Select a game server", FontWeight.BOLD, 40);
+    }
+
+    /**
+     * Creates a button for selecting the game id.
+     *
+     * @param index The game server index.
+     * @param vv The game server virtual view.
+     * @return The button for selecting the game server.
+     */
+    protected static Button getGameIdButton(String index, VirtualView vv) {
+      String id = vv.getGameId().toString();
+      TextField tf = new TextField(id);
+      tf.setText(index);
+      return getButton(id, confirmPlayerNumCallBack, tf);
+    }
+
+    /**
+     * Creates a VBox container with input widgets for setting up game server selection.
+     *
+     * @return The VBox container with input widgets for choosing the server to join.
+     */
+    protected static VBox getJoinGameWidget(List<VirtualView> vvs) {
+      List<Button> buttons = new ArrayList<>();
+      for (int i=0; i<vvs.size(); i++) {
+        buttons.add(getGameIdButton(String.valueOf(i), vvs.get(i)));
+      }
+
+      HBox hbox = new HBox();
+      hbox.setAlignment(Pos.CENTER);
+      hbox.setSpacing(30);
+      if (buttons.size() > 0) {
+        hbox.getChildren().addAll(buttons);
+      } else {
+        hbox.getChildren().add(getLabel("No available servers!", FontWeight.BOLD, 30, Color.RED));
+      }
+      VBox vbox = new VBox();
+      vbox.setAlignment(Pos.CENTER);
+      vbox.setSpacing(10);
+      vbox.getChildren().addAll(getInputJoinGameLabel(), hbox);
       return vbox;
     }
   }

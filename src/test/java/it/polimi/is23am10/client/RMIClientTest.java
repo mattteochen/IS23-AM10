@@ -153,7 +153,7 @@ public class RMIClientTest {
     rmiClient.setUserInterface(ui);
     doReturn(ui).when(rmiClient).getUserInterface();
     when(ui.getUserInput()).thenReturn(command);
-    rmiClient.setAvailableGames(ag);
+    rmiClient.setActiveGameServers(ag);
     doNothing().when(rmiClient).getAvailableGames(playerConnectorRmi);
     doNothing().when(rmiClient).lookupInit();
     when(rmiClient.getGameIdRef()).thenReturn(gId,gId);

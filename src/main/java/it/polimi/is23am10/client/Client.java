@@ -1,8 +1,6 @@
 package it.polimi.is23am10.client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -21,9 +19,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
-import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
-import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
@@ -92,6 +88,12 @@ public abstract class Client implements Runnable {
    * 
    */
   private Object virtualViewLock = new Object();
+
+  /**
+   * Custom lock object.
+   * 
+   */
+  private static Object availableServersLock = new Object();
 
   /**
    * Protected constructor for client using Socket as communication method.
@@ -205,7 +207,7 @@ public abstract class Client implements Runnable {
    * List of available games set when a message from getAvailableGames is
    * received.
    */
-  protected List<VirtualView> availableGames;
+  protected static List<VirtualView> availableGames;
 
   /**
    * Game id reference.
@@ -257,7 +259,7 @@ public abstract class Client implements Runnable {
         Type listOfMyClassObject = new TypeToken<ArrayList<VirtualView>>() {
         }.getType();
         List<VirtualView> availableGamesList = gson.fromJson(msg.getMessage(), listOfMyClassObject);
-        setAvailableGames(availableGamesList);
+        setActiveGameServers(availableGamesList);
         userInterface.displayAvailableGames(availableGamesList);
         break;
       default:
@@ -276,8 +278,21 @@ public abstract class Client implements Runnable {
    * 
    * @param ag list of available games
    */
-  protected void setAvailableGames(List<VirtualView> ag) {
-    this.availableGames = ag;
+  protected void setActiveGameServers(List<VirtualView> ag) {
+    synchronized (availableServersLock) {
+      availableGames = ag;
+    }
+  }
+
+  /**
+   * Available games param getter.
+   * 
+   * @return The list of available games
+   */
+  public static List<VirtualView> getActiveGameServers() {
+    synchronized (availableServersLock) {
+      return availableGames;
+    }
   }
 
   /**
@@ -484,8 +499,8 @@ public abstract class Client implements Runnable {
               && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS) {
 
             Map<Coordinates, Coordinates> moves = new HashMap<Coordinates, Coordinates>();
-            List<Coordinates> boardCoords = new ArrayList();
-            List<Coordinates> bsCoords = new ArrayList();
+            List<Coordinates> boardCoords = new ArrayList<Coordinates>();
+            List<Coordinates> bsCoords = new ArrayList<Coordinates>();
 
             // Reads a string containing coordinates of a tile and the column index
             String[] moveArgs = fullCommand.stripLeading().split(" ");
@@ -674,6 +689,7 @@ public abstract class Client implements Runnable {
                 while (getGameIdRef() == null) {
                 }
                 apc.setGameId(getGameIdRef());
+                System.out.println("lesgoooooooo");
               } else {
                 userInterface.displayError(
                     new ErrorMessage("Failed to create game", ErrorSeverity.CRITICAL));
