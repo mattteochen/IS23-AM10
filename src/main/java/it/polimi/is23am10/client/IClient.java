@@ -13,8 +13,8 @@ public interface IClient extends Remote {
   /**
    * Displays a server message on the client.
    *
-   * @param message The server message to be displayed on the client.
+   * @param msg The server message to be displayed on the client.
    * @throws RemoteException If a communication-related exception occurs during the remote method invocation.
    */
-  void showServerMessage(AbstractMessage mag) throws RemoteException;
+  void showServerMessage(AbstractMessage msg) throws RemoteException;
 }

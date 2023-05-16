@@ -77,7 +77,6 @@ public interface IServerControllerAction extends Remote {
    *
    * @param connector The connector to a player.
    * @param command   The command to be executed.
-   * @param client    The client reference, for RMI.
    * @throws RemoteException On RMI failure.
    *
    */

@@ -235,7 +235,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    * Show the received message to the client.
    * 
    * @param msg The message. Its dynamic type is inferred by {@link Gson}.
-   * @throws RemoteException.
+   * @throws RemoteException
    *
    */
   public void showServerMessage(AbstractMessage msg) throws RemoteException {
