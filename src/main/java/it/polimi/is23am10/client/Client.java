@@ -1,13 +1,13 @@
 package it.polimi.is23am10.client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,9 +21,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
-import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
-import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
@@ -57,6 +55,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+
+/**
+ * Custom lock object.
+ */
+class LockObject implements Serializable {
+}
+
 /**
  * An abstract class representing the app running in client mode. Holds the
  * three
@@ -73,25 +78,24 @@ import com.google.gson.JsonParseException;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  * 
  */
-public abstract class Client implements Runnable {
+public abstract class Client extends UnicastRemoteObject implements IClient {
+  /**
+   * Custom lock object.
+   * 
+   */
+  private LockObject gameRefLock = new LockObject();
 
   /**
    * Custom lock object.
    * 
    */
-  private Object gameRefLock = new Object();
+  private LockObject hasDuplicateLock = new LockObject();
 
   /**
    * Custom lock object.
    * 
    */
-  private Object hasDuplicateLock = new Object();
-
-  /**
-   * Custom lock object.
-   * 
-   */
-  private Object virtualViewLock = new Object();
+  private LockObject virtualViewLock = new LockObject();
 
   /**
    * Protected constructor for client using Socket as communication method.
@@ -100,7 +104,7 @@ public abstract class Client implements Runnable {
    * @param ui User interface.
    * @throws UnknownHostException On localhost retrieval failure.
    */
-  protected Client(IPlayerConnector pc, UserInterface ui) throws UnknownHostException {
+  protected Client(IPlayerConnector pc, UserInterface ui) throws UnknownHostException, RemoteException {
     playerConnector = pc;
     userInterface = ui;
     serverAddress = InetAddress.getLocalHost();
@@ -148,13 +152,13 @@ public abstract class Client implements Runnable {
    * A {@link Gson} instance to serialize and deserialize commands.
    * 
    */
-  protected Gson gson;
+  protected transient Gson gson;
 
   /**
    * The server host IP address.
    * 
    */
-  protected InetAddress serverAddress;
+  protected transient InetAddress serverAddress;
 
   /**
    * The three possible states in which the client can be.
@@ -215,7 +219,7 @@ public abstract class Client implements Runnable {
   /*
    * Application timer.
    */
-  protected Timer alarm;
+  protected transient Timer alarm;
 
   /**
    * Detected if the use has requested a clean disconnection.
@@ -231,9 +235,15 @@ public abstract class Client implements Runnable {
    * Show the received message to the client.
    * 
    * @param msg The message. Its dynamic type is inferred by {@link Gson}.
+   * @throws RemoteException.
    *
    */
-  protected void showServerMessage(AbstractMessage msg) {
+  public void showServerMessage(AbstractMessage msg) throws RemoteException {
+    if (gson == null) {
+      gson = new GsonBuilder()
+          .registerTypeAdapter(AbstractMessage.class, new MessageDeserializer())
+          .create();
+    }
     switch (msg.getMessageType()) {
       case CHAT_MESSAGE:
         userInterface.displayChatMessage((ChatMessage) msg);
@@ -266,10 +276,10 @@ public abstract class Client implements Runnable {
   }
 
   /**
-   * Abstract method that creates and run the message handler.
+   * Abstract method that run the client into the game.
    * 
    */
-  public abstract void runMessageHandler();
+  public abstract void run();
 
   /**
    * Available games param setter.
@@ -623,14 +633,6 @@ public abstract class Client implements Runnable {
               if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
                 UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
                 addPlayer(apc, selectedPlayerName, selectedGameId);
-                try {
-                  lookupInit();
-                } catch (NotBoundException e) {
-                  userInterface.displayError(new ErrorMessage(
-                      "Failed to connect to the server, aborting the request",
-                      ErrorSeverity.CRITICAL));
-                }
-                runMessageHandler();
                 /*
                  * Since the gameId ref is set when the message handler receives a GAME_SNAPSHOT
                  * message
@@ -663,14 +665,6 @@ public abstract class Client implements Runnable {
               if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
                 maxPlayers = Integer.parseInt(numMaxPlayers);
                 startGame(apc, selectedPlayerName, maxPlayers);
-                try {
-                  lookupInit();
-                } catch (NotBoundException e) {
-                  userInterface.displayError(
-                      new ErrorMessage("Failed to connect to the server, aborting the request",
-                          ErrorSeverity.CRITICAL));
-                }
-                runMessageHandler();
                 while (getGameIdRef() == null) {
                 }
                 apc.setGameId(getGameIdRef());

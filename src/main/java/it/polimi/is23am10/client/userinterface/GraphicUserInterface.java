@@ -1,5 +1,6 @@
 package it.polimi.is23am10.client.userinterface;
 
+import java.io.Serializable;
 import java.util.List;
 
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
@@ -15,7 +16,7 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public final class GraphicUserInterface implements UserInterface{
+public final class GraphicUserInterface implements UserInterface, Serializable {
 
   /**
    * {@inheritDoc}

@@ -4,23 +4,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -30,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -45,9 +39,7 @@ import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridRowIndexO
 import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
-import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
 import it.polimi.is23am10.server.model.player.Player;
-import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
@@ -63,7 +55,7 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
  * Rmi client tests.
  */
 @RunWith(MockitoJUnitRunner.class)
-@SuppressWarnings({ "deprecation", "unchecked", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck",
+@SuppressWarnings({ "deprecation", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck",
     "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck" })
 public class RMIClientTest {
   @Mock
@@ -100,7 +92,7 @@ public class RMIClientTest {
   @Test
   void constructor_should_create_RMIClientTest()
       throws NullSocketConnectorException, NullBlockingQueueException, UnknownHostException, RemoteException {
-    PlayerConnectorRmi pc = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
+    PlayerConnectorRmi pc = new PlayerConnectorRmi(new LinkedBlockingQueue<>(), null);
     UserInterface ui = new CommandLineInterface(true);
 
     Client rmiClient = new RMIClient(pc, ui, null, null, null);

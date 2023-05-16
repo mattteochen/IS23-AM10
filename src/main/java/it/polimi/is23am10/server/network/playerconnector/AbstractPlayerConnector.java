@@ -7,6 +7,7 @@ import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlocking
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -119,17 +120,24 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
   }
 
   /**
-   * Add a message from the queue.
-   * This blocks undefinably until the queue is available.
+   * Notify the player an update.
+   * Different delivery strategies are applied based on the {@link AbstractMessage} dynamic type.
+   * This blocks undefinably until the queue is available (in case socket is used).
    * {@link Game} model instances should leverage this
    * queue to send responses to the client (i.e. game updates).
    *
    * @param message The message to be added.
    * @throws InterruptedException On queue message insertion failure.
+   * @throws RemoteException On remote call failure.
    *
    */
-  public void addMessageToQueue(AbstractMessage message) throws InterruptedException {
-    if (message != null) {
+  public void notify(AbstractMessage message) throws InterruptedException, RemoteException {
+    if (message == null) {
+      return;
+    }
+    if (this.getClass() == PlayerConnectorRmi.class) {
+      ((PlayerConnectorRmi) this).getClient().showServerMessage(message);
+    } else {
       //sync is performed by the collection
       msgQueue.put(message);
     }

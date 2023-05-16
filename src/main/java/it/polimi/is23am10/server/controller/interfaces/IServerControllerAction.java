@@ -8,7 +8,6 @@ import it.polimi.is23am10.server.command.SendChatMessageCommand;
 import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
-import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
 import it.polimi.is23am10.server.controller.ServerControllerState;
 import it.polimi.is23am10.server.controller.ServerDebugPrefixString;
 import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
@@ -43,14 +42,11 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreExceptio
 import it.polimi.is23am10.server.network.gamehandler.GameHandler;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.GameSnapshotUpdateException;
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
-import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
-import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
-import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.ErrorTypeString;
@@ -58,14 +54,12 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
-import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
 /**
@@ -83,6 +77,7 @@ public interface IServerControllerAction extends Remote {
    *
    * @param connector The connector to a player.
    * @param command   The command to be executed.
+   * @param client    The client reference, for RMI.
    * @throws RemoteException On RMI failure.
    *
    */
@@ -127,15 +122,6 @@ public interface IServerControllerAction extends Remote {
       playerConnector.setLastSnoozeMs(System.currentTimeMillis());
       ServerControllerState.addPlayerConnector(playerConnector);
 
-      // if RMI, rebind the connector proxy
-      if (playerConnector.getClass() == PlayerConnectorRmi.class) {
-        AbstractPlayerConnector proxy = new PlayerConnectorRmi(new LinkedBlockingQueue<AbstractMessage>());
-        proxy.setPlayer(new Player(playerRef));
-        proxy.setGameId(gameHandler.getGame().getGameId());
-        ServerControllerState.addRmiProxyConnector(proxy.getPlayer().getPlayerID(), proxy);
-        ServerControllerRmiBindings.rebindPlayerConnector(proxy);
-      }
-
       // add the new player connector to the game handler.
       gameHandler.addPlayerConnector(playerConnector);
 
@@ -152,7 +138,7 @@ public interface IServerControllerAction extends Remote {
         | NullPlayerScoreBlocksException | DuplicatePlayerNameException | AlreadyInitiatedPatternException
         | NullPlayerNamesException | InvalidNumOfPlayersException | NullNumOfPlayersException
         | NullAssignedPatternException | FullGameException | NotValidScoreBlockValueException
-        | PlayerNotFoundException | NullBlockingQueueException e) {
+        | PlayerNotFoundException e) {
       logger.fatal("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_INITIALIZING_NEW_GAME, e);
@@ -176,22 +162,14 @@ public interface IServerControllerAction extends Remote {
       logger.fatal("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_UPDATING_GAME, e);
-      // Not adding the error here since it will not be possible to be sent
-      // to player if it already failed delivering a game.
-    } catch (RemoteException e) {
-      logger.fatal("{} {} {}",
-          ServerDebugPrefixString.START_COMMAND_PREFIX,
-          ErrorTypeString.ERROR_RMI_EXPOSURE, e);
-      // Not adding the error here since it will not be possible to be sent
-      // to player if there is no valid player connector.
     } finally {
       if (errorMsg != null) {
         try {
-          playerConnector.addMessageToQueue(errorMsg);
-        } catch (InterruptedException e) {
+          playerConnector.notify(errorMsg);
+        } catch (InterruptedException | RemoteException e) {
           logger.fatal("{} {} {}",
               ServerDebugPrefixString.START_COMMAND_PREFIX,
-              ErrorTypeString.ERROR_INTERRUPTED, e);
+              ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
         }
       }
     }
@@ -234,10 +212,10 @@ public interface IServerControllerAction extends Remote {
           gameHandler.getPlayerConnectors()
               .forEach(pc -> {
                 try {
-                  pc.addMessageToQueue(
+                  pc.notify(
                       new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_REJOIN, playerName), ErrorSeverity.WARNING));
-                } catch (InterruptedException e) {
-                  logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
+                } catch (InterruptedException | RemoteException e) {
+                  logger.error("{} {}", ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
                 }
               });
 
@@ -264,30 +242,20 @@ public interface IServerControllerAction extends Remote {
 
         // add the new player connector instance on the player pool.
         ServerControllerState.addPlayerConnector(playerConnector);
-
-        // if RMI, rebind the connector proxy
-        if (playerConnector.getClass() == PlayerConnectorRmi.class) {
-          AbstractPlayerConnector proxy = new PlayerConnectorRmi(new LinkedBlockingQueue<AbstractMessage>());
-          proxy.setPlayer(new Player(playerRef));
-          proxy.setGameId(gameHandler.getGame().getGameId());
-          ServerControllerState.addRmiProxyConnector(proxy.getPlayer().getPlayerID(), proxy);
-          ServerControllerRmiBindings.rebindPlayerConnector(proxy);
-        }
       }
-
 
       logger.info("{} {}",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           String.format(ErrorTypeString.WARNING_PLAYER_JOIN_SERVER, playerName, gameId));
 
-      playerConnector.addMessageToQueue(new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_JOIN, playerName), ErrorSeverity.WARNING));
+      playerConnector.notify(new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_JOIN, playerName), ErrorSeverity.WARNING));
 
       // send the game model update to all the connected players
       gameHandler.pushGameState();
     } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
         | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
         | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
-        | NullAssignedPatternException | PlayerNotFoundException | DuplicatePlayerNameException | NullGameHandlerInstance | NullBlockingQueueException e) {
+        | NullAssignedPatternException | PlayerNotFoundException | DuplicatePlayerNameException | NullGameHandlerInstance e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_PLAYERS, e);
@@ -305,21 +273,11 @@ public interface IServerControllerAction extends Remote {
           ErrorTypeString.ERROR_ADDING_CONNECTOR, e);
       // Not adding the error here since it will not be possible to be sent
       // to player if there is no valid player connector.
-    } catch (InterruptedException e) {
-      logger.error("{} {} {}",
-          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
-          ErrorTypeString.ERROR_INTERRUPTED, e);
-    } catch (GameSnapshotUpdateException e) {
+    } catch (GameSnapshotUpdateException | RemoteException | InterruptedException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_UPDATING_GAME, e);
       errorMsg = new ErrorMessage(ErrorTypeString.ERROR_UPDATING_GAME, ErrorSeverity.ERROR);
-    } catch (RemoteException e) {
-      logger.error("{} {} {}",
-          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
-          ErrorTypeString.ERROR_RMI_EXPOSURE, e);
-      // Not adding the error here since it will not be possible to be sent
-      // to player if there is no valid player connector.
     } catch (NullSocketConnectorException e) {
       logger.error("{} {} {}",
               ServerDebugPrefixString.START_COMMAND_PREFIX,
@@ -328,11 +286,11 @@ public interface IServerControllerAction extends Remote {
     } finally {
       if (errorMsg != null) {
         try {
-          playerConnector.addMessageToQueue(errorMsg);
-        } catch (InterruptedException e) {
+          playerConnector.notify(errorMsg);
+        } catch (InterruptedException | RemoteException e) {
           logger.error("{} {} {}",
               ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
-              ErrorTypeString.ERROR_INTERRUPTED, e);
+              ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
         }
       }
     }
@@ -353,11 +311,11 @@ public interface IServerControllerAction extends Remote {
         .collect(Collectors.toList());
 
     try {
-      playerConnector.addMessageToQueue(new AvailableGamesMessage(availableGames, playerConnector.getPlayer()));
-    } catch (InterruptedException e) {
+      playerConnector.notify(new AvailableGamesMessage(availableGames, playerConnector.getPlayer()));
+    } catch (InterruptedException | RemoteException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
-          ErrorTypeString.ERROR_INTERRUPTED, e);
+          ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
     }
     return null;
   };
@@ -397,11 +355,11 @@ public interface IServerControllerAction extends Remote {
             .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))
             .forEach(pc -> {
               try {
-                pc.addMessageToQueue(scmCommand.getChatMessage());
-              } catch (InterruptedException e) {
+                pc.notify(scmCommand.getChatMessage());
+              } catch (InterruptedException | RemoteException e) {
                 logger.error("{} {} {}",
                     ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
-                    ErrorTypeString.ERROR_INTERRUPTED, e);
+                    ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
               }
             });
       } else {
@@ -412,12 +370,12 @@ public interface IServerControllerAction extends Remote {
             .filter(pc -> pc.getPlayer().getPlayerName().equals(receiverName))
             .findFirst()
             .get()
-            .addMessageToQueue(scmCommand.getChatMessage());
+            .notify(scmCommand.getChatMessage());
       }
-    } catch (InterruptedException e) {
+    } catch (InterruptedException | RemoteException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
-          ErrorTypeString.ERROR_INTERRUPTED, e);
+          ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
     } catch (NullGameHandlerInstance e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
@@ -503,11 +461,11 @@ public interface IServerControllerAction extends Remote {
     } finally {
       if (errorMsg != null) {
         try {
-          pc.addMessageToQueue(errorMsg);
-        } catch (InterruptedException e) {
+          pc.notify(errorMsg);
+        } catch (InterruptedException | RemoteException e) {
           logger.error("{} {} {}",
               ServerDebugPrefixString.MOVE_TILES_COMMAND_PREFIX,
-              ErrorTypeString.ERROR_INTERRUPTED, e);
+              ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
         }
       }
     }
@@ -536,9 +494,6 @@ public interface IServerControllerAction extends Remote {
         return null;
       }
       pc.get().setLastSnoozeMs(System.currentTimeMillis());
-      logger.info("{} Operated timer snooze for {}",
-          ServerDebugPrefixString.SNOOZE_TIMER_COMMAND_PREFIX,
-          cmd.getPlayerName());
     } catch (NullPointerException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.SNOOZE_TIMER_COMMAND_PREFIX,
