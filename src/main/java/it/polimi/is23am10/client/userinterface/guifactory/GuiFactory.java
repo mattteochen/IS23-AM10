@@ -45,6 +45,10 @@ interface ButtonCallBack {
   void call(TextField... tfs);
 }
 
+interface BookShelfSelectionCallBack {
+  void call(String action);
+}
+
 interface TextFieldCallBack {
   void call(String s);
 }
@@ -128,6 +132,11 @@ public final class GuiFactory {
   private static ButtonCallBack createNewGameCallBack =
       (tfs) -> {
         changeScene(() -> mainStage.setScene(stages.get(SCENE.CREATE_GAME)));
+      };
+
+  private static BookShelfSelectionCallBack moveTileCallBack =
+      (move) -> {
+        GraphicUserInterface.addMsgQueue(CommandsBuilder.moveTileCmd(move));
       };
 
   /**
@@ -704,7 +713,6 @@ public final class GuiFactory {
       gp.setHgap(5);
       gp.setVgap(5);
       gp.setPadding(new Insets(20));
-      // gp.setBackground(new Background(getBgImg(LIVING_ROOM_IMG_PATH, 0)));
 
       Tile[][] b = vv.getGameBoard().getBoardGrid();
       for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
@@ -712,6 +720,19 @@ public final class GuiFactory {
           ImageView imgView = new ImageView(new Image(imagesMap.get(b[i][j].getType())));
           imgView.setFitWidth(55);
           imgView.setFitHeight(55);
+          final int row = i;
+          final int col = j;
+          ColorAdjust caj = new ColorAdjust();
+          caj.setBrightness(0);
+          imgView.setEffect(caj);
+          imgView.setOnMouseClicked(event -> {
+            if (caj.getBrightness() == 0) {
+              UserMoveBuilder.appendTile(row, col);
+            } else {
+              UserMoveBuilder.removeTile(row, col);
+            }
+           caj.setBrightness(caj.getBrightness() == 0 ? caj.getBrightness() - 0.3 : 0);
+          });
           gp.add(imgView, j + 1, i + 1);
         }
       }
@@ -736,6 +757,14 @@ public final class GuiFactory {
           ImageView imgView = new ImageView(new Image(imagesMap.get(b[i][j].getType())));
           imgView.setFitWidth(40);
           imgView.setFitHeight(40);
+
+          //buil the command
+          final int col = j;
+          imgView.setOnMouseClicked(event -> {
+            UserMoveBuilder.appendDestCol(col);
+            moveTileCallBack.call(UserMoveBuilder.getMove());
+            UserMoveBuilder.clear();
+          });
           gp.add(imgView, j, i);
         }
       }
@@ -938,6 +967,72 @@ public final class GuiFactory {
       root.setSpacing(20);
       root.getChildren().addAll(getLeaderboard(vv), gameStage);
       return root;
+    }
+  }
+
+  /**
+   * The UserMoveBuilder class is a utility class that helps in constructing a user's move.
+   * It provides methods to append tile coordinates and destination column to the move,
+   * clear the move, and retrieve the constructed move as a string.
+   */
+  class UserMoveBuilder {
+    private static String move = "";
+
+    /**
+     * Appends the tile coordinates to the move.
+     *
+     * @param row The row index of the tile.
+     * @param col The column index of the tile.
+     */
+    public static void appendTile(int row, int col) {
+      //commands work on col first
+      move += String.valueOf(col) + String.valueOf(row) + " ";
+    }
+
+    /**
+     * Removes a tile from the move based on its coordinates.
+     *
+     * @param row The row index of the tile to remove.
+     * @param col The column index of the tile to remove.
+     */
+    public static void removeTile(int row, int col) {
+      if (move.length() < 3) {
+        return;
+      }
+      String m = String.valueOf(col) + String.valueOf(row) + " ";
+      System.out.println("removing <" + m + ">");
+      int index = move.indexOf(m);
+      if (index < 0) {
+        return;
+        //TODO: show internal error
+      }
+      move = move.replaceAll(move.substring(index, index + m.length()), "");
+    }
+
+    /**
+     * Appends the destination column to the move.
+     *
+     * @param col The destination column index.
+     */
+    public static void appendDestCol(int col) {
+      move += Character.valueOf((char)('A' + col));
+    }
+
+    /**
+     * Clears the move by resetting it to an empty string.
+     */
+    public static void clear() {
+      move = "";
+    }
+
+    /**
+     * Returns the constructed move as a string.
+     *
+     * @return The move string.
+     */
+    public static String getMove() {
+      System.out.println("move " + move);
+      return move;
     }
   }
 }

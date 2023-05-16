@@ -13,11 +13,17 @@ public final class CommandsBuilder {
 
   public final static String JOIN_GAME = "j";
 
+  public final static String MOVE_TILE = "move";
+
   public final static String buildCreateGameCmd(String pn) {
     return CREATE_GAME + " " + pn;
   }
 
   public final static String buildJoinGameCmd(String id) {
     return JOIN_GAME + " " + id;
+  }
+
+  public final static String moveTileCmd(String move) {
+    return MOVE_TILE + " " + move;
   }
 }
