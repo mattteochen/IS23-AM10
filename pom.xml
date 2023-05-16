@@ -184,6 +184,15 @@
             <excludes>
               <exclude>**/examples/*</exclude>
               <exclude>**/exceptions/*</exclude>
+              <exclude>**/Client.class</exclude>
+              <exclude>**/RMIClient.class</exclude>
+              <exclude>**/SocketClient.class</exclude>
+              <exclude>**/GuiFactory*.class</exclude>
+              <exclude>**/CallBack.class</exclude>
+              <exclude>**/interfaces/*</exclude>
+              <exclude>**/GraphicUserInterface.class</exclude>
+              <exclude>**/CommandLineInterface.class</exclude>
+              <exclude>**/App.class</exclude>
             </excludes>
           </configuration>
         </plugin>

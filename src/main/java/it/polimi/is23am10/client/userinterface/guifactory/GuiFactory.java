@@ -1,8 +1,9 @@
 package it.polimi.is23am10.client.userinterface.guifactory;
 
 import it.polimi.is23am10.client.Client;
-import it.polimi.is23am10.client.userinterface.GraphicUserInterface;
-import it.polimi.is23am10.client.userinterface.helpers.CommandsBuilder;
+import it.polimi.is23am10.client.userinterface.guifactory.interfaces.ButtonCallBack;
+import it.polimi.is23am10.client.userinterface.guifactory.interfaces.TextFieldCallBack;
+import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.server.model.items.board.Board;
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.server.model.items.tile.Tile;
@@ -12,6 +13,7 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,18 +43,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-interface ButtonCallBack {
-  void call(TextField... tfs);
-}
-
-interface BookShelfSelectionCallBack {
-  void call(String action);
-}
-
-interface TextFieldCallBack {
-  void call(String s);
-}
-
 /**
  * GUI scene factory. Creates various GUI scenes for the application. Each scene is created as a
  * static method in this class. The class also contains helper methods for creating GUI components.
@@ -70,21 +60,15 @@ interface TextFieldCallBack {
  *
  * <p>Note: This is a simplified example and assumes the necessary JavaFX setup has been done.
  *
- * @see Scene
- * @see Stage
- * @see GuiState
- * @see Button
- * @see TextField
- * @see Label
- * @see BackgroundImage
- * @see Background
- * @see ColorAdjust
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public final class GuiFactory {
+
+  private GuiFactory() {}
+
   /**
    * An enum representing different scenes that can be created by the factory. Add more values to
    * represent additional scenes in the application.
@@ -95,49 +79,37 @@ public final class GuiFactory {
     CREATE_GAME,
     JOIN_GAME,
     WAIT_GAME,
-    GAME_SNAPSHOT
+    GAME_SNAPSHOT,
+    END_GAME
   }
 
+  /** The default {@link Scene} width. */
   private static final int SCENE_WIDTH = 1280;
 
+  /** The default {@link Scene} height. */
   private static final int SCENE_HEIGHT = 720;
 
+  /** The {@link Stage} reference. */
   public static Stage mainStage;
 
+  /** A mapping from a {@link SCENE} to a {@link Scene}. */
   public static Map<SCENE, Scene> stages = Collections.synchronizedMap(new HashMap<>());
 
-  private static ButtonCallBack confirmNameCallBack =
-      (tfs) -> {
-        System.out.println("TextField " + tfs[0].getText());
-        GraphicUserInterface.addMsgQueue(tfs[0].getText());
-      };
-
-  private static ButtonCallBack confirmPlayerNumCallBack =
-      (tfs) -> {
-        System.out.println("TextField " + tfs[0].getText());
-        GraphicUserInterface.addMsgQueue(CommandsBuilder.buildCreateGameCmd(tfs[0].getText()));
-      };
-
-  private static ButtonCallBack confirmJoinGameCallBack =
-      (tfs) -> {
-        System.out.println("TextField " + tfs[0].getText());
-        GraphicUserInterface.addMsgQueue(CommandsBuilder.buildJoinGameCmd(tfs[0].getText()));
-      };
-
-  private static ButtonCallBack joinGameCallBack =
-      (tfs) -> {
-        changeScene(() -> mainStage.setScene(stages.get(SCENE.JOIN_GAME)));
-      };
-
-  private static ButtonCallBack createNewGameCallBack =
-      (tfs) -> {
-        changeScene(() -> mainStage.setScene(stages.get(SCENE.CREATE_GAME)));
-      };
-
-  private static BookShelfSelectionCallBack moveTileCallBack =
-      (move) -> {
-        GraphicUserInterface.addMsgQueue(CommandsBuilder.moveTileCmd(move));
-      };
+  /**
+   * Check if the current client is the active player.
+   *
+   * @param vv The {@link VirtualView}.
+   * @return The requested flag.
+   */
+  protected static boolean isThisPlayerTurn(VirtualView vv) {
+    String thisPlayer = "";
+    try {
+      thisPlayer = Client.getPlayerConnector().getPlayer().getPlayerName();
+    } catch (RemoteException e) {
+      return false;
+    }
+    return vv.getActivePlayer().getPlayerName().equals(thisPlayer);
+  }
 
   /**
    * Creates a {@link BackgroundImage} with the specified image path and brightness.
@@ -153,7 +125,6 @@ public final class GuiFactory {
       img = new Image(path);
     } catch (Exception e) {
       // TODO: handle
-      System.out.println(e);
     }
 
     ImageView imgView = new ImageView(img);
@@ -240,7 +211,7 @@ public final class GuiFactory {
    * Creates the splash screen scene. The splash screen scene consists of a stack pane with a
    * background and an input name widget. The background image is retrieved from the
    * SplashScreenFactory class. The input name widget contains a label, a text field, and a confirm
-   * button. The confirm button triggers the confirmNameCallBack.
+   * button. The confirm button triggers the CallBack.confirmNameCallBack.
    *
    * @return The created splash screen scene.
    */
@@ -327,6 +298,20 @@ public final class GuiFactory {
   }
 
   /**
+   * Creates and returns a new JavaFX Scene for the game snapshot.
+   *
+   * @return The JavaFX Scene for the game snapshot.
+   */
+  public static Scene getEndGameScene(VirtualView vv) {
+    StackPane root = new StackPane();
+
+    root.setBackground(new Background(EndGameScene.getBg()));
+    root.getChildren().add(EndGameScene.getEndWidget(vv));
+
+    return new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
+  }
+
+  /**
    * Factory class for creating the splash screen UI components. Contains methods to create the
    * background image, input name label, input name text field, and the entire input name widget.
    *
@@ -382,8 +367,71 @@ public final class GuiFactory {
           .addAll(
               getInputNameLabel(),
               getInputNameTextField(),
-              getButton("Confirm", confirmNameCallBack, textField));
+              getButton("Confirm", CallBack.confirmNameCallBack, textField));
       return box;
+    }
+  }
+
+  /** GUI end game screen factory. Creates GUI components for the enter game end screen. */
+  class EndGameScene {
+    private static final String SELECTION_SCREEN_IMG_PATH =
+        "file:src/main/resources/assets/in_game.png";
+
+    /**
+     * Retrieves the background image for the end game selection screen.
+     *
+     * @return The background image for the end game selection screen.
+     */
+    protected static BackgroundImage getBg() {
+      return getBgImg(SELECTION_SCREEN_IMG_PATH, -0.5);
+    }
+
+    /**
+     * Retrieves the label for the enter game selection screen.
+     *
+     * @return The label for the enter game selection screen.
+     */
+    protected static Label getEndGameLabel() {
+      return getLabel(CLIStrings.gameOverString, FontWeight.BOLD, 40);
+    }
+
+    /**
+     * Retrieves the scores leaderboard.
+     *
+     * @return The scores box UI component.
+     */
+    protected static VBox getScores(VirtualView vv) {
+      VBox root = new VBox();
+      root.setAlignment(Pos.CENTER);
+      root.setSpacing(10);
+      vv.getPlayers().stream()
+          .sorted(
+              Comparator.comparing(p -> p.getScore().getVisibleScore(), Comparator.reverseOrder()))
+          .forEach(
+              p ->
+                  root.getChildren()
+                      .add(
+                          getLabel(
+                              String.format(
+                                  CLIStrings.playerScoreString,
+                                  p.getPlayerName(),
+                                  p.getScore().getTotalScore()),
+                              FontWeight.BOLD,
+                              30)));
+      return root;
+    }
+
+    /**
+     * Retrieves the widget (container) for the end game screen.
+     *
+     * @return The widget (container) for the end game screen.
+     */
+    protected static VBox getEndWidget(VirtualView vv) {
+      VBox root = new VBox();
+      root.setAlignment(Pos.CENTER);
+      root.setSpacing(20);
+      root.getChildren().addAll(getEndGameLabel(), getScores(vv));
+      return root;
     }
   }
 
@@ -424,8 +472,8 @@ public final class GuiFactory {
       hbox.setSpacing(10);
       hbox.getChildren()
           .addAll(
-              getButton("Create new game", createNewGameCallBack),
-              getButton("Join game", joinGameCallBack));
+              getButton("Create new game", CallBack.createNewGameCallBack),
+              getButton("Join game", CallBack.joinGameCallBack));
       VBox vbox = new VBox();
       vbox.setAlignment(Pos.CENTER);
       vbox.setSpacing(10);
@@ -476,7 +524,7 @@ public final class GuiFactory {
     protected static Button getPlayerNumButton(String n) {
       TextField tf = textFields.get(n);
       tf.setText(n);
-      return getButton(n, confirmPlayerNumCallBack, tf);
+      return getButton(n, CallBack.confirmPlayerNumCallBack, tf);
     }
 
     /**
@@ -535,7 +583,7 @@ public final class GuiFactory {
       String id = vv.getGameId().toString();
       TextField tf = new TextField(id);
       tf.setText(index);
-      return getButton(id, confirmJoinGameCallBack, tf);
+      return getButton(id, CallBack.confirmJoinGameCallBack, tf);
     }
 
     /**
@@ -725,14 +773,18 @@ public final class GuiFactory {
           ColorAdjust caj = new ColorAdjust();
           caj.setBrightness(0);
           imgView.setEffect(caj);
-          imgView.setOnMouseClicked(event -> {
-            if (caj.getBrightness() == 0) {
-              UserMoveBuilder.appendTile(row, col);
-            } else {
-              UserMoveBuilder.removeTile(row, col);
-            }
-           caj.setBrightness(caj.getBrightness() == 0 ? caj.getBrightness() - 0.3 : 0);
-          });
+          imgView.setOnMouseClicked(
+              event -> {
+                if (!isThisPlayerTurn(vv) || b[row][col].isEmpty()) {
+                  return;
+                }
+                if (caj.getBrightness() == 0) {
+                  UserMoveBuilder.appendTile(row, col);
+                } else {
+                  UserMoveBuilder.removeTile(row, col);
+                }
+                caj.setBrightness(caj.getBrightness() == 0 ? caj.getBrightness() - 0.3 : 0);
+              });
           gp.add(imgView, j + 1, i + 1);
         }
       }
@@ -743,9 +795,10 @@ public final class GuiFactory {
      * Retrieves the bookshelf board {@link Bookshelf}.
      *
      * @param bs The {@link Bookshelf}.
+     * @param myTurn A flag stating if is the current client game turn.
      * @return The bookshelf {@link GridPane}.
      */
-    private static GridPane getBookShelf(Bookshelf bs) {
+    private static GridPane getBookShelf(Bookshelf bs, boolean myTurn) {
       GridPane gp = new GridPane();
       gp.setHgap(5);
       gp.setVgap(5);
@@ -758,13 +811,17 @@ public final class GuiFactory {
           imgView.setFitWidth(40);
           imgView.setFitHeight(40);
 
-          //buil the command
+          // buil the command
           final int col = j;
-          imgView.setOnMouseClicked(event -> {
-            UserMoveBuilder.appendDestCol(col);
-            moveTileCallBack.call(UserMoveBuilder.getMove());
-            UserMoveBuilder.clear();
-          });
+          imgView.setOnMouseClicked(
+              event -> {
+                if (!myTurn) {
+                  return;
+                }
+                UserMoveBuilder.appendDestCol(col);
+                CallBack.moveTileCallBack.call(UserMoveBuilder.getMove());
+                UserMoveBuilder.clear();
+              });
           gp.add(imgView, j, i);
         }
       }
@@ -778,6 +835,8 @@ public final class GuiFactory {
      * @return A list of bookshelf {@link VBox}.
      */
     private static GridPane getPlayerBookShelf(VirtualView vv) {
+      boolean isCurrTurn = isThisPlayerTurn(vv);
+
       for (VirtualPlayer vp : vv.getPlayers()) {
         try {
           if (!vp.getPlayerName().equals(Client.getPlayerConnector().getPlayer().getPlayerName())) {
@@ -787,7 +846,7 @@ public final class GuiFactory {
           // TODO: add warning to ui
           continue;
         }
-        return getBookShelf(vp.getBookshelf());
+        return getBookShelf(vp.getBookshelf(), isCurrTurn);
       }
       return null;
     }
@@ -971,9 +1030,9 @@ public final class GuiFactory {
   }
 
   /**
-   * The UserMoveBuilder class is a utility class that helps in constructing a user's move.
-   * It provides methods to append tile coordinates and destination column to the move,
-   * clear the move, and retrieve the constructed move as a string.
+   * The UserMoveBuilder class is a utility class that helps in constructing a user's move. It
+   * provides methods to append tile coordinates and destination column to the move, clear the move,
+   * and retrieve the constructed move as a string.
    */
   class UserMoveBuilder {
     private static String move = "";
@@ -985,7 +1044,7 @@ public final class GuiFactory {
      * @param col The column index of the tile.
      */
     public static void appendTile(int row, int col) {
-      //commands work on col first
+      // commands work on col first
       move += String.valueOf(col) + String.valueOf(row) + " ";
     }
 
@@ -1000,11 +1059,10 @@ public final class GuiFactory {
         return;
       }
       String m = String.valueOf(col) + String.valueOf(row) + " ";
-      System.out.println("removing <" + m + ">");
       int index = move.indexOf(m);
       if (index < 0) {
         return;
-        //TODO: show internal error
+        // TODO: show internal error
       }
       move = move.replaceAll(move.substring(index, index + m.length()), "");
     }
@@ -1015,12 +1073,10 @@ public final class GuiFactory {
      * @param col The destination column index.
      */
     public static void appendDestCol(int col) {
-      move += Character.valueOf((char)('A' + col));
+      move += Character.valueOf((char) ('A' + col));
     }
 
-    /**
-     * Clears the move by resetting it to an empty string.
-     */
+    /** Clears the move by resetting it to an empty string. */
     public static void clear() {
       move = "";
     }
@@ -1031,7 +1087,6 @@ public final class GuiFactory {
      * @return The move string.
      */
     public static String getMove() {
-      System.out.println("move " + move);
       return move;
     }
   }
