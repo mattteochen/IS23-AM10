@@ -204,7 +204,7 @@ class ServerControllerSocketTest {
     VirtualView virtualView = new VirtualView(game);
     final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     GameMessage message = new GameMessage(virtualView);
-    playerConnector.addMessageToQueue(message);
+    playerConnector.notify(message);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);
     when(playerConnector.getMessageFromQueue()).thenReturn(message);

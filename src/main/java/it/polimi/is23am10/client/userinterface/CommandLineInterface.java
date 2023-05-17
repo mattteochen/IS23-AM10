@@ -3,6 +3,7 @@ package it.polimi.is23am10.client.userinterface;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -24,7 +25,7 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public final class CommandLineInterface implements UserInterface {
+public final class CommandLineInterface implements UserInterface, Serializable {
 
   /**
    * Output Wrapper, entrypoint for all UI output functions.
@@ -43,7 +44,7 @@ public final class CommandLineInterface implements UserInterface {
    * Buffered reader used by async read thread to get user input.
    * 
    */
-  private final BufferedReader br;
+  private final transient BufferedReader br;
 
 
   /**

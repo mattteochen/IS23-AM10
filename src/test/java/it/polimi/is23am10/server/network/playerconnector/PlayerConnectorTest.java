@@ -25,13 +25,12 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.GameMessage;
-import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
 import java.net.Socket;
-import java.util.Optional;
+import java.rmi.RemoteException;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.junit.jupiter.api.Test;
 
@@ -57,12 +56,12 @@ class PlayerConnectorSocketTest {
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException,
-      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
+      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException, RemoteException {
     PlayerConnectorSocket connector = new PlayerConnectorSocket(new Socket(), new LinkedBlockingQueue<>());
     Game game = GameFactory.getNewGame("Test", 2);
     VirtualView virtualView = new VirtualView(game);
     GameMessage message = new GameMessage(virtualView);
-    connector.addMessageToQueue(message);
+    connector.notify(message);
 
     assertEquals(1, connector.getMsgQueueSize());
   }
@@ -73,12 +72,12 @@ class PlayerConnectorSocketTest {
       NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
       NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
       NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException,
-      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
+      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException, RemoteException {
     PlayerConnectorSocket connector = new PlayerConnectorSocket(new Socket(), new LinkedBlockingQueue<>());
     Game game = GameFactory.getNewGame("Test", 2);
     VirtualView virtualView = new VirtualView(game);
     GameMessage message = new GameMessage(virtualView);
-    connector.addMessageToQueue(message);
+    connector.notify(message);
 
     AbstractMessage taken = connector.getMessageFromQueue();
 

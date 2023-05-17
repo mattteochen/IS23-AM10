@@ -10,7 +10,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 
-import it.polimi.is23am10.server.Server;
 import it.polimi.is23am10.server.command.AbstractCommand;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
 import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
@@ -33,6 +32,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.rmi.RemoteException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -124,11 +124,11 @@ public final class ServerControllerSocket implements Runnable {
           .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))
           .forEach(pc -> {
             try {
-              pc.addMessageToQueue(
+              pc.notify(
                   new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_DISCONNECT,
                       playerConnector.getPlayer().getPlayerName()), ErrorSeverity.WARNING));
-            } catch (InterruptedException e) {
-              logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
+            } catch (InterruptedException | RemoteException e) {
+              logger.error("{} {}", ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
             }
           });
     } catch (NullGameHandlerInstance e) {

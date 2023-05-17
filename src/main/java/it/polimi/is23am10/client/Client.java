@@ -1,5 +1,21 @@
 package it.polimi.is23am10.client;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.lang.reflect.Type;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -36,19 +52,12 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
+
+/**
+ * Custom lock object.
+ */
+class LockObject implements Serializable {
+}
 
 /**
  * An abstract class representing the app running in client mode. Holds the three elements needed
@@ -65,16 +74,24 @@ import java.util.UUID;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public abstract class Client implements Runnable {
+public abstract class Client extends UnicastRemoteObject implements IClient {
+  /**
+   * Custom lock object.
+   * 
+   */
+  private LockObject gameRefLock = new LockObject();
 
-  /** Custom lock object. */
-  private Object gameRefLock = new Object();
+  /**
+   * Custom lock object.
+   * 
+   */
+  private LockObject hasDuplicateLock = new LockObject();
 
-  /** Custom lock object. */
-  private Object hasDuplicateLock = new Object();
-
-  /** Custom lock object. */
-  private Object virtualViewLock = new Object();
+  /**
+   * Custom lock object.
+   * 
+   */
+  private LockObject virtualViewLock = new LockObject();
 
   /** Custom lock object. */
   private static Object availableServersLock = new Object();
@@ -89,7 +106,7 @@ public abstract class Client implements Runnable {
    * @param ui User interface.
    * @throws UnknownHostException On localhost retrieval failure.
    */
-  protected Client(IPlayerConnector pc, UserInterface ui) throws UnknownHostException {
+  protected Client(IPlayerConnector pc, UserInterface ui) throws UnknownHostException, RemoteException {
     playerConnector = pc;
     userInterface = ui;
     serverAddress = InetAddress.getLocalHost();
@@ -121,11 +138,17 @@ public abstract class Client implements Runnable {
   /** Duplicate name error flag. */
   private boolean hasDuplicateName;
 
-  /** A {@link Gson} instance to serialize and deserialize commands. */
-  protected Gson gson;
+  /**
+   * A {@link Gson} instance to serialize and deserialize commands.
+   * 
+   */
+  protected transient Gson gson;
 
-  /** The server host IP address. */
-  protected InetAddress serverAddress;
+  /**
+   * The server host IP address.
+   * 
+   */
+  protected transient InetAddress serverAddress;
 
   /** The three possible states in which the client can be. */
   public enum ClientGameStatus {
@@ -180,7 +203,7 @@ public abstract class Client implements Runnable {
   /*
    * Application timer.
    */
-  protected Timer alarm;
+  protected transient Timer alarm;
 
   /**
    * Detected if the use has requested a clean disconnection.
@@ -193,10 +216,17 @@ public abstract class Client implements Runnable {
 
   /**
    * Show the received message to the client.
-   *
+   * 
    * @param msg The message. Its dynamic type is inferred by {@link Gson}.
+   * @throws RemoteException
+   *
    */
-  protected void showServerMessage(AbstractMessage msg) {
+  public void showServerMessage(AbstractMessage msg) throws RemoteException {
+    if (gson == null) {
+      gson = new GsonBuilder()
+          .registerTypeAdapter(AbstractMessage.class, new MessageDeserializer())
+          .create();
+    }
     switch (msg.getMessageType()) {
       case CHAT_MESSAGE:
         userInterface.displayChatMessage((ChatMessage) msg);
@@ -227,8 +257,11 @@ public abstract class Client implements Runnable {
     }
   }
 
-  /** Abstract method that creates and run the message handler. */
-  public abstract void runMessageHandler();
+  /**
+   * Abstract method that run the client into the game.
+   * 
+   */
+  public abstract void run();
 
   /**
    * Available games param setter.
@@ -605,15 +638,6 @@ public abstract class Client implements Runnable {
               if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
                 UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
                 addPlayer(apc, selectedPlayerName, selectedGameId);
-                try {
-                  lookupInit();
-                } catch (NotBoundException e) {
-                  userInterface.displayError(
-                      new ErrorMessage(
-                          "Failed to connect to the server, aborting the request",
-                          ErrorSeverity.CRITICAL));
-                }
-                runMessageHandler();
                 /*
                  * Since the gameId ref is set when the message handler receives a GAME_SNAPSHOT
                  * message
@@ -646,16 +670,8 @@ public abstract class Client implements Runnable {
               if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
                 maxPlayers = Integer.parseInt(numMaxPlayers);
                 startGame(apc, selectedPlayerName, maxPlayers);
-                try {
-                  lookupInit();
-                } catch (NotBoundException e) {
-                  userInterface.displayError(
-                      new ErrorMessage(
-                          "Failed to connect to the server, aborting the request",
-                          ErrorSeverity.CRITICAL));
+                while (getGameIdRef() == null) {
                 }
-                runMessageHandler();
-                while (getGameIdRef() == null) {}
                 apc.setGameId(getGameIdRef());
                 System.out.println("lesgoooooooo");
               } else {

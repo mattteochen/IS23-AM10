@@ -1,5 +1,16 @@
 package it.polimi.is23am10.client;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.rmi.RemoteException;
+import java.util.Map;
+import java.util.UUID;
+
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
@@ -16,15 +27,6 @@ import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.utils.Coordinates;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * A client using Socket as communication method.
@@ -42,7 +44,7 @@ public class SocketClient extends Client {
    * @param pc player connector
    * @param ui user interface
    */
-  public SocketClient(PlayerConnectorSocket pc, UserInterface ui) throws UnknownHostException {
+  public SocketClient(PlayerConnectorSocket pc, UserInterface ui) throws UnknownHostException, RemoteException {
     super(pc, ui);
   }
 
@@ -77,6 +79,8 @@ public class SocketClient extends Client {
   public void run() {
 
     alarm.scheduleAtFixedRate(new AlarmTask(snoozer), ALARM_INITIAL_DELAY_MS, ALARM_INTERVAL_MS);
+
+    runInputMessageHandler();
 
     // PlayerConnector's msg queue is not used at this time as we don't have multi
     // source message inputs to handle,
@@ -186,9 +190,11 @@ public class SocketClient extends Client {
     epson.println(req);
   }
 
-  /** {@inheritDoc} */
-  @Override
-  public void runMessageHandler() {
+  /**
+   * Poll payloads from the socket stream and process {@link AbstractMessage} that can be recognized.
+   *
+   */
+  public void runInputMessageHandler(){
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
     Thread messageHandler =
         new Thread(

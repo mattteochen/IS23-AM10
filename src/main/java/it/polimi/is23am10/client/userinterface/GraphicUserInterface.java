@@ -4,11 +4,13 @@ import it.polimi.is23am10.client.Client;
 import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory;
 import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory.SCENE;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
+import java.io.Serializable;
+import java.util.List;
+
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,7 +26,7 @@ import javafx.stage.Stage;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public final class GraphicUserInterface extends Application implements UserInterface {
+public final class GraphicUserInterface extends Application implements UserInterface, Serializable {
 
   /**
    * Queue containing all the inputs the user sent trough readline. Content to be consumed by client
