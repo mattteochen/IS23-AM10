@@ -50,7 +50,7 @@ public class RMIClient extends Client {
    * The {@link ServerControllerAction} server object.
    * 
    */
-  protected IServerControllerAction serverControllerActionServer;
+  protected transient IServerControllerAction serverControllerActionServer;
 
   /**
    * The {@link IPlayerConnector} server object.
@@ -58,12 +58,11 @@ public class RMIClient extends Client {
    */
   protected IPlayerConnector playerConnectorServer;
 
-
   /**
    * Rmi alarm snoozer.
    * 
    */
-  protected AlarmConsumer snoozer = () -> {
+  protected transient AlarmConsumer snoozer = () -> {
     if (!hasJoined()) {
       return;
     }
@@ -86,7 +85,7 @@ public class RMIClient extends Client {
    * @param reg  Rmi registry instance.
    */
   public RMIClient(PlayerConnectorRmi pc, UserInterface ui, IPlayerConnector pcs, IServerControllerAction scas,
-      Registry reg) throws UnknownHostException {
+      Registry reg) throws UnknownHostException, RemoteException {
     super(pc, ui);
     playerConnectorServer = pcs;
     serverControllerActionServer = scas;
@@ -103,19 +102,6 @@ public class RMIClient extends Client {
     return (playerConnectorRmi.getPlayer() != null
       && playerConnectorRmi.getPlayer().getPlayerName() != null
       && gameIdRef != null);
-  }
-
-  /**
-   * Perform all the needed lookups.
-   * A gentle reminder that the {@link IPlayerConnector} bind can only be found
-   * after a join or creation action.
-   *
-   */
-  @Override
-  protected void lookupInit() throws RemoteException, NotBoundException {
-    playerConnectorServer = (IPlayerConnector) rmiRegistry
-        .lookup(ServerControllerRmiBindings.getPlayerConnectorRebindId((PlayerConnectorRmi) playerConnector));
-    playerConnectorServer.setPlayer(playerConnector.getPlayer());
   }
 
   /**
@@ -205,25 +191,4 @@ public class RMIClient extends Client {
   AbstractCommand command = new SendChatMessageCommand(msg);
   serverControllerActionServer.execute(apc, command);
  }
-
-  /**
-   * Method override that creates and starts message handler thread.
-   * To be started after the {@link RMIClient#lookupInit}.
-   */
-  @Override
-  public void runMessageHandler(){
-    Thread messageHandler = new Thread(()->{
-      while(!hasRequestedDisconnection()){
-        try {
-          AbstractMessage msg = playerConnectorServer.getMessageFromQueue();
-          if (msg != null) {
-            showServerMessage(msg);
-          }
-        } catch (InterruptedException | RemoteException | NullPointerException e) {
-          userInterface.displayError(new ErrorMessage("Internal module error, please report this message:" + e.getMessage(), ErrorSeverity.CRITICAL));
-        }
-      }
-    });
-    messageHandler.start();
-  }
 }

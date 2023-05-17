@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -43,7 +44,7 @@ public class SocketClient extends Client {
    * @param pc player connector
    * @param ui user interface
    */
-  public SocketClient(PlayerConnectorSocket pc, UserInterface ui) throws UnknownHostException {
+  public SocketClient(PlayerConnectorSocket pc, UserInterface ui) throws UnknownHostException, RemoteException {
     super(pc, ui);
   }
 
@@ -86,6 +87,8 @@ public class SocketClient extends Client {
 
     alarm.scheduleAtFixedRate(new AlarmTask(snoozer),
       ALARM_INITIAL_DELAY_MS, ALARM_INTERVAL_MS);
+
+    runInputMessageHandler();
 
     // PlayerConnector's msg queue is not used at this time as we don't have multi
     // source message inputs to handle,
@@ -206,11 +209,10 @@ public class SocketClient extends Client {
   }
 
   /**
-   * {@inheritDoc}
+   * Poll payloads from the socket stream and process {@link AbstractMessage} that can be recognized.
    *
    */
-  @Override
-  public void runMessageHandler(){
+  public void runInputMessageHandler(){
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
     Thread messageHandler = new Thread(()->{
       while(playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()){
