@@ -673,7 +673,6 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
                 while (getGameIdRef() == null) {
                 }
                 apc.setGameId(getGameIdRef());
-                System.out.println("lesgoooooooo");
               } else {
                 userInterface.displayError(
                     new ErrorMessage("Failed to create game", ErrorSeverity.CRITICAL));
