@@ -29,7 +29,8 @@ public final class CLIStrings {
   public final static String noGamesString = "No available game to join at the moment. Please create one.";
   public final static String insertPlayerNameString = "Insert your player name here:";
   public final static String listGamesString = "Here a list of the available games. Join one by typing the relative index.";
-  public final static String availableGameString = "[%d] - %d/%d joined - GameId: %s";
+  public final static String disconnectedPlayers = " (%d disconnected)";
+  public final static String availableGameString = "[%d] - %d/%d joined%s - GameId: %s";
   public final static String currentStateString = "Current state of the game:";
   public final static String gameOverString = "Game is over. Here the leaderboard:";
   public final static String playerScoreString = "%s - Score: %d";

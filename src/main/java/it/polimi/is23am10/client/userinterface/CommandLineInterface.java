@@ -94,8 +94,9 @@ public final class CommandLineInterface implements UserInterface, Serializable {
     } else {
       ow.info(CLIStrings.listGamesString, false);
      for (VirtualView ag : availableGames){
+      String disconnectedPlayers = (ag.getDisconnectedPlayersNum() > 0) ? String.format(CLIStrings.disconnectedPlayers, ag.getDisconnectedPlayersNum()) : "";
       ow.info(String.format(CLIStrings.availableGameString,
-              availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), ag.getGameId()), false);
+              availableGames.indexOf(ag), ag.getPlayers().size(), ag.getMaxPlayers(), disconnectedPlayers, ag.getGameId()), false);
      }
     }
   }
