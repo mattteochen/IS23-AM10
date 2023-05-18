@@ -275,6 +275,15 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
   }
 
   /**
+   * RequestedDisconnection setter.
+   * 
+   * @param b boolean to set.
+   */
+  protected void setRequestedDisconnection(Boolean b) {
+    this.requestedDisconnection = b;
+  }
+
+  /**
    * Available games param getter.
    *
    * @return The list of available games
@@ -475,7 +484,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
           }
           break;
         case "logout":
-          // TODO: add logout command
+          setRequestedDisconnection(true);
           break;
         case "move":
           if (getVirtualView() == null) {

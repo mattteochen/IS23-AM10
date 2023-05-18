@@ -27,6 +27,8 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  */
 public final class CommandLineInterface implements UserInterface, Serializable {
 
+  private Thread inputHandler;
+
   /**
    * Output Wrapper, entrypoint for all UI output functions.
    * 
@@ -165,8 +167,8 @@ public final class CommandLineInterface implements UserInterface, Serializable {
    * CLI method to retrieve user input and add it to the queue
    * for it to be consumed when needed by controller. 
    */
-  public void runInputHandler() {
-    final Thread inputHandler = new Thread(() -> {
+  public Thread runInputHandler() {
+    inputHandler = new Thread(() -> {
       try {
         while(true) {
           String newLine = br.readLine();
@@ -179,6 +181,16 @@ public final class CommandLineInterface implements UserInterface, Serializable {
       }
     });
     inputHandler.start();
+    return inputHandler;
+  }
+
+  /**
+   * Input handler thread getter method.
+   * 
+   * @return input handler thread.
+   */
+  public Thread getInputHandler() {
+    return this.inputHandler;
   }
 
 }

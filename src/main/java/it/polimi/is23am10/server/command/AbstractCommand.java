@@ -44,7 +44,11 @@ public abstract class AbstractCommand implements Serializable {
     /**
      * Null command.
      */
-    NULL
+    NULL,
+    /**
+     * Logout command.
+     */
+    LOGOUT
   }
 
   /**

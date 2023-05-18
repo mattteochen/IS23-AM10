@@ -194,7 +194,7 @@ public class SocketClient extends Client {
    * Poll payloads from the socket stream and process {@link AbstractMessage} that can be recognized.
    *
    */
-  public void runInputMessageHandler(){
+  public Thread runInputMessageHandler(){
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
     Thread messageHandler =
         new Thread(
@@ -216,5 +216,6 @@ public class SocketClient extends Client {
               }
             });
     messageHandler.start();
+    return messageHandler;
   }
 }
