@@ -27,6 +27,8 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  */
 public final class CommandLineInterface implements UserInterface {
 
+  private Thread inputHandler;
+
   /**
    * Output Wrapper, entrypoint for all UI output functions.
    * 
@@ -165,7 +167,7 @@ public final class CommandLineInterface implements UserInterface {
    * for it to be consumed when needed by controller. 
    */
   public void runInputHandler() {
-    final Thread inputHandler = new Thread(() -> {
+    inputHandler = new Thread(() -> {
       try {
         while(true) {
           String newLine = br.readLine();
@@ -178,6 +180,14 @@ public final class CommandLineInterface implements UserInterface {
       }
     });
     inputHandler.start();
+  }
+
+  /**
+   * Input handler thread getter method.
+   * @return Input handler thread.
+   */
+  public Thread getInputHandler() {
+    return this.inputHandler;
   }
 
 }

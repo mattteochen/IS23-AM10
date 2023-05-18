@@ -25,6 +25,12 @@ public interface UserInterface {
    * @return The first item in the list. Null if empty.
    */
   String getUserInput();
+
+  /**
+   * InputHandler thread getter.
+   * 
+   */
+  Thread getInputHandler();
   
   /**
    * Method called when first running the game.
