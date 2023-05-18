@@ -305,7 +305,7 @@ public interface IServerControllerAction extends Remote {
     List<VirtualView> availableGames = ServerControllerState.getGamePools()
         .stream()
         .map(gh -> gh.getGame())
-        .filter(g -> g.getPlayers().size() < g.getMaxPlayer())
+        .filter(g -> (g.getPlayers().size() - g.getDisconnectedPlayersNum()) < g.getMaxPlayer())
         .map(g -> new VirtualView(g))
         .collect(Collectors.toList());
 
