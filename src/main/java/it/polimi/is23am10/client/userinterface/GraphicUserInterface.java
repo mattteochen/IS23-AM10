@@ -17,15 +17,6 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  */
 public final class GraphicUserInterface implements UserInterface{
 
-  private Thread inputHandler;
-
-  /**
-   * {@inheritDoc}
-   */
-  public Thread getInputHandler() {
-    return this.inputHandler;
-  }
-
   /**
    * {@inheritDoc}
    */
