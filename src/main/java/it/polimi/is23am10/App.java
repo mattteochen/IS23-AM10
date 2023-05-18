@@ -73,7 +73,7 @@ public class App {
         UserInterface userInterface = ctx.getShowGUI() ? new GraphicUserInterface() : new CommandLineInterface(ctx.getShowDebug());
         Client client;
         Thread messageHandlerThread;
-        Thread inputHandler = userInterface.getInputHandler();
+        Thread inputHandler = ((CommandLineInterface) userInterface).getInputHandler();
         if (ctx.getUseRMI()) {
           try {
             Registry registry = LocateRegistry.getRegistry(ctx.getServerRmiPort());
