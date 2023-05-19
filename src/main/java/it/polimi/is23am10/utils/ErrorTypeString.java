@@ -46,7 +46,7 @@ public final class ErrorTypeString {
    * Message error on failure while pushing messages in player queues.
    *
    */
-  public static final String ERROR_INTERRUPTED = "Thread interruption";
+  public static final String ERROR_MESSAGE_DELIVERY = "Thread interruption or Remote call failure";
 
   /**
    * Message error in executing a move chosen by the client.

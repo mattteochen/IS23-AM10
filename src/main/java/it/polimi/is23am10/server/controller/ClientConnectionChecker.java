@@ -1,5 +1,6 @@
 package it.polimi.is23am10.server.controller;
 
+import java.rmi.RemoteException;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -84,6 +85,7 @@ public final class ClientConnectionChecker implements Runnable {
       try {
         checkAllPlayers();
         checkActivePlayersInactivity();
+        Thread.sleep(5000);
       } catch (GameSnapshotUpdateException e) {
         // Logging as fatal here as it's failing to send a game snapshot. Other
         // message delivery failures will be considered errors.
@@ -92,6 +94,8 @@ public final class ClientConnectionChecker implements Runnable {
             ErrorTypeString.ERROR_UPDATING_GAME, e);
         // Not adding the error here since it will not be possible to be sent
         // to player if it already failed delivering a game.
+      } catch (InterruptedException e) {
+        logger.error(e.getMessage());
       }
     } 
   }
@@ -155,7 +159,7 @@ public final class ClientConnectionChecker implements Runnable {
       | NullMatchedBlockCountException | NegativeMatchedBlockCountException e) {
       logger.error("{} {}", ErrorTypeString.ERROR_GAME_STATE, e);
     } catch(InterruptedException e) {
-      logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
+      logger.error("{} {}", ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
     }
   }
 
@@ -181,7 +185,7 @@ public final class ClientConnectionChecker implements Runnable {
               logger.warn("Detected turn inactivity for {}, disconnecting the player", h.getPlayer().getPlayerName());
               h.getPlayer().setIsConnected(false);
               if (connectorRef != null) {
-                connectorRef.addMessageToQueue(new ErrorMessage("You have been disconnected due to inactivity", h.getPlayer(), ErrorSeverity.ERROR));
+                connectorRef.notify(new ErrorMessage("You have been disconnected due to inactivity", h.getPlayer(), ErrorSeverity.ERROR));
               } else {
                 logger.error(
                   "{}: Failed to push warning message, can not find player connector from player", ErrorTypeString.ERROR_GAME_STATE);
@@ -194,7 +198,7 @@ public final class ClientConnectionChecker implements Runnable {
               h.setNotified(true);
               h.setStartPlayingTimeMs(System.currentTimeMillis());
               if (connectorRef != null) {
-                connectorRef.addMessageToQueue(
+                connectorRef.notify(
                   new ErrorMessage("You will be disconnected for inactivity in " + String.valueOf(MAX_TURN_INACTIVITY_MS/1000) + " seconds",
                     h.getPlayer(), ErrorSeverity.WARNING));
               } else {
@@ -209,8 +213,8 @@ public final class ClientConnectionChecker implements Runnable {
       | NullIndexValueException | NullPlayerBookshelfException | NullScoreBlockListException | NullPointerException
       | NullMatchedBlockCountException | NegativeMatchedBlockCountException e) {
       logger.error("{} {}", ErrorTypeString.ERROR_GAME_STATE, e);
-    } catch(InterruptedException e) {
-      logger.error("{} {}", ErrorTypeString.ERROR_INTERRUPTED, e);
+    } catch(InterruptedException | RemoteException e) {
+      logger.error("{} {}", ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
     }
   }
 

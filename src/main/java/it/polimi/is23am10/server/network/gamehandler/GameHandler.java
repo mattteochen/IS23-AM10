@@ -1,6 +1,5 @@
 package it.polimi.is23am10.server.network.gamehandler;
 
-import it.polimi.is23am10.server.controller.ServerControllerState;
 import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
@@ -30,6 +29,7 @@ import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
@@ -211,14 +211,8 @@ public class GameHandler {
         }
         // synch is performed by the blocking queue.
         try {
-          //is rmi? if yes, use proxy
-          AbstractPlayerConnector rmiProxy = ServerControllerState.getRmiProxyConnector(pc.getPlayer().getPlayerID());
-          if (rmiProxy != null) {
-            rmiProxy.addMessageToQueue(new GameMessage(gameCopy));
-          } else {
-            pc.addMessageToQueue(new GameMessage(gameCopy));
-          }
-        } catch (InterruptedException e) {
+          pc.notify(new GameMessage(gameCopy));
+        } catch (InterruptedException | RemoteException e) {
           throw new GameSnapshotUpdateException(game);
         }
       }

@@ -3,6 +3,7 @@ package it.polimi.is23am10.client.userinterface.helpers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -53,7 +54,7 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public final class OutputWrapper {
+public final class OutputWrapper implements Serializable {
 
   /**
    * Enum containing the output types.

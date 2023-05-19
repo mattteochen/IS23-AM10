@@ -683,6 +683,18 @@ public class Game implements Serializable {
   }
 
   /**
+   * Simple helper function to get the number of disconnected
+   * players to discount when looking for available games.
+   * @return disconnected player num.
+   */
+  public synchronized Integer getDisconnectedPlayersNum() {
+    return (int) players
+      .stream()
+      .filter(p -> !p.getIsConnected())
+      .count();
+  }
+
+  /**
    * Method that plays the active player's turn.
    * It's important to understand the structure of the Hashmap, which allows to
    * find a correspondence between the coordinates of the taken tile of the board

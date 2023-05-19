@@ -146,6 +146,18 @@ public final class VirtualView implements Serializable {
     return status;
   }
 
+  /**
+   * Simple helper function to get the number of disconnected
+   * players to discount when looking for available games.
+   * @return disconnected player num.
+   */
+  public synchronized Integer getDisconnectedPlayersNum() {
+    return (int) players
+      .stream()
+      .filter(p -> !p.getIsConnected())
+      .count();
+  }
+
 
   /**
    * Public constructor. Builds VirtualView out of {@link Game}

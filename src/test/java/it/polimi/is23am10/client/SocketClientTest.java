@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.rmi.RemoteException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -75,7 +76,7 @@ public class SocketClientTest {
 
   @Test
   void constructor_should_create_SocketClientTest()
-      throws NullSocketConnectorException, NullBlockingQueueException, UnknownHostException {
+      throws NullSocketConnectorException, NullBlockingQueueException, UnknownHostException, RemoteException {
     Socket socket = new Socket();
     PlayerConnectorSocket pc = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
     UserInterface ui = new CommandLineInterface(true);
@@ -175,7 +176,7 @@ public class SocketClientTest {
 
   // correctenss of the below tests must be handled by the implementer class
   @Test
-  void showServerMessage_should_showErrorMessage() {
+  void showServerMessage_should_showErrorMessage() throws RemoteException {
     ErrorMessage msg = new ErrorMessage("New Message", null);
 
     doNothing().when(userInterface).displayError(msg);
@@ -185,7 +186,7 @@ public class SocketClientTest {
   }
 
   @Test
-  void showServerMessage_should_showChatMessage() {
+  void showServerMessage_should_showChatMessage() throws RemoteException {
     ChatMessage msg = new ChatMessage(null, "Let's rewrite this in Golang");
 
     doNothing().when(userInterface).displayChatMessage(msg);
@@ -195,7 +196,7 @@ public class SocketClientTest {
   }
 
   @Test
-  void showServerMessage_should_gameSnapShot() {
+  void showServerMessage_should_gameSnapShot() throws RemoteException {
     AbstractMessage msg = new GameMessage(null);
 
     doNothing().when(userInterface).displayVirtualView(null);

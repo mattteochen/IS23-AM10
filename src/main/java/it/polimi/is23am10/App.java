@@ -23,6 +23,7 @@ import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
 import it.polimi.is23am10.utils.exceptions.MissingParameterException;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -71,14 +72,15 @@ public class App {
       } else {
         // CLIENT MODE
         UserInterface userInterface = ctx.getShowGUI() ? new GraphicUserInterface() : new CommandLineInterface(ctx.getShowDebug());
-        Client client;
+        Client client = null;
         if (ctx.getUseRMI()) {
           try {
             Registry registry = LocateRegistry.getRegistry(ctx.getServerRmiPort());
-            PlayerConnectorRmi playerConnector = new PlayerConnectorRmi(new LinkedBlockingQueue<>());
+            PlayerConnectorRmi playerConnector = new PlayerConnectorRmi(new LinkedBlockingQueue<>(), client);
             IServerControllerAction serverControllerActionServerRef = (IServerControllerAction) registry
                 .lookup(IServerControllerAction.class.getName());
             client = new RMIClient(playerConnector, userInterface, null, serverControllerActionServerRef, registry);
+            playerConnector.setClient(client);
           } catch (NotBoundException e) {
             userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
             return;
@@ -91,7 +93,6 @@ public class App {
             Socket socket = new Socket(ctx.getServerAddress(), ctx.getServerSocketPort());
             PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
             client = new SocketClient(playerConnector, userInterface);
-            client.runMessageHandler();
           } catch (UnknownHostException e) {
             userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
             return;
@@ -105,6 +106,8 @@ public class App {
     } catch (NumberFormatException | InvalidArgumentException | MissingParameterException | InvalidPortNumberException
         | InvalidMaxConnectionsNumberException e) {
       logger.error("Cannot parse CLI arguments.", e);
+    } catch (ConnectException e) {
+      logger.error("Cannot connect to server. Verify address and retry.");
     } catch (IOException e) {
       logger.error("Cannot launch server.", e);
     }

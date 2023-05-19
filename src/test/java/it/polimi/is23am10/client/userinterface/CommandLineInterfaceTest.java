@@ -84,8 +84,8 @@ public class CommandLineInterfaceTest {
 
     final String expectedString = String.format("%s\n%s\n%s",
         CLIStrings.listGamesString,
-        String.format(CLIStrings.availableGameString, 0, vw1.getPlayers().size(), vw1.getMaxPlayers(), vw1.getGameId()),
-        String.format(CLIStrings.availableGameString, 1, vw2.getPlayers().size(), vw2.getMaxPlayers(),
+        String.format(CLIStrings.availableGameString, 0, vw1.getPlayers().size(), vw1.getMaxPlayers(), "", vw1.getGameId()),
+        String.format(CLIStrings.availableGameString, 1, vw2.getPlayers().size(), vw2.getMaxPlayers(), "",
             vw2.getGameId()));
 
     assertOutput(OutputLevel.INFO, expectedString);
