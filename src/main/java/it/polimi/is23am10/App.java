@@ -113,7 +113,7 @@ public class App {
             inputMessageHandlerThread.join();
           }
         } catch (InterruptedException e) {
-          userInterface.displayError(new ErrorMessage("Message handler thread was interrupted.", ErrorSeverity.CRITICAL));
+          userInterface.displayError(new ErrorMessage("An error occurred. Please try again.", ErrorSeverity.CRITICAL));
         }
 
         client.run(); 
