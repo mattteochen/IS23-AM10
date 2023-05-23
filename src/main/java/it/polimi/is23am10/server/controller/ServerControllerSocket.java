@@ -99,7 +99,7 @@ public final class ServerControllerSocket implements Runnable {
   @Override
   public void run() {
 
-    while (playerConnector != null && playerConnector.getConnector().isConnected()) {
+    while (playerConnector != null && !playerConnector.getConnector().isClosed()) {
       try {
         AbstractCommand command = buildCommand();
         serverControllerAction.execute(playerConnector, command);

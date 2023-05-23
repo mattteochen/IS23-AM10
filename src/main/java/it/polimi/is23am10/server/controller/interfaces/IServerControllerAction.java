@@ -227,6 +227,7 @@ public interface IServerControllerAction extends Remote {
     }
 
     final Player playerRef = gameHandler.getGame().getPlayerByName(playerName);
+    playerRef.setIsConnected(true);
 
     // populate the connector with the game and player reference.
     playerConnector.setGameId(gameId);
