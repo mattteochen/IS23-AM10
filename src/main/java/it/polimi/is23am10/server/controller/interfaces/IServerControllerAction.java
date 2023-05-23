@@ -212,30 +212,32 @@ public interface IServerControllerAction extends Remote {
                   logger.error("{} {}", ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
                 }
               });
-      }else{
+      } else {
         // add the new player in the game model.
         // note, it is essential that the the model is updated first
         // to avoid wrong parameters in connectors if any exception
         // will be thrown from the model.
         gameHandler.getGame().addPlayer(playerName);
       }
-      //if started, handle active player
-      if (gameHandler.getGame().getStatus() == GameStatus.STARTED) {
-        gameHandler.updateCurrentPlayerHandler();
-      }
 
-      final Player playerRef = gameHandler.getGame().getPlayerByName(playerName);
 
-      // populate the connector with the game and player reference.
-      playerConnector.setGameId(gameId);
-      playerConnector.setPlayer(playerRef);
+    //if started, handle active player
+    if (gameHandler.getGame().getStatus() == GameStatus.STARTED) {
+      gameHandler.updateCurrentPlayerHandler();
+    }
 
-      // add the new player connector instance to the game's player pool.
-      playerConnector.setLastSnoozeMs(System.currentTimeMillis());
-      gameHandler.addPlayerConnector(playerConnector);
+    final Player playerRef = gameHandler.getGame().getPlayerByName(playerName);
 
-      // add the new player connector instance on the player pool.
-      ServerControllerState.addPlayerConnector(playerConnector);
+    // populate the connector with the game and player reference.
+    playerConnector.setGameId(gameId);
+    playerConnector.setPlayer(playerRef);
+
+    // add the new player connector instance to the game's player pool.
+    playerConnector.setLastSnoozeMs(System.currentTimeMillis());
+    gameHandler.addPlayerConnector(playerConnector);
+
+    // add the new player connector instance on the player pool.
+    ServerControllerState.addPlayerConnector(playerConnector);
 
     logger.info("{} {}",
         ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,

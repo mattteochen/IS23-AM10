@@ -251,7 +251,7 @@ public class GameHandler {
         }
       }
       playerConnectors.remove(targetConnector);
-      logger.info("Removed player {} connector from game {}", player, gameId);
+      logger.info("Removed player {} connector from game {}", player.getPlayerName(), gameId);
     }
   }
 
