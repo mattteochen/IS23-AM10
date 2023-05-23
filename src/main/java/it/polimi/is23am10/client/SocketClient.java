@@ -191,8 +191,9 @@ public class SocketClient extends Client {
   }
 
   /**
-   * Poll payloads from the socket stream and process {@link AbstractMessage} that can be recognized.
+   * Runs the input message handler tp retrieve server messages.
    *
+   * @return The thread object.
    */
   public Thread runInputMessageHandler(){
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;

@@ -27,6 +27,10 @@ import it.polimi.is23am10.server.network.virtualview.VirtualView;
  */
 public final class CommandLineInterface implements UserInterface, Serializable {
 
+  /**
+   * Private variable representing the input handler thread.
+   * 
+   */
   private Thread inputHandler;
 
   /**
@@ -164,8 +168,9 @@ public final class CommandLineInterface implements UserInterface, Serializable {
   }
 
   /**
-   * CLI method to retrieve user input and add it to the queue
-   * for it to be consumed when needed by controller. 
+   * Creates and starts new thread to handle user input.
+   *
+   * @return The thread object.  
    */
   public Thread runInputHandler() {
     inputHandler = new Thread(() -> {
