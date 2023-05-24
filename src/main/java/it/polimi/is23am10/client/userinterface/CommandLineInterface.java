@@ -103,7 +103,7 @@ public final class CommandLineInterface implements UserInterface, Serializable {
   /**
    * {@inheritDoc}
    */
-  public void displayVirtualView(VirtualView vw) {
+  public void displayVirtualView(VirtualView old, VirtualView vw) {
     ow.debug(vw.toString(), false);
     ow.info(CLIStrings.currentStateString, true);
     if (vw.getStatus() == GameStatus.ENDED) {
