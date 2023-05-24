@@ -84,7 +84,7 @@ public final class SharedPatternFactory {
   private static final Random random = new Random();
 
   /**
-   * #1
+   * #1 in rulebook, #4 in images
    * Rule that checks if there are at least six couples of the same tile type in
    * adjacent positions (row or column).
    *
@@ -123,7 +123,7 @@ public final class SharedPatternFactory {
   };
 
   /*
-   * #2
+   * #2 in rulebook, #3 in images
    * Rule that checks if the elements on all the corners match.
    *
    */
@@ -138,7 +138,7 @@ public final class SharedPatternFactory {
   };
 
   /**
-   * #3
+   * #3 in rulebook, #8 in images
    * Rule that checks if there are at least 4 separate groups of 4 elements of
    * the same type in adjacent positions(row or column).
    *
@@ -208,7 +208,7 @@ public final class SharedPatternFactory {
   }
 
   /*
-   * #4
+   * #4 in rulebook, #1 in images
    * Rule that checks if there are at least two 2x2 squares of tiles of the same
    * type (the type has to be the same for both the squares).
    * 
@@ -237,7 +237,7 @@ public final class SharedPatternFactory {
   };
 
   /**
-   * #5
+   * #5 both in rulebook and images
    * Rule that checks if there are at least three columns containing maximum 3
    * different types of tiles.
    *
@@ -247,17 +247,18 @@ public final class SharedPatternFactory {
     Tile[][] grid = bs.getBookshelfGrid();
 
     // here we want to check every column so we are iterating first over columns
-    for (int i = 0; i < grid[i].length; i++) {
+    for (int i = 0; i < grid[0].length; i++) {
       Set<TileType> seenTypes = new HashSet<>();
+      boolean isFull = true;
       for (int j = 0; j < grid.length; j++) {
-        if (grid[j][i].isEmpty()) {
-          break;
+        if (grid[j][i].isEmpty()){
+          isFull = false;
         }
-        if (!seenTypes.contains(grid[j][i].getType())) {
+        if (!grid[j][i].isEmpty() && !seenTypes.contains(grid[j][i].getType())) {
           seenTypes.add(grid[j][i].getType());
         }
       }
-      if (seenTypes.size() <= 3) {
+      if (seenTypes.size() <= 3 && isFull) {
         countedColumns++;
         if (countedColumns >= MAX_THREE_TYPES_COL_OCC) {
           return true;
@@ -268,7 +269,7 @@ public final class SharedPatternFactory {
   };
 
   /*
-   * #6
+   * #6 in rulebook, #9 in images 
    * Rule that checks if there are at least eight different tiles of the same
    * type.
    *
@@ -342,7 +343,7 @@ public final class SharedPatternFactory {
   }
 
   /**
-   * #7
+   * #7 in rulebook, #11 in images
    * Rule that checks if the diagonals are filled with tiles of the same type.
    *
    */
@@ -352,8 +353,7 @@ public final class SharedPatternFactory {
     // I'm cycling with i=0,1 meaning that I'm checking both the diagonals if the
     // starting row is the first one(i=0) or the second one (i=1)
     for (int i = 0; i <= 1; i++) {
-      boolean res = (checkAscDiagonal(i, grid) || checkDescDiagonal(i, grid));
-      if (res) {
+      if (checkAscDiagonal(i, grid) || checkDescDiagonal(i, grid)) {
         return true;
       }
     }
@@ -362,7 +362,7 @@ public final class SharedPatternFactory {
   };
 
   /**
-   * #8
+   * #8 in rulebook, #7 in images
    * Rule that checks if there are maximum three different types in at least 4
    * rows.
    *
@@ -372,16 +372,17 @@ public final class SharedPatternFactory {
     Tile[][] grid = bs.getBookshelfGrid();
     for (int i = 0; i < grid.length; i++) {
       Set<TileType> seenTypes = new HashSet<>();
+      boolean isFull = true;
       for (int j = 0; j < grid[0].length; j++) {
         if (grid[i][j].isEmpty()) {
-          break;
+          isFull = false;
         }
-        if (!seenTypes.contains(grid[i][j].getType())) {
+        if (!grid[i][j].isEmpty() && !seenTypes.contains(grid[i][j].getType())) {
           seenTypes.add(grid[i][j].getType());
         }
       }
 
-      if (seenTypes.size() <= 3) {
+      if (seenTypes.size() <= 3 && isFull) {
         countRows++;
         if (countRows >= MAX_THREE_TYPES_ROW_OCC) {
           return true;
@@ -392,7 +393,7 @@ public final class SharedPatternFactory {
   };
 
   /**
-   * #9
+   * #9 in rulebook, #2 in images
    * Rule that checks if there are at least two columns with all the elements of
    * different type.
    *
@@ -425,7 +426,7 @@ public final class SharedPatternFactory {
   };
 
   /**
-   * #10
+   * #10 in rulebook, #6 in images
    * Rule that checks if there are at least two rows full of different types of
    * tiles.
    *
@@ -473,7 +474,7 @@ public final class SharedPatternFactory {
   }
 
   /**
-   * #11
+   * #11 in rulebook, #10 in images
    * Rule that checks if there are 5 tiles of the same type on a 'X' shape.
    *
    */
@@ -491,7 +492,7 @@ public final class SharedPatternFactory {
   };
 
   /**
-   * #12
+   * #12 both in rulebook and images
    * Rule that checks if the columns in the bookshelf are ordered (asc o desc) and
    * the rest of the bookshelf is filled with {@link TileType#EMPTY}.
    *
@@ -567,17 +568,17 @@ public final class SharedPatternFactory {
    *
    */
   private static final List<SharedPattern<Predicate<Bookshelf>>> patternsArray = List.of(
-      (new SharedPattern<Predicate<Bookshelf>>(checkTwoAdjacent, 1)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkCornersMatch, 2)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkTwoAdjacent, 4)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkCornersMatch, 8)),
       (new SharedPattern<Predicate<Bookshelf>>(checkFourAdjacent, 3)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkSquares, 4)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkSquares, 1)),
       (new SharedPattern<Predicate<Bookshelf>>(checkMaxThreeTypesInColumn,5)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkEightOfSameType,6)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkDiagonalsSameType,7)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkMaxThreeTypesInRow, 8)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkTwoColumnAllDiff,9)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkTwoRowsAllDiff, 10)),
-      (new SharedPattern<Predicate<Bookshelf>>(checkTilesXShape, 11)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkEightOfSameType,9)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkDiagonalsSameType,11)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkMaxThreeTypesInRow, 7)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkTwoColumnAllDiff,2)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkTwoRowsAllDiff, 6)),
+      (new SharedPattern<Predicate<Bookshelf>>(checkTilesXShape, 10)),
       (new SharedPattern<Predicate<Bookshelf>>(checkOrderedBookshelfColumns, 12)));
 
   /**

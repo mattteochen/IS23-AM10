@@ -213,7 +213,7 @@ public class SharedPatternFactoryTest {
       throws NullPointerException, WrongLengthBookshelfStringException,
       WrongCharBookshelfStringException {
     Bookshelf threeColumnMaxThreeTypesMatching = new Bookshelf(
-        "CBTFG" +
+            "CBTFG" +
             "CBTCB" +
             "CBTGF" +
             "CBTBC" +
@@ -244,7 +244,7 @@ public class SharedPatternFactoryTest {
     assertTrue(SharedPatternFactory.checkMaxThreeTypesInColumn.test(threeColumnMaxThreeTypesMatching));
     assertFalse(SharedPatternFactory.checkMaxThreeTypesInColumn.test(twoColumnMaxThreeTypesMatching));
     assertFalse(SharedPatternFactory.checkMaxThreeTypesInColumn.test(noColumnMaxThreeTypesMatching));
-    assertTrue(SharedPatternFactory.checkMaxThreeTypesInColumn.test(allNull));
+    assertFalse(SharedPatternFactory.checkMaxThreeTypesInColumn.test(allNull));
   };
 
   @Test
@@ -378,7 +378,7 @@ public class SharedPatternFactoryTest {
             "XXXXX" +
             "XXXXX");
 
-    assertTrue(SharedPatternFactory.checkMaxThreeTypesInRow.test(allNull));
+    assertFalse(SharedPatternFactory.checkMaxThreeTypesInRow.test(allNull));
     assertTrue(SharedPatternFactory.checkMaxThreeTypesInRow.test(fourRowsMaxThreeTypesMatching));
     assertFalse(SharedPatternFactory.checkMaxThreeTypesInRow.test(threeRowsMaxThreeTypesMatching));
     assertFalse(SharedPatternFactory.checkMaxThreeTypesInRow.test(twoRowsMaxThreeTypesMatching));
