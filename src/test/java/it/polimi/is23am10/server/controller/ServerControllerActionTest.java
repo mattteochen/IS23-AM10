@@ -396,7 +396,6 @@ class ServerControllerActionTest {
   }
 
   @Test
-  @Disabled
   void ADD_PLAYER_CONSUMER_should_add_player_trying_to_reconnect()
       throws NullSocketConnectorException, NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
       NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,

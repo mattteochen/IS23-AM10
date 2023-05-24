@@ -115,7 +115,7 @@ public final class ServerControllerSocket implements Runnable {
         // thread.
       }
     }
-    /* 
+    
     playerConnector.getPlayer().setIsConnected(false);
     logger.info("Player {} disconnected", playerConnector.getPlayer().getPlayerName());
     try {
@@ -135,7 +135,6 @@ public final class ServerControllerSocket implements Runnable {
     } catch (NullGameHandlerInstance e) {
       logger.error(" {} {}", ErrorTypeString.ERROR_ADDING_HANDLER, e);
     }
-    */
   }
   /**
    * Build the response message and sent it to the client when any game update is
