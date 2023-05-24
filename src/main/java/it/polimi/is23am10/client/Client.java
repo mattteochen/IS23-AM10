@@ -232,13 +232,14 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
         userInterface.displayChatMessage((ChatMessage) msg);
         break;
       case GAME_SNAPSHOT:
+        VirtualView old = virtualView;
         VirtualView v = gson.fromJson(msg.getMessage(), VirtualView.class);
         setVirtualView(v);
         // do not overwrite game id
         if (getGameIdRef() == null) {
           setGameIdRef(v.getGameId());
         }
-        userInterface.displayVirtualView(v);
+        userInterface.displayVirtualView(old, v);
         break;
       case ERROR_MESSAGE:
         userInterface.displayError((ErrorMessage) msg);
@@ -581,7 +582,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
     // Select only the string before the space if the client writes more words
     String selectedPlayerName = userInterface.getUserInput();
     if (selectedPlayerName != null) {
-      selectedPlayerName = selectedPlayerName.stripLeading();
+      selectedPlayerName = selectedPlayerName.stripLeading().split(" ")[0];
       Player p = new Player();
       apc.setPlayer(p);
       try {
