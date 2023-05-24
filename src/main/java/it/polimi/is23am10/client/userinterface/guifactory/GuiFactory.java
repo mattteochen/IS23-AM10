@@ -119,6 +119,11 @@ public final class GuiFactory {
     return vv.getActivePlayer().getPlayerName().equals(getMyPlayerName());
   }
 
+  /**
+   * Helper method to retrieve the current player's name from PC.
+   * 
+   * @return Player name.
+   */
   protected static String getMyPlayerName() {
     try {
       return Client.getPlayerConnector().getPlayer().getPlayerName();
@@ -696,6 +701,14 @@ public final class GuiFactory {
     }
   }
 
+  /**
+   * Method used to update the current game widget scene dynamically. Must be wrapped in executeOnJavaFX
+   * when called to make sure it's properly runned into JavaFX's thread.
+   * 
+   * @param oldSP The old stack pane to update.
+   * @param oldVw The old virtual view to check what changed.
+   * @param newVw The new virtual view.
+   */
   public static void updateGameWidget(StackPane oldSP, VirtualView oldVw, VirtualView newVw) {
     VBox root = (VBox) oldSP.getChildren().get(0);
     root.getChildren().set(0, GameSnapshotFactory.getLeaderboard(newVw));
