@@ -22,11 +22,11 @@ This Java project is a porting of the boardgame *MyShelfie* by [Cranio Creations
 | Complete rules | :white_check_mark: |
 | Socket connection | :white_check_mark: |
 | RMI connection | :white_check_mark: |
-| CLI | :construction: |
-| GUI | :ballot_box_with_check: |
+| CLI | :white_check_mark: |
+| GUI | :construction: |
 | Multiple games | :white_check_mark: |
 | Persistence | :x: |
-| Resilience | :construction: |
+| Resilience | :white_check_mark: |
 | Chat | :white_check_mark: |
 
 **Legend**
@@ -54,6 +54,7 @@ Run the app with the following command line arguments:
 - `--rmi-port [1024-65535]` the port where server should expose the rmi registry/client should retrieve the stub. (Default: `9002`)
 - `--max-connections [0-10]` the maximum number of clients who can connect to the server. (Default: `8`) 🔷
 - `--keep-alive [bool]` to set socket keepalive function. (Default: `true`) 🔷
+- `--max-player-inactive-ms` to set the max time in milliseconds after a player gets kicked out for inactivity (Default: `120000` =2 min ) 🔷
 
 🔶 = Command only works in client mode. Will be ignored if launched in server mode.
 
