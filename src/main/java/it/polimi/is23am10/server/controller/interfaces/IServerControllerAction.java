@@ -198,16 +198,11 @@ public interface IServerControllerAction extends Remote {
        * connector with a new one connected, otherwise the else branch is executed
        * and the player is normally added to the game.
        */
-      if (gameHandler.getGame().getPlayerNames().contains(playerName) &&
+      if (ServerControllerState.getPlayersPool().stream().map(p -> p.getPlayer().getPlayerName()).collect(Collectors.toList()).contains(playerName) &&
           !gameHandler.getGame().getPlayerByName(playerName).getIsConnected()) {
-          ((PlayerConnectorSocket) gameHandler.getPlayerConnectors()
-              .stream()
-              .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerName))
-              .findFirst()
-              .get())
-              .setConnector(((PlayerConnectorSocket) playerConnector).getConnector());
+          ServerControllerState.removePlayerByGame(gameId, gameHandler.getGame().getPlayerByName(playerName));
+          gameHandler.removePlayerByGame(gameId, gameHandler.getGame().getPlayerByName(playerName));
 
-          gameHandler.getGame().getPlayerByName(playerName).setIsConnected(true);
           gameHandler.getPlayerConnectors()
               .forEach(pc -> {
                 try {
@@ -217,40 +212,42 @@ public interface IServerControllerAction extends Remote {
                   logger.error("{} {}", ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
                 }
               });
-
       } else {
         // add the new player in the game model.
         // note, it is essential that the the model is updated first
         // to avoid wrong parameters in connectors if any exception
         // will be thrown from the model.
         gameHandler.getGame().addPlayer(playerName);
-        //if started, handle active player
-        if (gameHandler.getGame().getStatus() == GameStatus.STARTED) {
-          gameHandler.updateCurrentPlayerHandler();
-        }
-
-        final Player playerRef = gameHandler.getGame().getPlayerByName(playerName);
-
-        // populate the connector with the game and player reference.
-        playerConnector.setGameId(gameId);
-        playerConnector.setPlayer(playerRef);
-
-        // add the new player connector instance to the game's player pool.
-        playerConnector.setLastSnoozeMs(System.currentTimeMillis());
-        gameHandler.addPlayerConnector(playerConnector);
-
-        // add the new player connector instance on the player pool.
-        ServerControllerState.addPlayerConnector(playerConnector);
       }
 
-      logger.info("{} {}",
-          ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
-          String.format(ErrorTypeString.WARNING_PLAYER_JOIN_SERVER, playerName, gameId));
 
-      playerConnector.notify(new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_JOIN, playerName), ErrorSeverity.WARNING));
+    //if started, handle active player
+    if (gameHandler.getGame().getStatus() == GameStatus.STARTED) {
+      gameHandler.updateCurrentPlayerHandler();
+    }
 
-      // send the game model update to all the connected players
-      gameHandler.pushGameState();
+    final Player playerRef = gameHandler.getGame().getPlayerByName(playerName);
+    playerRef.setIsConnected(true);
+
+    // populate the connector with the game and player reference.
+    playerConnector.setGameId(gameId);
+    playerConnector.setPlayer(playerRef);
+
+    // add the new player connector instance to the game's player pool.
+    playerConnector.setLastSnoozeMs(System.currentTimeMillis());
+    gameHandler.addPlayerConnector(playerConnector);
+
+    // add the new player connector instance on the player pool.
+    ServerControllerState.addPlayerConnector(playerConnector);
+
+    logger.info("{} {}",
+        ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
+        String.format(ErrorTypeString.WARNING_PLAYER_JOIN_SERVER, playerName, gameId));
+
+    playerConnector.notify(new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_JOIN, playerName), ErrorSeverity.WARNING));
+
+    // send the game model update to all the connected players
+    gameHandler.pushGameState();
     } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
         | NullPlayerPrivateCardException | NullPlayerScoreException | NullPlayerBookshelfException
         | NullPlayerIdException | NullPlayerNameException | AlreadyInitiatedPatternException
@@ -277,11 +274,6 @@ public interface IServerControllerAction extends Remote {
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_UPDATING_GAME, e);
       errorMsg = new ErrorMessage(ErrorTypeString.ERROR_UPDATING_GAME, ErrorSeverity.ERROR);
-    } catch (NullSocketConnectorException e) {
-      logger.error("{} {} {}",
-              ServerDebugPrefixString.START_COMMAND_PREFIX,
-              ErrorTypeString.ERROR_SOCKET_CONNECTOR, e);
-      errorMsg = new ErrorMessage(ErrorTypeString.ERROR_SERVER_SIDE, ErrorSeverity.ERROR);
     } finally {
       if (errorMsg != null) {
         try {
@@ -329,7 +321,7 @@ public interface IServerControllerAction extends Remote {
     List<VirtualView> availableGames = ServerControllerState.getGamePools()
         .stream()
         .map(gh -> gh.getGame())
-        .filter(g -> g.getPlayers().size() < g.getMaxPlayer())
+        .filter(g ->  (g.getPlayers().size() - g.getDisconnectedPlayersNum()) < g.getMaxPlayer())
         .map(g -> new VirtualView(g))
         .collect(Collectors.toList());
 

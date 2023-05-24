@@ -99,13 +99,14 @@ public final class ServerControllerSocket implements Runnable {
   @Override
   public void run() {
 
-    while (playerConnector != null && playerConnector.getConnector().isConnected()) {
+    while (playerConnector != null && !playerConnector.getConnector().isClosed()) {
       try {
         AbstractCommand command = buildCommand();
         serverControllerAction.execute(playerConnector, command);
         update();
       } catch (IOException e) {
         logger.error("Failed to retrieve socket payload", e);
+        break;
       } catch (JsonIOException | JsonSyntaxException e) {
         logger.error("Failed to parse socket payload", e);
       } catch (InterruptedException e) {
@@ -114,7 +115,7 @@ public final class ServerControllerSocket implements Runnable {
         // thread.
       }
     }
-
+    
     playerConnector.getPlayer().setIsConnected(false);
     logger.info("Player {} disconnected", playerConnector.getPlayer().getPlayerName());
     try {
@@ -135,7 +136,6 @@ public final class ServerControllerSocket implements Runnable {
       logger.error(" {} {}", ErrorTypeString.ERROR_ADDING_HANDLER, e);
     }
   }
-
   /**
    * Build the response message and sent it to the client when any game update is
    * available.

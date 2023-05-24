@@ -621,7 +621,7 @@ public class Game implements Serializable {
    * 
    */
   public synchronized void checkEndGame() {
-    if (activePlayer.getBookshelf().isBookshelfFull()) {
+    if (activePlayer.getBookshelf().isBookshelfFull() && getStatus() != GameStatus.LAST_ROUND ) {
       activePlayer.getScore().setExtraPoint();
       // When one player completes their bookshelf, last turn starts
       setStatus(GameStatus.LAST_ROUND);
