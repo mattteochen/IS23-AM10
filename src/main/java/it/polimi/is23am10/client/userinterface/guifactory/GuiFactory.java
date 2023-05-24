@@ -8,6 +8,7 @@ import it.polimi.is23am10.server.model.items.board.Board;
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.server.model.items.tile.Tile;
 import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
+import it.polimi.is23am10.server.model.score.Score;
 import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import java.rmi.RemoteException;
@@ -44,21 +45,32 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 /**
- * GUI scene factory. Creates various GUI scenes for the application. Each scene is created as a
- * static method in this class. The class also contains helper methods for creating GUI components.
+ * GUI scene factory. Creates various GUI scenes for the application. Each scene
+ * is created as a
+ * static method in this class. The class also contains helper methods for
+ * creating GUI components.
  *
- * <p>The class uses JavaFX for UI rendering.
+ * <p>
+ * The class uses JavaFX for UI rendering.
  *
- * <p>The factory methods return JavaFX Scene objects that can be used to set the application's
+ * <p>
+ * The factory methods return JavaFX Scene objects that can be used to set the
+ * application's
  * stage. The stages are stored in a static map for easy access.
  *
- * <p>This class is not meant to be instantiated. All methods and members are static.
+ * <p>
+ * This class is not meant to be instantiated. All methods and members are
+ * static.
  *
- * <p>Example usage: ``` Scene splashScreenScene = GuiFactory.getSplashScreenScene();
+ * <p>
+ * Example usage: ``` Scene splashScreenScene =
+ * GuiFactory.getSplashScreenScene();
  * GuiFactory.stages.put(GuiFactory.SCENE.SPLASH_SCREEN, splashScreenScene);
  * primaryStage.setScene(splashScreenScene); primaryStage.show(); ```
  *
- * <p>Note: This is a simplified example and assumes the necessary JavaFX setup has been done.
+ * <p>
+ * Note: This is a simplified example and assumes the necessary JavaFX setup has
+ * been done.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -67,10 +79,12 @@ import javafx.stage.Stage;
  */
 public final class GuiFactory {
 
-  private GuiFactory() {}
+  private GuiFactory() {
+  }
 
   /**
-   * An enum representing different scenes that can be created by the factory. Add more values to
+   * An enum representing different scenes that can be created by the factory. Add
+   * more values to
    * represent additional scenes in the application.
    */
   public enum SCENE {
@@ -102,19 +116,27 @@ public final class GuiFactory {
    * @return The requested flag.
    */
   protected static boolean isThisPlayerTurn(VirtualView vv) {
-    String thisPlayer = "";
-    try {
-      thisPlayer = Client.getPlayerConnector().getPlayer().getPlayerName();
-    } catch (RemoteException e) {
-      return false;
-    }
-    return vv.getActivePlayer().getPlayerName().equals(thisPlayer);
+    return vv.getActivePlayer().getPlayerName().equals(getMyPlayerName());
   }
 
   /**
-   * Creates a {@link BackgroundImage} with the specified image path and brightness.
+   * Helper method to retrieve the current player's name from PC.
+   * 
+   * @return Player name.
+   */
+  protected static String getMyPlayerName() {
+    try {
+      return Client.getPlayerConnector().getPlayer().getPlayerName();
+    } catch (RemoteException e) {
+      return "";
+    }
+  }
+
+  /**
+   * Creates a {@link BackgroundImage} with the specified image path and
+   * brightness.
    *
-   * @param path The path to the image file.
+   * @param path       The path to the image file.
    * @param brightness The brightness value to apply to the image (-1.0 to 1.0).
    * @return The created BackgroundImage object.
    */
@@ -144,8 +166,8 @@ public final class GuiFactory {
    * Creates a {@link Label} with the specified content, font weight, and size.
    *
    * @param content The text content of the label.
-   * @param weight The font weight of the label.
-   * @param size The font size of the label.
+   * @param weight  The font weight of the label.
+   * @param size    The font size of the label.
    * @return The created Label object.
    */
   protected static Label getLabel(String content, FontWeight weight, int size, Color... colors) {
@@ -158,15 +180,17 @@ public final class GuiFactory {
   }
 
   /**
-   * Creates a {@link TextField} with the specified placeholder, width, height, font weight, font
+   * Creates a {@link TextField} with the specified placeholder, width, height,
+   * font weight, font
    * size, and callback.
    *
    * @param placeholder The placeholder text for the text field.
-   * @param w The desired width of the text field.
-   * @param h The desired width of the text field.
-   * @param weight The font weight of the text field.
-   * @param size The font size of the text field.
-   * @param cb The callback function to be executed when the text field action is triggered.
+   * @param w           The desired width of the text field.
+   * @param h           The desired width of the text field.
+   * @param weight      The font weight of the text field.
+   * @param size        The font size of the text field.
+   * @param cb          The callback function to be executed when the text field
+   *                    action is triggered.
    * @return The created TextField object.
    */
   protected static TextField getTextField(
@@ -182,12 +206,15 @@ public final class GuiFactory {
   }
 
   /**
-   * Creates a {@link Button} with the specified content, callback function, and optional text
+   * Creates a {@link Button} with the specified content, callback function, and
+   * optional text
    * fields.
    *
    * @param content The text content of the button.
-   * @param cb The callback function to be executed when the button is clicked.
-   * @param tfs Optional text fields to be passed as arguments to the callback function.
+   * @param cb      The callback function to be executed when the button is
+   *                clicked.
+   * @param tfs     Optional text fields to be passed as arguments to the callback
+   *                function.
    * @return The created Button object.
    */
   protected static Button getButton(String content, ButtonCallBack cb, TextField... tfs) {
@@ -203,14 +230,17 @@ public final class GuiFactory {
    *
    * @param r The callback to be executed.
    */
-  public static void changeScene(Runnable r) {
+  public static void executeOnJavaFX(Runnable r) {
     Platform.runLater(r);
   }
 
   /**
-   * Creates the splash screen scene. The splash screen scene consists of a stack pane with a
-   * background and an input name widget. The background image is retrieved from the
-   * SplashScreenFactory class. The input name widget contains a label, a text field, and a confirm
+   * Creates the splash screen scene. The splash screen scene consists of a stack
+   * pane with a
+   * background and an input name widget. The background image is retrieved from
+   * the
+   * SplashScreenFactory class. The input name widget contains a label, a text
+   * field, and a confirm
    * button. The confirm button triggers the CallBack.confirmNameCallBack.
    *
    * @return The created splash screen scene.
@@ -225,9 +255,12 @@ public final class GuiFactory {
   }
 
   /**
-   * Creates the enter game selection scene. The enter game selection scene consists of a stack pane
-   * with a background and a selection widget. The background image is retrieved from the
-   * EnterGameSelectionScreenFactory class. The selection widget contains a label and two buttons
+   * Creates the enter game selection scene. The enter game selection scene
+   * consists of a stack pane
+   * with a background and a selection widget. The background image is retrieved
+   * from the
+   * EnterGameSelectionScreenFactory class. The selection widget contains a label
+   * and two buttons
    * (create new game and join game).
    *
    * @return The created enter game selection scene.
@@ -242,7 +275,8 @@ public final class GuiFactory {
   }
 
   /**
-   * Creates and returns a new JavaFX Scene for the create new game selection screen.
+   * Creates and returns a new JavaFX Scene for the create new game selection
+   * screen.
    *
    * @return The JavaFX Scene for the create new game selection screen.
    */
@@ -312,19 +346,23 @@ public final class GuiFactory {
   }
 
   /**
-   * Factory class for creating the splash screen UI components. Contains methods to create the
-   * background image, input name label, input name text field, and the entire input name widget.
+   * Factory class for creating the splash screen UI components. Contains methods
+   * to create the
+   * background image, input name label, input name text field, and the entire
+   * input name widget.
    *
-   * <p>This class is not meant to be instantiated. All methods and members are static.
+   * <p>
+   * This class is not meant to be instantiated. All methods and members are
+   * static.
    */
   class SplashScreenFactory {
-    private static final String SPLASH_SCREEN_IMG_PATH =
-        "file:src/main/resources/assets/in_lobby.png";
+    private static final String SPLASH_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_lobby.png";
 
     protected static TextField textField;
 
     /**
-     * Creates a {@link BackgroundImage} for the splash screen using the specified image path and
+     * Creates a {@link BackgroundImage} for the splash screen using the specified
+     * image path and
      * brightness.
      *
      * @return The created BackgroundImage object for the splash screen.
@@ -334,7 +372,8 @@ public final class GuiFactory {
     }
 
     /**
-     * Creates a {@link Label} for the input name with the specified content, font weight, and size.
+     * Creates a {@link Label} for the input name with the specified content, font
+     * weight, and size.
      *
      * @return The created Label object for the input name.
      */
@@ -343,7 +382,8 @@ public final class GuiFactory {
     }
 
     /**
-     * Creates a {@link TextField} for entering the name with the specified placeholder, width,
+     * Creates a {@link TextField} for entering the name with the specified
+     * placeholder, width,
      * height, font weight, font size, and callback.
      *
      * @return The created TextField object for entering the name.
@@ -354,7 +394,8 @@ public final class GuiFactory {
     }
 
     /**
-     * Creates a {@link VBox} that contains the input name label, input name text field, and confirm
+     * Creates a {@link VBox} that contains the input name label, input name text
+     * field, and confirm
      * button.
      *
      * @return The created VBox widget for the input name.
@@ -372,10 +413,12 @@ public final class GuiFactory {
     }
   }
 
-  /** GUI end game screen factory. Creates GUI components for the enter game end screen. */
+  /**
+   * GUI end game screen factory. Creates GUI components for the enter game end
+   * screen.
+   */
   class EndGameScene {
-    private static final String SELECTION_SCREEN_IMG_PATH =
-        "file:src/main/resources/assets/in_game.png";
+    private static final String SELECTION_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_game.png";
 
     /**
      * Retrieves the background image for the end game selection screen.
@@ -408,16 +451,15 @@ public final class GuiFactory {
           .sorted(
               Comparator.comparing(p -> p.getScore().getVisibleScore(), Comparator.reverseOrder()))
           .forEach(
-              p ->
-                  root.getChildren()
-                      .add(
-                          getLabel(
-                              String.format(
-                                  CLIStrings.playerScoreString,
-                                  p.getPlayerName(),
-                                  p.getScore().getTotalScore()),
-                              FontWeight.BOLD,
-                              30)));
+              p -> root.getChildren()
+                  .add(
+                      getLabel(
+                          String.format(
+                              CLIStrings.playerScoreString,
+                              p.getPlayerName(),
+                              p.getScore().getTotalScore()),
+                          FontWeight.BOLD,
+                          30)));
       return root;
     }
 
@@ -436,12 +478,12 @@ public final class GuiFactory {
   }
 
   /**
-   * GUI enter game selection screen factory. Creates GUI components for the enter game selection
+   * GUI enter game selection screen factory. Creates GUI components for the enter
+   * game selection
    * screen.
    */
   class EnterGameSelectionScreenFactory {
-    private static final String SELECTION_SCREEN_IMG_PATH =
-        "file:src/main/resources/assets/in_lobby.png";
+    private static final String SELECTION_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_lobby.png";
 
     /**
      * Retrieves the background image for the enter game selection screen.
@@ -483,19 +525,18 @@ public final class GuiFactory {
   }
 
   /**
-   * The NewGameFactory class provides static methods to create various UI components for setting up
+   * The NewGameFactory class provides static methods to create various UI
+   * components for setting up
    * a new game.
    */
   class NewGameFactory {
-    private static final String SPLASH_SCREEN_IMG_PATH =
-        "file:src/main/resources/assets/in_lobby.png";
+    private static final String SPLASH_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_lobby.png";
 
     /** A map of text fields associated with player numbers. */
-    protected static Map<String, TextField> textFields =
-        Map.of(
-            "2", new TextField(),
-            "3", new TextField(),
-            "4", new TextField());
+    protected static Map<String, TextField> textFields = Map.of(
+        "2", new TextField(),
+        "3", new TextField(),
+        "4", new TextField());
 
     /**
      * Retrieves the background image.
@@ -547,12 +588,12 @@ public final class GuiFactory {
   }
 
   /**
-   * The JoinGameFactory class provides static methods to create various UI components for setting
+   * The JoinGameFactory class provides static methods to create various UI
+   * components for setting
    * up a game to join.
    */
   class JoinGameFactory {
-    private static final String SPLASH_SCREEN_IMG_PATH =
-        "file:src/main/resources/assets/in_lobby.png";
+    private static final String SPLASH_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_lobby.png";
 
     /**
      * Retrieves the background image.
@@ -576,7 +617,7 @@ public final class GuiFactory {
      * Creates a button for selecting the game id.
      *
      * @param index The game server index.
-     * @param vv The game server virtual view.
+     * @param vv    The game server virtual view.
      * @return The button for selecting the game server.
      */
     protected static Button getGameIdButton(String index, VirtualView vv) {
@@ -587,9 +628,11 @@ public final class GuiFactory {
     }
 
     /**
-     * Creates a VBox container with input widgets for setting up game server selection.
+     * Creates a VBox container with input widgets for setting up game server
+     * selection.
      *
-     * @return The VBox container with input widgets for choosing the server to join.
+     * @return The VBox container with input widgets for choosing the server to
+     *         join.
      */
     protected static VBox getJoinGameWidget(List<VirtualView> vvs) {
       List<Button> buttons = new ArrayList<>();
@@ -619,10 +662,12 @@ public final class GuiFactory {
     }
   }
 
-  /** GUI waiting for a game to start. Creates GUI components for the waiting phase. */
+  /**
+   * GUI waiting for a game to start. Creates GUI components for the waiting
+   * phase.
+   */
   class WaitGameFactory {
-    private static final String SELECTION_SCREEN_IMG_PATH =
-        "file:src/main/resources/assets/in_wait.png";
+    private static final String SELECTION_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_wait.png";
 
     /**
      * Retrieves the background image for the waiting game.
@@ -656,10 +701,44 @@ public final class GuiFactory {
     }
   }
 
-  /** GUI waiting for a game snapshot. Creates GUI components for the game snapshot. */
+  /**
+   * Method used to update the current game widget scene dynamically. Must be wrapped in executeOnJavaFX
+   * when called to make sure it's properly runned into JavaFX's thread.
+   * 
+   * @param oldSP The old stack pane to update.
+   * @param oldVw The old virtual view to check what changed.
+   * @param newVw The new virtual view.
+   */
+  public static void updateGameWidget(StackPane oldSP, VirtualView oldVw, VirtualView newVw) {
+    VBox root = (VBox) oldSP.getChildren().get(0);
+    root.getChildren().set(0, GameSnapshotFactory.getLeaderboard(newVw));
+
+    HBox gameStage = (HBox) root.getChildren().get(1);
+    VBox gameBoard = (VBox) gameStage.getChildren().get(0);
+    VBox bookShelf = (VBox) gameStage.getChildren().get(1);
+
+    if (!oldVw.getGameBoard().equals(newVw.getGameBoard())) {
+      gameBoard.getChildren().set(1, GameSnapshotFactory.getGameBoard(newVw));
+    }
+
+    for (int i = 0; i < oldVw.getPlayers().size(); ++i) {
+      if (oldVw.getPlayers().get(i).getPlayerName().equals(getMyPlayerName())){
+          bookShelf.getChildren().set(1,
+          GameSnapshotFactory.getBookShelf(newVw.getPlayers().stream()
+              .filter(vp -> vp.getPlayerName().equals(getMyPlayerName()))
+              .findFirst().get().getBookshelf(), isThisPlayerTurn(newVw)));
+      }
+      // No else as it should be handled in separate "other bookshelfs" page
+    }
+
+  }
+
+  /**
+   * GUI waiting for a game snapshot. Creates GUI components for the game
+   * snapshot.
+   */
   class GameSnapshotFactory {
-    private static final String SELECTION_SCREEN_IMG_PATH =
-        "file:src/main/resources/assets/in_game.png";
+    private static final String SELECTION_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_game.png";
     private static final String FRAME_IMG = "file:src/main/resources/assets/frame.png";
     private static final String CAT_IMG = "file:src/main/resources/assets/cat.png";
     private static final String BOOK_IMG = "file:src/main/resources/assets/book.png";
@@ -693,53 +772,50 @@ public final class GuiFactory {
     private static final String COMMON_TWELVE = "file:src/main/resources/assets/c12.png";
 
     /** Associate a {@link TileType} to a image path. */
-    private static Map<TileType, String> imagesMap =
-        Map.of(
-            TileType.FRAME, FRAME_IMG,
-            TileType.CAT, CAT_IMG,
-            TileType.GAME, GAME_IMG,
-            TileType.BOOK, BOOK_IMG,
-            TileType.PLANT, PLANT_IMG,
-            TileType.TROPHY, TROPHY_IMG,
-            TileType.EMPTY, EMPTY_IMG);
+    private static Map<TileType, String> imagesMap = Map.of(
+        TileType.FRAME, FRAME_IMG,
+        TileType.CAT, CAT_IMG,
+        TileType.GAME, GAME_IMG,
+        TileType.BOOK, BOOK_IMG,
+        TileType.PLANT, PLANT_IMG,
+        TileType.TROPHY, TROPHY_IMG,
+        TileType.EMPTY, EMPTY_IMG);
 
     /** Associate a private card index to its image path. */
-    protected static Map<Integer, String> privateCardMap =
-        new HashMap<>() {
-          {
-            put(1, PRIVATE_ONE);
-            put(2, PRIVATE_TWO);
-            put(3, PRIVATE_THREE);
-            put(4, PRIVATE_FOUR);
-            put(5, PRIVATE_FIVE);
-            put(6, PRIVATE_SIX);
-            put(7, PRIVATE_SEVEN);
-            put(8, PRIVATE_EIGHT);
-            put(9, PRIVATE_NINE);
-            put(10, PRIVATE_TEN);
-            put(11, PRIVATE_ELEVEN);
-            put(12, PRIVATE_TWELVE);
-          }
-        };
+    protected static Map<Integer, String> privateCardMap = new HashMap<>() {
+      {
+        put(1, PRIVATE_ONE);
+        put(2, PRIVATE_TWO);
+        put(3, PRIVATE_THREE);
+        put(4, PRIVATE_FOUR);
+        put(5, PRIVATE_FIVE);
+        put(6, PRIVATE_SIX);
+        put(7, PRIVATE_SEVEN);
+        put(8, PRIVATE_EIGHT);
+        put(9, PRIVATE_NINE);
+        put(10, PRIVATE_TEN);
+        put(11, PRIVATE_ELEVEN);
+        put(12, PRIVATE_TWELVE);
+      }
+    };
 
     /** Associate a common goal card index to its image path. */
-    protected static Map<Integer, String> commonCardMap =
-        new HashMap<>() {
-          {
-            put(1, COMMON_ONE);
-            put(2, COMMON_TWO);
-            put(3, COMMON_THREE);
-            put(4, COMMON_FOUR);
-            put(5, COMMON_FIVE);
-            put(6, COMMON_SIX);
-            put(7, COMMON_SEVEN);
-            put(8, COMMON_EIGHT);
-            put(9, COMMON_NINE);
-            put(10, COMMON_TEN);
-            put(11, COMMON_ELEVEN);
-            put(12, COMMON_TWELVE);
-          }
-        };
+    protected static Map<Integer, String> commonCardMap = new HashMap<>() {
+      {
+        put(1, COMMON_ONE);
+        put(2, COMMON_TWO);
+        put(3, COMMON_THREE);
+        put(4, COMMON_FOUR);
+        put(5, COMMON_FIVE);
+        put(6, COMMON_SIX);
+        put(7, COMMON_SEVEN);
+        put(8, COMMON_EIGHT);
+        put(9, COMMON_NINE);
+        put(10, COMMON_TEN);
+        put(11, COMMON_ELEVEN);
+        put(12, COMMON_TWELVE);
+      }
+    };
 
     /**
      * Retrieves the background image for the waiting game.
@@ -794,11 +870,11 @@ public final class GuiFactory {
     /**
      * Retrieves the bookshelf board {@link Bookshelf}.
      *
-     * @param bs The {@link Bookshelf}.
-     * @param myTurn A flag stating if is the current client game turn.
+     * @param bs     The {@link Bookshelf}.
+     * @param isEditable A flag stating if is the bookshelf is owned by client player.
      * @return The bookshelf {@link GridPane}.
      */
-    private static GridPane getBookShelf(Bookshelf bs, boolean myTurn) {
+    private static GridPane getBookShelf(Bookshelf bs, boolean isEditable) {
       GridPane gp = new GridPane();
       gp.setHgap(5);
       gp.setVgap(5);
@@ -813,15 +889,14 @@ public final class GuiFactory {
 
           // buil the command
           final int col = j;
-          imgView.setOnMouseClicked(
-              event -> {
-                if (!myTurn) {
-                  return;
-                }
-                UserMoveBuilder.appendDestCol(col);
-                CallBack.moveTileCallBack.call(UserMoveBuilder.getMove());
-                UserMoveBuilder.clear();
-              });
+          if (isEditable){
+            imgView.setOnMouseClicked(
+                event -> {
+                  UserMoveBuilder.appendDestCol(col);
+                  CallBack.moveTileCallBack.call(UserMoveBuilder.getMove());
+                  UserMoveBuilder.clear();
+                });
+          }
           gp.add(imgView, j, i);
         }
       }
@@ -829,7 +904,8 @@ public final class GuiFactory {
     }
 
     /**
-     * Retrieves the bookshelf boards {@link Bookshelf} of all players with the player name.
+     * Retrieves the bookshelf boards {@link Bookshelf} of all players with the
+     * player name.
      *
      * @param vv The virtual view.
      * @return A list of bookshelf {@link VBox}.
@@ -838,15 +914,9 @@ public final class GuiFactory {
       boolean isCurrTurn = isThisPlayerTurn(vv);
 
       for (VirtualPlayer vp : vv.getPlayers()) {
-        try {
-          if (!vp.getPlayerName().equals(Client.getPlayerConnector().getPlayer().getPlayerName())) {
-            continue;
+          if (vp.getPlayerName().equals(getMyPlayerName())) {
+            return getBookShelf(vp.getBookshelf(), isCurrTurn);
           }
-        } catch (RemoteException e) {
-          // TODO: add warning to ui
-          continue;
-        }
-        return getBookShelf(vp.getBookshelf(), isCurrTurn);
       }
       return null;
     }
@@ -896,7 +966,7 @@ public final class GuiFactory {
      * @param vv The virtual view.
      * @return The score board.
      */
-    private static HBox getLeaderboard(VirtualView vv) {
+    protected static HBox getLeaderboard(VirtualView vv) {
       VBox status = new VBox();
       status.setAlignment(Pos.CENTER);
       status.setSpacing(5);
@@ -1030,8 +1100,10 @@ public final class GuiFactory {
   }
 
   /**
-   * The UserMoveBuilder class is a utility class that helps in constructing a user's move. It
-   * provides methods to append tile coordinates and destination column to the move, clear the move,
+   * The UserMoveBuilder class is a utility class that helps in constructing a
+   * user's move. It
+   * provides methods to append tile coordinates and destination column to the
+   * move, clear the move,
    * and retrieve the constructed move as a string.
    */
   class UserMoveBuilder {
