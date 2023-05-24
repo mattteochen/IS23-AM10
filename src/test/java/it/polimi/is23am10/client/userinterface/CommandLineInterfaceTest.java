@@ -110,7 +110,7 @@ public class CommandLineInterfaceTest {
     g.setStatus(GameStatus.ENDED);
     g.setWinnerPlayer(player2);
     VirtualView vw = new VirtualView(g);
-    cli.displayVirtualView(vw);
+    cli.displayVirtualView(null, vw);
 
     final String expectedString = String.format("%s\n%s\n%s\n%s\n%s",
         CLIStrings.currentStateString,
@@ -133,7 +133,7 @@ public class CommandLineInterfaceTest {
     g.setStatus(GameStatus.LAST_ROUND);
     g.setFirstPlayer(g.getActivePlayer());
     VirtualView vw = new VirtualView(g);
-    cli.displayVirtualView(vw);
+    cli.displayVirtualView(null, vw);
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.lastRoundString));
   }
 
@@ -149,7 +149,7 @@ public class CommandLineInterfaceTest {
     g.setFirstPlayer(g.getActivePlayer());
     g.addPlayer("Numa Pompilio");
     VirtualView vw = new VirtualView(g);
-    cli.displayVirtualView(vw);
+    cli.displayVirtualView(null, vw);
 
     // .show(VirtualView) method doesn't return the dynamic strings like other OW methods.
     // Sample-testing cli strings to ensure the whole method gets executed.

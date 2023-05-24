@@ -199,9 +199,9 @@ public class SocketClientTest {
   void showServerMessage_should_gameSnapShot() throws RemoteException {
     AbstractMessage msg = new GameMessage(null);
 
-    doNothing().when(userInterface).displayVirtualView(null);
+    doNothing().when(userInterface).displayVirtualView(null, null);
     socketClient.showServerMessage(msg);
 
-    verify(userInterface, times(1)).displayVirtualView(null);
+    verify(userInterface, times(1)).displayVirtualView(null, null);
   }
 }

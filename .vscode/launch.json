@@ -20,6 +20,14 @@
     },
     {
       "type": "java",
+      "name": "GUI",
+      "request": "launch",
+      "mainClass": "it.polimi.is23am10.App",
+      "args": "--show-gui",
+      "projectName": "is23am10"
+    },
+    {
+      "type": "java",
       "name": "SOCKET",
       "request": "launch",
       "mainClass": "it.polimi.is23am10.App",
