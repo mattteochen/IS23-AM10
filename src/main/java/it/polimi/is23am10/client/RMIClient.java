@@ -18,7 +18,6 @@ import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
-import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 import it.polimi.is23am10.utils.Coordinates;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -46,9 +45,6 @@ public class RMIClient extends Client {
    */
   protected transient IServerControllerAction serverControllerActionServer;
 
-  /** The {@link IPlayerConnector} server object. */
-  protected IPlayerConnector playerConnectorServer;
-
   /**
    * Rmi alarm snoozer.
    * 
@@ -71,14 +67,12 @@ public class RMIClient extends Client {
    *
    * @param pc Player connector.
    * @param ui User interface.
-   * @param pcs Player connector server reference.
    * @param scas Server controller action server reference.
    * @param reg Rmi registry instance.
    */
-  public RMIClient(PlayerConnectorRmi pc, UserInterface ui, IPlayerConnector pcs, IServerControllerAction scas,
+  public RMIClient(PlayerConnectorRmi pc, UserInterface ui, IServerControllerAction scas,
       Registry reg) throws UnknownHostException, RemoteException {
     super(pc, ui);
-    playerConnectorServer = pcs;
     serverControllerActionServer = scas;
     rmiRegistry = reg;
   }

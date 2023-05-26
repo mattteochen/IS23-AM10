@@ -174,7 +174,6 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    *
    * @return The {@link IPlayerConnector}.
    */
-  // TODO: add getter
   public static IPlayerConnector getPlayerConnector() {
     synchronized (playerConnectorLock) {
       return playerConnector;

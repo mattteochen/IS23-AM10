@@ -95,7 +95,7 @@ public class RMIClientTest {
     PlayerConnectorRmi pc = new PlayerConnectorRmi(new LinkedBlockingQueue<>(), null);
     UserInterface ui = new CommandLineInterface(true);
 
-    Client rmiClient = new RMIClient(pc, ui, null, null, null);
+    Client rmiClient = new RMIClient(pc, ui, null, null);
 
     assertNotNull(rmiClient);
   }
