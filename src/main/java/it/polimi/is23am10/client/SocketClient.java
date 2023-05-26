@@ -1,16 +1,5 @@
 package it.polimi.is23am10.client;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
-import java.rmi.RemoteException;
-import java.util.Map;
-import java.util.UUID;
-
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
@@ -24,9 +13,18 @@ import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
-import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.utils.Coordinates;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.rmi.RemoteException;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * A client using Socket as communication method.
@@ -38,13 +36,23 @@ import it.polimi.is23am10.utils.Coordinates;
  */
 public class SocketClient extends Client {
 
+  /** The {@link BufferedReader} buffer size. */
+  private final int BUFFER_LENGHT = 102400;
+
+  /** The input stream instance to be linked with {@link PlayerConnectorSocket#getConnector()}. */
+  DataInputStream dis;
+
+  /** The buffer reader instance to be linked with the {@link SocketClient#dis}. */
+  BufferedReader br;
+
   /**
    * Public constructor for client using Socket as communication method.
    *
    * @param pc player connector
    * @param ui user interface
    */
-  public SocketClient(PlayerConnectorSocket pc, UserInterface ui) throws UnknownHostException, RemoteException {
+  public SocketClient(PlayerConnectorSocket pc, UserInterface ui)
+      throws UnknownHostException, RemoteException {
     super(pc, ui);
   }
 
@@ -68,10 +76,23 @@ public class SocketClient extends Client {
   /** {@inheritDoc} */
   @Override
   protected boolean hasJoined() {
-    PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
-    return (playerConnectorSocket.getPlayer() != null
-        && playerConnectorSocket.getPlayer().getPlayerName() != null
-        && gameIdRef != null);
+    synchronized (playerConnectorLock) {
+      PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
+      return (playerConnectorSocket.getPlayer() != null
+          && playerConnectorSocket.getPlayer().getPlayerName() != null
+          && gameIdRef != null);
+    }
+  }
+
+  /**
+   * Determine if the socket is connected.
+   *
+   * @return The requested flag.
+   */
+  protected boolean isSocketConnected() {
+    synchronized (playerConnectorLock) {
+      return ((PlayerConnectorSocket) playerConnector).getConnector().isConnected();
+    }
   }
 
   /** Client core cycle. Send user requested commands and read updates. */
@@ -80,18 +101,18 @@ public class SocketClient extends Client {
 
     alarm.scheduleAtFixedRate(new AlarmTask(snoozer), ALARM_INITIAL_DELAY_MS, ALARM_INTERVAL_MS);
 
-    runInputMessageHandler();
+    try {
+      runInputMessageHandler();
+    } catch (IOException e) {
+      userInterface.displayError(
+          new ErrorMessage(
+              "Internal module error, please report this message:" + e.getMessage(),
+              ErrorSeverity.CRITICAL));
+    }
 
-    // PlayerConnector's msg queue is not used at this time as we don't have multi
-    // source message inputs to handle,
-    // hence there is no need to buffer them as at server level. Here we can just
-    // live update the view upon receiving an update in a FIFO manner.
-    // Consider using a lighter connector.
-    PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
-
-    while (playerConnectorSocket.getConnector().isConnected() && !hasRequestedDisconnection()) {
+    while (isSocketConnected() && !hasRequestedDisconnection()) {
       try {
-        clientRunnerCore(playerConnectorSocket);
+        clientRunnerCore();
       } catch (IOException | InterruptedException | NullPlayerIdException e) {
         userInterface.displayError(
             new ErrorMessage(
@@ -104,106 +125,107 @@ public class SocketClient extends Client {
   /**
    * Parse the server payload.
    *
-   * @param pc The socket player connector.
    * @return The parsed {@link AbstractMessage}.
    * @throws IOException Possibly thrown by readline.
    */
-  protected AbstractMessage parseServerMessage(PlayerConnectorSocket pc) throws IOException {
-    synchronized (pc.getConnector()) {
-      DataInputStream dis = new DataInputStream(pc.getConnector().getInputStream());
-      BufferedReader br = new BufferedReader(new InputStreamReader(dis));
-      String payload = br.readLine();
-      return payload == null ? null : gson.fromJson(payload, AbstractMessage.class);
-    }
+  protected AbstractMessage parseServerMessage() throws IOException {
+    String payload = br.readLine();
+    return payload == null ? null : gson.fromJson(payload, AbstractMessage.class);
   }
 
   /** {@inheritDoc} */
   @Override
-  void getAvailableGames(AbstractPlayerConnector apc) throws IOException, InterruptedException {
+  void getAvailableGames() throws IOException, InterruptedException {
     GetAvailableGamesCommand command = new GetAvailableGamesCommand();
     String req = gson.toJson(command);
-    sendMessage(req, apc);
+    sendMessage(req);
   }
-  ;
 
   /** {@inheritDoc} */
   @Override
   void snoozeAlarm() throws IOException {
-    PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
-    SnoozeGameTimerCommand cmd =
-        new SnoozeGameTimerCommand(playerConnectorSocket.getPlayer().getPlayerName());
-    String req = gson.toJson(cmd);
-    sendMessage(req, playerConnectorSocket);
+    String req;
+    synchronized (playerConnectorLock) {
+      PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
+      SnoozeGameTimerCommand cmd =
+          new SnoozeGameTimerCommand(playerConnectorSocket.getPlayer().getPlayerName());
+      req = gson.toJson(cmd);
+    }
+    sendMessage(req);
   }
-  ;
 
   /** {@inheritDoc} */
   @Override
-  void startGame(AbstractPlayerConnector apc, String playerName, int maxPlayerNum)
-      throws IOException {
+  void startGame(String playerName, int maxPlayerNum) throws IOException {
     StartGameCommand command = new StartGameCommand(playerName, maxPlayerNum);
     String req = gson.toJson(command);
-    sendMessage(req, apc);
+    sendMessage(req);
   }
-  ;
 
   /** {@inheritDoc} */
   @Override
-  void addPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId) throws IOException {
+  void addPlayer(String playerName, UUID gameId) throws IOException {
     AddPlayerCommand command = new AddPlayerCommand(playerName, gameId);
     String req = gson.toJson(command);
-    sendMessage(req, apc);
+    sendMessage(req);
   }
-  ;
 
   /** {@inheritDoc} */
   @Override
-  void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves)
-      throws IOException {
+  void moveTiles(Map<Coordinates, Coordinates> moves) throws IOException {
+    PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
     MoveTilesCommand command =
-        new MoveTilesCommand(apc.getPlayer().getPlayerName(), apc.getGameId(), moves);
+        new MoveTilesCommand(
+            playerConnectorSocket.getPlayer().getPlayerName(),
+            playerConnectorSocket.getGameId(),
+            moves);
     String req = gson.toJson(command);
-    sendMessage(req, apc);
+    sendMessage(req);
   }
-  ;
 
   /** {@inheritDoc} */
   @Override
-  void sendChatMessage(AbstractPlayerConnector apc, ChatMessage msg) throws IOException {
+  void sendChatMessage(ChatMessage msg) throws IOException {
     SendChatMessageCommand command = new SendChatMessageCommand(msg);
     String req = gson.toJson(command);
-    sendMessage(req, apc);
+    sendMessage(req);
   }
 
   /**
    * Write a message throw the socket.
    *
    * @param req The payload request.
-   * @param apc The player connector instance.
    */
-  protected void sendMessage(String req, AbstractPlayerConnector apc) throws IOException {
-    PrintWriter epson =
-        new PrintWriter(
-            ((PlayerConnectorSocket) apc).getConnector().getOutputStream(),
-            true,
-            StandardCharsets.UTF_8);
-    epson.println(req);
+  protected void sendMessage(String req) throws IOException {
+    synchronized (playerConnectorLock) {
+      PrintWriter epson =
+          new PrintWriter(
+              ((PlayerConnectorSocket) playerConnector).getConnector().getOutputStream(),
+              true,
+              StandardCharsets.UTF_8);
+      epson.println(req);
+    }
   }
 
   /**
-   * Poll payloads from the socket stream and process {@link AbstractMessage} that can be recognized.
-   *
+   * Poll payloads from the socket stream and process {@link AbstractMessage} that can be
+   * recognized.
    */
-  public void runInputMessageHandler(){
-    PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
+  public void runInputMessageHandler() throws IOException {
+    synchronized (playerConnectorLock) {
+      dis =
+          new DataInputStream(
+              ((PlayerConnectorSocket) playerConnector).getConnector().getInputStream());
+    }
+    br = new BufferedReader(new InputStreamReader(dis), BUFFER_LENGHT);
+
     Thread messageHandler =
         new Thread(
             () -> {
-              while (playerConnectorSocket.getConnector().isConnected()
-                  && !hasRequestedDisconnection()) {
+              while (isSocketConnected() && !hasRequestedDisconnection()) {
                 // retrieve and show server messages, it includes chat messages
                 try {
-                  AbstractMessage serverMessage = parseServerMessage(playerConnectorSocket);
+                  AbstractMessage serverMessage = parseServerMessage();
                   if (serverMessage != null) {
                     showServerMessage(serverMessage);
                   }
