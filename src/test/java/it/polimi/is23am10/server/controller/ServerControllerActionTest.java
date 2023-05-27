@@ -431,10 +431,10 @@ class ServerControllerActionTest {
     
     serverControllerAction.addPlayerConsumer.accept(logger, steveReconnecting, steveReconnectingCmd);
 
-    assertTrue(handler.getPlayerConnectors().contains(steve));
     assertTrue(handler.getGame().getPlayerNames().contains("Steve"));
-    assertEquals("Steve", steve.getPlayer().getPlayerName());
-    assertEquals(handler.getGame().getGameId(), steve.getGameId());
+    assertEquals("Steve", steveReconnecting.getPlayer().getPlayerName());
+    assertEquals(handler.getGame().getGameId(), steveReconnecting.getGameId());
+    assertTrue(handler.getPlayerConnectors().contains(steveReconnecting));
     assertEquals(3, handler.getGame().getPlayers().size());
     
     /*

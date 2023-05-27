@@ -57,7 +57,7 @@ public interface UserInterface {
    * 
    * @param vw {@link VirtualView} of the game to display.
    */
-  void displayVirtualView(VirtualView vw);
+  void displayVirtualView(VirtualView old, VirtualView vw);
 
   /**
    * Method called to notify the user of a new chat message.

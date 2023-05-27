@@ -1,21 +1,5 @@
 package it.polimi.is23am10.client;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.lang.reflect.Type;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -53,12 +37,23 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
+import java.io.IOException;
+import java.io.Serializable;
+import java.lang.reflect.Type;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 
-/**
- * Custom lock object.
- */
-class LockObject implements Serializable {
-}
+/** Custom lock object. */
+class LockObject implements Serializable {}
 
 /**
  * An abstract class representing the app running in client mode. Holds the three elements needed
@@ -89,29 +84,20 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    */
   protected Thread inputMessageHandlerThread = null;
 
-  /**
-   * Custom lock object.
-   * 
-   */
-  private LockObject gameRefLock = new LockObject();
-
-  /**
-   * Custom lock object.
-   * 
-   */
-  private LockObject hasDuplicateLock = new LockObject();
-
-  /**
-   * Custom lock object.
-   * 
-   */
-  private LockObject virtualViewLock = new LockObject();
+  /** Custom lock object. */
+  protected LockObject gameRefLock = new LockObject();
 
   /** Custom lock object. */
-  private static Object availableServersLock = new Object();
+  protected LockObject hasDuplicateLock = new LockObject();
 
   /** Custom lock object. */
-  private static Object playerConnectorLock = new Object();
+  protected LockObject virtualViewLock = new LockObject();
+
+  /** Custom lock object. */
+  protected static Object availableServersLock = new Object();
+
+  /** Custom lock object. */
+  protected static Object playerConnectorLock = new Object();
 
   /**
    * Protected constructor for client using Socket as communication method.
@@ -120,7 +106,8 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    * @param ui User interface.
    * @throws UnknownHostException On localhost retrieval failure.
    */
-  protected Client(IPlayerConnector pc, UserInterface ui) throws UnknownHostException, RemoteException {
+  protected Client(IPlayerConnector pc, UserInterface ui)
+      throws UnknownHostException, RemoteException {
     playerConnector = pc;
     userInterface = ui;
     serverAddress = InetAddress.getLocalHost();
@@ -152,16 +139,10 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
   /** Duplicate name error flag. */
   private boolean hasDuplicateName;
 
-  /**
-   * A {@link Gson} instance to serialize and deserialize commands.
-   * 
-   */
+  /** A {@link Gson} instance to serialize and deserialize commands. */
   protected transient Gson gson;
 
-  /**
-   * The server host IP address.
-   * 
-   */
+  /** The server host IP address. */
   protected transient InetAddress serverAddress;
 
   /** The three possible states in which the client can be. */
@@ -188,7 +169,6 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    *
    * @return The {@link IPlayerConnector}.
    */
-  // TODO: add getter
   public static IPlayerConnector getPlayerConnector() {
     synchronized (playerConnectorLock) {
       return playerConnector;
@@ -230,29 +210,30 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
 
   /**
    * Show the received message to the client.
-   * 
+   *
    * @param msg The message. Its dynamic type is inferred by {@link Gson}.
    * @throws RemoteException
-   *
    */
   public void showServerMessage(AbstractMessage msg) throws RemoteException {
     if (gson == null) {
-      gson = new GsonBuilder()
-          .registerTypeAdapter(AbstractMessage.class, new MessageDeserializer())
-          .create();
+      gson =
+          new GsonBuilder()
+              .registerTypeAdapter(AbstractMessage.class, new MessageDeserializer())
+              .create();
     }
     switch (msg.getMessageType()) {
       case CHAT_MESSAGE:
         userInterface.displayChatMessage((ChatMessage) msg);
         break;
       case GAME_SNAPSHOT:
+        VirtualView old = virtualView;
         VirtualView v = gson.fromJson(msg.getMessage(), VirtualView.class);
         setVirtualView(v);
         // do not overwrite game id
         if (getGameIdRef() == null) {
           setGameIdRef(v.getGameId());
         }
-        userInterface.displayVirtualView(v);
+        userInterface.displayVirtualView(old, v);
         break;
       case ERROR_MESSAGE:
         userInterface.displayError((ErrorMessage) msg);
@@ -271,10 +252,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
     }
   }
 
-  /**
-   * Abstract method that run the client into the game.
-   * 
-   */
+  /** Abstract method that run the client into the game. */
   public abstract void run();
 
   /**
@@ -405,53 +383,44 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
   /**
    * Abstract method that send command to get all available games.
    *
-   * @param apc abstract player connector
    * @throws IOException
    * @throws InterruptedException
    */
-  abstract void getAvailableGames(AbstractPlayerConnector apc)
-      throws IOException, InterruptedException;
+  abstract void getAvailableGames() throws IOException, InterruptedException;
 
   /**
    * Abstract method that send command to start a new game.
    *
-   * @param apc abstract player connector
    * @param playerName selected player name
    * @param maxPlayerNum max number of players selected
    * @throws IOException
    */
-  abstract void startGame(AbstractPlayerConnector apc, String playerName, int maxPlayerNum)
-      throws IOException;
+  abstract void startGame(String playerName, int maxPlayerNum) throws IOException;
 
   /**
    * Abstract method that send command to add a new player.
    *
-   * @param apc abstract player connector
    * @param playerName selected player name
    * @param gameId selected game id
    * @throws IOException
    */
-  abstract void addPlayer(AbstractPlayerConnector apc, String playerName, UUID gameId)
-      throws IOException;
+  abstract void addPlayer(String playerName, UUID gameId) throws IOException;
 
   /**
    * Abstract method that send command to move tiles.
    *
-   * @param apc abstract player connector
    * @param moves map of moves
    * @throws IOException
    */
-  abstract void moveTiles(AbstractPlayerConnector apc, Map<Coordinates, Coordinates> moves)
-      throws IOException;
+  abstract void moveTiles(Map<Coordinates, Coordinates> moves) throws IOException;
 
   /**
    * Abstract function that send chat message
    *
-   * @param apc abstract player connector
    * @param msg chat message
    * @throws IOException
    */
-  abstract void sendChatMessage(AbstractPlayerConnector apc, ChatMessage msg) throws IOException;
+  abstract void sendChatMessage(ChatMessage msg) throws IOException;
 
   /**
    * Abstract function that snoozes virtual alarm.
@@ -463,12 +432,48 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
   abstract void snoozeAlarm() throws IOException;
 
   /**
+   * Set the game id to the {@link IPlayerConnector}. The value source is {@link
+   * Client#getGameIdRef()}.
+   *
+   * @param reset A flag stating if this files has to be reset.
+   */
+  protected void setConnectorGameId(boolean reset) {
+    synchronized (playerConnectorLock) {
+      ((AbstractPlayerConnector) playerConnector).setGameId(reset ? null : getGameIdRef());
+    }
+  }
+
+  /**
+   * Set the {@link Player} to the {@link IPlayerConnector}.
+   *
+   * @param name The player name.
+   * @throws NullPlayerIdException
+   * @throws NullPlayerIdException
+   */
+  protected void setConnectorPlayer(String name)
+      throws NullPlayerNameException, NullPlayerIdException {
+    synchronized (playerConnectorLock) {
+      Player p = new Player();
+      if (name != null) {
+        p.setPlayerName(name);
+        p.setPlayerID(UUID.nameUUIDFromBytes(name.getBytes()));
+      }
+      ((AbstractPlayerConnector) playerConnector).setPlayer(p);
+    }
+  }
+
+  /**
    * Handling function for move tiles command.
    *
-   * @param apc abstract player connector
    * @throws IOException
    */
-  protected void handleCommands(AbstractPlayerConnector apc) throws IOException {
+  protected void handleCommands() throws IOException {
+
+    Player connectorPlayer;
+    synchronized (playerConnectorLock) {
+      AbstractPlayerConnector pc = (AbstractPlayerConnector) playerConnector;
+      connectorPlayer = pc.getPlayer();
+    }
 
     if (clientStatus == ClientGameStatus.GAME_SELECTION) {
       clientStatus = ClientGameStatus.PLAYING;
@@ -489,10 +494,10 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
               // If the second string begins with double quotes,
               // there's no receiver and the message is broadcast
               if (fullCommand.stripLeading().split(" ")[1].startsWith("\"")) {
-                sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg));
+                sendChatMessage(new ChatMessage(connectorPlayer, msg));
               } else {
                 String receiverName = fullCommand.split(" ")[1];
-                sendChatMessage(apc, new ChatMessage(apc.getPlayer(), msg, receiverName));
+                sendChatMessage(new ChatMessage(connectorPlayer, msg, receiverName));
               }
             }
           }
@@ -507,7 +512,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
                 new ErrorMessage("Wait the game to be loaded", ErrorSeverity.ERROR));
             break;
           }
-          if (apc.getPlayer()
+          if (connectorPlayer
                   .getPlayerName()
                   .equals(getVirtualView().getActivePlayer().getPlayerName())
               && getVirtualView().getStatus() != GameStatus.WAITING_FOR_PLAYERS) {
@@ -569,7 +574,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
                     moves,
                     virtualView.getActivePlayer().getBookshelf(),
                     virtualView.getGameBoard());
-                moveTiles(apc, moves);
+                moveTiles(moves);
               } catch (BoardGridRowIndexOutOfBoundsException
                   | BoardGridColIndexOutOfBoundsException
                   | BookshelfGridColIndexOutOfBoundsException
@@ -597,57 +602,51 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
   /**
    * Handling function for name selection.
    *
-   * @param apc abstract player connector
-   * @return player name selected
+   * @return The operation result.
    * @throws IOException
    */
-  protected String handlePlayerNameSelection(AbstractPlayerConnector apc) throws IOException {
+  protected boolean handlePlayerNameSelection() throws IOException {
     // Select only the string before the space if the client writes more words
     String selectedPlayerName = userInterface.getUserInput();
     if (selectedPlayerName != null) {
-      selectedPlayerName = selectedPlayerName.stripLeading();
-      Player p = new Player();
-      apc.setPlayer(p);
+      selectedPlayerName = selectedPlayerName.stripLeading().split(" ")[0];
       try {
-        apc.getPlayer().setPlayerName(selectedPlayerName);
-      } catch (NullPlayerNameException e) {
-        userInterface.displayError(new ErrorMessage("Null player name", ErrorSeverity.ERROR));
-        return null;
+        setConnectorPlayer(selectedPlayerName);
+      } catch (NullPlayerNameException | NullPlayerIdException e) {
+        userInterface.displayError(new ErrorMessage("Invalid player name", ErrorSeverity.ERROR));
+        return false;
       }
-      return selectedPlayerName;
+      return true;
     } else {
-      return null;
+      return false;
     }
   }
 
   /**
-   * Empty mock of lookup init for Socket client which is overrided in RMI client
-   *
-   * @throws RemoteException
-   * @throws NotBoundException
-   */
-  protected void lookupInit() throws RemoteException, NotBoundException {}
-
-  /**
    * Handling function for game selection.
    *
-   * @param apc abstract player connector
-   * @param selectedPlayerName player name selected
    * @throws IOException
    * @throws InterruptedException
    */
-  protected void handleGameSelection(AbstractPlayerConnector apc, String selectedPlayerName)
-      throws IOException, InterruptedException {
+  protected void handleGameSelection() throws IOException, InterruptedException {
+
+    Player connectorPlayer;
+    UUID connectorGameId;
+    synchronized (playerConnectorLock) {
+      AbstractPlayerConnector pc = (AbstractPlayerConnector) playerConnector;
+      connectorPlayer = pc.getPlayer();
+      connectorGameId = pc.getGameId();
+    }
 
     // Executed if I still haven't selected a game
-    if (apc.getGameId() == null) {
+    if (connectorGameId == null) {
 
       // We use the check over client status to perform one-time actions
       // like displaying stuff and sending
       if (clientStatus == ClientGameStatus.INIT) {
         userInterface.displayGameJoinGuide();
         clientStatus = ClientGameStatus.GAME_SELECTION;
-        getAvailableGames(apc);
+        getAvailableGames();
       }
 
       // TODO: use userinterface
@@ -661,7 +660,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
               String idx = fullCommand.split(" ")[1];
               if (CommandSyntaxValidator.validateGameIdx(idx, availableGames.size())) {
                 UUID selectedGameId = availableGames.get(Integer.parseInt(idx)).getGameId();
-                addPlayer(apc, selectedPlayerName, selectedGameId);
+                addPlayer(connectorPlayer.getPlayerName(), selectedGameId);
                 /*
                  * Since the gameId ref is set when the message handler receives a GAME_SNAPSHOT
                  * message
@@ -678,7 +677,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
                   setHasDuplicateName(false);
                   break;
                 }
-                apc.setGameId(getGameIdRef());
+                setConnectorGameId(false);
               } else {
                 userInterface.displayError(
                     new ErrorMessage("Failed to select game", ErrorSeverity.CRITICAL));
@@ -693,10 +692,9 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
               String numMaxPlayers = fullCommand.split(" ")[1];
               if (CommandSyntaxValidator.validateMaxPlayer(numMaxPlayers)) {
                 maxPlayers = Integer.parseInt(numMaxPlayers);
-                startGame(apc, selectedPlayerName, maxPlayers);
-                while (getGameIdRef() == null) {
-                }
-                apc.setGameId(getGameIdRef());
+                startGame(connectorPlayer.getPlayerName(), maxPlayers);
+                while (getGameIdRef() == null) {}
+                setConnectorGameId(false);
               } else {
                 userInterface.displayError(
                     new ErrorMessage("Failed to create game", ErrorSeverity.CRITICAL));
@@ -707,8 +705,11 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
             }
             break;
           case "q":
-            apc.setPlayer(new Player());
-            apc.setGameId(null);
+            try {
+              setConnectorPlayer(null);
+            } catch (NullPlayerIdException | NullPlayerNameException e) {
+            }
+            setConnectorGameId(true);
             break;
           default:
             break;
@@ -720,30 +721,33 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
   /**
    * The client game core machine state.
    *
-   * @param pc player connector instance.
    * @throws IOException
    * @throws NullPlayerIdException
    * @throws InterruptedException
    */
-  protected void clientRunnerCore(AbstractPlayerConnector pc)
+  protected void clientRunnerCore()
       throws IOException, InterruptedException, NullPlayerIdException {
 
+    Player connectorPlayer;
+    UUID connectorGameId;
+    synchronized (playerConnectorLock) {
+      AbstractPlayerConnector pc = (AbstractPlayerConnector) playerConnector;
+      connectorPlayer = pc.getPlayer();
+      connectorGameId = pc.getGameId();
+    }
+
     // First I'm gonna ask the player name
-    if (pc.getPlayer() == null || pc.getPlayer().getPlayerName() == null) {
-      String pn = null;
+    if (connectorPlayer == null || connectorPlayer.getPlayerName() == null) {
       userInterface.displaySplashScreen();
-      while (pn == null || pn.equals("")) {
-        pn = handlePlayerNameSelection(pc);
-      }
-      pc.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(pn.getBytes()));
+      while (!handlePlayerNameSelection()) {}
     }
 
     // Execute if the client is not connected to a game.
-    if (pc.getGameId() == null) {
-      handleGameSelection(pc, pc.getPlayer().getPlayerName());
+    if (connectorGameId == null) {
+      handleGameSelection();
     } else {
       // Executed if the client is connected to a game.
-      handleCommands(pc);
+      handleCommands();
     }
   }
 

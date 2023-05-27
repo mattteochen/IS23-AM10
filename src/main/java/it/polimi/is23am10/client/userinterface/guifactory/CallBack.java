@@ -45,7 +45,7 @@ public final class CallBack {
    */
   public static ButtonCallBack joinGameCallBack =
       (tfs) -> {
-        GuiFactory.changeScene(
+        GuiFactory.executeOnJavaFX(
             () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.JOIN_GAME)));
       };
 
@@ -55,7 +55,7 @@ public final class CallBack {
    */
   public static ButtonCallBack createNewGameCallBack =
       (tfs) -> {
-        GuiFactory.changeScene(
+        GuiFactory.executeOnJavaFX(
             () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.CREATE_GAME)));
       };
 

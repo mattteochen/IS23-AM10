@@ -125,13 +125,13 @@ class ServerControllerSocketTest {
     when(playerConnector.getPlayer()).thenReturn(mockPlayer);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);
-    when(mockSocket.isConnected()).thenReturn(true, false);
+    when(mockSocket.isClosed()).thenReturn(false, true);
     doReturn(cmd).when(controller).buildCommand();
     doNothing().when(controller).update();
     controller.run();
 
     verify(playerConnector, times(2)).getConnector();
-    verify(mockSocket, times(2)).isConnected();
+    verify(mockSocket, times(2)).isClosed();
   }
 
   @Test
@@ -141,7 +141,7 @@ class ServerControllerSocketTest {
     when(playerConnector.getPlayer()).thenReturn(mockPlayer);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);
-    when(mockSocket.isConnected()).thenReturn(true, false);
+    when(mockSocket.isClosed()).thenReturn(false,true);
     doThrow(IOException.class).when(controller).buildCommand();
     controller.run();
 
@@ -154,7 +154,7 @@ class ServerControllerSocketTest {
     Player mockPlayer = Mockito.mock(Player.class);
     when(playerConnector.getPlayer()).thenReturn(mockPlayer);
     when(playerConnector.getConnector()).thenReturn(mockSocket);
-    when(mockSocket.isConnected()).thenReturn(true, true, false);
+    when(mockSocket.isClosed()).thenReturn(false, false, true);
     doThrow(JsonIOException.class, JsonSyntaxException.class).when(controller).buildCommand();
     controller.run();
 
@@ -170,7 +170,7 @@ class ServerControllerSocketTest {
     when(playerConnector.getPlayer()).thenReturn(mockPlayer);
 
     when(playerConnector.getConnector()).thenReturn(mockSocket);
-    when(mockSocket.isConnected()).thenReturn(true, false);
+    when(mockSocket.isClosed()).thenReturn(false, true);
     doReturn(cmd).when(controller).buildCommand();
     doThrow(InterruptedException.class, JsonSyntaxException.class).when(controller).update();
     controller.run();
@@ -310,7 +310,7 @@ class ServerControllerSocketTest {
       when(playerConnector.getPlayer()).thenReturn(mockPlayer);
       when(mockPlayer.getPlayerName()).thenReturn("Steve");
       when(playerConnector.getConnector()).thenReturn(mockSocket);
-      when(mockSocket.isConnected()).thenReturn(true, false, false);
+      when(mockSocket.isClosed()).thenReturn(false, true, true);
       when(mockGameHandler.getPlayerConnectors()).thenReturn(Set.of(alivePlayerPC));
       alivePlayerPC.setPlayer(mockAlivePlayer);
       when(mockAlivePlayer.getPlayerName()).thenReturn("Alice");   

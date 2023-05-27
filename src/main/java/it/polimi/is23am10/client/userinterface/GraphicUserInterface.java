@@ -16,6 +16,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
@@ -94,19 +95,26 @@ public final class GraphicUserInterface extends Application implements UserInter
   }
 
   /** {@inheritDoc} */
-  public void displayVirtualView(VirtualView vw) {
+  public void displayVirtualView(VirtualView old, VirtualView vw) {
     if (vw.getStatus() == GameStatus.ENDED) {
       GuiFactory.stages.put(SCENE.END_GAME, GuiFactory.getEndGameScene(vw));
-      GuiFactory.changeScene(
+      GuiFactory.executeOnJavaFX(
           () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.END_GAME)));
     } else {
       if (vw.getStatus() == GameStatus.WAITING_FOR_PLAYERS) {
-        GuiFactory.changeScene(
+        GuiFactory.executeOnJavaFX(
             () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.WAIT_GAME)));
       } else {
-        GuiFactory.stages.put(SCENE.GAME_SNAPSHOT, GuiFactory.getGameSnapshotScene(vw));
-        GuiFactory.changeScene(
+        if (GuiFactory.stages.get(SCENE.GAME_SNAPSHOT) == null){
+          GuiFactory.stages.put(SCENE.GAME_SNAPSHOT, GuiFactory.getGameSnapshotScene(vw));
+          GuiFactory.executeOnJavaFX(
             () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.GAME_SNAPSHOT)));
+        } else {
+          StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
+          GuiFactory.executeOnJavaFX( () ->
+            GuiFactory.updateGameWidget(root, old, vw)
+          );
+        }
       }
     }
   }
@@ -129,7 +137,7 @@ public final class GraphicUserInterface extends Application implements UserInter
   /** {@inheritDoc} */
   @Override
   public void displayGameJoinGuide() {
-    GuiFactory.changeScene(
+    GuiFactory.executeOnJavaFX(
         () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.ENTER_GAME_SELECTION)));
   }
 

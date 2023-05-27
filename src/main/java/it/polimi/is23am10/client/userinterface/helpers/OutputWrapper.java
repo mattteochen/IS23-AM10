@@ -539,6 +539,6 @@ public final class OutputWrapper implements Serializable {
 
     String gameChoice = reader.readLine();
 
-    cli.displayVirtualView(vw2);
+    cli.displayVirtualView(null, vw2);
   }
 }
