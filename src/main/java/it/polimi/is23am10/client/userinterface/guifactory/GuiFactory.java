@@ -8,6 +8,7 @@ import it.polimi.is23am10.server.model.items.board.Board;
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.server.model.items.tile.Tile;
 import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import java.rmi.RemoteException;
@@ -41,6 +42,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -732,6 +734,23 @@ public final class GuiFactory {
 
   }
 
+  public static void updateChatHistory(StackPane oldSP, ChatMessage msg){
+    VBox root = (VBox) oldSP.getChildren().get(0);
+    //root.getChildren().set(0, GameSnapshotFactory.getLeaderboard(newVw));
+    
+    HBox gameStage = (HBox) root.getChildren().get(1);
+    VBox chat = (VBox) gameStage.getChildren().get(3);
+    VBox chatBox = (VBox) chat.getChildren().get(1);
+    VBox chatHistory = (VBox) chatBox.getChildren().get(0);
+    ListView<String> chatMessages = (ListView<String>) chatHistory.getChildren().get(0);
+    if(msg.isBroadcast()){
+      chatMessages.getItems().add(msg.getSender().getPlayerName() + ": " + msg.getMessage());
+    }else {
+      chatMessages.getItems().add(msg.getSender().getPlayerName() + " > " + msg.getReceiverName() + ": " + msg.getMessage());
+    }
+    chatMessages.scrollTo(chatMessages.getItems().size() - 1);
+   }
+ 
   /**
    * GUI waiting for a game snapshot. Creates GUI components for the game
    * snapshot.
@@ -815,6 +834,9 @@ public final class GuiFactory {
         put(12, COMMON_TWELVE);
       }
     };
+
+    protected static TextField textField;
+    protected static ListView<String> chatMessagesListView;
 
     /**
      * Retrieves the background image for the waiting game.
@@ -1059,6 +1081,45 @@ public final class GuiFactory {
       return root;
     }
 
+    protected static TextField getChatTextField() {
+      textField = getTextField("Enter your message here", 180, 100, FontWeight.NORMAL, 12, null);
+      return textField;
+    }
+
+    protected static HBox getSendMessageBox(){
+      HBox hbox = new HBox();
+      hbox.setSpacing(5);
+      hbox.setAlignment(Pos.CENTER_RIGHT);
+      hbox.getChildren().addAll( 
+        getChatTextField(),
+        getButton("Send", CallBack.sendMessageCallBack, textField)
+      );
+      return hbox;
+    };
+
+    protected static VBox getChatHistory(){
+      VBox chatHistory = new VBox();
+      chatMessagesListView = new ListView<String>();
+      chatMessagesListView.setStyle("-fx-control-inner-background: #B0721E");
+      chatHistory.setAlignment(Pos.CENTER);
+      chatHistory.getChildren().addAll(
+        chatMessagesListView
+      );
+      return chatHistory;
+    }
+
+    protected static VBox getChat(){
+      VBox chat = new VBox();
+      chat.setSpacing(10);
+      chat.setAlignment(Pos.BOTTOM_RIGHT);
+      chat.getChildren().addAll(
+        getChatHistory(),
+        getSendMessageBox()
+      );
+
+      return chat;
+    }
+
     /**
      * Retrieves the widget (container) for game snapshot.
      *
@@ -1086,9 +1147,13 @@ public final class GuiFactory {
       bookShelf
           .getChildren()
           .addAll(getLabel("Book Shelf", FontWeight.BOLD, 20), getPlayerBookShelf(vv));
+      VBox chat = new VBox();
+      chat.setAlignment(Pos.BOTTOM_RIGHT);
+      chat.setPadding(new Insets(0, 15, 15, 0));
+      chat.getChildren().addAll( getLabel("Chat", FontWeight.BOLD, 20), getChat());
       HBox gameStage = new HBox();
       gameStage.setAlignment(Pos.CENTER);
-      gameStage.getChildren().addAll(gameBoard, bookShelf, playerItems);
+      gameStage.getChildren().addAll(gameBoard, bookShelf, playerItems, chat);
       gameStage.setSpacing(10);
       VBox root = new VBox();
       root.setAlignment(Pos.CENTER);
