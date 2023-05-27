@@ -163,7 +163,7 @@ public class Board implements Serializable {
    * @return The extracted tile.
    * 
    */
-  public Tile getTileFromSack() {
+  public Tile getTileFromSack() throws IndexOutOfBoundsException {
     Tile tile = tileSack.get(tileSack.size() - 1);
     tileSack.remove(tileSack.size() - 1);
     return tile;
@@ -190,7 +190,7 @@ public class Board implements Serializable {
    * board AND when re-filling it partially mid-game.
    * 
    */
-  private void fillBoardGrid() {
+  private void fillBoardGrid() throws IndexOutOfBoundsException {
     for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
       for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
         if (blackMap[i][j] <= numOfPlayers) {
@@ -338,7 +338,7 @@ public class Board implements Serializable {
    * checks if the Board needs to be refilled
    * and proceeds if so.
    */
-  public void refillIfNeeded() {
+  public void refillIfNeeded() throws IndexOutOfBoundsException {
     if (isRefillNeeded()) {
       fillBoardGrid();
     }

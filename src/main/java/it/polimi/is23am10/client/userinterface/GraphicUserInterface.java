@@ -10,6 +10,7 @@ import java.util.List;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -129,12 +130,16 @@ public final class GraphicUserInterface extends Application implements UserInter
 
   /** {@inheritDoc}} */
   public void displayError(ErrorMessage errorMessage) {
-    // TODO Auto-generated method stub
-  }
-
-  /** {@inheritDoc} */
-  public void displayErrorMessage(AbstractMessage message) {
-    // TODO Auto-generated method stub
+    StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
+    if(errorMessage.getErrorSeverity() != ErrorSeverity.INFO){
+      GuiFactory.executeOnJavaFX(
+        () -> GuiFactory.getErrorMessage(root, errorMessage)
+      );
+    } else {
+      GuiFactory.executeOnJavaFX(
+        () -> GuiFactory.updateChatHistory(root, errorMessage)
+      );
+    }
   }
 
   /** {@inheritDoc} */
