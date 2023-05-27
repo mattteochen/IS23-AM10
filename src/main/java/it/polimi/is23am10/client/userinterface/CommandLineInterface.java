@@ -81,6 +81,18 @@ public final class CommandLineInterface implements UserInterface, Serializable {
   }
 
   /**
+   * {@inheritDoc}}
+   */
+  public void loggingOut() {
+    try {
+      inputHandler.join();
+    } catch (InterruptedException e) {
+      displayError(new ErrorMessage(CLIStrings.internalModuleError + e.getMessage(),
+          ErrorSeverity.CRITICAL));
+    }
+  }
+
+  /**
    * {@inheritDoc}
    */
   public void displayGameJoinGuide() {
@@ -170,9 +182,9 @@ public final class CommandLineInterface implements UserInterface, Serializable {
   /**
    * Creates and starts new thread to handle user input.
    *
-   * @return The thread object.  
+   * @return The thread object.
    */
-  public Thread runInputHandler() {
+  public void runInputHandler() {
     inputHandler = new Thread(() -> {
       try {
         while(true) {
@@ -186,16 +198,5 @@ public final class CommandLineInterface implements UserInterface, Serializable {
       }
     });
     inputHandler.start();
-    return inputHandler;
   }
-
-  /**
-   * Input handler thread getter method.
-   * 
-   * @return input handler thread.
-   */
-  public Thread getInputHandler() {
-    return this.inputHandler;
-  }
-
 }

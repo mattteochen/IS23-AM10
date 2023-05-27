@@ -72,8 +72,6 @@ public class App {
       } else {
         // CLIENT MODE
         UserInterface userInterface = ctx.getShowGUI() ? new GraphicUserInterface() : new CommandLineInterface(ctx.getShowDebug());
-        Thread messageHandlerThread = null;
-        Thread inputMessageHandlerThread = ((CommandLineInterface) userInterface).getInputHandler();
         Client client = null;
         if (ctx.getUseRMI()) {
           try {
@@ -95,7 +93,6 @@ public class App {
             Socket socket = new Socket(ctx.getServerAddress(), ctx.getServerSocketPort());
             PlayerConnectorSocket playerConnector = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
             client = new SocketClient(playerConnector, userInterface);
-            messageHandlerThread = ((SocketClient) client).runInputMessageHandler();
           } catch (UnknownHostException e) {
             userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
             return;
@@ -104,18 +101,6 @@ public class App {
             return;
           }
         }
-
-        try {
-          if (messageHandlerThread != null) {
-            messageHandlerThread.join();
-          }
-          if (inputMessageHandlerThread != null) {
-            inputMessageHandlerThread.join();
-          }
-        } catch (InterruptedException e) {
-          userInterface.displayError(new ErrorMessage("An error occurred. Please try again.", ErrorSeverity.CRITICAL));
-        }
-
         client.run(); 
       }
     } catch (NumberFormatException | InvalidArgumentException | MissingParameterException | InvalidPortNumberException

@@ -2,7 +2,6 @@ package it.polimi.is23am10.client.userinterface;
 
 import java.util.List;
 
-import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
@@ -31,6 +30,12 @@ public interface UserInterface {
    * 
    */
   void displaySplashScreen();
+
+  /**
+   * Method called when logging out.
+   * 
+   */
+  public void loggingOut();
 
   /**
    * Method to display a quick help guide to explain how

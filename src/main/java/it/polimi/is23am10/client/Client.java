@@ -25,6 +25,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
+import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
@@ -75,6 +76,19 @@ class LockObject implements Serializable {
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public abstract class Client extends UnicastRemoteObject implements IClient {
+
+  /**
+   * Message handler thread object.
+   *
+   */
+  protected Thread messageHandlerThread = null;
+
+  /**
+   * Input message handler thread object. 
+   * 
+   */
+  protected Thread inputMessageHandlerThread = null;
+
   /**
    * Custom lock object.
    * 
@@ -485,6 +499,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
           break;
         case "logout":
           setRequestedDisconnection(true);
+          userInterface.loggingOut();
           break;
         case "move":
           if (getVirtualView() == null) {

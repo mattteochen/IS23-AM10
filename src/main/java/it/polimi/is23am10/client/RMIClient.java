@@ -113,6 +113,14 @@ public class RMIClient extends Client {
                 ErrorSeverity.CRITICAL));
       }
     }
+    try {
+      if (inputMessageHandlerThread != null) {
+        inputMessageHandlerThread.join();
+      }
+    } catch (InterruptedException e) {
+      userInterface.displayError(new ErrorMessage("Internal module error, please report this message:" + e.getMessage(),
+          ErrorSeverity.CRITICAL));
+    }
   }
 
   /** {@inheritDoc} */

@@ -99,6 +99,18 @@ public class SocketClient extends Client {
                 ErrorSeverity.CRITICAL));
       }
     }
+
+    try {
+      if (messageHandlerThread != null) {
+        messageHandlerThread.join();
+      }
+      if (inputMessageHandlerThread != null) {
+        inputMessageHandlerThread.join();
+      }
+    } catch (InterruptedException e) {
+      userInterface.displayError(new ErrorMessage("Internal module error, please report this message:" + e.getMessage(),
+          ErrorSeverity.CRITICAL));
+    }
   }
 
   /**
@@ -191,13 +203,13 @@ public class SocketClient extends Client {
   }
 
   /**
-   * Runs the input message handler tp retrieve server messages.
+   * Runs the input message handler to retrieve server messages.
    *
    * @return The thread object.
    */
-  public Thread runInputMessageHandler(){
+  public void runInputMessageHandler(){
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
-    Thread messageHandler =
+    messageHandlerThread =
         new Thread(
             () -> {
               while (playerConnectorSocket.getConnector().isConnected()
@@ -216,7 +228,6 @@ public class SocketClient extends Client {
                 }
               }
             });
-    messageHandler.start();
-    return messageHandler;
+    messageHandlerThread.start();
   }
 }

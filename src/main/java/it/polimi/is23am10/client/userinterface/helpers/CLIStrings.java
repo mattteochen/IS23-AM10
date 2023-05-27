@@ -104,5 +104,6 @@ public final class CLIStrings {
     Map.entry(11,  "Five tiles of the same type, forming an X shape."),
     Map.entry(12, "Five columns with ascending or descending height. Starting from the first or the last column, the next column has to have one tile more. The tile types are not considered.")
   );
-  public final static String waitingForPlayers = "Waiting for game to be full before starting, %d/%d joined. GameID: %s"; 
+  public final static String waitingForPlayers = "Waiting for game to be full before starting, %d/%d joined. GameID: %s";
+  public final static String internalModuleError = "Internal module error, please report this message: ";
 }
