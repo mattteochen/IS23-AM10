@@ -27,6 +27,11 @@ public final class CommandsBuilder {
   public final static String MOVE_TILE = "move";
 
   /**
+   * The command string for sending a message
+   */
+  public final static String SEND_MESSAGE = "chat";
+
+  /**
    * Builds a create game command with the specified player name.
    *
    * @param pn The player name.
@@ -55,4 +60,21 @@ public final class CommandsBuilder {
   public final static String moveTileCmd(String move) {
     return MOVE_TILE + " " + move;
   }
+
+  /**
+   * Builds a chat message and sends it.
+   *
+   * @param msg The msg to be sent.
+   * @return The send message command string.
+   */
+  public final static String sendChatMessageCmd(String msg) {
+    if(msg.startsWith(">")){
+      String receiverName = msg.stripLeading().split(" ")[1];
+      int indexToTrim = msg.stripLeading().indexOf(" ", msg.stripLeading().indexOf(" ") + 1);
+      String msgTextTrimmed = msg.stripLeading().trim().substring(indexToTrim);
+      return SEND_MESSAGE + " " + receiverName + " \"" + msgTextTrimmed + "\" ";  
+    }
+    return SEND_MESSAGE + " \"" + msg + "\" ";
+  }
+
 }
