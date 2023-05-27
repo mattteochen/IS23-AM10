@@ -70,8 +70,9 @@ public final class CallBack {
       };
 
   /**
-   * A callback implementation for moving a tile on the bookshelf. This callback adds the move tile
+   * A callback implementation to send a chat message. This callback adds the send chat message
    * command to the message queue of the GraphicUserInterface.
+   * 
    */
   public static ButtonCallBack sendMessageCallBack =
       (tfs) -> {
