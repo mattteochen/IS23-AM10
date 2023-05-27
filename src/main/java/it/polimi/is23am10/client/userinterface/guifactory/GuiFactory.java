@@ -733,10 +733,14 @@ public final class GuiFactory {
     }
 
   }
-
+  /**
+   * Method used to update the chat widget dynamically.
+   *
+   * @param oldSP it's the old stackpane of the chat.
+   * @param msg the message to be added.
+   */
   public static void updateChatHistory(StackPane oldSP, ChatMessage msg){
     VBox root = (VBox) oldSP.getChildren().get(0);
-    //root.getChildren().set(0, GameSnapshotFactory.getLeaderboard(newVw));
     
     HBox gameStage = (HBox) root.getChildren().get(1);
     VBox chat = (VBox) gameStage.getChildren().get(3);
@@ -835,7 +839,10 @@ public final class GuiFactory {
       }
     };
 
+    /** Chat input text field. */
     protected static TextField textField;
+
+    /** Chat messages history. */
     protected static ListView<String> chatMessagesListView;
 
     /**
@@ -1081,11 +1088,19 @@ public final class GuiFactory {
       return root;
     }
 
+    /**
+     * Method used to retrieve the input text field to send messages.
+     * @return the textfield.
+     */
     protected static TextField getChatTextField() {
       textField = getTextField("Enter your message here", 180, 100, FontWeight.NORMAL, 12, null);
       return textField;
     }
 
+    /**
+     * Method used to retrieve the horizontal component of input textfield and send button.
+     * @return send message box.
+     */
     protected static HBox getSendMessageBox(){
       HBox hbox = new HBox();
       hbox.setSpacing(5);
@@ -1097,6 +1112,10 @@ public final class GuiFactory {
       return hbox;
     };
 
+    /**
+     * Method used to retrieve the chat history component.
+     * @return chat history component.
+     */
     protected static VBox getChatHistory(){
       VBox chatHistory = new VBox();
       chatMessagesListView = new ListView<String>();
@@ -1108,6 +1127,10 @@ public final class GuiFactory {
       return chatHistory;
     }
 
+    /**
+     * Method used to retrieve the whole chat component.
+     * @return chat component.
+     */
     protected static VBox getChat(){
       VBox chat = new VBox();
       chat.setSpacing(10);
