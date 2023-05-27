@@ -121,7 +121,10 @@ public final class GraphicUserInterface extends Application implements UserInter
 
   /** {@inheritDoc} */
   public void displayChatMessage(ChatMessage message) {
-    // TODO Auto-generated method stub
+    StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
+    GuiFactory.executeOnJavaFX(
+      () -> GuiFactory.updateChatHistory(root, message)
+    );
   }
 
   /** {@inheritDoc}} */
