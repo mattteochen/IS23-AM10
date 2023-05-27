@@ -2,6 +2,7 @@ package it.polimi.is23am10.client;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -95,7 +96,7 @@ public class RMIClientTest {
     PlayerConnectorRmi pc = new PlayerConnectorRmi(new LinkedBlockingQueue<>(), null);
     UserInterface ui = new CommandLineInterface(true);
 
-    Client rmiClient = new RMIClient(pc, ui, null, null, null);
+    Client rmiClient = new RMIClient(pc, ui, null, null);
 
     assertNotNull(rmiClient);
   }
@@ -106,8 +107,8 @@ public class RMIClientTest {
     AbstractMessage msg = new ErrorMessage("New Message", null);
 
     doReturn(false, true).when(rmiClient).hasRequestedDisconnection();
-    doReturn("ale").when(rmiClient).handlePlayerNameSelection(playerConnectorRmi);
-    doNothing().when(rmiClient).handleGameSelection(playerConnectorRmi, "ale");
+    doReturn("ale").when(rmiClient).handlePlayerNameSelection();
+    doNothing().when(rmiClient).handleGameSelection();
     when(playerConnectorServer.getMessageFromQueue()).thenReturn(msg);
     doNothing().when(rmiClient).showServerMessage(msg);
 
@@ -130,14 +131,13 @@ public class RMIClientTest {
     when(playerConnectorServer.getMessageFromQueue()).thenReturn(msg);
     doNothing().when(rmiClient).showServerMessage(msg);
 
-    assertEquals(rmiClient.handlePlayerNameSelection(playerConnectorRmi), pn);
+    assertTrue(rmiClient.handlePlayerNameSelection());
   }
 
   @Test
   @Disabled
   void handleGameSelection_should_run_gameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException, NotBoundException {
     List<VirtualView> ag = List.of(mock(VirtualView.class));
-    String pn = "Benny";
     String command = "c 2";
     UUID gId = UUID.randomUUID();
     UserInterface ui = mock(UserInterface.class);
@@ -146,11 +146,10 @@ public class RMIClientTest {
     doReturn(ui).when(rmiClient).getUserInterface();
     when(ui.getUserInput()).thenReturn(command);
     rmiClient.setActiveGameServers(ag);
-    doNothing().when(rmiClient).getAvailableGames(playerConnectorRmi);
-    doNothing().when(rmiClient).lookupInit();
+    doNothing().when(rmiClient).getAvailableGames();
     when(rmiClient.getGameIdRef()).thenReturn(gId,gId);
 
-    rmiClient.handleGameSelection(playerConnectorRmi, pn);
+    rmiClient.handleGameSelection();
 
     assertEquals(gId, playerConnectorRmi.getGameId());
   }
@@ -178,7 +177,7 @@ public class RMIClientTest {
     when(vw.getGameBoard()).thenReturn(new Board(4));
 
 
-    rmiClient.handleCommands(playerConnectorRmi);
+    rmiClient.handleCommands();
   }
 
 }
