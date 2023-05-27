@@ -135,6 +135,11 @@ public final class GraphicUserInterface extends Application implements UserInter
   }
 
   /** {@inheritDoc} */
+  public void terminateUserInterface() {
+    // TODO Auto-generated method stub
+  }
+
+  /** {@inheritDoc} */
   @Override
   public void displayGameJoinGuide() {
     GuiFactory.executeOnJavaFX(

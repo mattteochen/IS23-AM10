@@ -46,6 +46,18 @@ public final class CommandLineInterface implements UserInterface, Serializable {
    */
   private final transient BufferedReader br;
 
+  /**
+   * Control flag used to enable or disable user polling.
+   */
+  private boolean checkForUserInput = true;
+
+  public boolean isCheckForUserInput() {
+    synchronized(userInputLock){
+      return checkForUserInput;
+    }
+  }
+
+  private final Object userInputLock = new Object();
 
   /**
    * Public constructor for CLI.
@@ -166,11 +178,14 @@ public final class CommandLineInterface implements UserInterface, Serializable {
    * for it to be consumed when needed by controller. 
    */
   public void runInputHandler() {
-    final Thread inputHandler = new Thread(() -> {
+    Thread inputHandler = new Thread(() -> {
       try {
-        while(true) {
+        while(isCheckForUserInput()) {
           String newLine = br.readLine();
           if (newLine != null && !newLine.equals("")) {
+            if(newLine.equals("ping")){
+              System.out.println("pong");
+            }
             userInputList.add(newLine);
           }
         }
@@ -181,4 +196,12 @@ public final class CommandLineInterface implements UserInterface, Serializable {
     inputHandler.start();
   }
 
+  /** {@inheritDoc} */
+  @Override
+  public void terminateUserInterface() {
+    synchronized(userInputLock){
+      checkForUserInput = false;
+    }
+    ow.info("Client has been terminated. Hit return to exit.", false);
+  }
 }

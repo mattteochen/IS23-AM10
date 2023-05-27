@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,6 +41,7 @@ import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.messages.GameMessage;
+import it.polimi.is23am10.server.network.messages.SnoozeACKMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
@@ -133,7 +135,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
   protected final int ALARM_INITIAL_DELAY_MS = 0;
 
   /** Clean disconnection request. */
-  private boolean requestedDisconnection;
+  protected boolean requestedDisconnection;
 
   /** Duplicate name error flag. */
   private boolean hasDuplicateName;
@@ -627,7 +629,6 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
         getAvailableGames(apc);
       }
 
-      // TODO: use userinterface
       String fullCommand = userInterface.getUserInput();
       if (fullCommand != null) {
         String command = fullCommand.stripLeading().split(" ")[0];
@@ -725,6 +726,29 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
   }
 
   /**
+   * Method to terminate the client and all children safely.
+   */
+  public void terminateClient() {
+    Set<Thread> threads = Thread.getAllStackTraces().keySet();
+    System.out.printf("%-15s \t %-15s \t %-15s \t %s\n", "Name", "State", "Priority", "isDaemon");
+    for (Thread t : threads) {
+    System.out.printf("%-15s \t %-15s \t %-15d \t %s\n", t.getName(), t.getState(), t.getPriority(), t.isDaemon());
+    }
+    System.out.println("------------");
+
+    requestedDisconnection = true;
+    alarm.cancel();
+    userInterface.terminateUserInterface();
+
+    threads = Thread.getAllStackTraces().keySet();
+    System.out.printf("%-15s \t %-15s \t %-15s \t %s\n", "Name", "State", "Priority", "isDaemon");
+    for (Thread t : threads) {
+      System.out.printf("%-15s \t %-15s \t %-15d \t %s\n", t.getName(), t.getState(), t.getPriority(), t.isDaemon());
+      // t.interrupt();
+    }
+  }
+
+  /**
    * Custom deserializer class definition for {@link Gson} usage. This works on polymorphic {@link
    * AbstractMessage} objects.
    */
@@ -751,6 +775,8 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
           return context.deserialize(jsonObject, AvailableGamesMessage.class);
         case "it.polimi.is23am10.server.network.messages.ErrorMessage":
           return context.deserialize(jsonObject, ErrorMessage.class);
+        case "it.polimi.is23am10.server.network.messages.SnoozeACKMessage":
+          return context.deserialize(jsonObject, SnoozeACKMessage.class);
         default:
           throw new JsonParseException("Unknown class name: " + className);
       }

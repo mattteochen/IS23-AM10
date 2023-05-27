@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,6 +24,7 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.AbstractMessage.MessageType;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
@@ -48,6 +50,19 @@ public class SocketClient extends Client {
     super(pc, ui);
   }
 
+  /**
+   * Thread used to poll for messages from server.
+   * 
+   */
+  private transient Thread messageHandler;
+
+  /**
+   * Flag used to signal the client sent a snooze command and
+   * is waiting for the ACK reply. 
+   * 
+   */
+  private boolean waitingForACK;
+
   /** Socket alarm snoozer. */
   protected AlarmConsumer snoozer =
       () -> {
@@ -61,7 +76,7 @@ public class SocketClient extends Client {
         } catch (IOException e) {
           userInterface.displayError(
               new ErrorMessage(
-                  "Internal job failed, you might loose game connection", ErrorSeverity.ERROR));
+                  "Internal job failed, you might have lost connection to the server. Try re-joining", ErrorSeverity.CRITICAL));
         }
       };
 
@@ -97,6 +112,7 @@ public class SocketClient extends Client {
             new ErrorMessage(
                 "Internal module error, please report this message:" + e.getMessage(),
                 ErrorSeverity.CRITICAL));
+        terminateClient();
       }
     }
   }
@@ -134,6 +150,7 @@ public class SocketClient extends Client {
         new SnoozeGameTimerCommand(playerConnectorSocket.getPlayer().getPlayerName());
     String req = gson.toJson(cmd);
     sendMessage(req, playerConnectorSocket);
+    waitingForACK = true;
   }
   ;
 
@@ -182,9 +199,10 @@ public class SocketClient extends Client {
    * @param apc The player connector instance.
    */
   protected void sendMessage(String req, AbstractPlayerConnector apc) throws IOException {
+    PlayerConnectorSocket pc = (PlayerConnectorSocket) apc;
     PrintWriter epson =
         new PrintWriter(
-            ((PlayerConnectorSocket) apc).getConnector().getOutputStream(),
+            pc.getConnector().getOutputStream(),
             true,
             StandardCharsets.UTF_8);
     epson.println(req);
@@ -196,7 +214,7 @@ public class SocketClient extends Client {
    */
   public void runInputMessageHandler(){
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
-    Thread messageHandler =
+    messageHandler =
         new Thread(
             () -> {
               while (playerConnectorSocket.getConnector().isConnected()
@@ -205,16 +223,40 @@ public class SocketClient extends Client {
                 try {
                   AbstractMessage serverMessage = parseServerMessage(playerConnectorSocket);
                   if (serverMessage != null) {
+                    if (serverMessage.getMessageType() == MessageType.SNOOZE_ACK){
+                      waitingForACK = false;
+                    }
                     showServerMessage(serverMessage);
+                  } else {
+                    if (waitingForACK) {
+                      throw new IOException("No snooze ACK received. Server is probably dead. Closing client.");
+                    }
                   }
                 } catch (IOException | NullPointerException e) {
                   userInterface.displayError(
                       new ErrorMessage(
                           "Internal module error, please report this message:" + e.getMessage(),
                           ErrorSeverity.CRITICAL));
+                  terminateClient();
+                  return;
                 }
               }
             });
     messageHandler.start();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void terminateClient(){
+    PlayerConnectorSocket pc = (PlayerConnectorSocket) playerConnector;
+    try {
+      pc.getConnector().close();
+    } catch (IOException e) {
+      userInterface.displayError(new ErrorMessage("Client not able to terminate socket connection to server, please close app manually.", ErrorSeverity.CRITICAL));
+    } finally {
+      super.terminateClient();
+    }
   }
 }

@@ -87,6 +87,9 @@ public class App {
           } catch(NullBlockingQueueException e) {
             userInterface.displayError(new ErrorMessage("Client module error. Shutting down", ErrorSeverity.CRITICAL));
             return;
+          } catch (IOException e) {
+            logger.error("Cannot connect to server. Verify address and retry.");
+            return;
           }
         } else {
           try {

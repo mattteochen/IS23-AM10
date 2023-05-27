@@ -22,8 +22,10 @@ import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConne
 import it.polimi.is23am10.utils.Coordinates;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
 import java.util.UUID;
 
@@ -61,7 +63,9 @@ public class RMIClient extends Client {
       snoozeAlarm();
     } catch(RemoteException e) {
       userInterface.displayError(
-        new ErrorMessage("Internal job failed, you might loose game connection", ErrorSeverity.ERROR));
+        new ErrorMessage("Internal job failed, you might have lost connection to the server. Try re-joining", ErrorSeverity.ERROR));
+      terminateClient();
+      return;
     }
   };
 
@@ -109,8 +113,10 @@ public class RMIClient extends Client {
       } catch (IOException | InterruptedException | NullPlayerIdException e) {
         userInterface.displayError(
             new ErrorMessage(
-                "Internal module error, please report this message:" + e.getMessage(),
+                "Internal module error, please report this message: " + e.getMessage(),
                 ErrorSeverity.CRITICAL));
+        terminateClient();
+        return;
       }
     }
   }
@@ -164,4 +170,19 @@ public class RMIClient extends Client {
   AbstractCommand command = new SendChatMessageCommand(msg);
   serverControllerActionServer.execute(apc, command);
  }
+
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void terminateClient(){
+    try {
+      UnicastRemoteObject.unexportObject(this, true);
+    } catch (NoSuchObjectException e) {
+      userInterface.displayError(new ErrorMessage("Unable to unbind RMI object. Please close client manually", ErrorSeverity.CRITICAL));
+    } finally {
+      super.terminateClient();
+    }
+  }
 }
