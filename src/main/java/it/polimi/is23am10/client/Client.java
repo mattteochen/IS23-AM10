@@ -620,6 +620,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
       // We use the check over client status to perform one-time actions
       // like displaying stuff and sending
       if (clientStatus == ClientGameStatus.INIT) {
+        System.out.println("eccosi");
         userInterface.displayGameJoinGuide();
         clientStatus = ClientGameStatus.GAME_SELECTION;
         getAvailableGames();
@@ -685,6 +686,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
               setConnectorPlayer(null);
             } catch (NullPlayerIdException | NullPlayerNameException e) {
             }
+            clientStatus = ClientGameStatus.INIT;
             setConnectorGameId(true);
             break;
           default:
