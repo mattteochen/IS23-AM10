@@ -200,7 +200,7 @@ public final class ClientConnectionChecker implements Runnable {
               if (connectorRef != null) {
                 connectorRef.notify(
                   new ErrorMessage("You will be disconnected for inactivity in " + String.valueOf(MAX_TURN_INACTIVITY_MS/1000) + " seconds",
-                    h.getPlayer(), ErrorSeverity.WARNING));
+                    h.getPlayer(), ErrorSeverity.INFO));
               } else {
                 logger.error("{}: Failed to push warning message, can not find player connector from player", ErrorTypeString.ERROR_GAME_STATE);
               }

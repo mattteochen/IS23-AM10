@@ -36,6 +36,7 @@ public final class ErrorMessage extends AbstractMessage {
    * </ul>
    */
   public enum ErrorSeverity {
+    INFO,
     WARNING,
     ERROR,
     CRITICAL
