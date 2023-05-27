@@ -561,7 +561,12 @@ public class Game implements Serializable {
      * this part of code to decide next player playing 
      */
     if (getStatus() != GameStatus.ENDED) {
-      gameBoard.refillIfNeeded();
+      try {
+        gameBoard.refillIfNeeded();
+      } catch (IndexOutOfBoundsException e) {
+        endGame();
+        return;
+      }
       int nextPlayerIdx = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size();
       
       while(!players.get(nextPlayerIdx).getIsConnected()){
