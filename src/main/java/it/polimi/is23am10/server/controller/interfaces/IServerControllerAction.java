@@ -343,7 +343,6 @@ public interface IServerControllerAction extends Remote {
       if (scmCommand.getChatMessage().isBroadcast()) {
         handler.getPlayerConnectors()
             .stream()
-            .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))
             .forEach(pc -> {
               try {
                 pc.notify(scmCommand.getChatMessage());
@@ -356,6 +355,7 @@ public interface IServerControllerAction extends Remote {
       } else {
         String receiverName = scmCommand.getChatMessage().getReceiverName();
 
+        playerConnector.notify(scmCommand.getChatMessage());
         handler.getPlayerConnectors()
             .stream()
             .filter(pc -> pc.getPlayer().getPlayerName().equals(receiverName))

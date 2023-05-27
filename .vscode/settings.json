@@ -53,5 +53,6 @@
         "sharedexceptions",
         "typenamecheck",
         "variabledeclarationusagedistancecheck"
-    ]
+    ],
+    "maven.view": "hierarchical"
 }
