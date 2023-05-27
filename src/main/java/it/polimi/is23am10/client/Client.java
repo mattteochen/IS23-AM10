@@ -42,13 +42,13 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -732,23 +732,14 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    * Method to terminate the client and all children safely.
    */
   public void terminateClient() {
-    Set<Thread> threads = Thread.getAllStackTraces().keySet();
-    System.out.printf("%-15s \t %-15s \t %-15s \t %s\n", "Name", "State", "Priority", "isDaemon");
-    for (Thread t : threads) {
-    System.out.printf("%-15s \t %-15s \t %-15d \t %s\n", t.getName(), t.getState(), t.getPriority(), t.isDaemon());
+    try {
+      UnicastRemoteObject.unexportObject(this, true);
+    } catch (NoSuchObjectException e) {
+      userInterface.displayError(new ErrorMessage("Unable to unbind RMI object. Please close client manually", ErrorSeverity.CRITICAL));
     }
-    System.out.println("------------");
-
     requestedDisconnection = true;
     alarm.cancel();
     userInterface.terminateUserInterface();
-
-    threads = Thread.getAllStackTraces().keySet();
-    System.out.printf("%-15s \t %-15s \t %-15s \t %s\n", "Name", "State", "Priority", "isDaemon");
-    for (Thread t : threads) {
-      System.out.printf("%-15s \t %-15s \t %-15d \t %s\n", t.getName(), t.getState(), t.getPriority(), t.isDaemon());
-      // t.interrupt();
-    }
   }
 
   /**

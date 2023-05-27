@@ -20,10 +20,8 @@ import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi;
 import it.polimi.is23am10.utils.Coordinates;
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
 import java.util.UUID;
 
@@ -156,20 +154,6 @@ public class RMIClient extends Client {
               playerConnectorRmi.getGameId(),
               moves);
       serverControllerActionServer.execute((PlayerConnectorRmi) playerConnector, command);
-    }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void terminateClient(){
-    try {
-      UnicastRemoteObject.unexportObject(this, true);
-    } catch (NoSuchObjectException e) {
-      userInterface.displayError(new ErrorMessage("Unable to unbind RMI object. Please close client manually", ErrorSeverity.CRITICAL));
-    } finally {
-      super.terminateClient();
     }
   }
 

@@ -40,10 +40,15 @@ public class SocketClient extends Client {
   /** The {@link BufferedReader} buffer size. */
   private final int BUFFER_LENGHT = 102400;
 
-  /** The input stream instance to be linked with {@link PlayerConnectorSocket#getConnector()}. */
+  /**
+   * The input stream instance to be linked with
+   * {@link PlayerConnectorSocket#getConnector()}.
+   */
   DataInputStream dis;
 
-  /** The buffer reader instance to be linked with the {@link SocketClient#dis}. */
+  /**
+   * The buffer reader instance to be linked with the {@link SocketClient#dis}.
+   */
   BufferedReader br;
 
   /**
@@ -65,27 +70,30 @@ public class SocketClient extends Client {
 
   /**
    * Flag used to signal the client sent a snooze command and
-   * is waiting for the ACK reply. 
+   * is waiting for the ACK reply.
    * 
    */
   private boolean waitingForACK;
 
   /** Socket alarm snoozer. */
-  protected AlarmConsumer snoozer =
-      () -> {
-        // skip if the client has not joined the game: server won't have any connector for the
-        // current client
-        if (!hasJoined()) {
-          return;
-        }
-        try {
-          snoozeAlarm();
-        } catch (IOException e) {
-          userInterface.displayError(
-              new ErrorMessage(
-                  "Internal job failed, you might have lost connection to the server. Try re-joining", ErrorSeverity.CRITICAL));
-        }
-      };
+  protected AlarmConsumer snoozer = () -> {
+    // skip if the client has not joined the game: server won't have any connector
+    // for the
+    // current client
+    if (((PlayerConnectorSocket) playerConnector).getPlayer() == null) {
+      return;
+    }
+    try {
+      snoozeAlarm();
+    } catch (IOException e) {
+      userInterface.displayError(
+          new ErrorMessage(
+              "Internal job failed, you might have lost connection to the server. Try re-joining",
+              ErrorSeverity.CRITICAL));
+      terminateClient();
+      return;
+    }
+  };
 
   /** {@inheritDoc} */
   @Override
@@ -121,7 +129,7 @@ public class SocketClient extends Client {
       userInterface.displayError(
           new ErrorMessage(
               "Internal module error, please report this message:" + e.getMessage(),
-              ErrorSeverity.CRITICAL));
+              ErrorSeverity.ERROR));
     }
 
     while (isSocketConnected() && !hasRequestedDisconnection()) {
@@ -133,6 +141,7 @@ public class SocketClient extends Client {
                 "Internal module error, please report this message:" + e.getMessage(),
                 ErrorSeverity.CRITICAL));
         terminateClient();
+        return;
       }
     }
   }
@@ -144,8 +153,12 @@ public class SocketClient extends Client {
    * @throws IOException Possibly thrown by readline.
    */
   protected AbstractMessage parseServerMessage() throws IOException {
-    String payload = br.readLine();
-    return payload == null ? null : gson.fromJson(payload, AbstractMessage.class);
+    if (playerConnector.getPlayer() != null && playerConnector.getPlayer().getPlayerName() != null) {
+      String payload = br.readLine();
+      return payload == null ? null : gson.fromJson(payload, AbstractMessage.class);
+    } else {
+      return null;
+    }
   }
 
   /** {@inheritDoc} */
@@ -162,8 +175,7 @@ public class SocketClient extends Client {
     String req;
     synchronized (playerConnectorLock) {
       PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
-      SnoozeGameTimerCommand cmd =
-          new SnoozeGameTimerCommand(playerConnectorSocket.getPlayer().getPlayerName());
+      SnoozeGameTimerCommand cmd = new SnoozeGameTimerCommand(playerConnectorSocket.getPlayer().getPlayerName());
       req = gson.toJson(cmd);
     }
     sendMessage(req);
@@ -190,11 +202,10 @@ public class SocketClient extends Client {
   @Override
   void moveTiles(Map<Coordinates, Coordinates> moves) throws IOException {
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
-    MoveTilesCommand command =
-        new MoveTilesCommand(
-            playerConnectorSocket.getPlayer().getPlayerName(),
-            playerConnectorSocket.getGameId(),
-            moves);
+    MoveTilesCommand command = new MoveTilesCommand(
+        playerConnectorSocket.getPlayer().getPlayerName(),
+        playerConnectorSocket.getGameId(),
+        moves);
     String req = gson.toJson(command);
     sendMessage(req);
   }
@@ -214,69 +225,56 @@ public class SocketClient extends Client {
    */
   protected void sendMessage(String req) throws IOException {
     synchronized (playerConnectorLock) {
-      PrintWriter epson =
-          new PrintWriter(
-              ((PlayerConnectorSocket) playerConnector).getConnector().getOutputStream(),
-              true,
-              StandardCharsets.UTF_8);
+      PrintWriter epson = new PrintWriter(
+          ((PlayerConnectorSocket) playerConnector).getConnector().getOutputStream(),
+          true,
+          StandardCharsets.UTF_8);
       epson.println(req);
     }
   }
 
   /**
-   * Poll payloads from the socket stream and process {@link AbstractMessage} that can be
+   * Poll payloads from the socket stream and process {@link AbstractMessage} that
+   * can be
    * recognized.
    */
   public void runInputMessageHandler() throws IOException {
     synchronized (playerConnectorLock) {
-      dis =
-          new DataInputStream(
-              ((PlayerConnectorSocket) playerConnector).getConnector().getInputStream());
+      dis = new DataInputStream(
+          ((PlayerConnectorSocket) playerConnector).getConnector().getInputStream());
     }
     br = new BufferedReader(new InputStreamReader(dis), BUFFER_LENGHT);
 
-    messageHandler =
-        new Thread(
-            () -> {
-              while (isSocketConnected() && !hasRequestedDisconnection()) {
-                // retrieve and show server messages, it includes chat messages
-                try {
-                  AbstractMessage serverMessage = parseServerMessage();
-                  if (serverMessage != null) {
-                    if (serverMessage.getMessageType() == MessageType.SNOOZE_ACK){
-                      waitingForACK = false;
-                    }
-                    showServerMessage(serverMessage);
-                  } else {
-                    if (waitingForACK) {
-                      throw new IOException("No snooze ACK received. Server is probably dead. Closing client.");
-                    }
-                  }
-                } catch (IOException | NullPointerException e) {
+    messageHandler = new Thread(
+        () -> {
+          while (isSocketConnected() && !hasRequestedDisconnection()) {
+            // retrieve and show server messages, it includes chat messages
+            try {
+              AbstractMessage serverMessage = parseServerMessage();
+              if (serverMessage != null) {
+                if (serverMessage.getMessageType() == MessageType.SNOOZE_ACK) {
+                  waitingForACK = false;
+                }
+                showServerMessage(serverMessage);
+              } else {
+                if (waitingForACK) {
                   userInterface.displayError(
                       new ErrorMessage(
-                          "Internal module error, please report this message:" + e.getMessage(),
-                          ErrorSeverity.CRITICAL));
+                          "No snooze ACK received. Server is probably dead. Closing client.",
+                          ErrorSeverity.ERROR));
                   terminateClient();
                   return;
                 }
               }
-            });
+            } catch (IOException | NullPointerException e) {
+              userInterface.displayError(
+                  new ErrorMessage(
+                      "Internal module error, please report this message:" + e.getMessage(),
+                      ErrorSeverity.ERROR));
+            }
+          }
+        });
     messageHandler.start();
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void terminateClient(){
-    PlayerConnectorSocket pc = (PlayerConnectorSocket) playerConnector;
-    try {
-      pc.getConnector().close();
-    } catch (IOException e) {
-      userInterface.displayError(new ErrorMessage("Client not able to terminate socket connection to server, please close app manually.", ErrorSeverity.CRITICAL));
-    } finally {
-      super.terminateClient();
-    }
-  }
 }

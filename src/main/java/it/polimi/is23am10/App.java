@@ -104,7 +104,7 @@ public class App {
             return;
           }
         }
-        client.run(); 
+        client.run();
       }
     } catch (NumberFormatException | InvalidArgumentException | MissingParameterException | InvalidPortNumberException
         | InvalidMaxConnectionsNumberException e) {

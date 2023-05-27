@@ -479,6 +479,7 @@ public interface IServerControllerAction extends Remote {
         logger.info("{} Can not snooze timer, unknown player name {}",
             ServerDebugPrefixString.SNOOZE_TIMER_COMMAND_PREFIX,
             cmd.getPlayerName());
+        playerConnector.notify(new SnoozeACKMessage());
         return null;
       }
       //don't allow inactive players calls
