@@ -63,6 +63,9 @@ public final class CommandsBuilder {
 
   /**
    * Builds a chat message and sends it.
+   * The syntax for the chat messages is the following:
+   * Broadcast: "textContent"
+   * To player: "> playerName textContent"
    *
    * @param msg The msg to be sent.
    * @return The send message command string.

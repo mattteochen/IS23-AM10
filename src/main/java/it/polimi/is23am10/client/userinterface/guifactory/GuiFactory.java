@@ -11,6 +11,7 @@ import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.AbstractMessage.MessageType;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
@@ -769,7 +770,7 @@ public final class GuiFactory {
     VBox chatBox = (VBox) chat.getChildren().get(1);
     VBox chatHistory = (VBox) chatBox.getChildren().get(0);
     ListView<String> chatMessages = (ListView<String>) chatHistory.getChildren().get(0);
-    if(msg.getClass() == ChatMessage.class){
+    if(msg.getMessageType() == MessageType.CHAT_MESSAGE){
       ChatMessage chatMsg = (ChatMessage) msg;
       if(chatMsg.isBroadcast()){
         chatMessages.getItems().add(chatMsg.getSender().getPlayerName() + ": " + chatMsg.getMessage());
