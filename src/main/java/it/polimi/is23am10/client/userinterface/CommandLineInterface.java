@@ -182,7 +182,6 @@ public final class CommandLineInterface implements UserInterface, Serializable {
   /**
    * Creates and starts new thread to handle user input.
    *
-   * @return The thread object.
    */
   public void runInputHandler() {
     inputHandler = new Thread(() -> {
