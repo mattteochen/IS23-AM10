@@ -93,7 +93,7 @@ public class SocketClientTest {
 
     when(playerConnectorSocket.getConnector()).thenReturn(mockSocket);
     when(mockSocket.isConnected()).thenReturn(true, false);
-    doReturn(msg).when(socketClient).parseServerMessage(playerConnectorSocket);
+    doReturn(msg).when(socketClient).parseServerMessage();
     doNothing().when(socketClient).showServerMessage(msg);
 
     socketClient.run();
@@ -114,7 +114,7 @@ public class SocketClientTest {
     when(ui.getUserInput()).thenReturn(pn);
     when(playerConnectorSocket.getPlayer()).thenReturn(p);
 
-    assertEquals(socketClient.handlePlayerNameSelection(playerConnectorSocket), pn);
+    assertEquals(socketClient.handlePlayerNameSelection(), pn);
   }
 
   @Test
@@ -140,7 +140,7 @@ public class SocketClientTest {
     when(vw.getGameBoard()).thenReturn(new Board(4));
 
 
-    socketClient.handleCommands(playerConnectorSocket);
+    socketClient.handleCommands();
   }
 
   @Test
@@ -149,7 +149,7 @@ public class SocketClientTest {
 
     when(playerConnectorSocket.getConnector()).thenReturn(mockSocket);
     when(mockSocket.isConnected()).thenReturn(true, false);
-    doThrow(IOException.class).when(socketClient).parseServerMessage(playerConnectorSocket);
+    doThrow(IOException.class).when(socketClient).parseServerMessage();
 
     socketClient.run();
 
@@ -170,7 +170,7 @@ public class SocketClientTest {
     when(mockSocket.getInputStream()).thenReturn(inputStream);
 
     // being lazy: there is no equals overriden
-    AbstractMessage parsedMsg = socketClient.parseServerMessage(playerConnectorSocket);
+    AbstractMessage parsedMsg = socketClient.parseServerMessage();
     assertEquals(parsedMsg.getMessage(), msg.getMessage());
   }
 

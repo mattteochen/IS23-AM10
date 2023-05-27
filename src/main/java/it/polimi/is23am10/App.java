@@ -79,7 +79,7 @@ public class App {
             PlayerConnectorRmi playerConnector = new PlayerConnectorRmi(new LinkedBlockingQueue<>(), client);
             IServerControllerAction serverControllerActionServerRef = (IServerControllerAction) registry
                 .lookup(IServerControllerAction.class.getName());
-            client = new RMIClient(playerConnector, userInterface, null, serverControllerActionServerRef, registry);
+            client = new RMIClient(playerConnector, userInterface, serverControllerActionServerRef, registry);
             playerConnector.setClient(client);
           } catch (NotBoundException e) {
             userInterface.displayError(new ErrorMessage("Server not found. Shutting down client...", ErrorSeverity.CRITICAL));
