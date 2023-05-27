@@ -141,7 +141,7 @@ public final class GraphicUserInterface extends Application implements UserInter
         () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.ENTER_GAME_SELECTION)));
   }
 
-  @Override
+  /** {@inheritDoc}} */
   public void loggingOut() {
     // TODO Auto-generated method stub
   }
