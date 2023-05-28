@@ -67,4 +67,12 @@ public class PlayerConnectorSocket extends AbstractPlayerConnector {
     }
     this.connector = socket;
   }
+
+  @Override
+  public void notify(AbstractMessage msg) throws InterruptedException {
+    if (msg == null) {
+      return;
+    }
+    msgQueue.put(msg);
+  } 
 }
