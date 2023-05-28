@@ -660,7 +660,9 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
               }
             } else {
               userInterface.displayError(
-                  new ErrorMessage("Insert value of max players", ErrorSeverity.ERROR));
+                  new ErrorMessage(
+                      "Insert the index of the game you want to join, if none present please create a new game",
+                      ErrorSeverity.ERROR));
             }
             break;
           case "c":
