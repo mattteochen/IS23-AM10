@@ -685,6 +685,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
               setConnectorPlayer(null);
             } catch (NullPlayerIdException | NullPlayerNameException e) {
             }
+            clientStatus = ClientGameStatus.INIT;
             setConnectorGameId(true);
             break;
           default:
