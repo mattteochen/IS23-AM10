@@ -1,7 +1,8 @@
 package it.polimi.is23am10.server.network.messages;
 
 /**
- * Abstract class representing a generic message exchanged.
+ * Class representing a ACK message sent from server to client
+ * in response to a snooze command. Used to keep alice client.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -17,6 +18,10 @@ public class SnoozeACKMessage extends AbstractMessage {
   @SuppressWarnings("unused")
   private final String className = this.getClass().getName();
 
+  /**
+   * Public constructor.
+   * 
+   */
   public SnoozeACKMessage(){
     msgType = MessageType.SNOOZE_ACK;
   }

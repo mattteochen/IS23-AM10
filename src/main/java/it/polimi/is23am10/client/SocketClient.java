@@ -75,11 +75,16 @@ public class SocketClient extends Client {
    */
   private boolean waitingForACK;
 
+  /**
+   * Lock for waitingForACK flag.
+   * 
+   */
+  private final Object ackWaitLock = new Object();
+
   /** Socket alarm snoozer. */
   protected AlarmConsumer snoozer = () -> {
-    // skip if the client has not joined the game: server won't have any connector
-    // for the
-    // current client
+    // skip if the client has not inserted the name: server won't have any reference
+    // to player and therefore won't be able to snooze it.
     if (((PlayerConnectorSocket) playerConnector).getPlayer() == null) {
       return;
     }
@@ -91,7 +96,6 @@ public class SocketClient extends Client {
               "Internal job failed, you might have lost connection to the server. Try re-joining",
               ErrorSeverity.CRITICAL));
       terminateClient();
-      return;
     }
   };
 
@@ -113,7 +117,7 @@ public class SocketClient extends Client {
    */
   protected boolean isSocketConnected() {
     synchronized (playerConnectorLock) {
-      return ((PlayerConnectorSocket) playerConnector).getConnector().isConnected();
+      return !((PlayerConnectorSocket) playerConnector).getConnector().isClosed();
     }
   }
 
@@ -179,7 +183,9 @@ public class SocketClient extends Client {
       req = gson.toJson(cmd);
     }
     sendMessage(req);
-    waitingForACK = true;
+    synchronized (ackWaitLock){
+      waitingForACK = true;
+    }
   }
 
   /** {@inheritDoc} */
@@ -251,19 +257,21 @@ public class SocketClient extends Client {
             // retrieve and show server messages, it includes chat messages
             try {
               AbstractMessage serverMessage = parseServerMessage();
-              if (serverMessage != null) {
-                if (serverMessage.getMessageType() == MessageType.SNOOZE_ACK) {
-                  waitingForACK = false;
-                }
-                showServerMessage(serverMessage);
-              } else {
-                if (waitingForACK) {
-                  userInterface.displayError(
-                      new ErrorMessage(
-                          "No snooze ACK received. Server is probably dead. Closing client.",
-                          ErrorSeverity.ERROR));
-                  terminateClient();
-                  return;
+              synchronized (ackWaitLock){
+                if (serverMessage != null) {
+                  if (serverMessage.getMessageType() == MessageType.SNOOZE_ACK) {
+                    waitingForACK = false;
+                  }
+                  showServerMessage(serverMessage);
+                } else {
+                  if (waitingForACK) {
+                    userInterface.displayError(
+                        new ErrorMessage(
+                            "No snooze ACK received. Server is probably dead. Closing client.",
+                            ErrorSeverity.ERROR));
+                    terminateClient();
+                    return;
+                  }
                 }
               }
             } catch (IOException | NullPointerException e) {

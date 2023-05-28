@@ -55,7 +55,6 @@ public class RMIClient extends Client {
       userInterface.displayError(
         new ErrorMessage("Internal job failed, you might have lost connection to the server. Try re-joining", ErrorSeverity.ERROR));
       terminateClient();
-      return;
     }
   };
 
@@ -102,7 +101,6 @@ public class RMIClient extends Client {
                 "Internal module error, please report this message: " + e.getMessage(),
                 ErrorSeverity.CRITICAL));
         terminateClient();
-        return;
       }
     }
   }

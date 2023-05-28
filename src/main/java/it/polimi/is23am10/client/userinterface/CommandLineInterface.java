@@ -51,12 +51,21 @@ public final class CommandLineInterface implements UserInterface, Serializable {
    */
   private boolean checkForUserInput = true;
 
+  /**
+   * Getter for checkForUserInput flag.
+   * 
+   * @return checkForUserInput flag.
+   */
   public boolean isCheckForUserInput() {
     synchronized(userInputLock){
       return checkForUserInput;
     }
   }
 
+  /**
+   * Lock object for checkForUserInput flag.
+   * 
+   */
   private final Object userInputLock = new Object();
 
   /**
@@ -183,9 +192,6 @@ public final class CommandLineInterface implements UserInterface, Serializable {
         while(isCheckForUserInput()) {
           String newLine = br.readLine();
           if (newLine != null && !newLine.equals("")) {
-            if(newLine.equals("ping")){
-              System.out.println("pong");
-            }
             userInputList.add(newLine);
           }
         }

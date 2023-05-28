@@ -729,13 +729,13 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
   }
 
   /**
-   * Method to terminate the client and all children safely.
+   * Method to terminate the client and all client's threads.
    */
   public void terminateClient() {
     try {
       UnicastRemoteObject.unexportObject(this, true);
     } catch (NoSuchObjectException e) {
-      userInterface.displayError(new ErrorMessage("Unable to unbind RMI object. Please close client manually", ErrorSeverity.CRITICAL));
+      userInterface.displayError(new ErrorMessage("Unable to close connection safely. Please close client manually", ErrorSeverity.CRITICAL));
     }
     requestedDisconnection = true;
     alarm.cancel();
