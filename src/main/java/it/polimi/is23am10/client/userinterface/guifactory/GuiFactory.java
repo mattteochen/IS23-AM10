@@ -8,6 +8,11 @@ import it.polimi.is23am10.server.model.items.board.Board;
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.server.model.items.tile.Tile;
 import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
+import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.ChatMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.AbstractMessage.MessageType;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import java.rmi.RemoteException;
@@ -22,10 +27,13 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,6 +49,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -222,6 +231,22 @@ public final class GuiFactory {
       b.setOnAction(event -> cb.call(tfs));
     }
     return b;
+  }
+
+  /**
+   * Method that creates and shows the alert modal for error messages 
+   * 
+   * @param sp The stack pane.
+   * @param msg Message to be displayed.
+   */
+  public static void getErrorMessage(StackPane sp, ErrorMessage msg){
+    Alert alert = msg.getErrorSeverity() == ErrorSeverity.WARNING ? new Alert(AlertType.WARNING) : new Alert(AlertType.ERROR);
+    alert.setTitle("Error");
+    alert.setHeaderText("An error occurred");
+    alert.setContentText(msg.getMessage());
+
+    // Display the dialog modally
+    alert.showAndWait();
   }
 
   /**
@@ -731,7 +756,34 @@ public final class GuiFactory {
     }
 
   }
-
+  /**
+   * Method used to update the chat widget dynamically.
+   *
+   * @param oldSP it's the old stackpane of the chat.
+   * @param msg the message to be added.
+   */
+  public static void updateChatHistory(StackPane oldSP, AbstractMessage msg){
+    VBox root = (VBox) oldSP.getChildren().get(0);
+    
+    HBox gameStage = (HBox) root.getChildren().get(1);
+    VBox chat = (VBox) gameStage.getChildren().get(3);
+    VBox chatBox = (VBox) chat.getChildren().get(1);
+    VBox chatHistory = (VBox) chatBox.getChildren().get(0);
+    ListView<String> chatMessages = (ListView<String>) chatHistory.getChildren().get(0);
+    if(msg.getMessageType() == MessageType.CHAT_MESSAGE){
+      ChatMessage chatMsg = (ChatMessage) msg;
+      if(chatMsg.isBroadcast()){
+        chatMessages.getItems().add(chatMsg.getSender().getPlayerName() + ": " + chatMsg.getMessage());
+      }else {
+        chatMessages.getItems().add(chatMsg.getSender().getPlayerName() + " > " + chatMsg.getReceiverName() + ": " + chatMsg.getMessage());
+      }
+    } else if (msg.getClass() == ErrorMessage.class){
+      ErrorMessage infoMsg = (ErrorMessage) msg;
+      chatMessages.getItems().add(infoMsg.getErrorSeverity() + ": " + infoMsg.getMessage());
+    } 
+    chatMessages.scrollTo(chatMessages.getItems().size() - 1);
+    }
+ 
   /**
    * GUI waiting for a game snapshot. Creates GUI components for the game
    * snapshot.
@@ -815,6 +867,12 @@ public final class GuiFactory {
         put(12, COMMON_TWELVE);
       }
     };
+
+    /** Chat input text field. */
+    protected static TextField textField;
+
+    /** Chat messages history. */
+    protected static ListView<String> chatMessagesListView;
 
     /**
      * Retrieves the background image for the waiting game.
@@ -1060,6 +1118,83 @@ public final class GuiFactory {
     }
 
     /**
+     * Method used to retrieve the input text field to send messages.
+     * @return the textfield.
+     */
+    protected static TextField getChatTextField() {
+      textField = getTextField("Enter your message here", 180, 100, FontWeight.NORMAL, 12, null);
+      return textField;
+    }
+
+    /**
+     * Method used to retrieve the horizontal component of input textfield and send button.
+     * @return send message box.
+     */
+    protected static HBox getSendMessageBox(){
+      HBox hbox = new HBox();
+      hbox.setSpacing(5);
+      hbox.setAlignment(Pos.CENTER_RIGHT);
+      hbox.getChildren().addAll( 
+        getChatTextField(),
+        getButton("Send", CallBack.sendMessageCallBack, textField)
+      );
+      return hbox;
+    };
+
+    /**
+     * Method used to retrieve the chat history component.
+     * @return chat history component.
+     */
+    protected static VBox getChatHistory(){
+      VBox chatHistory = new VBox();
+      chatMessagesListView = new ListView<String>();
+      chatMessagesListView.setStyle("-fx-control-inner-background: #B0721E");
+      chatMessagesListView.setPrefWidth(300);
+
+      //this 'magheggio' is needed to have a message that doesn't overflow in chat
+      chatMessagesListView.setCellFactory(list -> new ListCell<String>() {
+          private final Text textNode = new Text();
+          {
+              textNode.wrappingWidthProperty().bind(chatMessagesListView.widthProperty().subtract(20));
+          }
+
+          @Override
+          protected void updateItem(String item, boolean empty) {
+              super.updateItem(item, empty);
+
+              if (empty || item == null) {
+                  setGraphic(null);
+              } else {
+                  textNode.setText(item);
+                  setGraphic(textNode);
+              }
+          }
+      });
+
+      chatHistory.setAlignment(Pos.CENTER);
+      chatHistory.getChildren().addAll(
+        chatMessagesListView
+      );
+      return chatHistory;
+    }
+
+    /**
+     * Method used to retrieve the whole chat component.
+     * @return chat component.
+     */
+    protected static VBox getChat(){
+      VBox chat = new VBox();
+      chat.setSpacing(10);
+      chat.setAlignment(Pos.BOTTOM_RIGHT);
+      chat.getChildren().addAll(
+        getChatHistory(),
+        getSendMessageBox()
+      );
+
+      return chat;
+    }
+
+    /**
      * Retrieves the widget (container) for game snapshot.
      *
      * @return The widget (container) for the game snapshot.
@@ -1086,9 +1221,13 @@ public final class GuiFactory {
       bookShelf
           .getChildren()
           .addAll(getLabel("Book Shelf", FontWeight.BOLD, 20), getPlayerBookShelf(vv));
+      VBox chat = new VBox();
+      chat.setAlignment(Pos.BOTTOM_RIGHT);
+      chat.setPadding(new Insets(0, 15, 15, 0));
+      chat.getChildren().addAll( getLabel("Chat", FontWeight.BOLD, 20), getChat());
       HBox gameStage = new HBox();
       gameStage.setAlignment(Pos.CENTER);
-      gameStage.getChildren().addAll(gameBoard, bookShelf, playerItems);
+      gameStage.getChildren().addAll(gameBoard, bookShelf, playerItems, chat);
       gameStage.setSpacing(10);
       VBox root = new VBox();
       root.setAlignment(Pos.CENTER);

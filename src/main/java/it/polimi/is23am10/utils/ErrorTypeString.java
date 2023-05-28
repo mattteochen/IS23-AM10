@@ -129,4 +129,10 @@ public final class ErrorTypeString {
    *
    */
   public static final String ERROR_GAME_STATE = "Severe game state failure";
+
+  /**
+   * Message error in sending message to player name not existing.
+   */
+  public static final String RECEIVER_NOT_FOUND = "Player not found, message couldn't be delivered";
+
 }

@@ -127,7 +127,7 @@ public final class ServerControllerSocket implements Runnable {
             try {
               pc.notify(
                   new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_DISCONNECT,
-                      playerConnector.getPlayer().getPlayerName()), ErrorSeverity.WARNING));
+                      playerConnector.getPlayer().getPlayerName()), ErrorSeverity.INFO));
             } catch (InterruptedException | RemoteException e) {
               logger.error("{} {}", ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
             }

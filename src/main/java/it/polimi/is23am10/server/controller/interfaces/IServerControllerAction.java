@@ -59,6 +59,7 @@ import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -208,7 +209,7 @@ public interface IServerControllerAction extends Remote {
               .forEach(pc -> {
                 try {
                   pc.notify(
-                      new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_REJOIN, playerName), ErrorSeverity.WARNING));
+                      new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_REJOIN, playerName), ErrorSeverity.INFO));
                 } catch (InterruptedException | RemoteException e) {
                   logger.error("{} {}", ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);
                 }
@@ -245,8 +246,6 @@ public interface IServerControllerAction extends Remote {
         ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
         String.format(ErrorTypeString.WARNING_PLAYER_JOIN_SERVER, playerName, gameId));
 
-    playerConnector.notify(new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_JOIN, playerName), ErrorSeverity.WARNING));
-
     // send the game model update to all the connected players
     gameHandler.pushGameState();
     } catch (NullPlayerNamesException | NullPlayerScoreBlocksException
@@ -270,7 +269,7 @@ public interface IServerControllerAction extends Remote {
           ErrorTypeString.ERROR_ADDING_CONNECTOR, e);
       // Not adding the error here since it will not be possible to be sent
       // to player if there is no valid player connector.
-    } catch (GameSnapshotUpdateException | RemoteException | InterruptedException e) {
+    } catch (GameSnapshotUpdateException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.ADD_PLAYER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_UPDATING_GAME, e);
@@ -344,7 +343,6 @@ public interface IServerControllerAction extends Remote {
       if (scmCommand.getChatMessage().isBroadcast()) {
         handler.getPlayerConnectors()
             .stream()
-            .filter(pc -> !pc.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))
             .forEach(pc -> {
               try {
                 pc.notify(scmCommand.getChatMessage());
@@ -356,13 +354,19 @@ public interface IServerControllerAction extends Remote {
             });
       } else {
         String receiverName = scmCommand.getChatMessage().getReceiverName();
-
-        handler.getPlayerConnectors()
-            .stream()
-            .filter(pc -> pc.getPlayer().getPlayerName().equals(receiverName))
-            .findFirst()
-            .get()
-            .notify(scmCommand.getChatMessage());
+        try {
+          handler.getPlayerConnectors()
+          .stream()
+          .filter(pc -> pc.getPlayer().getPlayerName().equals(receiverName))
+          .findFirst()
+          .get()
+          .notify(scmCommand.getChatMessage());
+          playerConnector.notify(scmCommand.getChatMessage());
+        } catch (NoSuchElementException e){
+          logger.error("{} {} {}",
+            ServerDebugPrefixString.SEND_CHAT_MESSAGE_COMMAND_PREFIX,
+            ErrorTypeString.RECEIVER_NOT_FOUND, e);
+        }
       }
     } catch (InterruptedException | RemoteException e) {
       logger.error("{} {} {}",

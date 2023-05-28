@@ -220,7 +220,7 @@ class ServerControllerActionTest {
     assertEquals(oldPlayerConnectors + 1, ServerControllerState.getPlayersPool().size());
     assertTrue(handler.getPlayerConnectors().contains(playerConnector));
     assertTrue(handler.getGame().getPlayerNames().contains("Steve"));
-    assertEquals(2, playerConnector.getMsgQueueSize());
+    assertEquals(1, playerConnector.getMsgQueueSize());
   }
 
   @Test
@@ -439,11 +439,10 @@ class ServerControllerActionTest {
     
     /*
      * I'm here removing the other messages that alice has in her queue 
-     * (the welcome and the two virtual views of the game) sent when the other player
+     * (the two virtual views of the game) sent when the other player
      * connected to the game and then reconnected.
      * The last message will be the message informing that Steve reconnected.
      */
-    alice.getMessageFromQueue().getMessage();
     alice.getMessageFromQueue().getMessage();
     alice.getMessageFromQueue().getMessage();
     assertEquals(String.format(ErrorTypeString.WARNING_PLAYER_REJOIN, "Steve"), alice.getMessageFromQueue().getMessage());

@@ -1,6 +1,7 @@
 package it.polimi.is23am10.client.userinterface.guifactory;
 
 import it.polimi.is23am10.client.userinterface.GraphicUserInterface;
+import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory.SCENE;
 import it.polimi.is23am10.client.userinterface.guifactory.interfaces.BookShelfSelectionCallBack;
 import it.polimi.is23am10.client.userinterface.guifactory.interfaces.ButtonCallBack;
@@ -66,5 +67,18 @@ public final class CallBack {
   public static BookShelfSelectionCallBack moveTileCallBack =
       (move) -> {
         GraphicUserInterface.addMsgQueue(CommandsBuilder.moveTileCmd(move));
+      };
+
+  /**
+   * A callback implementation to send a chat message. This callback adds the send chat message
+   * command to the message queue of the GraphicUserInterface.
+   * 
+   */
+  public static ButtonCallBack sendMessageCallBack =
+      (tfs) -> {
+        if(tfs[0].getText().stripLeading().length() > 0){
+          GraphicUserInterface.addMsgQueue(CommandsBuilder.sendChatMessageCmd(tfs[0].getText()));
+        }
+        tfs[0].clear();
       };
 }
