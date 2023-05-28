@@ -15,6 +15,8 @@ import it.polimi.is23am10.server.network.messages.AbstractMessage.MessageType;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
+
+import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -149,15 +151,8 @@ public final class GuiFactory {
    * @return The created BackgroundImage object.
    */
   protected static BackgroundImage getBgImg(String path, double brightness) {
-
-    Image img = null;
-    try {
-      img = new Image(path);
-    } catch (Exception e) {
-      // TODO: handle
-    }
-
-    ImageView imgView = new ImageView(img);
+    InputStream inputStream = GameSnapshotFactory.class.getResourceAsStream(path);
+    ImageView imgView = new ImageView(new Image(inputStream));
     ColorAdjust cadj = new ColorAdjust();
     cadj.setBrightness(brightness);
     imgView.setEffect(cadj);
@@ -380,7 +375,7 @@ public final class GuiFactory {
    * static.
    */
   class SplashScreenFactory {
-    private static final String SPLASH_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_lobby.png";
+    private static final String SPLASH_SCREEN_IMG_PATH = "/assets/in_lobby.png";
 
     protected static TextField textField;
 
@@ -442,7 +437,7 @@ public final class GuiFactory {
    * screen.
    */
   class EndGameScene {
-    private static final String SELECTION_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_game.png";
+    private static final String SELECTION_SCREEN_IMG_PATH = "/assets/in_game.png";
 
     /**
      * Retrieves the background image for the end game selection screen.
@@ -507,7 +502,7 @@ public final class GuiFactory {
    * screen.
    */
   class EnterGameSelectionScreenFactory {
-    private static final String SELECTION_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_lobby.png";
+    private static final String SELECTION_SCREEN_IMG_PATH = "/assets/in_lobby.png";
 
     /**
      * Retrieves the background image for the enter game selection screen.
@@ -554,7 +549,7 @@ public final class GuiFactory {
    * a new game.
    */
   class NewGameFactory {
-    private static final String SPLASH_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_lobby.png";
+    private static final String SPLASH_SCREEN_IMG_PATH = "/assets/in_lobby.png";
 
     /** A map of text fields associated with player numbers. */
     protected static Map<String, TextField> textFields = Map.of(
@@ -617,7 +612,7 @@ public final class GuiFactory {
    * up a game to join.
    */
   class JoinGameFactory {
-    private static final String SPLASH_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_lobby.png";
+    private static final String SPLASH_SCREEN_IMG_PATH = "/assets/in_lobby.png";
 
     /**
      * Retrieves the background image.
@@ -691,7 +686,7 @@ public final class GuiFactory {
    * phase.
    */
   class WaitGameFactory {
-    private static final String SELECTION_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_wait.png";
+    private static final String SELECTION_SCREEN_IMG_PATH = "/assets/in_wait.png";
 
     /**
      * Retrieves the background image for the waiting game.
@@ -789,38 +784,38 @@ public final class GuiFactory {
    * snapshot.
    */
   class GameSnapshotFactory {
-    private static final String SELECTION_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_game.png";
-    private static final String FRAME_IMG = "file:src/main/resources/assets/frame.png";
-    private static final String CAT_IMG = "file:src/main/resources/assets/cat.png";
-    private static final String BOOK_IMG = "file:src/main/resources/assets/book.png";
-    private static final String GAME_IMG = "file:src/main/resources/assets/game.png";
-    private static final String PLANT_IMG = "file:src/main/resources/assets/plant.png";
-    private static final String TROPHY_IMG = "file:src/main/resources/assets/trophy.png";
-    private static final String EMPTY_IMG = "file:src/main/resources/assets/empty.png";
-    private static final String PRIVATE_ONE = "file:src/main/resources/assets/p1.png";
-    private static final String PRIVATE_TWO = "file:src/main/resources/assets/p2.png";
-    private static final String PRIVATE_THREE = "file:src/main/resources/assets/p3.png";
-    private static final String PRIVATE_FOUR = "file:src/main/resources/assets/p4.png";
-    private static final String PRIVATE_FIVE = "file:src/main/resources/assets/p5.png";
-    private static final String PRIVATE_SIX = "file:src/main/resources/assets/p6.png";
-    private static final String PRIVATE_SEVEN = "file:src/main/resources/assets/p7.png";
-    private static final String PRIVATE_EIGHT = "file:src/main/resources/assets/p8.png";
-    private static final String PRIVATE_NINE = "file:src/main/resources/assets/p9.png";
-    private static final String PRIVATE_TEN = "file:src/main/resources/assets/p10.png";
-    private static final String PRIVATE_ELEVEN = "file:src/main/resources/assets/p11.png";
-    private static final String PRIVATE_TWELVE = "file:src/main/resources/assets/p12.png";
-    private static final String COMMON_ONE = "file:src/main/resources/assets/c1.png";
-    private static final String COMMON_TWO = "file:src/main/resources/assets/c2.png";
-    private static final String COMMON_THREE = "file:src/main/resources/assets/c3.png";
-    private static final String COMMON_FOUR = "file:src/main/resources/assets/c4.png";
-    private static final String COMMON_FIVE = "file:src/main/resources/assets/c5.png";
-    private static final String COMMON_SIX = "file:src/main/resources/assets/c6.png";
-    private static final String COMMON_SEVEN = "file:src/main/resources/assets/c7.png";
-    private static final String COMMON_EIGHT = "file:src/main/resources/assets/c8.png";
-    private static final String COMMON_NINE = "file:src/main/resources/assets/c9.png";
-    private static final String COMMON_TEN = "file:src/main/resources/assets/c10.png";
-    private static final String COMMON_ELEVEN = "file:src/main/resources/assets/c11.png";
-    private static final String COMMON_TWELVE = "file:src/main/resources/assets/c12.png";
+    private static final String SELECTION_SCREEN_IMG_PATH = "/assets/in_game.png";
+    private static final String FRAME_IMG = "/assets/frame.png";
+    private static final String CAT_IMG = "/assets/cat.png";
+    private static final String BOOK_IMG = "/assets/book.png";
+    private static final String GAME_IMG = "/assets/game.png";
+    private static final String PLANT_IMG = "/assets/plant.png";
+    private static final String TROPHY_IMG = "/assets/trophy.png";
+    private static final String EMPTY_IMG = "/assets/empty.png";
+    private static final String PRIVATE_ONE = "/assets/p1.png";
+    private static final String PRIVATE_TWO = "/assets/p2.png";
+    private static final String PRIVATE_THREE = "/assets/p3.png";
+    private static final String PRIVATE_FOUR = "/assets/p4.png";
+    private static final String PRIVATE_FIVE = "/assets/p5.png";
+    private static final String PRIVATE_SIX = "/assets/p6.png";
+    private static final String PRIVATE_SEVEN = "/assets/p7.png";
+    private static final String PRIVATE_EIGHT = "/assets/p8.png";
+    private static final String PRIVATE_NINE = "/assets/p9.png";
+    private static final String PRIVATE_TEN = "/assets/p10.png";
+    private static final String PRIVATE_ELEVEN = "/assets/p11.png";
+    private static final String PRIVATE_TWELVE = "/assets/p12.png";
+    private static final String COMMON_ONE = "/assets/c1.png";
+    private static final String COMMON_TWO = "/assets/c2.png";
+    private static final String COMMON_THREE = "/assets/c3.png";
+    private static final String COMMON_FOUR = "/assets/c4.png";
+    private static final String COMMON_FIVE = "/assets/c5.png";
+    private static final String COMMON_SIX = "/assets/c6.png";
+    private static final String COMMON_SEVEN = "/assets/c7.png";
+    private static final String COMMON_EIGHT = "/assets/c8.png";
+    private static final String COMMON_NINE = "/assets/c9.png";
+    private static final String COMMON_TEN = "/assets/c10.png";
+    private static final String COMMON_ELEVEN = "/assets/c11.png";
+    private static final String COMMON_TWELVE = "/assets/c12.png";
 
     /** Associate a {@link TileType} to a image path. */
     private static Map<TileType, String> imagesMap = Map.of(
@@ -898,7 +893,8 @@ public final class GuiFactory {
       Tile[][] b = vv.getGameBoard().getBoardGrid();
       for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
         for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
-          ImageView imgView = new ImageView(new Image(imagesMap.get(b[i][j].getType())));
+          InputStream inputStream = GameSnapshotFactory.class.getResourceAsStream(imagesMap.get(b[i][j].getType()));
+          ImageView imgView = new ImageView(new Image(inputStream));
           imgView.setFitWidth(55);
           imgView.setFitHeight(55);
           final int row = i;
@@ -940,11 +936,12 @@ public final class GuiFactory {
       Tile[][] b = bs.getBookshelfGrid();
       for (int i = 0; i < b.length; i++) {
         for (int j = 0; j < b[i].length; j++) {
-          ImageView imgView = new ImageView(new Image(imagesMap.get(b[i][j].getType())));
+          InputStream inputStream = GameSnapshotFactory.class.getResourceAsStream(imagesMap.get(b[i][j].getType()));
+          ImageView imgView = new ImageView(new Image(inputStream));
           imgView.setFitWidth(40);
           imgView.setFitHeight(40);
 
-          // buil the command
+          // build the command
           final int col = j;
           if (isEditable){
             imgView.setOnMouseClicked(
@@ -988,8 +985,8 @@ public final class GuiFactory {
       try {
         for (VirtualPlayer vp : vv.getPlayers()) {
           if (vp.getPlayerName().equals(Client.getPlayerConnector().getPlayer().getPlayerName())) {
-            Image img = new Image(privateCardMap.get(vp.getPrivateCardIndex()));
-            ImageView imgView = new ImageView(img);
+            InputStream inputStream = GameSnapshotFactory.class.getResourceAsStream(privateCardMap.get(vp.getPrivateCardIndex()));
+            ImageView imgView = new ImageView(new Image(inputStream));
             imgView.setFitWidth(137 * 1.2);
             imgView.setFitHeight(207.9 * 1.2);
             return imgView;
@@ -1008,8 +1005,10 @@ public final class GuiFactory {
      */
     private static List<ImageView> getCommonGoalCard(VirtualView vv) {
       List<ImageView> imgs = new ArrayList<>();
-      imgs.add(new ImageView(new Image(commonCardMap.get(vv.getSharedCards().get(0)))));
-      imgs.add(new ImageView(new Image(commonCardMap.get(vv.getSharedCards().get(1)))));
+      InputStream inputStream = GameSnapshotFactory.class.getResourceAsStream(commonCardMap.get(vv.getSharedCards().get(0)));
+      imgs.add(new ImageView(new Image(inputStream)));
+      inputStream = GameSnapshotFactory.class.getResourceAsStream(commonCardMap.get(vv.getSharedCards().get(1)));
+      imgs.add(new ImageView(new Image(inputStream)));
       for (ImageView i : imgs) {
         i.setFitWidth(138.5 * 1.4);
         i.setFitHeight(91.3 * 1.4);
