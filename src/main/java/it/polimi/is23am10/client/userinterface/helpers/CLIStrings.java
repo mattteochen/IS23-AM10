@@ -91,17 +91,17 @@ public final class CLIStrings {
   public final static String description = "Card Description";
   public final static String privateCardIdx = "\tPrivate Card #%d\t";
   public final static Map<Integer, String> sharedPatternsDesc = Map.ofEntries(
-    Map.entry(1, "Six separated groups made of two adjacent tiles of the same type. The tile type of different groups can be different."),
-    Map.entry(2, "The four tiles at the corners of the bookshelf are of the same type."),
+    Map.entry(1, "Two groups of four tiles of the same type forming a 2x2 square shape. The tile type of the two squares has to be the same."),
+    Map.entry(2,  "At least two full columns (filled with six tiles), having tiles of all different types."),
     Map.entry(3, "Four separated groups made of four adjacent tiles of the same type. The tile's type of different groups can be different."),
-    Map.entry(4, "Two groups of four tiles of the same type forming a 2x2 square shape. The tile type of the two squares has to be the same."),
-    Map.entry(5, "At least three full columns (filled with six tiles), having maximum three different tile types per column. "),
-    Map.entry(6, "At least eight tiles of the same type. There are no restrictions concerning their positions."),
-    Map.entry(7, "Five tiles of the same type forming a diagonal."),
-    Map.entry(8, "At least four full rows (filled with five tiles), having maximum three different tile types per row."),
-    Map.entry(9,  "At least two full columns (filled with six tiles), having tiles of all different types."),
-    Map.entry(10,  "At least two full rows (filled with five tiles), having tiles of all different types."),
-    Map.entry(11,  "Five tiles of the same type, forming an X shape."),
+    Map.entry(4, "Six separated groups made of two adjacent tiles of the same type. The tile type of different groups can be different."),
+    Map.entry(5, "At least three full columns (filled with six tiles), having maximum three different tile types per column."),
+    Map.entry(6,  "At least two full rows (filled with five tiles), having tiles of all different types."),
+    Map.entry(7, "At least four full rows (filled with five tiles), having maximum three different tile types per row."),
+    Map.entry(8, "The four tiles at the corners of the bookshelf are of the same type."),
+    Map.entry(9, "At least eight tiles of the same type. There are no restrictions concerning their positions."),
+    Map.entry(10,  "Five tiles of the same type, forming an X shape."),
+    Map.entry(11, "Five tiles of the same type forming a diagonal."),
     Map.entry(12, "Five columns with ascending or descending height. Starting from the first or the last column, the next column has to have one tile more. The tile types are not considered.")
   );
   public final static String waitingForPlayers = "Waiting for game to be full before starting, %d/%d joined. GameID: %s"; 
