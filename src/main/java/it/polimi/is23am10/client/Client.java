@@ -24,6 +24,7 @@ import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.messages.GameMessage;
+import it.polimi.is23am10.server.network.messages.SnoozeACKMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
@@ -41,6 +42,7 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -120,7 +122,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
   protected final int ALARM_INITIAL_DELAY_MS = 0;
 
   /** Clean disconnection request. */
-  private boolean requestedDisconnection;
+  protected boolean requestedDisconnection;
 
   /** Duplicate name error flag. */
   private boolean hasDuplicateName;
@@ -625,7 +627,6 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
         getAvailableGames();
       }
 
-      // TODO: use userinterface
       String fullCommand = userInterface.getUserInput();
       if (fullCommand != null) {
         String command = fullCommand.stripLeading().split(" ")[0];
@@ -729,6 +730,20 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
   }
 
   /**
+   * Method to terminate the client and all client's threads.
+   */
+  public void terminateClient() {
+    try {
+      UnicastRemoteObject.unexportObject(this, true);
+    } catch (NoSuchObjectException e) {
+      userInterface.displayError(new ErrorMessage("Unable to close connection safely. Please close client manually", ErrorSeverity.CRITICAL));
+    }
+    requestedDisconnection = true;
+    alarm.cancel();
+    userInterface.terminateUserInterface();
+  }
+
+  /**
    * Custom deserializer class definition for {@link Gson} usage. This works on polymorphic {@link
    * AbstractMessage} objects.
    */
@@ -755,6 +770,8 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
           return context.deserialize(jsonObject, AvailableGamesMessage.class);
         case "it.polimi.is23am10.server.network.messages.ErrorMessage":
           return context.deserialize(jsonObject, ErrorMessage.class);
+        case "it.polimi.is23am10.server.network.messages.SnoozeACKMessage":
+          return context.deserialize(jsonObject, SnoozeACKMessage.class);
         default:
           throw new JsonParseException("Unknown class name: " + className);
       }

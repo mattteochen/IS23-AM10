@@ -36,7 +36,12 @@ public class AbstractMessage implements Serializable {
     /**
      * Message containing the available games joinable by player.
      */
-    AVAILABLE_GAMES
+    AVAILABLE_GAMES,
+    /**
+     * ACK message sent from server to client to confirm that the timer has
+     * been snoozed. If not received by client implies client termination.
+     */
+    SNOOZE_ACK
   }
 
   /**
