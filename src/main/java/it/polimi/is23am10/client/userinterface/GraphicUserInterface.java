@@ -113,7 +113,7 @@ public final class GraphicUserInterface extends Application implements UserInter
         } else {
           StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
           GuiFactory.executeOnJavaFX( () ->
-            GuiFactory.updateGameWidget(root, old, vw)
+            GuiFactory.GameSnapshotFactory.updateGameWidget(root, old, vw)
           );
         }
       }
@@ -124,7 +124,7 @@ public final class GraphicUserInterface extends Application implements UserInter
   public void displayChatMessage(ChatMessage message) {
     StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
     GuiFactory.executeOnJavaFX(
-      () -> GuiFactory.updateChatHistory(root, message)
+      () -> GuiFactory.GameSnapshotFactory.updateChatHistory(root, message)
     );
   }
 
@@ -137,7 +137,7 @@ public final class GraphicUserInterface extends Application implements UserInter
       );
     } else {
       GuiFactory.executeOnJavaFX(
-        () -> GuiFactory.updateChatHistory(root, errorMessage)
+        () -> GuiFactory.GameSnapshotFactory.updateChatHistory(root, errorMessage)
       );
     }
   }
