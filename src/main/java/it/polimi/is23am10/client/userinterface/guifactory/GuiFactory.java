@@ -234,13 +234,14 @@ public final class GuiFactory {
   }
 
   /**
-   * Method that creates and shows the alert modal for error messages 
+   * Method that creates and shows the alert modal for error messages
    * 
-   * @param sp The stack pane.
+   * @param sp  The stack pane.
    * @param msg Message to be displayed.
    */
-  public static void getErrorMessage(StackPane sp, ErrorMessage msg){
-    Alert alert = msg.getErrorSeverity() == ErrorSeverity.WARNING ? new Alert(AlertType.WARNING) : new Alert(AlertType.ERROR);
+  public static void getErrorMessage(StackPane sp, ErrorMessage msg) {
+    Alert alert = msg.getErrorSeverity() == ErrorSeverity.WARNING ? new Alert(AlertType.WARNING)
+        : new Alert(AlertType.ERROR);
     alert.setTitle("Error");
     alert.setHeaderText("An error occurred");
     alert.setContentText(msg.getMessage());
@@ -250,7 +251,8 @@ public final class GuiFactory {
   }
 
   /**
-   * Perform a scene change.
+   * Executes a callback inside of JavaFX thread. Mandatory for
+   * any scene-change related task.
    *
    * @param r The callback to be executed.
    */
@@ -363,8 +365,8 @@ public final class GuiFactory {
   public static Scene getEndGameScene(VirtualView vv) {
     StackPane root = new StackPane();
 
-    root.setBackground(new Background(EndGameScene.getBg()));
-    root.getChildren().add(EndGameScene.getEndWidget(vv));
+    root.setBackground(new Background(EndGameSceneFactory.getBg()));
+    root.getChildren().add(EndGameSceneFactory.getEndWidget(vv));
 
     return new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
   }
@@ -441,7 +443,7 @@ public final class GuiFactory {
    * GUI end game screen factory. Creates GUI components for the enter game end
    * screen.
    */
-  class EndGameScene {
+  class EndGameSceneFactory {
     private static final String SELECTION_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_game.png";
 
     /**
@@ -726,69 +728,10 @@ public final class GuiFactory {
   }
 
   /**
-   * Method used to update the current game widget scene dynamically. Must be wrapped in executeOnJavaFX
-   * when called to make sure it's properly runned into JavaFX's thread.
-   * 
-   * @param oldSP The old stack pane to update.
-   * @param oldVw The old virtual view to check what changed.
-   * @param newVw The new virtual view.
-   */
-  public static void updateGameWidget(StackPane oldSP, VirtualView oldVw, VirtualView newVw) {
-    VBox root = (VBox) oldSP.getChildren().get(0);
-    root.getChildren().set(0, GameSnapshotFactory.getLeaderboard(newVw));
-
-    HBox gameStage = (HBox) root.getChildren().get(1);
-    VBox gameBoard = (VBox) gameStage.getChildren().get(0);
-    VBox bookShelf = (VBox) gameStage.getChildren().get(1);
-
-    if (!oldVw.getGameBoard().equals(newVw.getGameBoard())) {
-      gameBoard.getChildren().set(1, GameSnapshotFactory.getGameBoard(newVw));
-    }
-
-    for (int i = 0; i < oldVw.getPlayers().size(); ++i) {
-      if (oldVw.getPlayers().get(i).getPlayerName().equals(getMyPlayerName())){
-          bookShelf.getChildren().set(1,
-          GameSnapshotFactory.getBookShelf(newVw.getPlayers().stream()
-              .filter(vp -> vp.getPlayerName().equals(getMyPlayerName()))
-              .findFirst().get().getBookshelf(), isThisPlayerTurn(newVw)));
-      }
-      // No else as it should be handled in separate "other bookshelfs" page
-    }
-
-  }
-  /**
-   * Method used to update the chat widget dynamically.
-   *
-   * @param oldSP it's the old stackpane of the chat.
-   * @param msg the message to be added.
-   */
-  public static void updateChatHistory(StackPane oldSP, AbstractMessage msg){
-    VBox root = (VBox) oldSP.getChildren().get(0);
-    
-    HBox gameStage = (HBox) root.getChildren().get(1);
-    VBox chat = (VBox) gameStage.getChildren().get(3);
-    VBox chatBox = (VBox) chat.getChildren().get(1);
-    VBox chatHistory = (VBox) chatBox.getChildren().get(0);
-    ListView<String> chatMessages = (ListView<String>) chatHistory.getChildren().get(0);
-    if(msg.getMessageType() == MessageType.CHAT_MESSAGE){
-      ChatMessage chatMsg = (ChatMessage) msg;
-      if(chatMsg.isBroadcast()){
-        chatMessages.getItems().add(chatMsg.getSender().getPlayerName() + ": " + chatMsg.getMessage());
-      }else {
-        chatMessages.getItems().add(chatMsg.getSender().getPlayerName() + " > " + chatMsg.getReceiverName() + ": " + chatMsg.getMessage());
-      }
-    } else if (msg.getClass() == ErrorMessage.class){
-      ErrorMessage infoMsg = (ErrorMessage) msg;
-      chatMessages.getItems().add(infoMsg.getErrorSeverity() + ": " + infoMsg.getMessage());
-    } 
-    chatMessages.scrollTo(chatMessages.getItems().size() - 1);
-    }
- 
-  /**
    * GUI waiting for a game snapshot. Creates GUI components for the game
    * snapshot.
    */
-  class GameSnapshotFactory {
+  public class GameSnapshotFactory {
     private static final String SELECTION_SCREEN_IMG_PATH = "file:src/main/resources/assets/in_game.png";
     private static final String FRAME_IMG = "file:src/main/resources/assets/frame.png";
     private static final String CAT_IMG = "file:src/main/resources/assets/cat.png";
@@ -927,11 +870,10 @@ public final class GuiFactory {
     /**
      * Retrieves the bookshelf board {@link Bookshelf}.
      *
-     * @param bs     The {@link Bookshelf}.
-     * @param isEditable A flag stating if is the bookshelf is owned by client player.
+     * @param bs The {@link Bookshelf}.
      * @return The bookshelf {@link GridPane}.
      */
-    private static GridPane getBookShelf(Bookshelf bs, boolean isEditable) {
+    private static GridPane getBookShelfGridPane(Bookshelf bs) {
       GridPane gp = new GridPane();
       gp.setHgap(5);
       gp.setVgap(5);
@@ -946,14 +888,12 @@ public final class GuiFactory {
 
           // buil the command
           final int col = j;
-          if (isEditable){
-            imgView.setOnMouseClicked(
-                event -> {
-                  UserMoveBuilder.appendDestCol(col);
-                  CallBack.moveTileCallBack.call(UserMoveBuilder.getMove());
-                  UserMoveBuilder.clear();
-                });
-          }
+          imgView.setOnMouseClicked(
+              event -> {
+                UserMoveBuilder.appendDestCol(col);
+                CallBack.moveTileCallBack.call(UserMoveBuilder.getMove());
+                UserMoveBuilder.clear();
+              });
           gp.add(imgView, j, i);
         }
       }
@@ -968,12 +908,11 @@ public final class GuiFactory {
      * @return A list of bookshelf {@link VBox}.
      */
     private static GridPane getPlayerBookShelf(VirtualView vv) {
-      boolean isCurrTurn = isThisPlayerTurn(vv);
 
       for (VirtualPlayer vp : vv.getPlayers()) {
-          if (vp.getPlayerName().equals(getMyPlayerName())) {
-            return getBookShelf(vp.getBookshelf(), isCurrTurn);
-          }
+        if (vp.getPlayerName().equals(getMyPlayerName())) {
+          return getBookShelfGridPane(vp.getBookshelf());
+        }
       }
       return null;
     }
@@ -1063,8 +1002,8 @@ public final class GuiFactory {
       VBox extraPoints = new VBox();
       extraPoints.setAlignment(Pos.CENTER);
       extraPoints.setSpacing(5);
-      VBox totalScore = new VBox();
       extraPoints.getChildren().add(getLabel("Extra points", FontWeight.BOLD, 15));
+      VBox totalScore = new VBox();
       totalScore.setAlignment(Pos.CENTER);
       totalScore.setSpacing(5);
       totalScore.getChildren().add(getLabel("Total score", FontWeight.BOLD, 15));
@@ -1119,6 +1058,7 @@ public final class GuiFactory {
 
     /**
      * Method used to retrieve the input text field to send messages.
+     * 
      * @return the textfield.
      */
     protected static TextField getChatTextField() {
@@ -1127,72 +1067,89 @@ public final class GuiFactory {
     }
 
     /**
-     * Method used to retrieve the horizontal component of input textfield and send button.
+     * Method used to retrieve the horizontal component of input textfield and send
+     * button.
+     * 
      * @return send message box.
      */
-    protected static HBox getSendMessageBox(){
+    protected static HBox getSendMessageBox() {
       HBox hbox = new HBox();
       hbox.setSpacing(5);
       hbox.setAlignment(Pos.CENTER_RIGHT);
-      hbox.getChildren().addAll( 
-        getChatTextField(),
-        getButton("Send", CallBack.sendMessageCallBack, textField)
-      );
+      hbox.getChildren().addAll(
+          getChatTextField(),
+          getButton("Send", CallBack.sendMessageCallBack, textField));
       return hbox;
     };
 
     /**
      * Method used to retrieve the chat history component.
+     * 
      * @return chat history component.
      */
-    protected static VBox getChatHistory(){
+    protected static VBox getChatHistory() {
       VBox chatHistory = new VBox();
       chatMessagesListView = new ListView<String>();
       chatMessagesListView.setStyle("-fx-control-inner-background: #B0721E");
       chatMessagesListView.setPrefWidth(300);
 
-      //this 'magheggio' is needed to have a message that doesn't overflow in chat
+      // this 'magheggio' is needed to have a message that doesn't overflow in chat
       chatMessagesListView.setCellFactory(list -> new ListCell<String>() {
-          private final Text textNode = new Text();
-          {
-              textNode.wrappingWidthProperty().bind(chatMessagesListView.widthProperty().subtract(20));
-          }
+        private final Text textNode = new Text();
+        {
+          textNode.wrappingWidthProperty().bind(chatMessagesListView.widthProperty().subtract(20));
+        }
 
-          @Override
-          protected void updateItem(String item, boolean empty) {
-              super.updateItem(item, empty);
+        @Override
+        protected void updateItem(String item, boolean empty) {
+          super.updateItem(item, empty);
 
-              if (empty || item == null) {
-                  setGraphic(null);
-              } else {
-                  textNode.setText(item);
-                  setGraphic(textNode);
-              }
+          if (empty || item == null) {
+            setGraphic(null);
+          } else {
+            textNode.setText(item);
+            setGraphic(textNode);
           }
+        }
       });
 
       chatHistory.setAlignment(Pos.CENTER);
       chatHistory.getChildren().addAll(
-        chatMessagesListView
-      );
+          chatMessagesListView);
       return chatHistory;
     }
 
     /**
      * Method used to retrieve the whole chat component.
+     * 
      * @return chat component.
      */
-    protected static VBox getChat(){
+    protected static VBox getChat() {
       VBox chat = new VBox();
       chat.setSpacing(10);
       chat.setAlignment(Pos.BOTTOM_RIGHT);
       chat.getChildren().addAll(
-        getChatHistory(),
-        getSendMessageBox()
-      );
+          getChatHistory(),
+          getSendMessageBox());
 
       return chat;
     }
+
+    /**
+     * Private method used to retrieve a VBox containing the buttons
+     * to navigate to all bookshelves.
+     */
+    private static VBox getBSButtons(VirtualView vv) {
+      VBox bsButtons = new VBox();
+      bsButtons.setSpacing(5);
+      bsButtons.setAlignment(Pos.CENTER);
+      for (VirtualPlayer vp : vv.getPlayers()) {
+        bsButtons.getChildren().add(
+            getButton(String.format("Show %s's bookshelf", vp.getPlayerName()), CallBack.switchToPlayerBookshelf,
+                new TextField(vp.getBookshelf().getBookshelfString()), new TextField(vp.getPlayerName())));
+      }
+      return bsButtons;
+    } 
 
     /**
      * Retrieves the widget (container) for game snapshot.
@@ -1200,17 +1157,17 @@ public final class GuiFactory {
      * @return The widget (container) for the game snapshot.
      */
     protected static VBox getGameWidget(VirtualView vv) {
-      VBox commonGolas = new VBox();
-      commonGolas.setAlignment(Pos.CENTER);
-      commonGolas.setSpacing(10);
-      commonGolas.getChildren().addAll(getCommonGoalCard(vv));
+      VBox commonGoals = new VBox();
+      commonGoals.setAlignment(Pos.CENTER);
+      commonGoals.setSpacing(10);
+      commonGoals.getChildren().addAll(getCommonGoalCard(vv));
       VBox playerItems = new VBox();
       playerItems.setAlignment(Pos.CENTER);
       playerItems.setSpacing(10);
       playerItems.getChildren().add(getLabel("Your Private Card", FontWeight.BOLD, 20));
       playerItems.getChildren().add(getPrivateCard(vv));
       playerItems.getChildren().add(getLabel("Common Goals", FontWeight.BOLD, 20));
-      playerItems.getChildren().add(commonGolas);
+      playerItems.getChildren().add(commonGoals);
       VBox gameBoard = new VBox();
       gameBoard.setSpacing(10);
       gameBoard.setAlignment(Pos.CENTER);
@@ -1220,11 +1177,11 @@ public final class GuiFactory {
       bookShelf.setAlignment(Pos.CENTER);
       bookShelf
           .getChildren()
-          .addAll(getLabel("Book Shelf", FontWeight.BOLD, 20), getPlayerBookShelf(vv));
+          .addAll(getLabel(String.format("%s's Bookshelf", vv.getActivePlayer().getPlayerName()), FontWeight.BOLD, 20), getBookShelfGridPane(vv.getActivePlayer().getBookshelf()), getBSButtons(vv));
       VBox chat = new VBox();
       chat.setAlignment(Pos.BOTTOM_RIGHT);
       chat.setPadding(new Insets(0, 15, 15, 0));
-      chat.getChildren().addAll( getLabel("Chat", FontWeight.BOLD, 20), getChat());
+      chat.getChildren().addAll(getLabel("Chat", FontWeight.BOLD, 20), getChat());
       HBox gameStage = new HBox();
       gameStage.setAlignment(Pos.CENTER);
       gameStage.getChildren().addAll(gameBoard, bookShelf, playerItems, chat);
@@ -1234,6 +1191,76 @@ public final class GuiFactory {
       root.setSpacing(20);
       root.getChildren().addAll(getLeaderboard(vv), gameStage);
       return root;
+    }
+
+    /**
+     * Method used to update the bookshelf currently on stage.
+     * 
+     * @param sp scene's stackpane.
+     * @param bs bookshelf to show.
+     * @param bsOwner string name of the BS owner.
+     */
+    public static void updateBookshelf(StackPane sp, Bookshelf bs, String bsOwner) {
+      VBox root = (VBox) sp.getChildren().get(0);
+      HBox gameStage = (HBox) root.getChildren().get(1);
+      VBox bookShelf = (VBox) gameStage.getChildren().get(1);
+      Label BSLabel = (Label) bookShelf.getChildren().get(0);
+      BSLabel.setText(String.format("%s's Bookshelf", bsOwner));
+      bookShelf.getChildren().set(1, getBookShelfGridPane(bs));
+    }
+
+    /**
+     * Method used to update the current game widget scene dynamically. Must be
+     * wrapped in executeOnJavaFX
+     * when called to make sure it's properly runned into JavaFX's thread.
+     * 
+     * @param oldSP The old stack pane to update.
+     * @param oldVw The old virtual view to check what changed.
+     * @param newVw The new virtual view.
+     */
+    public static void updateGameWidget(StackPane oldSP, VirtualView oldVw, VirtualView newVw) {
+      VBox root = (VBox) oldSP.getChildren().get(0);
+      root.getChildren().set(0, GameSnapshotFactory.getLeaderboard(newVw));
+
+      HBox gameStage = (HBox) root.getChildren().get(1);
+      VBox gameBoard = (VBox) gameStage.getChildren().get(0);
+      VBox bookShelf = (VBox) gameStage.getChildren().get(1);
+
+      if (!oldVw.getGameBoard().equals(newVw.getGameBoard())) {
+        gameBoard.getChildren().set(1, GameSnapshotFactory.getGameBoard(newVw));
+      }
+
+      updateBookshelf(oldSP, newVw.getActivePlayer().getBookshelf(), newVw.getActivePlayer().getPlayerName());
+      bookShelf.getChildren().set(2, getBSButtons(newVw));
+    }
+
+    /**
+     * Method used to update the chat widget dynamically.
+     *
+     * @param oldSP it's the old stackpane of the chat.
+     * @param msg   the message to be added.
+     */
+    public static void updateChatHistory(StackPane oldSP, AbstractMessage msg) {
+      VBox root = (VBox) oldSP.getChildren().get(0);
+
+      HBox gameStage = (HBox) root.getChildren().get(1);
+      VBox chat = (VBox) gameStage.getChildren().get(3);
+      VBox chatBox = (VBox) chat.getChildren().get(1);
+      VBox chatHistory = (VBox) chatBox.getChildren().get(0);
+      ListView<String> chatMessages = (ListView<String>) chatHistory.getChildren().get(0);
+      if (msg.getMessageType() == MessageType.CHAT_MESSAGE) {
+        ChatMessage chatMsg = (ChatMessage) msg;
+        if (chatMsg.isBroadcast()) {
+          chatMessages.getItems().add(chatMsg.getSender().getPlayerName() + ": " + chatMsg.getMessage());
+        } else {
+          chatMessages.getItems().add(
+              chatMsg.getSender().getPlayerName() + " > " + chatMsg.getReceiverName() + ": " + chatMsg.getMessage());
+        }
+      } else if (msg.getClass() == ErrorMessage.class) {
+        ErrorMessage infoMsg = (ErrorMessage) msg;
+        chatMessages.getItems().add(infoMsg.getErrorSeverity() + ": " + infoMsg.getMessage());
+      }
+      chatMessages.scrollTo(chatMessages.getItems().size() - 1);
     }
   }
 

@@ -6,6 +6,10 @@ import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory.SCENE;
 import it.polimi.is23am10.client.userinterface.guifactory.interfaces.BookShelfSelectionCallBack;
 import it.polimi.is23am10.client.userinterface.guifactory.interfaces.ButtonCallBack;
 import it.polimi.is23am10.client.userinterface.helpers.CommandsBuilder;
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.WrongCharBookshelfStringException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
+import javafx.scene.layout.StackPane;
 
 /**
  * The CallBack class provides various callback implementations used in the GUI. It includes
@@ -20,6 +24,24 @@ public final class CallBack {
   public static ButtonCallBack confirmNameCallBack =
       (tfs) -> {
         GraphicUserInterface.addMsgQueue(tfs[0].getText());
+      };
+
+  /**
+   * Callback for "see XYZ's bookshelf" button. Textfield received is player's name.
+   */
+  public static ButtonCallBack switchToPlayerBookshelf =
+      (tfs) -> {
+          StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
+          GuiFactory.executeOnJavaFX( () ->
+            {
+              try {
+                GuiFactory.GameSnapshotFactory.updateBookshelf(root, new Bookshelf(tfs[0].getText()), tfs[1].getText());
+              } catch (NullPointerException | WrongLengthBookshelfStringException
+                  | WrongCharBookshelfStringException e) {
+                return;
+              }
+            }
+        );
       };
 
   /**
