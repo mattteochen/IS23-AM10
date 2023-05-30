@@ -482,7 +482,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
           }
           break;
         case "logout":
-          // TODO: add logout command
+          terminateClient();
           break;
         case "move":
           if (getVirtualView() == null) {
