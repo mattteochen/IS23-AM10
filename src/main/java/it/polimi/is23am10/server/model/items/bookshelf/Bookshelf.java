@@ -70,6 +70,24 @@ public class Bookshelf implements Serializable {
   }
 
   /**
+   * Method used to get a string representation for a bookshelf.
+   * 
+   * @return string representation of this bookshelf.
+   */
+  public String getBookshelfString(){
+    StringBuilder toReturn = new StringBuilder();
+    for (int i = 0; i < BOOKSHELF_ROWS; i++) {
+      for (int j = 0; j < BOOKSHELF_COLS; j++) {
+        // Apparently needed because "Local variable i defined in an enclosing scope must be final or effectively final Java(536871575)"
+        final Integer ii = i;
+        final Integer jj = j;
+        toReturn.append(tileMap.keySet().stream().filter(s -> tileMap.get(s) == (bookshelfGrid[ii][jj]).getType()).findFirst().get());
+      }
+    }
+    return toReturn.toString();
+  }
+
+  /**
    * Copy constructor of Bookshelf.
    * 
    * @param toCopy original instance

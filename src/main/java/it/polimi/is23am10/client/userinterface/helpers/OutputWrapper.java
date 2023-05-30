@@ -97,7 +97,7 @@ public final class OutputWrapper implements Serializable {
       OutputLevel.CHAT, ANSICodes.GREEN + "💬 %s" + ANSICodes.RESET,
       OutputLevel.WARNING, ANSICodes.YELLOW + "🔶 %s" + ANSICodes.RESET,
       OutputLevel.ERROR, ANSICodes.RED + "🔴 %s" + ANSICodes.RESET,
-      OutputLevel.CRITICAL, ANSICodes.RED_BACKGROUND_BRIGHT + "⚫️ %s" + ANSICodes.RESET);
+      OutputLevel.CRITICAL, ANSICodes.PURPLE_BACKGROUND + "⚫️ %s" + ANSICodes.RESET);
 
   /**
    * A map that associates TileType to their Java source code encoding.

@@ -68,5 +68,11 @@ public interface UserInterface {
    */
   void displayError(ErrorMessage errorMessage);
 
+  /**
+   * Method used when game is over to close input and eventually show infos.
+   *
+   */
+  void terminateUserInterface();
+
   //TODO: Add other needed display methods if needed
 }

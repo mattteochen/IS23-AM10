@@ -44,6 +44,7 @@ import it.polimi.is23am10.server.network.gamehandler.exceptions.GameSnapshotUpda
 import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.SnoozeACKMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
@@ -482,6 +483,7 @@ public interface IServerControllerAction extends Remote {
         logger.info("{} Can not snooze timer, unknown player name {}",
             ServerDebugPrefixString.SNOOZE_TIMER_COMMAND_PREFIX,
             cmd.getPlayerName());
+        playerConnector.notify(new SnoozeACKMessage());
         return null;
       }
       //don't allow inactive players calls
@@ -489,7 +491,8 @@ public interface IServerControllerAction extends Remote {
         return null;
       }
       pc.get().setLastSnoozeMs(System.currentTimeMillis());
-    } catch (NullPointerException e) {
+      pc.get().notify(new SnoozeACKMessage());
+    } catch (NullPointerException | RemoteException | InterruptedException e) {
       logger.error("{} {} {}",
           ServerDebugPrefixString.SNOOZE_TIMER_COMMAND_PREFIX,
           ErrorTypeString.ERROR_SNOOZING_TIMER, e);
