@@ -58,6 +58,7 @@ public class PlayerConnectorRmi extends AbstractPlayerConnector {
     this.client = client;
   }
 
+  /** {@inheritDoc} */
   @Override
   public void notify(AbstractMessage msg) throws InterruptedException, RemoteException {
     if (msg == null) {
