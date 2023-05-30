@@ -32,9 +32,8 @@ hs_err_pid*
 .settings
 
 #Vscode
-**/.vscode/**
+.vscode
 
 #Dev container
-
-**/.devcontainer/**
+.devcontainer
 Dockerfile
