@@ -131,17 +131,7 @@ public abstract class AbstractPlayerConnector implements Serializable, IPlayerCo
    * @throws RemoteException On remote call failure.
    *
    */
-  public void notify(AbstractMessage message) throws InterruptedException, RemoteException {
-    if (message == null) {
-      return;
-    }
-    if (this.getClass() == PlayerConnectorRmi.class) {
-      ((PlayerConnectorRmi) this).getClient().showServerMessage(message);
-    } else {
-      //sync is performed by the collection
-      msgQueue.put(message);
-    }
-  }
+  public abstract void notify(AbstractMessage message) throws InterruptedException, RemoteException;
 
   /**
    * Setter for the associated game id.

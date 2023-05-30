@@ -1,5 +1,6 @@
 package it.polimi.is23am10.server.network.playerconnector;
 
+import java.rmi.RemoteException;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import it.polimi.is23am10.client.Client;
@@ -56,4 +57,13 @@ public class PlayerConnectorRmi extends AbstractPlayerConnector {
   public void setClient(IClient client) {
     this.client = client;
   }
+
+  /** {@inheritDoc} */
+  @Override
+  public void notify(AbstractMessage msg) throws InterruptedException, RemoteException {
+    if (msg == null) {
+      return;
+    }
+    client.showServerMessage(msg);
+  } 
 }
