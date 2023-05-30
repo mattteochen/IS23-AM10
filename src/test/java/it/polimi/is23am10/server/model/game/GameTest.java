@@ -7,11 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.PlayerFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.server.model.game.Game;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
@@ -86,20 +88,20 @@ public class GameTest {
   }
 
   @Test
-  public void addPlayer_should_throw_FullGameException_if_game_is_full() 
-    throws NullPlayerNameException, NullPlayerIdException,
-    NullPlayerBookshelfException, NullPlayerScoreException,
-    NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-    AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException,
-    NullMaxPlayerException, InvalidMaxPlayerException, InvalidNumOfPlayersException,
-    NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException  {
+  public void addPlayer_should_throw_FullGameException_if_game_is_full()
+      throws NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException,
+      NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
+      AlreadyInitiatedPatternException, NullPlayerNamesException, PlayerNotFoundException,
+      NullMaxPlayerException, InvalidMaxPlayerException, InvalidNumOfPlayersException,
+      NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException {
     Game game = GameFactory.getNewGame("Optimus", 3);
     game.addPlayer("Morrison");
     game.addPlayer("Hendrix");
     assertThrows(FullGameException.class, () -> game.addPlayer("Jason"));
     assertFalse(game.getPlayerNames().contains("Jason"));
   }
-  
+
   @Test
   public void setFirstPlayer_should_set_first_player()
       throws NullPlayerNameException, NullPlayerIdException,
@@ -145,7 +147,8 @@ public class GameTest {
         DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException,
         NullMaxPlayerException, InvalidMaxPlayerException,
         InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException,
-        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException {
+        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException,
+        FullGameException, NotValidScoreBlockValueException {
 
       final Integer dummyPlayerNum = 3;
 
@@ -165,7 +168,8 @@ public class GameTest {
         throws NullPointerException, BookshelfGridColIndexOutOfBoundsException,
         BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
         NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException,
-        NullPlayerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+        NullPlayerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException,
+        NullGameHandlerInstance {
       assertEquals(g.getActivePlayer(), p2);
       g.nextTurn();
       assertEquals(g.getActivePlayer(), p3);
@@ -176,18 +180,55 @@ public class GameTest {
     }
 
     @Test
+    public void nextTurn_should_skip_inactive_player()
+        throws NullPointerException, BookshelfGridColIndexOutOfBoundsException,
+        BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
+        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException,
+        NullPlayerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException,
+        NullGameHandlerInstance {
+      p3.setIsConnected(false);
+      assertEquals(g.getActivePlayer(), p2);
+      g.nextTurn();
+      assertEquals(g.getActivePlayer(), p1);
+      g.nextTurn();
+      assertEquals(g.getActivePlayer(), p2);
+      g.nextTurn();
+      assertEquals(g.getActivePlayer(), p1);
+    }
+
+    @Test
     public void nextTurn_should_end_game_if_last_lap_finishes()
         throws NullPlayerNameException,
         BookshelfGridColIndexOutOfBoundsException,
         BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
-        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException, PlayerNotFoundException, NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException, PlayerNotFoundException,
+        NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException,
+        NullGameHandlerInstance {
 
       g.setActivePlayer(p1);
       g.setWinnerPlayer(p1);
-      g.setLastRound();
-      assertFalse(g.getEnded());
+      g.setStatus(GameStatus.LAST_ROUND);
+      assertFalse(g.getStatus() == GameStatus.ENDED);
       g.nextTurn();
-      assertTrue(g.getEnded());
+      assertTrue(g.getStatus() == GameStatus.ENDED);
+    }
+
+    @Test
+    public void nextTurn_should_end_game_if_one_player_remains()
+        throws NullPlayerNameException,
+        BookshelfGridColIndexOutOfBoundsException,
+        BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException,
+        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException, PlayerNotFoundException,
+        NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException,
+        NullGameHandlerInstance {
+
+      g.setActivePlayer(p1);
+      g.setWinnerPlayer(p1);
+      assertFalse(g.getStatus() == GameStatus.ENDED);
+      p2.setIsConnected(false);
+      p3.setIsConnected(false);
+      g.nextTurn();
+      assertTrue(g.getStatus() == GameStatus.ENDED);
     }
 
     @Test
@@ -195,7 +236,8 @@ public class GameTest {
         throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
         NullIndexValueException, NullPointerException,
         BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+        NullPlayerBookshelfException, NullScoreBlockListException, NullPlayerException, NullMatchedBlockCountException,
+        NegativeMatchedBlockCountException, NullGameHandlerInstance {
       // removing tiles as long as the board needs to be refilled
       for (int row = 0; row < Board.BOARD_GRID_ROWS; row++) {
         for (int col = 0; col < Board.BOARD_GRID_COLS; col++) {
@@ -249,7 +291,8 @@ public class GameTest {
         DuplicatePlayerNameException, AlreadyInitiatedPatternException,
         NullPlayerNamesException, NullMaxPlayerException, InvalidMaxPlayerException,
         InvalidNumOfPlayersException, NullNumOfPlayersException, NullPointerException,
-        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException,FullGameException, NotValidScoreBlockValueException {
+        PlayerNotFoundException, NullPlayerException, InvalidPlayersNumberException, NullAssignedPatternException,
+        FullGameException, NotValidScoreBlockValueException {
 
       Integer dummyPlayerNum = 3;
       g = GameFactory.getNewGame("player1", dummyPlayerNum);
@@ -270,9 +313,9 @@ public class GameTest {
         BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
         NullPointerException, InvalidBoardTileSelectionException, NullIndexValueException,
         NullTileException, NullPlayerBookshelfException,
-        NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException, NullPlayerException, 
-        NullMatchedBlockCountException, NegativeMatchedBlockCountException, WrongMovesNumberException, 
-        WrongGameBoardPicksException, WrongBookShelfPicksException {
+        NullScoreBlockListException, NullPlayerNameException, PlayerNotFoundException, NullPlayerException,
+        NullMatchedBlockCountException, NegativeMatchedBlockCountException, WrongMovesNumberException,
+        WrongGameBoardPicksException, WrongBookShelfPicksException, NullGameHandlerInstance {
       final Integer boardRow = 0;
       final Integer boardCol = 3;
       final Integer bsRow = 5;
@@ -315,7 +358,7 @@ public class GameTest {
       ;
 
       // is ending immediately because winner is also first player of the game
-      assertTrue(g.getEnded());
+      assertTrue(g.getStatus() == GameStatus.ENDED);
       assertEquals(g.getWinnerPlayer(), g.getActivePlayer());
     }
 
@@ -335,8 +378,31 @@ public class GameTest {
       g.getActivePlayer().setBookshelf(fullBookshelf);
       g.checkEndGame();
 
-      assertFalse(g.getEnded());
+      assertFalse(g.getStatus() == GameStatus.ENDED);
       assertNull(g.getWinnerPlayer());
+    }
+
+    @Test
+    public void checkWin_should_give_extra_point_only_to_winner()
+        throws NullPlayerBookshelfException, NullPointerException,
+        WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
+        NullPlayerException, BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullScoreBlockListException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+      g.setActivePlayer(p1);
+      Bookshelf fullBookshelf = new Bookshelf(
+          "CCCCC"
+              + "CCCCC"
+              + "PPPPP"
+              + "PPPPP"
+              + "CCCCC"
+              + "TTTTT");
+      g.getActivePlayer().setBookshelf(fullBookshelf);
+      g.checkEndGame();
+      assertTrue(g.getStatus() == GameStatus.LAST_ROUND);
+
+      g.getActivePlayer().setBookshelf(fullBookshelf);
+      g.nextTurn();
+      assertEquals(1,p1.getScore().getExtraPoint());
+      assertEquals(0,p2.getScore().getExtraPoint());
     }
   }
 }

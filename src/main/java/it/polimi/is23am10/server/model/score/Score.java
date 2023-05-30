@@ -131,11 +131,11 @@ public final class Score implements Serializable {
    * bookshelfPoints setter.
    * 
    * @param bs The bookshelf object to check for groups in.
-   * @throws NullIndexValueException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws NullPlayerBookshelfException
-   * @throws NullPointsException.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPointerException Generic NPE.
    * 
    */
   public void setBookshelfPoints(Bookshelf bs) 
@@ -176,7 +176,7 @@ public final class Score implements Serializable {
    * scoreBlockPoints setter.
    * 
    * @param scoreBlocks The scoreblock list to get points from.
-   * @throws NullPointsException.
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
    * 
    */
   public void setScoreBlockPoints(List<ScoreBlock> scoreBlocks) throws NullScoreBlockListException {
@@ -190,9 +190,9 @@ public final class Score implements Serializable {
    * privatePoints setter.
    * 
    * @param pc The private card to get points from.
-   * @throws NegativeMatchedBlockCountException
-   * @throws NullMatchedBlockCountException
-   * @throws NullPointsException.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
+   * @throws NullPointerException Generic NPE.
    * 
    */
   public void setPrivatePoints(Bookshelf bs, PrivateCard pc) throws NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
@@ -201,6 +201,10 @@ public final class Score implements Serializable {
     }
     pc.setMatchedBlocksCount(pc.getPattern().getRule().apply(bs));
     privatePoints = privateCardPointsMap.get(pc.getMatchedBlocksCount());
+  }
+
+  public void obfuscatePrivatePoints() {
+    privatePoints = -1;
   }
 
   /**
@@ -253,9 +257,9 @@ public final class Score implements Serializable {
    * @param visitedMap map to prevent repeatedly checking same spots
    * @param type type of tile to check for
    * @return integer representing the count of items in that group
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
    */
   private int countAdjacentTilesRecursive(Bookshelf bs, int row, int col, Integer[][] visitedMap, TileType type) 
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
@@ -285,11 +289,34 @@ public final class Score implements Serializable {
 
   /**
    * Getter method that returns the total score
-   * computing it from all the available scores 
-   * @return total score
+   * computing it from all the available scores.
+   * 
+   * @return total score.
    */
   public Integer getTotalScore() {
     return extraPoint + scoreBlockPoints + privatePoints + bookshelfPoints;
+  }
+
+  /**
+   * Method used to retrieve the total score from a
+   * possibly obfuscated score. It ignores the invalidated privatescore.
+   * Used for sorting purposes in CLI.
+   * 
+   * @return visible score.
+   */
+  public Integer getVisibleScore() {
+    return (privatePoints != -1) ? getTotalScore() : extraPoint + scoreBlockPoints + bookshelfPoints;
+  }
+
+  /**
+   * Method used to retrieve a string representing the
+   * total score. If score is obfuscated (private card points)
+   * it returns a partial score and a graphic indication of possibly missing points.
+   * 
+   * @return String representing total score.
+   */
+  public String getStringTotalScore() {
+    return (privatePoints != -1) ? getTotalScore().toString() : String.format("%d (+?)", getVisibleScore());
   }
 
   /**

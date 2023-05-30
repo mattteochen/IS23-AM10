@@ -31,7 +31,7 @@ public class PlayerConnectorSocket extends AbstractPlayerConnector {
    * @param connector The {@link Socket} instance linked to a player client.
    * @param msgQueue  The message queue instance.
    * @throws NullSocketConnectorException
-   * @throws NullBlockingQueueException
+   * @throws NullBlockingQueueException If providing a null queue when building player connector.
    *
    */
   public PlayerConnectorSocket(Socket connector, LinkedBlockingQueue<AbstractMessage> msgQueue)
@@ -52,4 +52,28 @@ public class PlayerConnectorSocket extends AbstractPlayerConnector {
   public synchronized Socket getConnector() {
     return connector;
   }
+
+  /**
+   * Setter for {@link Socket}, the low level connector.
+   * 
+   * @param socket the socket I want to set.
+   * 
+   * @throws NullSocketConnectorException
+   *
+   */
+  public synchronized void setConnector(Socket socket) throws NullSocketConnectorException {
+    if(socket == null){
+      throw new NullSocketConnectorException();
+    }
+    this.connector = socket;
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void notify(AbstractMessage msg) throws InterruptedException {
+    if (msg == null) {
+      return;
+    }
+    msgQueue.put(msg);
+  } 
 }

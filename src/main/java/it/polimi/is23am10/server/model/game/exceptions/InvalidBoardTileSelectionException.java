@@ -1,5 +1,7 @@
 package it.polimi.is23am10.server.model.game.exceptions;
 
+import it.polimi.is23am10.server.model.items.tile.Tile;
+
 /**
  * The TileType given is not inside the enum of possible TileType.
  * Can be used in public methods of {@link Tile}.

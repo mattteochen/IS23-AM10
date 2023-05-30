@@ -62,16 +62,15 @@ public class PlayerFactory {
    *
    * @param playerName  The chosen player name.
    * @param game The game reference instance where the new player will be added.
-   * @throws AlreadyInitiatedPatternException
-   * @throws DuplicatePlayerNameException
-   * @throws NullPlayerIdException
-   * @throws NullPlayerBookshelfException
-   * @throws NullPlayerNameException
-   * @throws NullPlayerPrivateCardException
-   * @throws NullPlayerScoreBlocksException
-   * @throws NullPlayerScoreException
-   * @throws NullPlayerNamesException
-   * @throws NullAssignedPatternException
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerNameException If player name is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
    * 
    */
   public static Player getNewPlayer(String playerName, Game game)
@@ -101,6 +100,7 @@ public class PlayerFactory {
     instance.setBookshelf(new Bookshelf());
     instance.setPrivateCard(privateCard);
     instance.setScoreBlocks(new ArrayList<>());
+    instance.setIsConnected(true);
 
     return instance;
   }

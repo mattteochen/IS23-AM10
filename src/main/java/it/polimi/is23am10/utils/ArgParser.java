@@ -66,6 +66,16 @@ public class ArgParser {
   public static final String SERVER_ADDRESS_CLI_COMMAND = "--address";  
 
   /**
+   * The debug command. If enabled shows all messages in console.
+   */
+  public static final String DEBUG_CLI_COMMAND = "--debug";  
+
+  /**
+   * The max players inactivity time command.
+   */
+  public static final String MAX_CLIENT_INACTIVITY_TIME = "--max-player-inactive-ms";
+
+  /**
    * Regex expression for validating ipv4 addresses
    */
   private static final String IPV4_REGEX = 
@@ -82,7 +92,7 @@ public class ArgParser {
    * @throws MissingParameterException            for missing param.
    * @throws InvalidPortNumberException           if port not in bounds.
    * @throws NumberFormatException                if int not found.
-   * @throws InvalidMaxConnectionsNumberException
+   * @throws InvalidMaxConnectionsNumberException if the max number of connections is invalid.
    * 
    */
   public static void parse(String[] args)
@@ -143,6 +153,17 @@ public class ArgParser {
             break;
           case USE_RMI_CLI_COMMAND:
             AppConfig.setUseRMI(true);
+            break;
+          case DEBUG_CLI_COMMAND:
+            AppConfig.setShowDebug(true);
+            break;
+          case MAX_CLIENT_INACTIVITY_TIME:
+            if (i + 1 < args.length) {
+              AppConfig.setMaxInactivityTimeMs(Long.parseLong(args[i + 1]));
+              i++;
+            } else {
+              throw new MissingParameterException(args[i]);
+            }
             break;
           default:
             throw new InvalidArgumentException(args[i]);

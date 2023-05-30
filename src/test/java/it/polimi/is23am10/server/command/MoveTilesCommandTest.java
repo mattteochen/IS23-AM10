@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.UUID;
 
-import it.polimi.is23am10.server.command.AbstractCommand;
-import it.polimi.is23am10.server.command.MoveTilesCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.utils.Coordinates;
 

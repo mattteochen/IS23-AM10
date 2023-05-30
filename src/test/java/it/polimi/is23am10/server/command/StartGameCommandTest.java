@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Test;
 
-import it.polimi.is23am10.server.command.AbstractCommand;
-import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 
 @SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck" })

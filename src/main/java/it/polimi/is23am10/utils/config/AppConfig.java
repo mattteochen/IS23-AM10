@@ -95,10 +95,21 @@ public final class AppConfig {
   private static boolean useRMI = false;
 
   /**
+   * A simple flag that if enabled shows all verbose messages
+   * in console logs.
+   */
+  private static boolean showDebug = false;
+
+  /**
    * The network address where the server is running.
    * 
    */
   private static String serverAddress = "localhost";
+
+  /**
+   * The maximum inactivity time allowed to a player when playing a game turn.
+   */
+  private static long maxInactivityTimeMs = 1000 * 60 * 2;
 
   /**
    * Server port setter.
@@ -181,6 +192,16 @@ public final class AppConfig {
   }
 
   /**
+   * Show verbose debug.
+   *
+   * @param debug show debug or not.
+   * 
+   */
+  public static void setShowDebug(boolean debug) {
+    showDebug = debug;
+  }
+
+  /**
    * Server address setter.
    *
    * @param address Server address.
@@ -188,6 +209,15 @@ public final class AppConfig {
    */
   public static void setServerAddress(String address) {
     serverAddress = address;
+  }
+
+  /**
+   * Max inactivity time setter.
+   *
+   * @param time max inactivity time in ms.
+   */
+  public static void setMaxInactivityTimeMs(long time) {
+    maxInactivityTimeMs = time;
   }
 
   /**
@@ -268,5 +298,25 @@ public final class AppConfig {
    */
   public static String getServerAddress() {
     return serverAddress;
+  }
+
+  /**
+   * Show debug getter.
+   *
+   * @return The debug flag.
+   * 
+   */
+  public static boolean getShowDebug() {
+    return showDebug;
+  }
+
+  /**
+   * Max inactivity time getter.
+   *
+   * @return The max inactivity time.
+   * 
+   */
+  public static long getMaxInactivityTime() {
+    return maxInactivityTimeMs;
   }
 }

@@ -1,10 +1,12 @@
 package it.polimi.is23am10.server.network.playerconnector;
 
+import java.rmi.RemoteException;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import it.polimi.is23am10.client.Client;
+import it.polimi.is23am10.client.IClient;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
-import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 
 /**
  * The player connector class definition.
@@ -17,15 +19,51 @@ import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketCo
  */
 @SuppressWarnings({ "checkstyle:nonemptyatclausedescriptioncheck" })
 public class PlayerConnectorRmi extends AbstractPlayerConnector {
+
+  /**
+   * The {@link Client} reference.
+   */
+  private IClient client;
+
   /**
    * Constructor.
    *
    * @param msgQueue The message queue instance.
-   * @throws NullBlockingQueueException
+   * @throws NullBlockingQueueException If providing a null queue when building player connector.
    *
    */
-  public PlayerConnectorRmi(LinkedBlockingQueue<AbstractMessage> msgQueue)
-      throws NullSocketConnectorException, NullBlockingQueueException {
+  public PlayerConnectorRmi(LinkedBlockingQueue<AbstractMessage> msgQueue, IClient client)
+      throws NullBlockingQueueException {
     super(msgQueue);
+    this.client = client;
   }
+
+  /**
+   * Retrive the {@link Client} reference.
+   *
+   * @return The client reference.
+   *
+   */
+  public IClient getClient() {
+    return client;
+  }
+
+  /**
+   * Set the {@link Client} reference.
+   *
+   * @param client The client reference.
+   *
+   */
+  public void setClient(IClient client) {
+    this.client = client;
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void notify(AbstractMessage msg) throws InterruptedException, RemoteException {
+    if (msg == null) {
+      return;
+    }
+    client.showServerMessage(msg);
+  } 
 }

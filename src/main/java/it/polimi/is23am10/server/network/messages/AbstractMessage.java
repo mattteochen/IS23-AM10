@@ -1,6 +1,6 @@
 package it.polimi.is23am10.server.network.messages;
 
-import it.polimi.is23am10.server.model.player.Player;
+import java.io.Serializable;
 
 /**
  * Abstract class representing a generic message exchanged.
@@ -10,7 +10,7 @@ import it.polimi.is23am10.server.model.player.Player;
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
-public abstract class AbstractMessage {
+public class AbstractMessage implements Serializable {
 
   /**
    * Message in string. Plaintext or JSON.
@@ -18,17 +18,30 @@ public abstract class AbstractMessage {
   protected String message;
 
   /**
-   * Player sending the message.
-   */
-  protected Player sender;
-
-  /**
    * Enum for type of message sent.
    */
   public enum MessageType {
+    /**
+     * Message containing a VirtualView, representing a game snapshot.
+     */
     GAME_SNAPSHOT,
+    /**
+     * Message containing a chat textual exchange between players.
+     */
     CHAT_MESSAGE,
-    ERROR_MESSAGE
+    /**
+     * Message containing an error to display to the player.
+     */
+    ERROR_MESSAGE,
+    /**
+     * Message containing the available games joinable by player.
+     */
+    AVAILABLE_GAMES,
+    /**
+     * ACK message sent from server to client to confirm that the timer has
+     * been snoozed. If not received by client implies client termination.
+     */
+    SNOOZE_ACK
   }
 
   /**
@@ -52,14 +65,5 @@ public abstract class AbstractMessage {
    */
   public MessageType getMessageType() {
     return msgType;
-  }
-
-  /**
-   * Getter for the sending player.
-   *
-   * @return the sending player
-   */
-  public Player getSender() {
-    return sender;
   }
 }

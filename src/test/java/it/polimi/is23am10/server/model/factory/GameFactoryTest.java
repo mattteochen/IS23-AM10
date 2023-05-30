@@ -1,6 +1,7 @@
 package it.polimi.is23am10.server.model.factory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -14,6 +15,7 @@ import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.server.model.game.Game;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
@@ -66,7 +68,7 @@ public class GameFactoryTest {
     assertEquals(dummyPlayerNum, g.getMaxPlayer());
     assertNotNull(g.getGameBoard());
     assertNotNull(g.getSharedCard());
-    assertEquals(false, g.getEnded());
+    assertNotEquals(GameStatus.ENDED, g.getStatus());
     assertEquals(expectedPLayedNames, g.getPlayerNames());
     assertEquals(expectedPlayers.size(), g.getPlayers().size());
   }

@@ -1,6 +1,8 @@
 package it.polimi.is23am10.server;
 
+import it.polimi.is23am10.server.controller.ClientConnectionChecker;
 import it.polimi.is23am10.server.controller.ServerControllerAction;
+import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
 import it.polimi.is23am10.server.controller.ServerControllerSocket;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
@@ -13,7 +15,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.logging.log4j.LogManager;
@@ -52,46 +53,35 @@ public class Server {
   protected ServerSocket serverSocket;
 
   /**
+   * Socket socket clients connected.
+   *
+   */
+  protected static int socketClientsConnected = 0;
+
+  /**
    * Server thread executor service manager.
    *
    */
   protected ExecutorService executorService;
 
   /**
-   * RMI server instance.
-   *
-   */
-  protected IServerControllerAction rmiServer;
-
-  /**
-   * RMI stub instance.
-   *
-   */
-  protected IServerControllerAction rmiStub;
-
-  /**
-   * RMI registry instance.
-   *
-   */
-  Registry rmiRegistry;
-
-  /**
    * Constructor.
    *
-   * @param serverSocket The server socket reference of a newly connected client.
-   * @param executorService The built thread executor service.
-   * @param rmiServer An built instance of the implementing class.
-   * @param rmiRegistry A built instance of the RMI registry.
-   * @throws RemoteException
+   * @param serverSocket                    The server socket reference of a newly
+   *                                        connected client.
+   * @param executorService                 The built thread executor service.
+   * @param rmiServerControllerActionServer An built instance of the implementing
+   *                                        class.
+   * @param rmiRegistry                     A built instance of the RMI registry.
+   * @throws RemoteException On rebind failure.
    *
    */
   public Server(ServerSocket serverSocket, ExecutorService executorService,
-      IServerControllerAction rmiServer, Registry rmiRegistry) throws RemoteException {
+      IServerControllerAction rmiServerControllerActionServer, Registry rmiRegistry) throws RemoteException {
     this.executorService = executorService;
     this.serverSocket = serverSocket;
-    this.rmiServer = rmiServer;
-    this.rmiStub = (IServerControllerAction) UnicastRemoteObject.exportObject(this.rmiServer, 0);
-    this.rmiRegistry = rmiRegistry;
+    ServerControllerRmiBindings.setRmiRegistry(rmiRegistry);
+    ServerControllerRmiBindings.rebindServerControllerAction(rmiServerControllerActionServer);
   }
 
   /**
@@ -100,25 +90,30 @@ public class Server {
    * infinity loop listens for clients connections.
    *
    * @param ctx An instance of the server configuration.
-   * @throws RemoteException
    *
    */
-  public void start(AppConfigContext ctx) throws RemoteException {
+  public void start(AppConfigContext ctx) {
     logger.info("Starting Spurious Dragon, try to kill me...");
     // https://www.youtube.com/watch?v=Jo6fKboqfMs&ab_channel=memesammler
 
-    //start the rmi server
-    rmiRegistry.rebind("IServerControllerAction", rmiStub);
-    //start the socket server
+    executorService.execute(new ClientConnectionChecker(ctx.getMaxInactivityTime()));
+
+    // start the socket server
     while (!serverSocket.isClosed()) {
       try {
-        Socket client = serverSocket.accept();
-        client.setKeepAlive(ctx.getKeepAlive());
-        logger.info("Received new connection");
-        executorService.execute(new ServerControllerSocket(
+        if (getSocketClientsConnected() < ctx.getMaxConnections()) {
+          Socket client = serverSocket.accept();
+          client.setKeepAlive(ctx.getKeepAlive());
+          setSocketClientConnected(getSocketClientsConnected() + 1);
+          executorService.execute(new ServerControllerSocket(
             new PlayerConnectorSocket(client,
-                new LinkedBlockingQueue<>()),
+            new LinkedBlockingQueue<>()),
             new ServerControllerAction()));
+          logger.info("Received new connection " + "(" + getSocketClientsConnected() + "/" + ctx.getMaxConnections() + ")" );
+        } else {
+          serverSocket.accept();
+          logger.error("Socket connection cannot be established as the server has reached its maximum socket client connections capacity.");
+        }
       } catch (IOException | NullSocketConnectorException | NullBlockingQueueException e) {
         logger.error("Failed to process connection", e);
       }
@@ -128,7 +123,7 @@ public class Server {
   /**
    * Stop the serverSocket.
    *
-   * @throws IOException
+   * @throws IOException On socket closure failing.
    *
    */
   public void stop() throws IOException {
@@ -147,5 +142,25 @@ public class Server {
     return serverSocket == null || serverSocket.isClosed()
         ? ServerStatus.STOPPED
         : ServerStatus.STARTED;
+  }
+
+  /**
+   * Get the current number of clients connected to the socket.
+   *
+   * @return The connect clients number.
+   *
+   */
+  public static int getSocketClientsConnected(){
+    return socketClientsConnected;
+  }
+
+  /**
+   * Set the current number of clients connected to the socket.
+   *
+   * @param scc The connect clients number.
+   *
+   */
+  public static void setSocketClientConnected(int scc){
+    socketClientsConnected = scc;
   }
 }

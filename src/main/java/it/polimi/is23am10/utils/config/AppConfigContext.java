@@ -61,15 +61,31 @@ public class AppConfigContext {
   private String serverAddress;
 
   /**
+   * A simple flag that if enabled shows all verbose messages
+   * in console logs.
+   */
+  private boolean showDebug;
+
+  /**
+   * The maximum inactivity time allowed to a player when playing a game turn.
+   */
+  private long maxInactivityTimeMs;
+
+  /**
    * Constructor.
-   *
+   * 
    * @param serverSocketPort     The server port number.
    * @param maxConnections The maximum allowed connections.
    * @param keepAlive      The socket keep alive flag.
-   * 
+   * @param serverRmiPort The server RMI port.
+   * @param isServer Run app in server mode flag.
+   * @param showGUI Show GUI client flag.
+   * @param useRMI Use RMI over socket flag.
+   * @param serverAddress Address where to find server.
+   * @param showDebug Show debug infos flag.
    */
   public AppConfigContext(Integer serverSocketPort, Integer serverRmiPort,
-      Integer maxConnections, boolean keepAlive, boolean isServer, boolean showGUI, boolean useRMI, String serverAddress) {
+      Integer maxConnections, boolean keepAlive, boolean isServer, boolean showGUI, boolean useRMI, String serverAddress, boolean showDebug, long maxInactivityTimeMs) {
     this.serverSocketPort = serverSocketPort;
     this.serverRmiPort = serverRmiPort;
     this.maxConnection = maxConnections;
@@ -78,6 +94,8 @@ public class AppConfigContext {
     this.showGUI = showGUI;
     this.useRMI = useRMI;
     this.serverAddress = serverAddress;
+    this.showDebug = showDebug;
+    this.maxInactivityTimeMs = maxInactivityTimeMs;
   }
 
 
@@ -95,6 +113,8 @@ public class AppConfigContext {
     this.showGUI = AppConfig.getShowGUI();
     this.useRMI = AppConfig.getUseRMI();
     this.serverAddress = AppConfig.getServerAddress();
+    this.showDebug = AppConfig.getShowDebug();
+    this.maxInactivityTimeMs = AppConfig.getMaxInactivityTime();
   }
 
   /**
@@ -175,5 +195,25 @@ public class AppConfigContext {
    */
   public String getServerAddress() {
     return serverAddress;
+  }
+
+  /**
+   * Show debug getter.
+   *
+   * @return The debug flag.
+   * 
+   */
+  public boolean getShowDebug() {
+    return showDebug;
+  }
+
+  /**
+   * Max inactivity time getter.
+   *
+   * @return The max inactivity time value in ms.
+   * 
+   */
+  public long getMaxInactivityTime() {
+    return maxInactivityTimeMs;
   }
 }

@@ -1,10 +1,10 @@
 package it.polimi.is23am10.server.model.game;
 
+import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
 import it.polimi.is23am10.server.model.factory.PlayerFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
-import it.polimi.is23am10.server.model.game.exceptions.InvalidBoardTileSelectionException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidPlayersNumberException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
@@ -89,7 +89,7 @@ public class Game implements Serializable {
   private Integer maxPlayers = MIN_PLAYER_NUM;
 
   /**
-   * List of {@Player} type.
+   * List of {@link Player} type.
    * This instance must never be null.
    * 
    */
@@ -112,28 +112,33 @@ public class Game implements Serializable {
   private Player winnerPlayer;
 
   /**
-   * The instance {@Board} type.
+   * The instance {@link Board} type.
    * 
    */
   private Board gameBoard;
 
   /**
-   * List of {@SharedCard} type containing two randomly selected
+   * List of {@link SharedCard} type containing two randomly selected
    * shared cards for this game.
    */
   private List<SharedCard> sharedCards;
 
   /**
-   * A boolean signaling the game is ended.
+   * All the possible status the game can be in.
    * 
    */
-  private boolean ended;
+  public enum GameStatus {
+    WAITING_FOR_PLAYERS,
+    STARTED,
+    LAST_ROUND,
+    ENDED
+  }
 
   /**
-   * A boolean signaling the game is in its last round of rounds.
+   * The current status of the game.
    * 
    */
-  private boolean lastRound;
+  private GameStatus status;
 
   /**
    * A cache to store already used shared patterns.
@@ -168,7 +173,7 @@ public class Game implements Serializable {
    * @return The already assigned {@link SharedPattern}s.
    *
    */
-  public List<SharedPattern<Predicate<Bookshelf>>> getAssignedSharedPatterns() {
+  public synchronized List<SharedPattern<Predicate<Bookshelf>>> getAssignedSharedPatterns() {
     return assignedSharedPatterns;
   }
 
@@ -178,7 +183,7 @@ public class Game implements Serializable {
    * @return The already assigned {@link PrivatePattern}s.
    *
    */
-  public List<PrivatePattern<Function<Bookshelf, Integer>>> getAssignedPrivatePatterns() {
+  public synchronized List<PrivatePattern<Function<Bookshelf, Integer>>> getAssignedPrivatePatterns() {
     return assignedPrivatePatterns;
   }
 
@@ -186,10 +191,10 @@ public class Game implements Serializable {
    * Add a new consumed {@link SharedPattern}.
    *
    * @param pattern The {@link SharedPattern} to be added.
-   * @throws NullAssignedPatternException
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
    *
    */
-  public void addAssignedSharedPattern(SharedPattern<Predicate<Bookshelf>> pattern)
+  public synchronized void addAssignedSharedPattern(SharedPattern<Predicate<Bookshelf>> pattern)
       throws NullAssignedPatternException {
     if (pattern == null) {
       throw new NullAssignedPatternException("shared");
@@ -201,10 +206,10 @@ public class Game implements Serializable {
    * Add a new consumed {@link PrivatePattern}.
    *
    * @param pattern The {@link PrivatePattern} to be added.
-   * @throws NullAssignedPatternException
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
    *
    */
-  public void addAssignedPrivatePattern(PrivatePattern<Function<Bookshelf, Integer>> pattern)
+  public synchronized void addAssignedPrivatePattern(PrivatePattern<Function<Bookshelf, Integer>> pattern)
       throws NullAssignedPatternException {
     if (pattern == null) {
       throw new NullAssignedPatternException("private");
@@ -216,7 +221,7 @@ public class Game implements Serializable {
    * Check if a maxPlayer value is correct.
    *
    * @param maxPlayers The value to be controlled.
-   * @throws NullMaxPlayerException.
+   * @throws NullMaxPlayerException If no value for maximum number of players in the game is provided..
    *
    */
   private boolean validMaxPlayers(Integer maxPlayers) throws NullMaxPlayerException {
@@ -230,11 +235,11 @@ public class Game implements Serializable {
    * The maxPlayers setter.
    *
    * @param maxPlayers The value to be assigned.
-   * @throws NullMaxPlayerException
-   * @throws InvalidMaxPlayerException.
+   * @throws NullMaxPlayerException If no value for maximum number of players in the game is provided.
+   * @throws InvalidMaxPlayerException If value for maximum number of players in the game is not valid.
    *
    */
-  public void setMaxPlayers(Integer maxPlayers)
+  public synchronized void setMaxPlayers(Integer maxPlayers)
       throws NullMaxPlayerException, InvalidMaxPlayerException {
     if (!validMaxPlayers(maxPlayers)) {
       throw new InvalidMaxPlayerException();
@@ -248,7 +253,7 @@ public class Game implements Serializable {
    * @param playerToSet The first player's name.
    *
    */
-  public void setFirstPlayer(Player playerToSet) {
+  public synchronized void setFirstPlayer(Player playerToSet) {
     players.stream()
         .filter(player -> player.equals(playerToSet))
         .findFirst()
@@ -260,22 +265,23 @@ public class Game implements Serializable {
    * as position in players list is the order in the game.
    *
    * @param playerName The player's name.
-   * @throws NullPlayerNamesException
-   * @throws AlreadyInitiatedPatternException
-   * @throws DuplicatePlayerNameException
-   * @throws NullPlayerScoreBlocksException
-   * @throws NullPlayerPrivateCardException
-   * @throws NullPlayerScoreException
-   * @throws NullPlayerBookshelfException
-   * @throws NullPlayerIdException
-   * @throws NullPlayerNameException
-   * @throws NullAssignedPatternException
+   * @throws NullPlayerNamesException If, while adding multiple players, the list of player names is null.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerNameException If player name is null.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
    *
    */
-  private void addPlayer(Player player) {
+  private synchronized void addPlayer(Player player) {
     final Integer position = players.isEmpty() ? 0 : random.nextInt(players.size());
     players.add(position, player);
     if (players.size() == maxPlayers) {
+      setStatus(GameStatus.STARTED);
       assignPlayers();
     }
   }
@@ -286,17 +292,17 @@ public class Game implements Serializable {
    *
    * @param playerName The player's name.
    * @return The instance of created player.
-   * @throws NullPlayerNamesException
-   * @throws AlreadyInitiatedPatternException
-   * @throws DuplicatePlayerNameException
-   * @throws NullPlayerScoreBlocksException
-   * @throws NullPlayerPrivateCardException
-   * @throws NullPlayerScoreException
-   * @throws NullPlayerBookshelfException
-   * @throws NullPlayerIdException
-   * @throws NullPlayerNameException
-   * @throws NullAssignedPatternException
-   * @throws FullGameException
+   * @throws NullPlayerNamesException If, while adding multiple players, the list of player names is null.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerNameException If player name is null.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
+   * @throws FullGameException If game is full, on player trying to join.
    */
   public Player addPlayer(String playerName)
       throws NullPlayerNamesException, NullPlayerNameException, NullPlayerIdException,
@@ -316,11 +322,11 @@ public class Game implements Serializable {
    * Function that adds multiple players to game.
    *
    * @param players List of players to add.
-   * @throws NullPlayerException
-   * @throws InvalidPlayersNumberException
-   * @throws DuplicatePlayerNameException
+   * @throws NullPlayerException If player object is null.
+   * @throws InvalidPlayersNumberException If number of players to add is invalid.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
    */
-  public void addPlayers(List<Player> players)
+  public synchronized void addPlayers(List<Player> players)
       throws NullPlayerException, InvalidPlayersNumberException, DuplicatePlayerNameException {
 
     if (players == null) {
@@ -341,11 +347,11 @@ public class Game implements Serializable {
   /**
    * GameBoard setter.
    *
-   * @throws InvalidNumOfPlayersException
-   * @throws NullNumOfPlayersException
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
    *
    */
-  public void setGameBoard() throws InvalidNumOfPlayersException, NullNumOfPlayersException {
+  public synchronized void setGameBoard() throws InvalidNumOfPlayersException, NullNumOfPlayersException {
     this.gameBoard = new Board(maxPlayers);
   }
 
@@ -353,28 +359,20 @@ public class Game implements Serializable {
    * The sharedCards setter.
    *
    */
-  public void setSharedCards(List<SharedCard> cards) {
+  public synchronized void setSharedCards(List<SharedCard> cards) {
     this.sharedCards = new ArrayList<>();
     sharedCards.add(cards.get(0));
     sharedCards.add(cards.get(1));
   }
 
   /**
-   * The ended setter.
+   * The status setter.
    *
-   * @param ended A flag referencing if the game is ended.
-   *
-   */
-  public void setEnded(boolean ended) {
-    this.ended = ended;
-  }
-
-  /**
-   * The lastRound setter.
+   * @param status The status to set.
    *
    */
-  public void setLastRound() {
-    this.lastRound = true;
+  public synchronized void setStatus(GameStatus status) {
+    this.status = status;
   }
 
   /**
@@ -383,7 +381,7 @@ public class Game implements Serializable {
    * @return The game id.
    *
    */
-  public UUID getGameId() {
+  public synchronized UUID getGameId() {
     return gameId;
   }
 
@@ -393,7 +391,7 @@ public class Game implements Serializable {
    * @return The maximum number of players for the current game instance.
    *
    */
-  public Integer getMaxPlayer() {
+  public synchronized Integer getMaxPlayer() {
     return maxPlayers;
   }
 
@@ -403,7 +401,7 @@ public class Game implements Serializable {
    * @return A list containing all the current players.
    *
    */
-  public List<Player> getPlayers() {
+  public synchronized List<Player> getPlayers() {
     return players;
   }
 
@@ -414,7 +412,7 @@ public class Game implements Serializable {
    *         This player has started the game.
    *
    */
-  public Player getFirstPlayer() {
+  public synchronized Player getFirstPlayer() {
     return firstPlayer;
   }
 
@@ -424,7 +422,7 @@ public class Game implements Serializable {
    * @return The game board grid.
    *
    */
-  public Board getGameBoard() {
+  public synchronized Board getGameBoard() {
     return gameBoard;
   }
 
@@ -434,30 +432,18 @@ public class Game implements Serializable {
    * @return The assigned shared cards to the current game instance.
    *
    */
-  public List<SharedCard> getSharedCard() {
+  public synchronized List<SharedCard> getSharedCard() {
     return sharedCards;
   }
 
   /**
    * The ended status getter.
    *
-   * @return A boolean values stating if the current game is still running or
-   *         not.
+   * @return The current status of the game.
    *
    */
-  public boolean getEnded() {
-    return ended;
-  }
-
-  /**
-   * A last round getter.
-   *
-   * @return A boolean values stating if the current game is still running or
-   *         not.
-   *
-   */
-  public boolean isLastRound() {
-    return this.lastRound;
+  public synchronized GameStatus getStatus() {
+    return status;
   }
 
   /**
@@ -466,7 +452,7 @@ public class Game implements Serializable {
    * @return A {@link List} containing all the current players' names.
    *
    */
-  public List<String> getPlayerNames() {
+  public synchronized List<String> getPlayerNames() {
     return players.stream()
         .map(Player::getPlayerName)
         .collect(Collectors.toList());
@@ -478,10 +464,9 @@ public class Game implements Serializable {
    *
    * @param playerName The player name we are looking for.
    * @return Player matching provided name.
-   * @throws PlayerNotFoundException
+   * @throws PlayerNotFoundException If the player with the name provided is not found.
    */
-  public Player getPlayerByName(String playerName) throws
-      NullPlayerNameException, PlayerNotFoundException {
+  public synchronized Player getPlayerByName(String playerName) throws NullPlayerNameException, PlayerNotFoundException {
     if (playerName == null) {
       throw new NullPlayerNameException("[Class Game, method getPlayerByName]");
     }
@@ -500,7 +485,7 @@ public class Game implements Serializable {
    *
    * @param player Player to set as active
    */
-  public void setActivePlayer(Player player) {
+  public synchronized void setActivePlayer(Player player) {
     this.activePlayer = player;
   }
 
@@ -509,7 +494,7 @@ public class Game implements Serializable {
    *
    * @param player The winning player to set.
    */
-  public void setWinnerPlayer(Player player) {
+  public synchronized void setWinnerPlayer(Player player) {
     this.winnerPlayer = player;
   }
 
@@ -518,7 +503,7 @@ public class Game implements Serializable {
    *
    * @return The active player.
    */
-  public Player getActivePlayer() {
+  public synchronized Player getActivePlayer() {
     return activePlayer;
   }
 
@@ -527,7 +512,7 @@ public class Game implements Serializable {
    *
    * @return The winning player.
    */
-  public Player getWinnerPlayer() {
+  public synchronized Player getWinnerPlayer() {
     return this.winnerPlayer;
   }
 
@@ -538,7 +523,7 @@ public class Game implements Serializable {
    * from that card, the first available SB is given to the player.
    * 
    */
-  private void assignScoreBlocks(){
+  private synchronized void assignScoreBlocks() {
     sharedCards.forEach(c -> {
       if (c.getPattern().getRule().test(activePlayer.getBookshelf()) && !c.getCardWinners().contains(activePlayer)) {
         c.addCardWinner(activePlayer);
@@ -551,27 +536,44 @@ public class Game implements Serializable {
    * Method that computes active player's Score, updates the view,
    * checks if game is over and if not picks next player.
    *
-   * @throws NullScoreBlockListException
-   * @throws NullPlayerBookshelfException
-   * @throws NullIndexValueException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws NegativeMatchedBlockCountException
-   * @throws NullMatchedBlockCountException
-   * @throws NullPointerException
-   * @throws NullPlayerException
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
+   * @throws NullPointerException Generic NPE.
    */
-  public void nextTurn()
+  public synchronized void nextTurn()
       throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-      NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException, NullPointerException, 
+      NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException, NullPointerException,
       NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+    activePlayer.setIsActivePlayer(false);
     assignScoreBlocks();
     activePlayer.updateScore();
     checkEndGame();
-    if (!(getEnded())) {
-      gameBoard.refillIfNeeded();
+    
+    /*
+     * If there's only one player left, checkEndGame() will eventually 
+     * end the game here setting the ended flag to true, otherwise
+     * if the game has two or more players still connected we're entering
+     * this part of code to decide next player playing 
+     */
+    if (getStatus() != GameStatus.ENDED) {
+      try {
+        gameBoard.refillIfNeeded();
+      } catch (IndexOutOfBoundsException e) {
+        endGame();
+        return;
+      }
       int nextPlayerIdx = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size();
+      
+      while(!players.get(nextPlayerIdx).getIsConnected()){
+        nextPlayerIdx = (nextPlayerIdx+ 1) % getPlayers().size();
+      }
       setActivePlayer(players.get(nextPlayerIdx));
+      players.get(nextPlayerIdx).setIsActivePlayer(true);
     }
   }
 
@@ -580,11 +582,11 @@ public class Game implements Serializable {
    *
    * @param coord The coordinates of the tile.
    * @return The tile of the board the player wants to take.
-   * @throws BoardGridColIndexOutOfBoundsException
-   * @throws BoardGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
    */
-  public Tile takeTileAction(Coordinates coord)
+  public synchronized Tile takeTileAction(Coordinates coord)
       throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
       NullIndexValueException {
     return gameBoard.takeTileAt(coord.getRow(), coord.getCol());
@@ -595,13 +597,13 @@ public class Game implements Serializable {
    *
    * @param t     Tile taken from the board.
    * @param coord Coordinates of the bookshelf.
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
-   * @throws NullTileException
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws NullTileException If the tile is null.
    */
-  public void putTileAction(Tile t, Coordinates coord) throws
-      BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+  public synchronized void putTileAction(Tile t, Coordinates coord)
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
       NullIndexValueException, NullTileException {
     activePlayer.getBookshelf().setBookshelfGridIndex(coord.getRow(), coord.getCol(), t);
   }
@@ -609,10 +611,11 @@ public class Game implements Serializable {
   /**
    * Quick helper function to determine if the player is the last in turn.
    *
-   * @param playerToCheck A reference player instance on which to operate the check.
+   * @param playerToCheck A reference player instance on which to operate the
+   *                      check.
    * @return Is playerToCheck the last one in turn
    */
-  private boolean isLastPlayer(Player playerToCheck) {
+  private synchronized boolean isLastPlayer(Player playerToCheck) {
     final Integer idxDiff = players.indexOf(playerToCheck) - players.indexOf(firstPlayer);
     return (idxDiff == -1 || idxDiff == (maxPlayers - 1));
   }
@@ -622,14 +625,15 @@ public class Game implements Serializable {
    * their bookshelf and sets flags accordingly.
    * 
    */
-  public void checkEndGame() {
-    if (activePlayer.getBookshelf().isBookshelfFull()) {
+  public synchronized void checkEndGame() {
+    if (activePlayer.getBookshelf().isBookshelfFull() && getStatus() != GameStatus.LAST_ROUND ) {
       activePlayer.getScore().setExtraPoint();
       // When one player completes their bookshelf, last turn starts
-      setLastRound();
+      setStatus(GameStatus.LAST_ROUND);
     }
     // Regardless of bookshelf, if last player and lastRound, end game
-    if (lastRound && isLastPlayer(activePlayer)) {
+    if ((getStatus() == GameStatus.LAST_ROUND && isLastPlayer(activePlayer)) 
+        || players.stream().filter(p -> p.getIsConnected()).count() <= 1) {
       endGame();
     }
   }
@@ -643,7 +647,7 @@ public class Game implements Serializable {
    * @param p2 Second player
    * @return Player who should win between two
    */
-  private Player decideWinner(Player p1, Player p2) {
+  private synchronized Player decideWinner(Player p1, Player p2) {
     final Integer p1Score = p1.getScore().getTotalScore();
     final Integer p2Score = p2.getScore().getTotalScore();
 
@@ -662,12 +666,13 @@ public class Game implements Serializable {
   /**
    * Method that is called when all players joined
    * the game and the first one should be picked.
-   * Can be used in tests to force starting a game before 
+   * Can be used in tests to force starting a game before
    * the players threshold is met.
    */
-  public void assignPlayers() {
+  public synchronized void assignPlayers() {
     Player choosenFirstPlayer = players.get(random.nextInt(players.size()));
     activePlayer = choosenFirstPlayer;
+    activePlayer.setIsActivePlayer(true);
     firstPlayer = choosenFirstPlayer;
   }
 
@@ -675,11 +680,23 @@ public class Game implements Serializable {
    * Helper method that sets the game as ended
    * and declares the winner.
    */
-  private void endGame() {
-    setEnded(true);
+  private synchronized void endGame() {
+    setStatus(GameStatus.ENDED);
     players.stream()
         .reduce(this::decideWinner)
         .ifPresent(this::setWinnerPlayer);
+  }
+
+  /**
+   * Simple helper function to get the number of disconnected
+   * players to discount when looking for available games.
+   * @return disconnected player num.
+   */
+  public synchronized Integer getDisconnectedPlayersNum() {
+    return (int) players
+      .stream()
+      .filter(p -> !p.getIsConnected())
+      .count();
   }
 
   /**
@@ -699,32 +716,32 @@ public class Game implements Serializable {
    *                            from board as key and the corresponding
    *                            coordinates of the active player bookshelf as
    *                            value.
-   * @throws BoardGridColIndexOutOfBoundsException
-   * @throws BoardGridRowIndexOutOfBoundsException
-   * @throws InvalidBoardTileSelectionException
-   * @throws NullIndexValueException
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws NullTileException
-   * @throws NullPointerException
-   * @throws NullPlayerBookshelfException
-   * @throws NullScoreBlockListException
-   * @throws NegativeMatchedBlockCountException
-   * @throws NullMatchedBlockCountException
-   * @throws WrongBookShelfPicksException
-   * @throws WrongGameBoardPicksException
-   * @throws WrongMovesNumberException
-   * @throws NullPlayerException
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullTileException If the tile is null.
+   * @throws NullPointerException Generic NPE.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
+   * @throws WrongBookShelfPicksException If the game moves are invalid because of bookshelf placement.
+   * @throws WrongGameBoardPicksException If the game moves are invalid because of board picking.
+   * @throws WrongMovesNumberException If the game moves are in an illegal number.
+   * @throws NullGameHandlerInstance If the game handler is null.
    */
-  public void activePlayerMove(Map<Coordinates, Coordinates> selectedCoordinates)
+  public synchronized void activePlayerMove(Map<Coordinates, Coordinates> selectedCoordinates)
       throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
       NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPlayerBookshelfException,
-      NullScoreBlockListException, NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException, 
-      WrongMovesNumberException, WrongGameBoardPicksException, WrongBookShelfPicksException {
+      NullScoreBlockListException, NullPointerException, NullMatchedBlockCountException,
+      NegativeMatchedBlockCountException,
+      WrongMovesNumberException, WrongGameBoardPicksException, WrongBookShelfPicksException, NullGameHandlerInstance {
 
     MovesValidator.validateGameMoves(selectedCoordinates, activePlayer.getBookshelf(), gameBoard);
-    
+
     for (Map.Entry<Coordinates, Coordinates> entry : selectedCoordinates.entrySet()) {
       Coordinates boardCoord = entry.getKey();
       Coordinates bsCoord = entry.getValue();

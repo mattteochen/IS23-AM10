@@ -1,7 +1,9 @@
 package it.polimi.is23am10.server.model.player;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -237,26 +239,26 @@ public class PlayerTest {
    * Test to check that the updateScore() method
    * actually updates all scores.
    *
-   * @throws NullPlayerNameException
-   * @throws NullPlayerIdException
-   * @throws NullPlayerBookshelfException
-   * @throws NullPlayerScoreException
-   * @throws NullPlayerPrivateCardException
-   * @throws NullPlayerScoreBlocksException
-   * @throws DuplicatePlayerNameException
-   * @throws AlreadyInitiatedPatternException
-   * @throws NullPlayerNamesException
-   * @throws NullPointerException
-   * @throws WrongLengthBookshelfStringException
-   * @throws WrongCharBookshelfStringException
-   * @throws NotValidScoreBlockValueException
-   * @throws NullMatchedBlockCountException
-   * @throws NegativeMatchedBlockCountException
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
-   * @throws NullScoreBlockListException
-   * @throws NullAssignedPatternException
+   * @throws NullPlayerNameException If player name is null.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws NullPlayerNamesException If, while adding multiple players, the list of player names is null.
+   * @throws NullPointerException Generic NPE.
+   * @throws WrongLengthBookshelfStringException If when building a bookshelf based on string, it is of an invalid length.
+   * @throws WrongCharBookshelfStringException If when building a bookshelf based on string, it contains an invalid character.
+   * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
    */
   @Test
   public void updateScore_should_update_score()
@@ -299,5 +301,27 @@ public class PlayerTest {
     assertEquals(BS_POINTS, p.getScore().getBookshelfPoints());
     assertEquals(SB_POINTS, p.getScore().getScoreBlockPoints());
     assertEquals(EG_POINTS, p.getScore().getExtraPoint());
+  }
+
+
+  @Nested
+  class setIsConnected_tests {
+
+    ArrayList<String> players;
+    Player p;
+    Game game;
+
+    @BeforeEach
+    void setIsConnected_tests_setup() throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullAssignedPatternException {
+      game = new Game();
+      p = PlayerFactory.getNewPlayer("myNewPlayer", game);
+    }
+
+    @Test
+    public void setIsConnected_should_set_isConnected() throws NullPlayerScoreException {
+      assertTrue(p.getIsConnected());
+      p.setIsConnected(false);
+      assertFalse(p.getIsConnected());
+    }
   }
 }

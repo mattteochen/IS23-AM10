@@ -17,6 +17,7 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.model.score.Score;
+import it.polimi.is23am10.server.model.game.Game;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import java.io.Serializable;
 import java.util.List;
@@ -33,6 +34,23 @@ import java.util.UUID;
 public class Player implements Serializable {
 
   /**
+   * Copy constructor for Player class.
+   *
+   * @param player The player object to be copied.
+   */
+  public Player(Player player) {
+    this.playerId = player.playerId;
+    this.playerName = player.playerName;
+  }
+
+  /**
+   * Constructor for Player class.
+   *
+   */
+  public Player() {
+  }
+
+  /**
    * A randomly generated {@link UUID} id.
    * 
    */
@@ -44,6 +62,20 @@ public class Player implements Serializable {
    * 
    */
   private String playerName;
+
+  /**
+   * Status of the player.
+   * Tells us if he's connected or not.
+   * 
+   */
+  private boolean isConnected;
+
+  /**
+   * Status of the player.
+   * Tells us if he's connected or not.
+   * 
+   */
+  private boolean isActivePlayer;
 
   /**
    * The score storage for the player.
@@ -76,7 +108,7 @@ public class Player implements Serializable {
    * @param playerId The player id.
    * 
    */
-  public void setPlayerID(UUID playerId) throws NullPlayerIdException {
+  public synchronized void setPlayerID(UUID playerId) throws NullPlayerIdException {
     if (playerId == null) {
       throw new NullPlayerIdException("[Class Player, Method setPlayerID]: Null player id");
     }
@@ -92,7 +124,7 @@ public class Player implements Serializable {
    * @param playerName The player name.
    * 
    */
-  public void setPlayerName(String playerName) throws NullPlayerNameException {
+  public synchronized void setPlayerName(String playerName) throws NullPlayerNameException {
     if (playerName == null) {
       throw new NullPlayerNameException("[Class Player, method setPlayerName]: Null player name");
     }
@@ -105,7 +137,7 @@ public class Player implements Serializable {
    * @param score The score.
    * 
    */
-  public void setScore(Score score) throws NullPlayerScoreException {
+  public synchronized void setScore(Score score) throws NullPlayerScoreException {
     if (score == null) {
       throw new NullPlayerScoreException("[Class Player, method setScore]: Null score");
     }
@@ -118,7 +150,7 @@ public class Player implements Serializable {
    * @param bookshelf The bookshelf.
    * 
    */
-  public void setBookshelf(Bookshelf bookshelf) throws NullPlayerBookshelfException {
+  public synchronized void setBookshelf(Bookshelf bookshelf) throws NullPlayerBookshelfException {
     if (bookshelf == null) {
       throw new NullPlayerBookshelfException("[Class Player, method setBookshelf]: Null bookshelf");
     }
@@ -131,7 +163,7 @@ public class Player implements Serializable {
    * @param privateCard The private card.
    * 
    */
-  public void setPrivateCard(PrivateCard privateCard) throws NullPlayerPrivateCardException {
+  public synchronized void setPrivateCard(PrivateCard privateCard) throws NullPlayerPrivateCardException {
     if (privateCard == null) {
       throw new NullPlayerPrivateCardException("[Class Player, method setPrivateCard]: Null private card");
     }
@@ -144,7 +176,7 @@ public class Player implements Serializable {
    * @param scoreBlocks The score blocks list.
    * 
    */
-  public void setScoreBlocks(List<ScoreBlock> scoreBlocks) throws NullPlayerScoreBlocksException {
+  public synchronized void setScoreBlocks(List<ScoreBlock> scoreBlocks) throws NullPlayerScoreBlocksException {
     if (scoreBlocks == null) {
       throw new NullPlayerScoreBlocksException("[Class Player, method setScoreBlocks]: Null score blocks");
     }
@@ -156,7 +188,7 @@ public class Player implements Serializable {
    * 
    * @param scoreBlock The scoreblock to add.
    */
-  public void addScoreBlock(ScoreBlock scoreBlock) {
+  public synchronized void addScoreBlock(ScoreBlock scoreBlock) {
     scoreBlocks.add(scoreBlock);
   }
 
@@ -166,7 +198,7 @@ public class Player implements Serializable {
    * @return The player's id.
    * 
    */
-  public UUID getPlayerID() {
+  public synchronized UUID getPlayerID() {
     return playerId;
   }
 
@@ -176,7 +208,7 @@ public class Player implements Serializable {
    * @return The player's name.
    * 
    */
-  public String getPlayerName() {
+  public synchronized String getPlayerName() {
     return playerName;
   }
 
@@ -186,7 +218,7 @@ public class Player implements Serializable {
    * @return The player's score.
    * 
    */
-  public Score getScore() {
+  public synchronized Score getScore() {
     return score;
   }
 
@@ -196,7 +228,7 @@ public class Player implements Serializable {
    * @return The player's bookshelf.
    * 
    */
-  public Bookshelf getBookshelf() {
+  public synchronized Bookshelf getBookshelf() {
     return bookshelf;
   }
 
@@ -206,7 +238,7 @@ public class Player implements Serializable {
    * @return The player's private card.
    * 
    */
-  public PrivateCard getPrivateCard() {
+  public synchronized PrivateCard getPrivateCard() {
     return privateCard;
   }
 
@@ -216,7 +248,7 @@ public class Player implements Serializable {
    * @return The player's score blocks list.
    * 
    */
-  public List<ScoreBlock> getScoreBlocks() {
+  public synchronized List<ScoreBlock> getScoreBlocks() {
     return scoreBlocks;
   }
 
@@ -224,14 +256,14 @@ public class Player implements Serializable {
    * Function to be called by {@link Game} at the end of Player's turn.
    * Updates its scores passing their score-giving objects to specific methods.
    * 
-   * @throws NullPointerException
-   * @throws BookshelfGridColIndexOutOfBoundsException
-   * @throws BookshelfGridRowIndexOutOfBoundsException
-   * @throws NullIndexValueException
-   * @throws NullPlayerBookshelfException
-   * @throws NullScoreBlockListException
-   * @throws NegativeMatchedBlockCountException
-   * @throws NullMatchedBlockCountException
+   * @throws NullPointerException Generic NPE.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
    */
   public void updateScore() throws NullPointerException, BookshelfGridColIndexOutOfBoundsException,
       BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException,
@@ -239,6 +271,42 @@ public class Player implements Serializable {
     score.setBookshelfPoints(bookshelf);
     score.setPrivatePoints(bookshelf, privateCard);
     score.setScoreBlockPoints(scoreBlocks);
+  }
+
+  /**
+   * Setter of connected status.
+   *
+   * @param status status of player connection.
+   */
+  public synchronized void setIsConnected(boolean status) {
+    this.isConnected = status;
+  }
+
+  /**
+   * Getter of connected status.
+   *
+   * @return status of player connection.
+   */
+  public synchronized boolean getIsConnected() {
+    return isConnected;
+  }
+
+  /**
+   * Setter of active player status.
+   *
+   * @param status status of player.
+   */
+  public void setIsActivePlayer(boolean status) {
+    this.isActivePlayer = status;
+  }
+
+  /**
+   * Getter of active player status.
+   *
+   * @return status of player .
+   */
+  public boolean getIsActivePlayer() {
+    return isActivePlayer;
   }
 
   /**

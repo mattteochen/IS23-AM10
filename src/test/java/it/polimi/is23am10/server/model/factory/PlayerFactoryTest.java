@@ -2,6 +2,7 @@ package it.polimi.is23am10.server.model.factory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class PlayerFactoryTest {
     assertNotNull(p.getPrivateCard());
     assertNotNull(p.getScore());
     assertNotNull(p.getScoreBlocks());
+    assertTrue(p.getIsConnected());
   }
 
   @Test

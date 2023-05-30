@@ -1,5 +1,7 @@
 package it.polimi.is23am10.server.model.items.bookshelf.exceptions;
 
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+
 /**
  * Null Tile exception.
  * Can be used public methods of {@link Bookshelf}.

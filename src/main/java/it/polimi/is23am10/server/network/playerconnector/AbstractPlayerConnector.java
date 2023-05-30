@@ -4,9 +4,10 @@ import it.polimi.is23am10.server.model.game.Game;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
+import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 
 import java.io.Serializable;
-import java.util.Optional;
+import java.rmi.RemoteException;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -21,7 +22,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 @SuppressWarnings({ "checkstyle:nonemptyatclausedescriptioncheck" })
-public abstract class AbstractPlayerConnector implements Serializable {
+public abstract class AbstractPlayerConnector implements Serializable, IPlayerConnector {
 
   /**
    * The player inside a game session.
@@ -42,11 +43,17 @@ public abstract class AbstractPlayerConnector implements Serializable {
   protected BlockingQueue<AbstractMessage> msgQueue;
 
   /**
+   * The client last alarm snooze time in ms truggered by the alarm.
+   *
+   */
+  protected long lastSnoozeMs;
+
+  /**
    * Constructor.
    *
    *
    * @param msgQueue The message queue instance.
-   * @throws NullBlockingQueueException
+   * @throws NullBlockingQueueException If providing a null queue when building player connector.
    *
    */
   protected AbstractPlayerConnector(LinkedBlockingQueue<AbstractMessage> msgQueue)
@@ -55,69 +62,76 @@ public abstract class AbstractPlayerConnector implements Serializable {
       throw new NullBlockingQueueException();
     }
     this.msgQueue = msgQueue;
+    this.lastSnoozeMs = System.currentTimeMillis();
   }
 
   /**
-   * Getter for the associated game id.
+   * {@inheritDoc}
    *
-   * @return The game id.
    *
    */
+  @Override
   public synchronized UUID getGameId() {
     return gameId;
   }
 
   /**
-   * Getter for the associated player.
+   * {@inheritDoc}
    *
-   * @return The player reference.
    *
    */
+  @Override
   public synchronized Player getPlayer() {
     return player;
   }
 
   /**
-   * Retrieve a message from the queue.
-   * This deletes the retrieved message.
+   * {@inheritDoc}
    *
-   * @return The oldest message if present.
-   * @throws InterruptedException
    *
    */
-  public Optional<AbstractMessage> getMessageFromQueue() throws InterruptedException {
+  @Override
+  public AbstractMessage getMessageFromQueue() throws InterruptedException {
     if (msgQueue.isEmpty()) {
-      return Optional.empty();
+      return null;
     }
-    return Optional.of(msgQueue.take());
+    //synch is performed by the collection
+    return (msgQueue.take());
   }
 
   /**
-   * Retrieve the message queue size.
+   * {@inheritDoc}
    *
-   * @return The blocking message queue size.
-   * @throws InterruptedException
    *
    */
-  public int getMsgQueueSize() {
+  @Override
+  public synchronized int getMsgQueueSize() {
     return msgQueue.size();
   }
 
   /**
-   * Add a message from the queue.
-   * This blocks undefinably until the queue is available.
+   * Get the client last snooze time in ms.
+   *
+   * @return The ms of the last alarm snooze.
+   *
+   */
+  public long getLastSnoozeMs() {
+    return lastSnoozeMs;
+  }
+
+  /**
+   * Notify the player an update.
+   * Different delivery strategies are applied based on the {@link AbstractMessage} dynamic type.
+   * This blocks undefinably until the queue is available (in case socket is used).
    * {@link Game} model instances should leverage this
    * queue to send responses to the client (i.e. game updates).
    *
    * @param message The message to be added.
-   * @throws InterruptedException
+   * @throws InterruptedException On queue message insertion failure.
+   * @throws RemoteException On remote call failure.
    *
    */
-  public void addMessageToQueue(AbstractMessage message) throws InterruptedException {
-    if (message != null) {
-      msgQueue.put(message);
-    }
-  }
+  public abstract void notify(AbstractMessage message) throws InterruptedException, RemoteException;
 
   /**
    * Setter for the associated game id.
@@ -135,8 +149,19 @@ public abstract class AbstractPlayerConnector implements Serializable {
    * @param player The player to associate to the current player connector.
    *
    */
+  @Override
   public synchronized void setPlayer(Player player) {
     this.player = player;
+  }
+
+  /**
+   * Set the client last snooze time in ms.
+   *
+   * @param lastSnoozeMs The snooze ms.
+   *
+   */
+  public void setLastSnoozeMs(long lastSnoozeMs) {
+    this.lastSnoozeMs = lastSnoozeMs;
   }
 
   /**
