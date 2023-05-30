@@ -30,3 +30,10 @@ hs_err_pid*
 .factorypath
 .project
 .settings
+
+#Vscode
+.vscode/
+
+#Dev container
+.devcontainer/
+Dockerfile

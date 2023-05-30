@@ -23,7 +23,7 @@ This Java project is a porting of the boardgame *MyShelfie* by [Cranio Creations
 | Socket connection | :white_check_mark: |
 | RMI connection | :white_check_mark: |
 | CLI | :white_check_mark: |
-| GUI | :construction: |
+| GUI | :white_check_mark: |
 | Multiple games | :white_check_mark: |
 | Persistence | :x: |
 | Resilience | :white_check_mark: |
