@@ -1198,6 +1198,7 @@ public final class GuiFactory {
      * 
      * @param sp scene's stackpane.
      * @param bs bookshelf to show.
+     * @param bsOwner string name of the BS owner.
      */
     public static void updateBookshelf(StackPane sp, Bookshelf bs, String bsOwner) {
       VBox root = (VBox) sp.getChildren().get(0);
