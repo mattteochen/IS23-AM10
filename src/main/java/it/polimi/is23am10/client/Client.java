@@ -8,6 +8,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+
+import it.polimi.is23am10.client.exceptions.ForceCloseApplicationException;
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
@@ -106,6 +108,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
     requestedDisconnection = false;
     alarm = new Timer();
     clientStatus = ClientGameStatus.INIT;
+    forceCloseApplication = false;
   }
 
   /**
@@ -123,6 +126,9 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
 
   /** Clean disconnection request. */
   protected boolean requestedDisconnection;
+
+  /** Force application close request, for example when gui is closed. */
+  protected static boolean forceCloseApplication;
 
   /** Duplicate name error flag. */
   private boolean hasDuplicateName;
@@ -194,6 +200,17 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    */
   protected boolean hasRequestedDisconnection() {
     return requestedDisconnection;
+  }
+
+  /**
+   * Set a force close application request.
+   * This method is defined as static as JavaFX thread must have access.
+   *
+   * @param flag The request flag.
+   *
+   */
+  public static void setForceCloseApplication(boolean flag) {
+    forceCloseApplication = flag;
   }
 
   /**
@@ -706,7 +723,12 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    * @throws InterruptedException
    */
   protected void clientRunnerCore()
-      throws IOException, InterruptedException, NullPlayerIdException {
+      throws IOException, InterruptedException, NullPlayerIdException, ForceCloseApplicationException {
+
+    //this flag is raised by external threads, as JavaFX
+    if (forceCloseApplication) {
+      throw new ForceCloseApplicationException();
+    }
 
     Player connectorPlayer;
     UUID connectorGameId;
