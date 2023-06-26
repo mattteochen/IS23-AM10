@@ -1,5 +1,6 @@
 package it.polimi.is23am10.client;
 
+import it.polimi.is23am10.client.exceptions.ForceCloseApplicationException;
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.command.AbstractCommand;
@@ -101,6 +102,10 @@ public class RMIClient extends Client {
                 "Internal module error, please report this message: " + e.getMessage(),
                 ErrorSeverity.CRITICAL));
         terminateClient();
+        return;
+      } catch(ForceCloseApplicationException e) {
+        terminateClient();
+        return;
       }
     }
   }

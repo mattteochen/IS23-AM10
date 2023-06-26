@@ -4,10 +4,10 @@ import it.polimi.is23am10.client.Client;
 import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory;
 import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory.SCENE;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
+
 import java.io.Serializable;
 import java.util.List;
 
-import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
@@ -75,6 +75,9 @@ public final class GraphicUserInterface extends Application implements UserInter
 
     stage.setTitle("MyShelfie - IS23AM10");
     stage.setScene(GuiFactory.stages.get(SCENE.SPLASH_SCREEN));
+    stage.setOnCloseRequest(e -> {
+      Client.setForceCloseApplication(true);
+    }); 
     stage.show();
   }
 
