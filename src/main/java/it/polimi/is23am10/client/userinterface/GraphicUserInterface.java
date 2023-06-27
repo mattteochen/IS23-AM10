@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -147,7 +148,7 @@ public final class GraphicUserInterface extends Application implements UserInter
 
   /** {@inheritDoc} */
   public void terminateUserInterface() {
-    // TODO Auto-generated method stub
+    Platform.exit();
   }
 
   /** {@inheritDoc} */
