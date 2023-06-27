@@ -39,7 +39,6 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
 import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
-import javafx.application.Platform;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -501,7 +500,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
           }
           break;
         case "logout":
-          terminateClient();
+          setForceCloseApplication(true);
           break;
         case "move":
           if (getVirtualView() == null) {
