@@ -289,8 +289,12 @@ public class SocketClient extends Client {
                     new ErrorMessage(
                         "Internal module error, please report this message:" + e.getMessage(),
                         ErrorSeverity.ERROR));
-                }
               }
+              if (!hasRequestedDisconnection()) {
+                terminateClient();
+                return;
+              }
+            }
           }
         });
     messageHandler.start();

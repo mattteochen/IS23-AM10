@@ -72,6 +72,4 @@ public interface UserInterface {
    *
    */
   void terminateUserInterface();
-
-  //TODO: Add other needed display methods if needed
 }
