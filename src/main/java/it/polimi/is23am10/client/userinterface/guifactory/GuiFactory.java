@@ -47,6 +47,7 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -212,6 +213,8 @@ public final class GuiFactory {
     TextField t = new TextField(placeholder);
     t.setMaxWidth(w);
     t.setMinWidth(h);
+    t.setStyle("-fx-background-radius: 16px;" +
+      "-fx-padding: 6px 14px; ");
     t.setFont(Font.font("Arial", weight, size));
     if (cb != null) {
       t.setOnAction(event -> cb.call(t.getText()));
@@ -233,6 +236,14 @@ public final class GuiFactory {
    */
   protected static Button getButton(String content, ButtonCallBack cb, TextField... tfs) {
     Button b = new Button(content);
+    b.setStyle(
+      "-fx-padding: 6px 14px; " +
+      "-fx-border-width: 0px; " +
+      "-fx-text-fill: rgb(51,51,51); " +
+      "-fx-font-weight: 800; " +
+      "-fx-background-radius: 16px; " +
+      "-fx-background-color: #ffffff;"
+    );
     if (cb != null) {
       b.setOnAction(event -> cb.call(tfs));
     }
@@ -388,7 +399,7 @@ public final class GuiFactory {
    * static.
    */
   class SplashScreenFactory {
-    private static final String SPLASH_SCREEN_IMG_PATH = "/assets/bg/in_lobby.png";
+    private static final String SPLASH_SCREEN_IMG_PATH = "/assets/bg/in_lobby1.png";
 
     protected static TextField textField;
 
@@ -410,7 +421,7 @@ public final class GuiFactory {
      * @return The created Label object for the input name.
      */
     protected static Label getInputNameLabel() {
-      return getLabel("Please choose your name", FontWeight.BOLD, 40);
+      return getLabel("Please choose your name", FontWeight.BOLD, 40,Color.BLACK);
     }
 
     /**
@@ -435,7 +446,7 @@ public final class GuiFactory {
     protected static VBox getInputNameWidget() {
       VBox box = new VBox();
       box.setAlignment(Pos.CENTER);
-      box.setSpacing(10);
+      box.setSpacing(30);
       box.getChildren()
           .addAll(
               getInputNameLabel(),
@@ -450,7 +461,7 @@ public final class GuiFactory {
    * screen.
    */
   class EndGameSceneFactory {
-    private static final String SELECTION_SCREEN_IMG_PATH = "/assets/bg/in_game.png";
+    private static final String SELECTION_SCREEN_IMG_PATH = "/assets/bg/in_lobby1.png";
 
     /**
      * Retrieves the background image for the end game selection screen.
@@ -467,7 +478,7 @@ public final class GuiFactory {
      * @return The label for the enter game selection screen.
      */
     protected static Label getEndGameLabel() {
-      return getLabel(CLIStrings.gameOverString, FontWeight.BOLD, 40);
+      return getLabel(CLIStrings.gameOverString, FontWeight.BOLD, 40,Color.BLACK);
     }
 
     /**
@@ -491,7 +502,7 @@ public final class GuiFactory {
                               p.getPlayerName(),
                               p.getScore().getTotalScore()),
                           FontWeight.BOLD,
-                          30)));
+                          30,Color.BLACK)));
       return root;
     }
 
@@ -515,7 +526,7 @@ public final class GuiFactory {
    * screen.
    */
   class EnterGameSelectionScreenFactory {
-    private static final String SELECTION_SCREEN_IMG_PATH = "/assets/bg/in_lobby.png";
+    private static final String SELECTION_SCREEN_IMG_PATH = "/assets/bg/in_lobby1.png";
 
     /**
      * Retrieves the background image for the enter game selection screen.
@@ -532,7 +543,7 @@ public final class GuiFactory {
      * @return The label for the enter game selection screen.
      */
     protected static Label getSelectionOptionLabel() {
-      return getLabel("Please choose your one option", FontWeight.BOLD, 40);
+      return getLabel("Please choose your one option", FontWeight.BOLD, 40,Color.BLACK);
     }
 
     /**
@@ -562,7 +573,7 @@ public final class GuiFactory {
    * a new game.
    */
   class NewGameFactory {
-    private static final String SPLASH_SCREEN_IMG_PATH = "/assets/bg/in_lobby.png";
+    private static final String SPLASH_SCREEN_IMG_PATH = "/assets/bg/in_lobby1.png";
 
     /** A map of text fields associated with player numbers. */
     protected static Map<String, TextField> textFields = Map.of(
@@ -585,7 +596,7 @@ public final class GuiFactory {
      * @return The label for inputting the player number.
      */
     protected static Label getInputPlayerNumberLabel() {
-      return getLabel("Choose max players number", FontWeight.BOLD, 40);
+      return getLabel("Choose max players number", FontWeight.BOLD, 40,Color.BLACK);
     }
 
     /**
@@ -625,7 +636,7 @@ public final class GuiFactory {
    * up a game to join.
    */
   class JoinGameFactory {
-    private static final String SPLASH_SCREEN_IMG_PATH = "/assets/bg/in_lobby.png";
+    private static final String SPLASH_SCREEN_IMG_PATH = "/assets/bg/in_join.png";
 
     /**
      * Retrieves the background image.
@@ -642,7 +653,7 @@ public final class GuiFactory {
      * @return The label for inputting the game server selection.
      */
     protected static Label getInputJoinGameLabel() {
-      return getLabel("Select a game server", FontWeight.BOLD, 40);
+      return getLabel("Select a game server", FontWeight.BOLD, 40,Color.BLACK);
     }
 
     /**
@@ -652,11 +663,16 @@ public final class GuiFactory {
      * @param vv    The game server virtual view.
      * @return The button for selecting the game server.
      */
-    protected static Button getGameIdButton(String index, VirtualView vv) {
+    protected static Button getGameIdButton(Integer index, VirtualView vv) {
       String id = vv.getGameId().toString();
       TextField tf = new TextField(id);
-      tf.setText(index);
-      return getButton(id, CallBack.confirmJoinGameCallBack, tf);
+      tf.setText(String.valueOf(index));
+      String disconnectedPlayers = (vv.getDisconnectedPlayersNum() > 0)
+          ? String.format(CLIStrings.disconnectedPlayers, vv.getDisconnectedPlayersNum())
+          : "";
+      return getButton(String.format(CLIStrings.availableGameString,
+          index, vv.getPlayers().size(), vv.getMaxPlayers(), disconnectedPlayers, vv.getGameId()),
+          CallBack.confirmJoinGameCallBack, tf);
     }
 
     /**
@@ -669,27 +685,29 @@ public final class GuiFactory {
     protected static VBox getJoinGameWidget(List<VirtualView> vvs) {
       List<Button> buttons = new ArrayList<>();
       for (int i = 0; i < vvs.size(); i++) {
-        buttons.add(getGameIdButton(String.valueOf(i), vvs.get(i)));
+        buttons.add(getGameIdButton(i, vvs.get(i)));
       }
 
       ListView<Button> listView = new ListView<>();
 
-      HBox hbox = new HBox();
+      TilePane hbox = new TilePane();
       hbox.setAlignment(Pos.CENTER);
-      hbox.setSpacing(30);
+      hbox.setHgap(30);
       if (buttons.size() > 0) {
         listView.setItems(FXCollections.observableArrayList(buttons));
-        listView.setPrefWidth(400);
+        listView.setPrefWidth(600);
+        listView.setStyle("-fx-focus-color: -fx-control-inner-background ; -fx-faint-focus-color: -fx-control-inner-background ;");
       }
       hbox.getChildren()
           .add(
               buttons.size() > 0
                   ? listView
-                  : getLabel("No available servers!", FontWeight.BOLD, 30, Color.RED));
+                  : getLabel("No available games!", FontWeight.BOLD, 30, Color.RED));
+
       VBox vbox = new VBox();
       vbox.setAlignment(Pos.CENTER);
       vbox.setSpacing(10);
-      vbox.getChildren().addAll(getInputJoinGameLabel(), hbox);
+      vbox.getChildren().addAll(hbox);
       return vbox;
     }
   }
@@ -699,7 +717,7 @@ public final class GuiFactory {
    * phase.
    */
   class WaitGameFactory {
-    private static final String SELECTION_SCREEN_IMG_PATH = "/assets/bg/in_wait.png";
+    private static final String SELECTION_SCREEN_IMG_PATH = "/assets/bg/in_lobby1.png";
 
     /**
      * Retrieves the background image for the waiting game.
@@ -716,7 +734,7 @@ public final class GuiFactory {
      * @return The label for the waiting game.
      */
     protected static Label getWaitingLabel() {
-      return getLabel("Waiting for other players...", FontWeight.BOLD, 40);
+      return getLabel("Waiting for other players...", FontWeight.BOLD, 40,Color.BLACK);
     }
 
     /**
@@ -738,14 +756,14 @@ public final class GuiFactory {
    * snapshot.
    */
   public class GameSnapshotFactory {
-    private static final String SELECTION_SCREEN_IMG_PATH = "/assets/bg/in_game.png";
+    private static final String SELECTION_SCREEN_IMG_PATH = "/assets/bg/in_game1.png";
     private static final String FRAME_IMG = "/assets/tiles/frame.png";
     private static final String CAT_IMG = "/assets/tiles/cat.png";
     private static final String BOOK_IMG = "/assets/tiles/book.png";
     private static final String GAME_IMG = "/assets/tiles/game.png";
     private static final String PLANT_IMG = "/assets/tiles/plant.png";
     private static final String TROPHY_IMG = "/assets/tiles/trophy.png";
-    private static final String EMPTY_IMG = "/assets/tiles/empty.png";
+    private static final String EMPTY_IMG = "/assets/tiles/empty1.png";
     private static final String PRIVATE_ONE = "/assets/private/p1.png";
     private static final String PRIVATE_TWO = "/assets/private/p2.png";
     private static final String PRIVATE_THREE = "/assets/private/p3.png";
@@ -842,14 +860,14 @@ public final class GuiFactory {
       GridPane gp = new GridPane();
       gp.setHgap(5);
       gp.setVgap(5);
-      gp.setPadding(new Insets(20));
+      gp.setPadding(new Insets(0,20,0,20));
 
       Tile[][] b = vv.getGameBoard().getBoardGrid();
       for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
         for (int j = 0; j < Board.BOARD_GRID_COLS; j++) {
           ImageView imgView = getImage(imagesMap.get(b[i][j].getType()));
-          imgView.setFitWidth(55);
-          imgView.setFitHeight(55);
+          imgView.setFitWidth(50);
+          imgView.setFitHeight(50);
           final int row = i;
           final int col = j;
           ColorAdjust caj = new ColorAdjust();
@@ -883,7 +901,7 @@ public final class GuiFactory {
       GridPane gp = new GridPane();
       gp.setHgap(5);
       gp.setVgap(5);
-      gp.setPadding(new Insets(10));
+      gp.setPadding(new Insets(5,10,0,10));
 
       Tile[][] b = bs.getBookshelfGrid();
       for (int i = 0; i < b.length; i++) {
@@ -971,47 +989,47 @@ public final class GuiFactory {
       VBox status = new VBox();
       status.setAlignment(Pos.CENTER);
       status.setSpacing(5);
-      status.getChildren().add(getLabel("Status", FontWeight.BLACK, 15));
+      status.getChildren().add(getLabel("Status", FontWeight.BLACK, 15,Color.BLACK));
       VBox players = new VBox();
       players.setAlignment(Pos.CENTER);
       players.setSpacing(5);
-      players.getChildren().add(getLabel("Players", FontWeight.BOLD, 15));
+      players.getChildren().add(getLabel("Players", FontWeight.BOLD, 15,Color.BLACK));
       VBox firstPlayer = new VBox();
       firstPlayer.setAlignment(Pos.CENTER);
       firstPlayer.setSpacing(5);
       firstPlayer
           .getChildren()
           .addAll(
-              getLabel("First player", FontWeight.BOLD, 15),
-              getLabel(vv.getFirstPlayer().getPlayerName(), FontWeight.BOLD, 13));
+              getLabel("First player", FontWeight.BOLD, 15,Color.BLACK),
+              getLabel(vv.getFirstPlayer().getPlayerName(), FontWeight.BOLD, 13,Color.BLACK));
       VBox roles = new VBox();
       roles.setAlignment(Pos.CENTER);
       roles.setSpacing(5);
       roles
           .getChildren()
           .addAll(
-              getLabel("Active turn", FontWeight.BOLD, 15),
-              getLabel(vv.getActivePlayer().getPlayerName(), FontWeight.BOLD, 13));
+              getLabel("Active turn", FontWeight.BOLD, 15,Color.BLACK),
+              getLabel(vv.getActivePlayer().getPlayerName(), FontWeight.BOLD, 13,Color.BLACK));
       VBox bsPoints = new VBox();
       bsPoints.setAlignment(Pos.CENTER);
       bsPoints.setSpacing(5);
-      bsPoints.getChildren().add(getLabel("BookShelf points", FontWeight.BOLD, 15));
+      bsPoints.getChildren().add(getLabel("BookShelf points", FontWeight.BOLD, 15,Color.BLACK));
       VBox scoreBlocksPoints = new VBox();
       scoreBlocksPoints.setAlignment(Pos.CENTER);
       scoreBlocksPoints.setSpacing(5);
-      scoreBlocksPoints.getChildren().add(getLabel("Score blocks points", FontWeight.BOLD, 15));
+      scoreBlocksPoints.getChildren().add(getLabel("Score blocks points", FontWeight.BOLD, 15,Color.BLACK));
       VBox pvtPoints = new VBox();
       pvtPoints.setAlignment(Pos.CENTER);
       pvtPoints.setSpacing(5);
-      pvtPoints.getChildren().add(getLabel("Private points", FontWeight.BOLD, 15));
+      pvtPoints.getChildren().add(getLabel("Private points", FontWeight.BOLD, 15,Color.BLACK));
       VBox extraPoints = new VBox();
       extraPoints.setAlignment(Pos.CENTER);
       extraPoints.setSpacing(5);
-      extraPoints.getChildren().add(getLabel("Extra points", FontWeight.BOLD, 15));
+      extraPoints.getChildren().add(getLabel("Extra points", FontWeight.BOLD, 15,Color.BLACK));
       VBox totalScore = new VBox();
       totalScore.setAlignment(Pos.CENTER);
       totalScore.setSpacing(5);
-      totalScore.getChildren().add(getLabel("Total score", FontWeight.BOLD, 15));
+      totalScore.getChildren().add(getLabel("Total score", FontWeight.BOLD, 15,Color.BLACK));
       for (VirtualPlayer vp : vv.getPlayers()) {
         status
             .getChildren()
@@ -1020,14 +1038,14 @@ public final class GuiFactory {
                     vp.getIsConnected() ? "ONLINE" : "OFFLINE",
                     FontWeight.BOLD,
                     13,
-                    vp.getIsConnected() ? Color.GREEN : Color.RED));
-        players.getChildren().add(getLabel(vp.getPlayerName(), FontWeight.BOLD, 13));
+                    vp.getIsConnected() ? Color.DARKGREEN : Color.DARKRED));
+        players.getChildren().add(getLabel(vp.getPlayerName(), FontWeight.BOLD, 13,Color.BLACK));
         bsPoints
             .getChildren()
-            .add(getLabel(vp.getScore().getBookshelfPoints().toString(), FontWeight.BOLD, 13));
+            .add(getLabel(vp.getScore().getBookshelfPoints().toString(), FontWeight.BOLD, 13,Color.BLACK));
         scoreBlocksPoints
             .getChildren()
-            .add(getLabel(vp.getScore().getScoreBlockPoints().toString(), FontWeight.BOLD, 13));
+            .add(getLabel(vp.getScore().getScoreBlockPoints().toString(), FontWeight.BOLD, 13,Color.BLACK));
         pvtPoints
             .getChildren()
             .add(
@@ -1036,13 +1054,13 @@ public final class GuiFactory {
                         ? "?"
                         : vp.getScore().getPrivatePoints().toString(),
                     FontWeight.BOLD,
-                    13));
+                    13,Color.BLACK));
         extraPoints
             .getChildren()
-            .add(getLabel(vp.getScore().getExtraPoint().toString(), FontWeight.BOLD, 13));
+            .add(getLabel(vp.getScore().getExtraPoint().toString(), FontWeight.BOLD, 13,Color.BLACK));
         totalScore
             .getChildren()
-            .add(getLabel(vp.getScore().getStringTotalScore(), FontWeight.BOLD, 13));
+            .add(getLabel(vp.getScore().getStringTotalScore(), FontWeight.BOLD, 13,Color.BLACK));
       }
       HBox root = new HBox();
       root.setSpacing(30);
@@ -1068,6 +1086,7 @@ public final class GuiFactory {
      */
     protected static TextField getChatTextField() {
       textField = getTextField("Enter your message here", 180, 100, FontWeight.NORMAL, 12, null);
+      textField.setStyle("-fx-focus-color: -fx-control-inner-background ; -fx-faint-focus-color: -fx-control-inner-background ;");
       return textField;
     }
 
@@ -1095,8 +1114,11 @@ public final class GuiFactory {
     protected static VBox getChatHistory() {
       VBox chatHistory = new VBox();
       chatMessagesListView = new ListView<String>();
-      chatMessagesListView.setStyle("-fx-control-inner-background: #B0721E");
+      //chatMessagesListView.setStyle("-fx-control-inner-background: #A9562A");
+      chatMessagesListView.setPadding(new Insets(0));
+      chatMessagesListView.setStyle("-fx-focus-color: -fx-control-inner-background ; -fx-faint-focus-color: -fx-control-inner-background ;");
       chatMessagesListView.setPrefWidth(300);
+      chatMessagesListView.setPrefHeight(550);
 
       // this 'magheggio' is needed to have a message that doesn't overflow in chat
       chatMessagesListView.setCellFactory(list -> new ListCell<String>() {
@@ -1132,7 +1154,7 @@ public final class GuiFactory {
     protected static VBox getChat() {
       VBox chat = new VBox();
       chat.setSpacing(10);
-      chat.setAlignment(Pos.BOTTOM_RIGHT);
+      chat.setAlignment(Pos.TOP_RIGHT);
       chat.getChildren().addAll(
           getChatHistory(),
           getSendMessageBox());
@@ -1163,30 +1185,30 @@ public final class GuiFactory {
      */
     protected static VBox getGameWidget(VirtualView vv) {
       VBox commonGoals = new VBox();
-      commonGoals.setAlignment(Pos.CENTER);
+      commonGoals.setAlignment(Pos.BOTTOM_CENTER);
       commonGoals.setSpacing(10);
       commonGoals.getChildren().addAll(getCommonGoalCard(vv));
       VBox playerItems = new VBox();
-      playerItems.setAlignment(Pos.CENTER);
-      playerItems.setSpacing(10);
-      playerItems.getChildren().add(getLabel("Your Private Card", FontWeight.BOLD, 20));
+      playerItems.setAlignment(Pos.TOP_CENTER);
+      playerItems.setSpacing(5);
+      playerItems.getChildren().add(getLabel("Your Private Card", FontWeight.BOLD, 20,Color.BLACK));
       playerItems.getChildren().add(getPrivateCard(vv));
-      playerItems.getChildren().add(getLabel("Common Goals", FontWeight.BOLD, 20));
+      playerItems.getChildren().add(getLabel("Common Goals", FontWeight.BOLD, 20,Color.BLACK));
       playerItems.getChildren().add(commonGoals);
       VBox gameBoard = new VBox();
       gameBoard.setSpacing(10);
-      gameBoard.setAlignment(Pos.CENTER);
-      gameBoard.getChildren().addAll(getLabel("Game Board", FontWeight.BOLD, 20), getGameBoard(vv));
+      gameBoard.setAlignment(Pos.TOP_CENTER);
+      gameBoard.getChildren().addAll(getLabel("Game Board", FontWeight.BOLD, 20,Color.BLACK), getGameBoard(vv));
       VBox bookShelf = new VBox();
       bookShelf.setSpacing(10);
-      bookShelf.setAlignment(Pos.CENTER);
+      bookShelf.setAlignment(Pos.TOP_CENTER);
       bookShelf
           .getChildren()
-          .addAll(getLabel(String.format("%s's Bookshelf", vv.getActivePlayer().getPlayerName()), FontWeight.BOLD, 20), getBookShelfGridPane(vv.getActivePlayer().getBookshelf()), getBSButtons(vv));
+          .addAll(getLabel(String.format("%s's Bookshelf", vv.getActivePlayer().getPlayerName()), FontWeight.BOLD, 20,Color.BLACK), getBookShelfGridPane(vv.getActivePlayer().getBookshelf()), getBSButtons(vv));
       VBox chat = new VBox();
-      chat.setAlignment(Pos.BOTTOM_RIGHT);
-      chat.setPadding(new Insets(0, 15, 15, 0));
-      chat.getChildren().addAll(getLabel("Chat", FontWeight.BOLD, 20), getChat());
+      chat.setAlignment(Pos.TOP_RIGHT);
+      chat.setPadding(new Insets(10, 15, 10, 10));
+      chat.getChildren().addAll(getLabel("Chat", FontWeight.BOLD, 20,Color.BLACK), getChat());
       HBox gameStage = new HBox();
       gameStage.setAlignment(Pos.CENTER);
       gameStage.getChildren().addAll(gameBoard, bookShelf, playerItems, chat);
