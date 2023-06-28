@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>/home/locav/IS23-AM10 (copia)/src/main</OriginalElement>
+  <nodes>
+    <node x="3537.0" y="655.0">it.polimi.is23am10.server.controller.ServerControllerState</node>
+    <node x="3371.625" y="96.0">it.polimi.is23am10.server.network.gamehandler.GameHandler</node>
+    <node x="3049.0" y="806.0">it.polimi.is23am10.server.Server</node>
+    <node x="283.75" y="198.0">it.polimi.is23am10.server.network.messages.SnoozeACKMessage</node>
+    <node x="1947.625" y="504.0">it.polimi.is23am10.server.model.pattern.SharedPattern</node>
+    <node x="755.0" y="806.0">it.polimi.is23am10.utils.ErrorTypeString</node>
+    <node x="3795.5" y="198.0">it.polimi.is23am10.server.controller.interfaces.IServerControllerAction</node>
+    <node x="2158.375" y="582.0">it.polimi.is23am10.server.model.pattern.AbstractPattern</node>
+    <node x="1791.75" y="96.0">it.polimi.is23am10.client.userinterface.GraphicUserInterface</node>
+    <node x="1557.73046875" y="198.0">it.polimi.is23am10.server.network.messages.AvailableGamesMessage</node>
+    <node x="2940.875" y="198.0">it.polimi.is23am10.client.LockObject</node>
+    <node x="3675.0693359375" y="338.0">it.polimi.is23am10.server.network.virtualview.VirtualPlayer</node>
+    <node x="2423.625" y="96.0">it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi</node>
+    <node x="3253.875" y="198.0">it.polimi.is23am10.server.network.gamehandler.CurrentPlayerHandler</node>
+    <node x="3270.5439453125" y="426.0">it.polimi.is23am10.server.model.items.card.SharedCard</node>
+    <node x="3316.625" y="-14.0">it.polimi.is23am10.client.SocketClient</node>
+    <node x="2346.0" y="806.0">it.polimi.is23am10.client.userinterface.guifactory.GuiFactory</node>
+    <node x="1046.8193359375" y="198.0">it.polimi.is23am10.server.network.messages.ChatMessage</node>
+    <node x="514.75" y="198.0">it.polimi.is23am10.server.network.messages.GameMessage</node>
+    <node x="3488.875" y="198.0">it.polimi.is23am10.server.model.game.Game</node>
+    <node x="2704.1689453125" y="426.0">it.polimi.is23am10.server.model.items.bookshelf.Bookshelf</node>
+    <node x="-208.0" y="733.0">it.polimi.is23am10.client.userinterface.guifactory.interfaces.BookShelfSelectionCallBack</node>
+    <node x="3590.25" y="96.0">it.polimi.is23am10.server.controller.ServerControllerAction</node>
+    <node x="1818.73046875" y="198.0">it.polimi.is23am10.client.userinterface.UserInterface</node>
+    <node x="3836.25" y="96.0">it.polimi.is23am10.server.controller.ServerControllerRmiBindings</node>
+    <node x="1923.0" y="655.0">it.polimi.is23am10.server.controller.ServerDebugPrefixString</node>
+    <node x="521.0" y="806.0">it.polimi.is23am10.client.userinterface.guifactory.interfaces.TextFieldCallBack</node>
+    <node x="868.125" y="96.0">it.polimi.is23am10.server.command.SnoozeGameTimerCommand</node>
+    <node x="3701.0693359375" y="426.0">it.polimi.is23am10.server.model.score.Score</node>
+    <node x="249.0" y="96.0">it.polimi.is23am10.server.command.AddPlayerCommand</node>
+    <node x="25.2939453125" y="198.0">it.polimi.is23am10.client.userinterface.helpers.OutputWrapper</node>
+    <node x="1982.0" y="806.0">it.polimi.is23am10.server.model.items.scoreblock.ScoreBlock</node>
+    <node x="3798.0" y="655.0">it.polimi.is23am10.utils.CustomKeySerializer</node>
+    <node x="2212.0" y="198.0">it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector</node>
+    <node x="2525.0" y="806.0">it.polimi.is23am10.utils.config.AppConfig</node>
+    <node x="45.0" y="806.0">it.polimi.is23am10.utils.config.AppConfigContext</node>
+    <node x="80.0" y="733.0">it.polimi.is23am10.client.userinterface.guifactory.interfaces.ButtonCallBack</node>
+    <node x="696.0" y="655.0">it.polimi.is23am10.utils.MoveTileCommandTypeAdaptor</node>
+    <node x="348.0" y="655.0">it.polimi.is23am10.utils.ThreadLocalTypeAdapterFactory</node>
+    <node x="2481.0" y="655.0">it.polimi.is23am10.utils.MoveCommandHelper</node>
+    <node x="2171.625" y="96.0">it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket</node>
+    <node x="2374.625" y="504.0">it.polimi.is23am10.server.model.items.card.AbstractCard</node>
+    <node x="2085.625" y="426.0">it.polimi.is23am10.server.model.items.card.PrivateCard</node>
+    <node x="2559.9638671875" y="338.0">it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector</node>
+    <node x="1335.0" y="655.0">it.polimi.is23am10.server.controller.ClientConnectionChecker</node>
+    <node x="-13.0" y="655.0">it.polimi.is23am10.client.userinterface.guifactory.CallBack</node>
+    <node x="3193.0" y="806.0">it.polimi.is23am10.App</node>
+    <node x="1162.125" y="96.0">it.polimi.is23am10.server.command.GetAvailableGamesCommand</node>
+    <node x="1993.73046875" y="198.0">it.polimi.is23am10.server.network.messages.ErrorMessage</node>
+    <node x="2747.0" y="655.0">it.polimi.is23am10.server.model.factory.SharedPatternFactory</node>
+    <node x="476.0" y="96.0">it.polimi.is23am10.client.userinterface.CommandLineInterface</node>
+    <node x="2426.6943359375" y="-14.0">it.polimi.is23am10.server.controller.ServerControllerSocket</node>
+    <node x="3097.875" y="198.0">it.polimi.is23am10.server.network.virtualview.VirtualView</node>
+    <node x="1460.125" y="96.0">it.polimi.is23am10.server.command.SendChatMessageCommand</node>
+    <node x="2878.0" y="806.0">it.polimi.is23am10.utils.ArgParser</node>
+    <node x="-208.0" y="806.0">it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector</node>
+    <node x="2492.125" y="198.0">it.polimi.is23am10.client.IClient</node>
+    <node x="3274.0" y="655.0">it.polimi.is23am10.server.model.factory.PrivatePatternFactory</node>
+    <node x="3841.0693359375" y="338.0">it.polimi.is23am10.server.model.items.board.Board</node>
+    <node x="-208.0" y="96.0">it.polimi.is23am10.server.command.MoveTilesCommand</node>
+    <node x="2985.375" y="96.0">it.polimi.is23am10.client.Client</node>
+    <node x="3011.0" y="655.0">it.polimi.is23am10.client.userinterface.helpers.PrivatePatternsHelper</node>
+    <node x="1187.0" y="806.0">it.polimi.is23am10.utils.IndexValidator</node>
+    <node x="2161.625" y="504.0">it.polimi.is23am10.server.model.pattern.PrivatePattern</node>
+    <node x="1594.0" y="806.0">it.polimi.is23am10.server.model.factory.GameFactory</node>
+    <node x="2184.125" y="338.0">it.polimi.is23am10.server.model.player.Player</node>
+    <node x="3871.1689453125" y="-14.0">it.polimi.is23am10.client.RMIClient</node>
+    <node x="19.0" y="96.0">it.polimi.is23am10.server.command.StartGameCommand</node>
+    <node x="1393.0" y="806.0">it.polimi.is23am10.server.model.factory.PlayerFactory</node>
+    <node x="972.0" y="806.0">it.polimi.is23am10.utils.MovesValidator</node>
+    <node x="1629.0" y="655.0">it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance</node>
+    <node x="3319.0" y="806.0">it.polimi.is23am10.server.model.items.tile.Tile</node>
+    <node x="2703.0" y="806.0">it.polimi.is23am10.client.userinterface.helpers.CLIStrings</node>
+    <node x="2207.0" y="655.0">it.polimi.is23am10.utils.CustomKeyDeserializer</node>
+    <node x="2791.375" y="96.0">it.polimi.is23am10.client.interfaces.AlarmConsumer</node>
+    <node x="3392.0693359375" y="338.0">it.polimi.is23am10.server.controller.interfaces.ControllerConsumer</node>
+    <node x="1039.0" y="655.0">it.polimi.is23am10.utils.CommandSyntaxValidator</node>
+    <node x="1062.25" y="338.0">it.polimi.is23am10.server.network.messages.AbstractMessage</node>
+    <node x="697.75" y="198.0">it.polimi.is23am10.server.command.AbstractCommand</node>
+    <node x="2164.0" y="806.0">it.polimi.is23am10.client.userinterface.helpers.ANSICodes</node>
+    <node x="285.0" y="806.0">it.polimi.is23am10.client.userinterface.helpers.CommandsBuilder</node>
+    <node x="1792.0" y="806.0">it.polimi.is23am10.utils.Coordinates</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="it.polimi.is23am10.server.model.player.Player" target="it.polimi.is23am10.server.model.items.bookshelf.Bookshelf" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="2232.625" y="396.0" />
+      <point x="2768.1689453125" y="396.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.userinterface.GraphicUserInterface" target="it.polimi.is23am10.client.userinterface.UserInterface" relationship="REALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="1898.75" y="156.0" />
+      <point x="1654.150390625" y="156.0" />
+      <point x="1654.150390625" y="176.0" />
+      <point x="1857.48046875" y="176.0" />
+      <point x="-38.75" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.virtualview.VirtualPlayer" target="it.polimi.is23am10.server.model.score.Score" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.messages.SnoozeACKMessage" target="it.polimi.is23am10.server.network.messages.AbstractMessage" relationship="GENERALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="389.25" y="247.0" />
+      <point x="1154.75" y="247.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.Client" target="it.polimi.is23am10.client.IClient" relationship="REALIZATION">
+      <point x="-23.75" y="14.0" />
+      <point x="3009.125" y="156.0" />
+      <point x="2567.125" y="156.0" />
+      <point x="25.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.controller.ServerControllerSocket" target="it.polimi.is23am10.server.controller.ServerControllerAction" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="2541.1943359375" y="55.0" />
+      <point x="3703.25" y="55.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.userinterface.guifactory.CallBack" target="it.polimi.is23am10.client.userinterface.guifactory.interfaces.BookShelfSelectionCallBack" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="45.5" y="708.0" />
+      <point x="-74.0" y="708.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.command.StartGameCommand" target="it.polimi.is23am10.server.command.AbstractCommand" relationship="GENERALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="124.0" y="146.0" />
+      <point x="795.25" y="146.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector" target="it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector" relationship="REALIZATION">
+      <point x="61.25" y="14.0" />
+      <point x="2395.75" y="267.0" />
+      <point x="2605.9638671875" y="267.0" />
+      <point x="-46.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.command.SendChatMessageCommand" target="it.polimi.is23am10.server.command.AbstractCommand" relationship="GENERALIZATION">
+      <point x="-68.5" y="14.0" />
+      <point x="1528.625" y="146.0" />
+      <point x="795.25" y="146.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi" target="it.polimi.is23am10.client.IClient" relationship="TO_ONE">
+      <point x="51.75" y="14.0" />
+      <point x="2578.875" y="146.0" />
+      <point x="2517.125" y="146.0" />
+      <point x="-25.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.model.player.Player" target="it.polimi.is23am10.server.model.score.Score" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="2232.625" y="386.0" />
+      <point x="3748.0693359375" y="386.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.gamehandler.GameHandler" target="it.polimi.is23am10.server.model.game.Game" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="3448.625" y="146.0" />
+      <point x="3535.875" y="146.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.messages.ErrorMessage" target="it.polimi.is23am10.server.model.player.Player" relationship="TO_ONE">
+      <point x="39.25" y="14.0" />
+      <point x="2111.48046875" y="257.0" />
+      <point x="2232.625" y="257.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.userinterface.guifactory.CallBack" target="it.polimi.is23am10.client.userinterface.guifactory.interfaces.ButtonCallBack" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="45.5" y="708.0" />
+      <point x="165.0" y="708.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.model.player.Player" target="it.polimi.is23am10.server.model.items.card.PrivateCard" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="2232.625" y="406.0" />
+      <point x="2155.625" y="406.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.Client" target="it.polimi.is23am10.client.LockObject" relationship="TO_ONE">
+      <point x="23.75" y="14.0" />
+      <point x="3056.625" y="146.0" />
+      <point x="3037.875" y="146.0" />
+      <point x="3037.875" y="166.0" />
+      <point x="3009.375" y="166.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.model.items.card.SharedCard" target="it.polimi.is23am10.server.model.items.card.AbstractCard" relationship="GENERALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="3341.0439453125" y="479.0" />
+      <point x="2478.125" y="479.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.command.GetAvailableGamesCommand" target="it.polimi.is23am10.server.command.AbstractCommand" relationship="GENERALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="1301.125" y="146.0" />
+      <point x="795.25" y="146.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.messages.AvailableGamesMessage" target="it.polimi.is23am10.server.model.player.Player" relationship="TO_ONE">
+      <point x="60.25" y="14.0" />
+      <point x="1738.48046875" y="257.0" />
+      <point x="2232.625" y="257.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.RMIClient" target="it.polimi.is23am10.client.Client" relationship="GENERALIZATION">
+      <point x="-30.75" y="14.0" />
+      <point x="3901.9189453125" y="35.0" />
+      <point x="3537.25" y="35.0" />
+      <point x="3537.25" y="75.0" />
+      <point x="3032.875" y="75.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.messages.GameMessage" target="it.polimi.is23am10.server.network.messages.AbstractMessage" relationship="GENERALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="596.25" y="247.0" />
+      <point x="1154.75" y="247.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.Client" target="it.polimi.is23am10.client.userinterface.UserInterface" relationship="TO_ONE">
+      <point x="23.75" y="14.0" />
+      <point x="3056.625" y="146.0" />
+      <point x="3037.875" y="146.0" />
+      <point x="3037.875" y="166.0" />
+      <point x="1934.98046875" y="166.0" />
+      <point x="38.75" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.command.MoveTilesCommand" target="it.polimi.is23am10.server.command.AbstractCommand" relationship="GENERALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="-104.5" y="146.0" />
+      <point x="795.25" y="146.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.Client" target="it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector" relationship="TO_ONE">
+      <point x="23.75" y="14.0" />
+      <point x="3056.625" y="146.0" />
+      <point x="3037.875" y="146.0" />
+      <point x="3037.875" y="166.0" />
+      <point x="2766.625" y="166.0" />
+      <point x="2766.625" y="267.0" />
+      <point x="2697.9638671875" y="267.0" />
+      <point x="46.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.virtualview.VirtualView" target="it.polimi.is23am10.server.model.items.board.Board" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="3165.875" y="277.0" />
+      <point x="3833.900390625" y="277.0" />
+      <point x="3833.900390625" y="287.0" />
+      <point x="3889.0693359375" y="287.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi" target="it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector" relationship="GENERALIZATION">
+      <point x="-51.75" y="14.0" />
+      <point x="2475.375" y="146.0" />
+      <point x="2334.5" y="146.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.messages.ChatMessage" target="it.polimi.is23am10.server.model.player.Player" relationship="TO_ONE">
+      <point x="39.0" y="14.0" />
+      <point x="1163.8193359375" y="257.0" />
+      <point x="2232.625" y="257.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector" target="it.polimi.is23am10.server.model.player.Player" relationship="TO_ONE">
+      <point x="-61.25" y="14.0" />
+      <point x="2273.25" y="257.0" />
+      <point x="2232.625" y="257.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.model.game.Game" target="it.polimi.is23am10.server.model.player.Player" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="3535.875" y="267.0" />
+      <point x="3330.85546875" y="267.0" />
+      <point x="3330.85546875" y="307.0" />
+      <point x="2232.625" y="307.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.gamehandler.CurrentPlayerHandler" target="it.polimi.is23am10.server.model.player.Player" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="3361.375" y="257.0" />
+      <point x="2232.625" y="257.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.model.items.card.PrivateCard" target="it.polimi.is23am10.server.model.items.card.AbstractCard" relationship="GENERALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="2155.625" y="479.0" />
+      <point x="2478.125" y="479.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.RMIClient" target="it.polimi.is23am10.client.interfaces.AlarmConsumer" relationship="TO_ONE">
+      <point x="30.75" y="14.0" />
+      <point x="3963.4189453125" y="35.0" />
+      <point x="4118.75" y="35.0" />
+      <point x="4118.75" y="45.0" />
+      <point x="3385.625" y="45.0" />
+      <point x="3385.625" y="65.0" />
+      <point x="2878.375" y="65.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.SocketClient" target="it.polimi.is23am10.client.interfaces.AlarmConsumer" relationship="TO_ONE">
+      <point x="-37.0" y="14.0" />
+      <point x="3353.625" y="35.0" />
+      <point x="3385.625" y="35.0" />
+      <point x="3385.625" y="65.0" />
+      <point x="2878.375" y="65.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.command.AddPlayerCommand" target="it.polimi.is23am10.server.command.AbstractCommand" relationship="GENERALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="352.5" y="146.0" />
+      <point x="795.25" y="146.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.controller.ServerControllerRmiBindings" target="it.polimi.is23am10.server.controller.interfaces.IServerControllerAction" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="3972.25" y="146.0" />
+      <point x="4045.5" y="146.0" />
+      <point x="4045.5" y="156.0" />
+      <point x="3968.75" y="156.0" />
+      <point x="57.75" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.RMIClient" target="it.polimi.is23am10.server.controller.interfaces.IServerControllerAction" relationship="TO_ONE">
+      <point x="30.75" y="14.0" />
+      <point x="3963.4189453125" y="35.0" />
+      <point x="4118.75" y="35.0" />
+      <point x="4118.75" y="146.0" />
+      <point x="4045.5" y="146.0" />
+      <point x="4045.5" y="156.0" />
+      <point x="3968.75" y="156.0" />
+      <point x="57.75" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.controller.ServerControllerAction" target="it.polimi.is23am10.server.controller.interfaces.IServerControllerAction" relationship="REALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="3703.25" y="146.0" />
+      <point x="3853.25" y="146.0" />
+      <point x="-57.75" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.Client" target="it.polimi.is23am10.server.network.virtualview.VirtualView" relationship="TO_ONE">
+      <point x="23.75" y="14.0" />
+      <point x="3056.625" y="146.0" />
+      <point x="3037.875" y="146.0" />
+      <point x="3037.875" y="166.0" />
+      <point x="3165.875" y="166.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.messages.AvailableGamesMessage" target="it.polimi.is23am10.server.network.messages.AbstractMessage" relationship="GENERALIZATION">
+      <point x="-60.25" y="14.0" />
+      <point x="1617.98046875" y="247.0" />
+      <point x="1154.75" y="247.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.controller.interfaces.IServerControllerAction" target="it.polimi.is23am10.server.controller.interfaces.ControllerConsumer" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="3911.0" y="317.0" />
+      <point x="3523.5693359375" y="317.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.userinterface.CommandLineInterface" target="it.polimi.is23am10.client.userinterface.UserInterface" relationship="REALIZATION">
+      <point x="57.25" y="14.0" />
+      <point x="647.75" y="156.0" />
+      <point x="1654.150390625" y="156.0" />
+      <point x="1654.150390625" y="176.0" />
+      <point x="1857.48046875" y="176.0" />
+      <point x="-38.75" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.model.pattern.PrivatePattern" target="it.polimi.is23am10.server.model.pattern.AbstractPattern" relationship="GENERALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="2258.125" y="552.0" />
+      <point x="2151.375" y="552.0" />
+      <point x="2151.375" y="562.0" />
+      <point x="2209.875" y="562.0" />
+      <point x="-51.5" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.command.SnoozeGameTimerCommand" target="it.polimi.is23am10.server.command.AbstractCommand" relationship="GENERALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="1005.125" y="146.0" />
+      <point x="795.25" y="146.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.command.SendChatMessageCommand" target="it.polimi.is23am10.server.network.messages.ChatMessage" relationship="TO_ONE">
+      <point x="68.5" y="14.0" />
+      <point x="1665.625" y="166.0" />
+      <point x="1124.8193359375" y="166.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.userinterface.CommandLineInterface" target="it.polimi.is23am10.client.userinterface.helpers.OutputWrapper" relationship="TO_ONE">
+      <point x="-57.25" y="14.0" />
+      <point x="533.25" y="156.0" />
+      <point x="108.7939453125" y="156.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.model.items.card.AbstractCard" target="it.polimi.is23am10.server.model.pattern.AbstractPattern" relationship="DEPENDENCY">
+      <point x="0.0" y="14.0" />
+      <point x="2478.125" y="552.0" />
+      <point x="2312.875" y="552.0" />
+      <point x="51.5" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.messages.ChatMessage" target="it.polimi.is23am10.server.network.messages.AbstractMessage" relationship="GENERALIZATION">
+      <point x="-39.0" y="14.0" />
+      <point x="1085.8193359375" y="247.0" />
+      <point x="1154.75" y="247.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket" target="it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector" relationship="GENERALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="2287.625" y="146.0" />
+      <point x="2334.5" y="146.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.SocketClient" target="it.polimi.is23am10.client.Client" relationship="GENERALIZATION">
+      <point x="37.0" y="14.0" />
+      <point x="3427.625" y="35.0" />
+      <point x="3537.25" y="35.0" />
+      <point x="3537.25" y="75.0" />
+      <point x="3032.875" y="75.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.model.pattern.SharedPattern" target="it.polimi.is23am10.server.model.pattern.AbstractPattern" relationship="GENERALIZATION">
+      <point x="0.0" y="14.0" />
+      <point x="2044.625" y="552.0" />
+      <point x="2151.375" y="552.0" />
+      <point x="2151.375" y="562.0" />
+      <point x="2209.875" y="562.0" />
+      <point x="-51.5" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.virtualview.VirtualView" target="it.polimi.is23am10.server.network.virtualview.VirtualPlayer" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="3165.875" y="277.0" />
+      <point x="3833.900390625" y="277.0" />
+      <point x="3833.900390625" y="307.0" />
+      <point x="3748.0693359375" y="307.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.virtualview.VirtualPlayer" target="it.polimi.is23am10.server.model.items.bookshelf.Bookshelf" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="3748.0693359375" y="406.0" />
+      <point x="2768.1689453125" y="406.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.model.game.Game" target="it.polimi.is23am10.server.model.items.board.Board" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="3535.875" y="267.0" />
+      <point x="3330.85546875" y="267.0" />
+      <point x="3330.85546875" y="297.0" />
+      <point x="3889.0693359375" y="297.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.gamehandler.GameHandler" target="it.polimi.is23am10.server.network.gamehandler.CurrentPlayerHandler" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="3448.625" y="146.0" />
+      <point x="3361.375" y="146.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.messages.ErrorMessage" target="it.polimi.is23am10.server.network.messages.AbstractMessage" relationship="GENERALIZATION">
+      <point x="-39.25" y="14.0" />
+      <point x="2032.98046875" y="247.0" />
+      <point x="1154.75" y="247.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.controller.ServerControllerSocket" target="it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket" relationship="TO_ONE">
+      <point x="0.0" y="14.0" />
+      <point x="2541.1943359375" y="55.0" />
+      <point x="2287.625" y="55.0" />
+      <point x="0.0" y="-14.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.42051989878076834" showDependencies="true" x="1965.5" y="420.0000000000001" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
