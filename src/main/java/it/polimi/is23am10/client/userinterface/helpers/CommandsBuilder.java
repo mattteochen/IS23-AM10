@@ -9,7 +9,6 @@ package it.polimi.is23am10.client.userinterface.helpers;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public final class CommandsBuilder {
-  //TODO: integrate missing commands
 
   /**
    * The command string for creating a game.
