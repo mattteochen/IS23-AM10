@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>/home/locav/IS23-AM10 (copia)/src/main/java/it/polimi/is23am10/server</OriginalElement>
+  <nodes>
+    <node x="-93.0" y="-74.0">it.polimi.is23am10.server.controller.ServerControllerAction</node>
+    <node x="236.5" y="226.0">it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi</node>
+    <node x="-94.5" y="26.0">it.polimi.is23am10.server.controller.ServerControllerSocket</node>
+    <node x="-96.0" y="126.0">it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket</node>
+    <node x="222.5" y="26.0">it.polimi.is23am10.server.controller.ServerControllerSocket.CoordinatesDeserializer</node>
+    <node x="-28.0" y="526.0">it.polimi.is23am10.server.model.items.board.Board</node>
+    <node x="-364.0" y="526.0">it.polimi.is23am10.server.model.items.bookshelf.Bookshelf</node>
+    <node x="-53.0" y="726.0">it.polimi.is23am10.server.network.virtualview.VirtualPlayer</node>
+    <node x="-95.0" y="-174.0">it.polimi.is23am10.server.controller.interfaces.IServerControllerAction</node>
+    <node x="293.0" y="526.0">it.polimi.is23am10.server.model.score.Score</node>
+    <node x="-48.0" y="626.0">it.polimi.is23am10.server.network.virtualview.VirtualView</node>
+    <node x="-102.5" y="226.0">it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector</node>
+    <node x="-27.0" y="426.0">it.polimi.is23am10.server.model.game.Game</node>
+    <node x="-28.5" y="326.0">it.polimi.is23am10.server.model.player.Player</node>
+    <node x="-409.5" y="26.0">it.polimi.is23am10.server.controller.ServerControllerSocket.CommandDeserializer</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="it.polimi.is23am10.server.network.playerconnector.PlayerConnectorRmi" target="it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector" relationship="GENERALIZATION">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.model.player.Player" target="it.polimi.is23am10.server.model.score.Score" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector" target="it.polimi.is23am10.server.model.player.Player" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.model.game.Game" target="it.polimi.is23am10.server.model.player.Player" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.model.player.Player" target="it.polimi.is23am10.server.model.items.bookshelf.Bookshelf" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket" target="it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector" relationship="GENERALIZATION">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.virtualview.VirtualPlayer" target="it.polimi.is23am10.server.model.score.Score" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.controller.ServerControllerAction" target="it.polimi.is23am10.server.controller.interfaces.IServerControllerAction" relationship="REALIZATION">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.controller.ServerControllerSocket.CoordinatesDeserializer" target="it.polimi.is23am10.server.controller.ServerControllerSocket" relationship="INNER_CLASS">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.virtualview.VirtualView" target="it.polimi.is23am10.server.network.virtualview.VirtualPlayer" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.virtualview.VirtualPlayer" target="it.polimi.is23am10.server.model.items.bookshelf.Bookshelf" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.controller.ServerControllerSocket" target="it.polimi.is23am10.server.controller.ServerControllerAction" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.model.game.Game" target="it.polimi.is23am10.server.model.items.board.Board" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.controller.ServerControllerSocket.CommandDeserializer" target="it.polimi.is23am10.server.controller.ServerControllerSocket" relationship="INNER_CLASS">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.network.virtualview.VirtualView" target="it.polimi.is23am10.server.model.items.board.Board" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.server.controller.ServerControllerSocket" target="it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.644640234948605" showDependencies="true" x="339.60136674259684" y="425.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
