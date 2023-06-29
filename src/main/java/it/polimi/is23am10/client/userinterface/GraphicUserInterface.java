@@ -32,7 +32,8 @@ import javafx.stage.Stage;
 public final class GraphicUserInterface extends Application implements UserInterface, Serializable {
 
   /**
-   * Queue containing all the inputs the user sent trough readline. Content to be consumed by client
+   * Queue containing all the inputs the user sent trough readline. Content to be
+   * consumed by client
    * controller on premise.
    */
   private static final BlockingQueue<String> userInputQueue = new LinkedBlockingQueue<>();
@@ -64,21 +65,20 @@ public final class GraphicUserInterface extends Application implements UserInter
   public void start(Stage stage) {
     GuiFactory.mainStage = stage;
     stage.setResizable(false);
-    Map<SCENE, Scene> m =
-        Map.of(
-            SCENE.SPLASH_SCREEN, GuiFactory.getSplashScreenScene(),
-            SCENE.ENTER_GAME_SELECTION, GuiFactory.getEnterGameSelectionScene(),
-            SCENE.CREATE_GAME, GuiFactory.getCreateNewGameSelectionScene(),
-            SCENE.WAIT_GAME, GuiFactory.getWaitGameScene()
-            // some scenes require the {@link VirtualView}, they are built later
-            );
+    Map<SCENE, Scene> m = Map.of(
+        SCENE.SPLASH_SCREEN, GuiFactory.getSplashScreenScene(),
+        SCENE.ENTER_GAME_SELECTION, GuiFactory.getEnterGameSelectionScene(),
+        SCENE.CREATE_GAME, GuiFactory.getCreateNewGameSelectionScene(),
+        SCENE.WAIT_GAME, GuiFactory.getWaitGameScene()
+    // some scenes require the {@link VirtualView}, they are built later
+    );
     GuiFactory.stages.putAll(m);
 
     stage.setTitle("MyShelfie - IS23AM10");
     stage.setScene(GuiFactory.stages.get(SCENE.SPLASH_SCREEN));
     stage.setOnCloseRequest(e -> {
       Client.setForceCloseApplication(true);
-    }); 
+    });
     stage.show();
   }
 
@@ -110,15 +110,13 @@ public final class GraphicUserInterface extends Application implements UserInter
         GuiFactory.executeOnJavaFX(
             () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.WAIT_GAME)));
       } else {
-        if (GuiFactory.stages.get(SCENE.GAME_SNAPSHOT) == null){
+        if (GuiFactory.stages.get(SCENE.GAME_SNAPSHOT) == null) {
           GuiFactory.stages.put(SCENE.GAME_SNAPSHOT, GuiFactory.getGameSnapshotScene(vw));
           GuiFactory.executeOnJavaFX(
-            () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.GAME_SNAPSHOT)));
+              () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.GAME_SNAPSHOT)));
         } else {
           StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
-          GuiFactory.executeOnJavaFX( () ->
-            GuiFactory.GameSnapshotFactory.updateGameWidget(root, old, vw)
-          );
+          GuiFactory.executeOnJavaFX(() -> GuiFactory.GameSnapshotFactory.updateGameWidget(root, old, vw));
         }
       }
     }
@@ -128,8 +126,7 @@ public final class GraphicUserInterface extends Application implements UserInter
   public void displayChatMessage(ChatMessage message) {
     StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
     GuiFactory.executeOnJavaFX(
-      () -> GuiFactory.GameSnapshotFactory.updateChatHistory(root, message)
-    );
+        () -> GuiFactory.GameSnapshotFactory.updateChatHistory(root, message));
   }
 
   /** {@inheritDoc}} */
@@ -139,6 +136,14 @@ public final class GraphicUserInterface extends Application implements UserInter
       GuiFactory.executeOnJavaFX(
         () -> GuiFactory.getErrorMessage(root, errorMessage)
       );
+      if (errorMessage.getMessage().contains("You have been disconnected")) {
+        try {
+          Thread.sleep(2000);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        Client.setForceCloseApplication(true); 
+      }
     } else {
       GuiFactory.executeOnJavaFX(
         () -> GuiFactory.GameSnapshotFactory.updateChatHistory(root, errorMessage)

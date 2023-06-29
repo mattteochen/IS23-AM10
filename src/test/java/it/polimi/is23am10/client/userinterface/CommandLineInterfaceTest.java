@@ -2,16 +2,27 @@ package it.polimi.is23am10.client.userinterface;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.net.Socket;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 
+import it.polimi.is23am10.client.Client;
+import it.polimi.is23am10.client.SocketClient;
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.client.userinterface.helpers.OutputWrapper.OutputLevel;
 import it.polimi.is23am10.server.model.factory.GameFactory;
@@ -37,8 +48,12 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.model.score.Score;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
+import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
+import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
+import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
+import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
-
 
 public class CommandLineInterfaceTest {
   private final PrintStream standardOut = System.out;
@@ -83,7 +98,8 @@ public class CommandLineInterfaceTest {
 
     final String expectedString = String.format("%s\n%s\n%s",
         CLIStrings.listGamesString,
-        String.format(CLIStrings.availableGameString, 0, vw1.getPlayers().size(), vw1.getMaxPlayers(), "", vw1.getGameId()),
+        String.format(CLIStrings.availableGameString, 0, vw1.getPlayers().size(), vw1.getMaxPlayers(), "",
+            vw1.getGameId()),
         String.format(CLIStrings.availableGameString, 1, vw2.getPlayers().size(), vw2.getMaxPlayers(), "",
             vw2.getGameId()));
 
@@ -150,33 +166,35 @@ public class CommandLineInterfaceTest {
     VirtualView vw = new VirtualView(g);
     cli.displayVirtualView(null, vw);
 
-    // .show(VirtualView) method doesn't return the dynamic strings like other OW methods.
+    // .show(VirtualView) method doesn't return the dynamic strings like other OW
+    // methods.
     // Sample-testing cli strings to ensure the whole method gets executed.
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.currentStateString));
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.boardStatus));
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.indexBoard));
 
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.topPaddingBoard));
-    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.tabBlackSquare));    
+    assertTrue(outputStreamCaptor.toString().contains(CLIStrings.tabBlackSquare));
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.bottomPaddingBoard));
-    
+
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.bookshelfPoints));
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.scoreBlockPoints));
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.privatePoints));
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.extraPoints));
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.totalScore));
-    
+
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.yourTurn));
 
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.indexBookshelf));
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.paddingBookshelf));
-    
+
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.moveTilesInviteString));
     assertTrue(outputStreamCaptor.toString().contains(CLIStrings.moveTilesExampleString));
   }
 
   @Test
-  void displayChatMessage_should_display_private_message() throws NullPlayerNameException, NullPlayerIdException {
+  void displayChatMessage_should_display_private_message()
+      throws NullPlayerNameException, NullPlayerIdException, NullSocketConnectorException, NullBlockingQueueException {
     String textMessage = "valar";
     String playerName = "Jaqen";
     String receiverName = "Arya";
@@ -187,12 +205,18 @@ public class CommandLineInterfaceTest {
     Player receiver = new Player();
     receiver.setPlayerID(UUID.nameUUIDFromBytes(receiverName.getBytes()));
     receiver.setPlayerName(receiverName);
-    
-    ChatMessage m = new ChatMessage(p, textMessage, receiverName);
-    cli.displayChatMessage(m);
 
-    final String expectedString = String.format(CLIStrings.messageString, playerName, textMessage);
-    assertOutput(OutputLevel.CHAT, expectedString);
+    try (MockedStatic<Client> clientMock = Mockito.mockStatic(Client.class)) {
+      AbstractPlayerConnector pc = Mockito.mock(AbstractPlayerConnector.class);
+      clientMock.when(Client::getPlayerConnector).thenReturn(pc);
+      Mockito.when(pc.getPlayer()).thenReturn(receiver);
+
+      ChatMessage m = new ChatMessage(p, textMessage, receiverName);
+      cli.displayChatMessage(m);
+
+      final String expectedString = cli.getFormattedChatMessage(m);
+      assertOutput(OutputLevel.CHAT, expectedString);
+    }
   }
 
   @Test
@@ -202,7 +226,7 @@ public class CommandLineInterfaceTest {
     Player p = new Player();
     p.setPlayerID(UUID.nameUUIDFromBytes(playerName.getBytes()));
     p.setPlayerName(playerName);
-    
+
     ChatMessage m = new ChatMessage(p, textMessage);
     cli.displayChatMessage(m);
 

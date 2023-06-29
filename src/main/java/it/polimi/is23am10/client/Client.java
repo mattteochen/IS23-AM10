@@ -160,6 +160,11 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
   protected static IPlayerConnector playerConnector;
 
   /**
+   * Maximum player name length.
+   */
+  private final Integer MAX_PLAYER_NAME_LENGTH = 15;
+
+  /**
    * Retrieve the player connector intance.
    *
    * @return The {@link IPlayerConnector}.
@@ -606,6 +611,9 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
     String selectedPlayerName = userInterface.getUserInput();
     if (selectedPlayerName != null) {
       selectedPlayerName = selectedPlayerName.stripLeading().split(" ")[0];
+      if (selectedPlayerName.length() > MAX_PLAYER_NAME_LENGTH){
+        selectedPlayerName = selectedPlayerName.substring(0, MAX_PLAYER_NAME_LENGTH);
+      }
       try {
         setConnectorPlayer(selectedPlayerName);
       } catch (NullPlayerNameException | NullPlayerIdException e) {
