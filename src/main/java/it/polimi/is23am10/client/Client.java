@@ -8,6 +8,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+
+import it.polimi.is23am10.client.exceptions.ForceCloseApplicationException;
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
@@ -93,6 +95,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    * @param pc Player connector.
    * @param ui User interface.
    * @throws UnknownHostException On localhost retrieval failure.
+   * @throws RemoteException
    */
   protected Client(IPlayerConnector pc, UserInterface ui)
       throws UnknownHostException, RemoteException {
@@ -106,6 +109,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
     requestedDisconnection = false;
     alarm = new Timer();
     clientStatus = ClientGameStatus.INIT;
+    forceCloseApplication = false;
   }
 
   /**
@@ -123,6 +127,9 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
 
   /** Clean disconnection request. */
   protected boolean requestedDisconnection;
+
+  /** Force application close request, for example when gui is closed. */
+  protected static boolean forceCloseApplication;
 
   /** Duplicate name error flag. */
   private boolean hasDuplicateName;
@@ -151,6 +158,11 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    * snapshots, chat messages)
    */
   protected static IPlayerConnector playerConnector;
+
+  /**
+   * Maximum player name length.
+   */
+  private final Integer MAX_PLAYER_NAME_LENGTH = 15;
 
   /**
    * Retrieve the player connector intance.
@@ -194,6 +206,17 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    */
   protected boolean hasRequestedDisconnection() {
     return requestedDisconnection;
+  }
+
+  /**
+   * Set a force close application request.
+   * This method is defined as static as JavaFX thread must have access.
+   *
+   * @param flag The request flag.
+   *
+   */
+  public static void setForceCloseApplication(boolean flag) {
+    forceCloseApplication = flag;
   }
 
   /**
@@ -276,7 +299,11 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
     }
   }
 
-  /** GameIdRef getter. */
+  /**
+   * Game id ref getter.
+   * 
+   * @return game id.
+   */
   protected UUID getGameIdRef() {
     synchronized (gameRefLock) {
       return gameIdRef;
@@ -334,7 +361,11 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
     }
   }
 
-  /** Virtual view setter. */
+  /**
+   * Virtual view setter.
+   * 
+   * @param vv virtual view to set.
+   */
   protected void setVirtualView(VirtualView vv) {
     synchronized (virtualViewLock) {
       this.virtualView = vv;
@@ -427,7 +458,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    *
    * @param name The player name.
    * @throws NullPlayerIdException
-   * @throws NullPlayerIdException
+   * @throws NullPlayerNameException
    */
   protected void setConnectorPlayer(String name)
       throws NullPlayerNameException, NullPlayerIdException {
@@ -482,7 +513,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
           }
           break;
         case "logout":
-          terminateClient();
+          setForceCloseApplication(true);
           break;
         case "move":
           if (getVirtualView() == null) {
@@ -588,6 +619,9 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
     String selectedPlayerName = userInterface.getUserInput();
     if (selectedPlayerName != null) {
       selectedPlayerName = selectedPlayerName.stripLeading().split(" ")[0];
+      if (selectedPlayerName.length() > MAX_PLAYER_NAME_LENGTH){
+        selectedPlayerName = selectedPlayerName.substring(0, MAX_PLAYER_NAME_LENGTH);
+      }
       try {
         setConnectorPlayer(selectedPlayerName);
       } catch (NullPlayerNameException | NullPlayerIdException e) {
@@ -704,9 +738,15 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    * @throws IOException
    * @throws NullPlayerIdException
    * @throws InterruptedException
+   * @throws ForceCloseApplicationException
    */
   protected void clientRunnerCore()
-      throws IOException, InterruptedException, NullPlayerIdException {
+      throws IOException, InterruptedException, NullPlayerIdException, ForceCloseApplicationException {
+
+    //this flag is raised by external threads, as JavaFX
+    if (forceCloseApplication) {
+      throw new ForceCloseApplicationException();
+    }
 
     Player connectorPlayer;
     UUID connectorGameId;

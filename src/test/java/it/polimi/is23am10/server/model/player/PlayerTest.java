@@ -25,7 +25,6 @@ import it.polimi.is23am10.server.model.items.card.exceptions.NullScoreBlockListE
 import it.polimi.is23am10.server.model.items.scoreblock.ScoreBlock;
 import it.polimi.is23am10.server.model.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.server.model.pattern.PrivatePattern;
-import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;

@@ -1,5 +1,6 @@
 package it.polimi.is23am10.client;
 
+import it.polimi.is23am10.client.exceptions.ForceCloseApplicationException;
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.command.AddPlayerCommand;
@@ -146,6 +147,13 @@ public class SocketClient extends Client {
                 ErrorSeverity.CRITICAL));
         terminateClient();
         return;
+      } catch (ForceCloseApplicationException e) {
+        terminateClient();
+        //close the socket to unbock the buffer reader thread, that may be in a blocked state
+        try {
+          ((PlayerConnectorSocket) playerConnector).getConnector().close();
+        } catch(IOException socketException) {}
+        return;
       }
     }
   }
@@ -275,14 +283,20 @@ public class SocketClient extends Client {
                 }
               }
             } catch (IOException | NullPointerException e) {
-              userInterface.displayError(
-                  new ErrorMessage(
-                      "Internal module error, please report this message:" + e.getMessage(),
-                      ErrorSeverity.ERROR));
+              //notify this only if the error is not raised by a wanted action
+              if (!forceCloseApplication) {
+                userInterface.displayError(
+                    new ErrorMessage(
+                        "Internal module error, please report this message:" + e.getMessage(),
+                        ErrorSeverity.ERROR));
+              }
+              if (!hasRequestedDisconnection()) {
+                terminateClient();
+                return;
+              }
             }
           }
         });
     messageHandler.start();
   }
-
 }

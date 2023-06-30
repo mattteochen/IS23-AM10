@@ -3,7 +3,6 @@ package it.polimi.is23am10.server.controller;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import it.polimi.is23am10.server.command.AbstractCommand;
@@ -41,7 +40,6 @@ import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
-import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.Coordinates;
 import it.polimi.is23am10.utils.ErrorTypeString;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
@@ -49,7 +47,6 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -57,7 +54,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -487,15 +483,11 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
       InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, FullGameException,
       NotValidScoreBlockValueException, PlayerNotFoundException, NullGameHandlerInstance, InterruptedException {
 
-    Socket mockSocket = new Socket();
-    AbstractPlayerConnector playerConnector = new PlayerConnectorSocket(mockSocket, new LinkedBlockingQueue<>());
 
     GameHandler h1 = new GameHandler("bob", 2);
     GameHandler h2 = new GameHandler("frank zappa", 3);
     GameHandler h3 = new GameHandler("nicoletta", 4);
 
-    List<VirtualView> availableGames = List.of(new VirtualView(h1.getGame()), new VirtualView(h2.getGame()),
-        new VirtualView(h3.getGame()));
 
     ServerControllerState.addGameHandler(h1);
     ServerControllerState.addGameHandler(h2);
@@ -526,9 +518,6 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
 
     // Adding one more player makes the game full, therefore unavailable
     h1.getGame().addPlayer("giovanni");
-
-    List<VirtualView> availableGames = List.of(new VirtualView(h2.getGame()),
-        new VirtualView(h3.getGame()));
 
     ServerControllerState.addGameHandler(h1);
     ServerControllerState.addGameHandler(h2);
@@ -600,9 +589,6 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
 
     Map<Coordinates, Coordinates> moves = new HashMap<>();
     moves.put(new Coordinates(1, 15), new Coordinates(5, 0));
-    AbstractCommand move = new MoveTilesCommand(
-      handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max",
-      handler.getGame().getGameId(), moves);
     assertFalse(handler.getGame().getGameBoard().getTileAt(1, 3).isEmpty());
     playerConnector.getPlayer().setPlayerName(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve" : "Max");
     playerConnector.getPlayer().setPlayerID(UUID.nameUUIDFromBytes(handler.getGame().getActivePlayer().getPlayerName().equals("Steve") ? "Steve".getBytes() : "Max".getBytes()));
@@ -628,7 +614,6 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
   }
 
   @Test
-  @Disabled
   void SNOOZE_TIMER_CONSUMER_should_NOT_SNOOZE_UNKNOWN_PLAYER_TIMER()
       throws NullSocketConnectorException, NullBlockingQueueException, InterruptedException {
     Socket socket = new Socket();
@@ -636,13 +621,13 @@ void GET_AVAILABLE_GAMES_RMI_should_return_gameList()
     AbstractCommand cmd = new StartGameCommand("Steve", 2);
     AbstractCommand snoozecmd = new SnoozeGameTimerCommand("Stevee");
 
-    long snooze1 = playerConnector.getLastSnoozeMs();
     serverControllerAction.startConsumer.accept(logger, playerConnector, cmd);
+    long snooze1 = playerConnector.getLastSnoozeMs();
 
     Thread.sleep(1000);
 
     serverControllerAction.snoozeTimerConsumer.accept(logger, playerConnector, snoozecmd);
     long snooze2 = playerConnector.getLastSnoozeMs();
-    assertTrue(snooze2 == snooze1);
+    assertEquals(snooze2 , snooze1);
   }
 }

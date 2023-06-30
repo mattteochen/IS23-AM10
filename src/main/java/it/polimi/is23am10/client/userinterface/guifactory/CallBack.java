@@ -1,7 +1,6 @@
 package it.polimi.is23am10.client.userinterface.guifactory;
 
 import it.polimi.is23am10.client.userinterface.GraphicUserInterface;
-import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory.SCENE;
 import it.polimi.is23am10.client.userinterface.guifactory.interfaces.BookShelfSelectionCallBack;
 import it.polimi.is23am10.client.userinterface.guifactory.interfaces.ButtonCallBack;

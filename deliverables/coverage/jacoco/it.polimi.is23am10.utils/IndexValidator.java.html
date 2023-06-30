@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IndexValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.utils</a> &gt; <span class="el_source">IndexValidator.java</span></div><h1>IndexValidator.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.utils;
+
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+
+/**
+ * Index validator class definition.
+ * 
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ * 
+ */
+public final class IndexValidator {
+
+  /**
+   * Private constructor.
+   * 
+   */
+  private IndexValidator() {
+
+  }
+
+  /**
+   * Validate the row index.
+   * 
+   * @param row The index value to be evaluated.
+   * @return The validation result.
+   * @throws NullIndexValueException If the index provided is null.
+   * 
+   */
+  public static boolean validRowIndex(Integer row, Integer maxValue) throws NullIndexValueException {
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">    if (row == null) {</span>
+<span class="nc" id="L34">      throw new NullIndexValueException();</span>
+    }
+<span class="pc bpc" id="L36" title="1 of 4 branches missed.">    return row &gt;= 0 &amp;&amp; row &lt; maxValue;</span>
+  }
+
+  /**
+   * Validate the column index.
+   * 
+   * @param col The index value to be evaluated.
+   * @return The validation result.
+   * @throws NullIndexValueException If the index provided is null.
+   * 
+   */
+  public static boolean validColIndex(Integer col, Integer maxValue) throws NullIndexValueException {
+<span class="pc bpc" id="L48" title="1 of 2 branches missed.">    if (col == null) {</span>
+<span class="nc" id="L49">      throw new NullIndexValueException();</span>
+    }
+<span class="pc bpc" id="L51" title="1 of 4 branches missed.">    return col &gt;= 0 &amp;&amp; col &lt; maxValue;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

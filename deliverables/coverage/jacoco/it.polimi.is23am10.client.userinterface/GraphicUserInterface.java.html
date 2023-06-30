@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GraphicUserInterface.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.client.userinterface</a> &gt; <span class="el_source">GraphicUserInterface.java</span></div><h1>GraphicUserInterface.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.client.userinterface;
+
+import it.polimi.is23am10.client.Client;
+import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory;
+import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory.SCENE;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
+
+import java.io.Serializable;
+import java.util.List;
+
+import it.polimi.is23am10.server.network.messages.ChatMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
+import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+
+/**
+ * A VirtualView pair class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+class VirtualViewPair {
+  /**
+   * The new {@link VirtualView}.
+   */
+  VirtualView newVw;
+
+  /**
+   * The old {@link VirtualView}.
+   */
+  VirtualView oldVw;
+
+  /**
+   * Notify the receiver that this pair is intended to be treated as null.
+   */
+  boolean isNull;
+
+  /**
+   * Constructor.
+   *
+   * @param o The old {@link VirtualView} instance.
+   * @param n The new {@link VirtualView} instance.
+   * @param in The isNull flag.
+   *
+   */
+<span class="nc" id="L56">  public VirtualViewPair(VirtualView o, VirtualView n, boolean in) {</span>
+<span class="nc" id="L57">    newVw = n;</span>
+<span class="nc" id="L58">    oldVw = o;</span>
+<span class="nc" id="L59">    isNull = in;</span>
+<span class="nc" id="L60">  }</span>
+}
+
+<span class="nc" id="L63">class VirtualViewSceneHandler {</span>
+
+  /**
+   * Custom lock object.
+   */
+<span class="nc" id="L68">  private static final Object stopGameSnapshotHandlerLock = new Object();</span>
+
+  /**
+   * A list {@link VirtualViewPair} to be shown.
+   */
+<span class="nc" id="L73">  private static final BlockingQueue&lt;VirtualViewPair&gt; gameSnapshots = new LinkedBlockingQueue&lt;VirtualViewPair&gt;();</span>
+
+  /**
+   * Boolean flag to stop the game scene handler thread.
+   */
+<span class="nc" id="L78">  private static boolean stopGameSnapshotHandler = false;</span>
+
+  /**
+   * Setter for {@link VirtualViewSceneHandler#stopGameSnapshotHandler}
+   *
+   * @param flag The flag to be set.
+   */
+  protected static void setStopGameSnapshotHandler(boolean flag) {
+<span class="nc" id="L86">    synchronized(stopGameSnapshotHandlerLock) {</span>
+<span class="nc" id="L87">      stopGameSnapshotHandler = flag;</span>
+<span class="nc" id="L88">    }</span>
+<span class="nc" id="L89">  }</span>
+
+  /**
+   * Getter for {@link VirtualViewSceneHandler#stopGameSnapshotHandler}
+   *
+   * @return The flag status.
+   */
+  protected static boolean getStopGameSnapshotHandler() {
+<span class="nc" id="L97">    synchronized(stopGameSnapshotHandlerLock) {</span>
+<span class="nc" id="L98">      return stopGameSnapshotHandler;</span>
+    }
+  }
+
+  /**
+   * Add a new {@link VirtualViewPair} object to the {@link VirtualViewSceneHandler#gameSnapshots}.
+   *
+   * @param vwp The {@link VirtualViewPair}.
+   */
+  protected static void addVirtualViewPair(VirtualViewPair vwp) {
+<span class="nc" id="L108">    gameSnapshots.add(vwp);</span>
+<span class="nc" id="L109">  }</span>
+
+  protected static void notifyVirtualViewPairQueue() {
+<span class="nc" id="L112">    gameSnapshots.notifyAll();</span>
+<span class="nc" id="L113">  }</span>
+
+  /**
+   * Run the game scene handler thread.
+   *
+   */
+  protected static void runGameSnapShotHandler() {
+<span class="nc" id="L120">    new Thread(() -&gt; {</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">      while(!getStopGameSnapshotHandler()) {</span>
+<span class="nc" id="L122">        VirtualViewPair vwp = null;</span>
+        try {
+<span class="nc" id="L124">          vwp = gameSnapshots.take();</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">          if (vwp != null) {</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">            if (vwp.isNull) {</span>
+<span class="nc" id="L127">              break;</span>
+            }
+<span class="nc bnc" id="L129" title="All 2 branches missed.">            if (vwp.newVw.getStatus() == GameStatus.ENDED) {</span>
+<span class="nc" id="L130">              GuiFactory.stages.put(SCENE.END_GAME, GuiFactory.getEndGameScene(vwp.newVw));</span>
+<span class="nc" id="L131">              GuiFactory.executeOnJavaFX(</span>
+<span class="nc" id="L132">                  () -&gt; GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.END_GAME)));</span>
+            } else {
+<span class="nc bnc" id="L134" title="All 2 branches missed.">              if (vwp.newVw.getStatus() == GameStatus.WAITING_FOR_PLAYERS) {</span>
+<span class="nc" id="L135">                GuiFactory.executeOnJavaFX(</span>
+<span class="nc" id="L136">                    () -&gt; GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.WAIT_GAME)));</span>
+              } else {
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                if (GuiFactory.stages.get(SCENE.GAME_SNAPSHOT) == null) {</span>
+<span class="nc" id="L139">                  GuiFactory.stages.put(SCENE.GAME_SNAPSHOT, GuiFactory.getGameSnapshotScene(vwp.newVw));</span>
+<span class="nc" id="L140">                  GuiFactory.executeOnJavaFX(</span>
+<span class="nc" id="L141">                      () -&gt; GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.GAME_SNAPSHOT)));</span>
+                } else {
+<span class="nc" id="L143">                  StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();</span>
+<span class="nc" id="L144">                  final VirtualView oldVw = vwp.oldVw;</span>
+<span class="nc" id="L145">                  final VirtualView newVw = vwp.newVw;</span>
+<span class="nc" id="L146">                  GuiFactory.executeOnJavaFX(() -&gt; GuiFactory.GameSnapshotFactory.updateGameWidget(root, oldVw, newVw));</span>
+                }
+              }
+            }
+          }
+<span class="nc" id="L151">        } catch(InterruptedException e) {</span>
+
+<span class="nc" id="L153">        } catch(NullPointerException e) {</span>
+
+<span class="nc" id="L155">        }</span>
+<span class="nc" id="L156">      }</span>
+<span class="nc" id="L157">    }).start();</span>
+<span class="nc" id="L158">  }</span>
+}
+
+/**
+ * A client interface using a graphic UI as I/O.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public final class GraphicUserInterface extends Application implements UserInterface, Serializable {
+
+  /**
+   * Queue containing all the inputs the user sent trough readline. Content to be
+   * consumed by client
+   * controller on premise.
+   */
+  private static final BlockingQueue&lt;String&gt; userInputQueue = new LinkedBlockingQueue&lt;&gt;();
+
+  /**
+   * Constructor.
+   */
+  public GraphicUserInterface() {
+    VirtualViewSceneHandler.runGameSnapShotHandler();
+  }
+
+  /**
+   * Add a new message to the input list queue.
+   *
+   * @param msg The message to be added.
+   */
+  public static void addMsgQueue(String msg) {
+    userInputQueue.add(msg);
+  }
+
+  /**
+   * Retrirve the head of the message queue.
+   *
+   * @return The oldest message.
+   */
+  public static String takeMsgQueue() {
+    try {
+      return userInputQueue.isEmpty() ? null : userInputQueue.take();
+    } catch (InterruptedException e) {
+      return null;
+    }
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void start(Stage stage) {
+    GuiFactory.mainStage = stage;
+    stage.setResizable(false);
+    Map&lt;SCENE, Scene&gt; m = Map.of(
+        SCENE.SPLASH_SCREEN, GuiFactory.getSplashScreenScene(),
+        SCENE.ENTER_GAME_SELECTION, GuiFactory.getEnterGameSelectionScene(),
+        SCENE.CREATE_GAME, GuiFactory.getCreateNewGameSelectionScene(),
+        SCENE.WAIT_GAME, GuiFactory.getWaitGameScene()
+    // some scenes require the {@link VirtualView}, they are built later
+    );
+    GuiFactory.stages.putAll(m);
+
+    stage.setTitle(&quot;MyShelfie - IS23AM10&quot;);
+    stage.setScene(GuiFactory.stages.get(SCENE.SPLASH_SCREEN));
+    stage.setOnCloseRequest(e -&gt; {
+      Client.setForceCloseApplication(true);
+      VirtualViewSceneHandler.addVirtualViewPair(new VirtualViewPair(null, null, true));
+      VirtualViewSceneHandler.setStopGameSnapshotHandler(true);
+    });
+    stage.show();
+  }
+
+  /** {@inheritDoc} */
+  public String getUserInput() {
+    return takeMsgQueue();
+  }
+
+  /** {@inheritDoc} */
+  public void displaySplashScreen() {
+    // this will perform javaFX init process and show the first scene
+    new Thread(() -&gt; {
+      launch();
+    }).start();
+  }
+
+  /** {@inheritDoc} */
+  public void displayAvailableGames(List&lt;VirtualView&gt; availableGames) {
+    GuiFactory.stages.put(
+        SCENE.JOIN_GAME, GuiFactory.getCreateJoinScene(Client.getActiveGameServers()));
+  }
+
+  //For RMI: This was the original implementation (with GUI update from remote calls), but it does have some functional issues.
+  //We are aware that the turnaround that we have chosen (to save the data and trigger the scene from another thread) does not reflect the RMI paradigm at 100%
+  //
+  // /** {@inheritDoc} */
+  // public void displayVirtualView(VirtualView old, VirtualView vw) {
+  //   if (vw.getStatus() == GameStatus.ENDED) {
+  //     GuiFactory.stages.put(SCENE.END_GAME, GuiFactory.getEndGameScene(vw));
+  //     GuiFactory.executeOnJavaFX(
+  //         () -&gt; GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.END_GAME)));
+  //   } else {
+  //     if (vw.getStatus() == GameStatus.WAITING_FOR_PLAYERS) {
+  //       GuiFactory.executeOnJavaFX(
+  //           () -&gt; GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.WAIT_GAME)));
+  //     } else {
+  //       if (GuiFactory.stages.get(SCENE.GAME_SNAPSHOT) == null) {
+  //         GuiFactory.stages.put(SCENE.GAME_SNAPSHOT, GuiFactory.getGameSnapshotScene(vw));
+  //         GuiFactory.executeOnJavaFX(
+  //             () -&gt; GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.GAME_SNAPSHOT)));
+  //       } else {
+  //         StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
+  //         GuiFactory.executeOnJavaFX(() -&gt; GuiFactory.GameSnapshotFactory.updateGameWidget(root, old, vw));
+  //       }
+  //     }
+  //   }
+  // }
+
+  /** {@inheritDoc} */
+  public void displayVirtualView(VirtualView old, VirtualView vw) {
+    VirtualViewSceneHandler.addVirtualViewPair(new VirtualViewPair(old, vw, false));
+  }
+
+  /** {@inheritDoc} */
+  public void displayChatMessage(ChatMessage message) {
+    StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
+    GuiFactory.executeOnJavaFX(
+        () -&gt; GuiFactory.GameSnapshotFactory.updateChatHistory(root, message));
+  }
+
+  /** {@inheritDoc}} */
+  public void displayError(ErrorMessage errorMessage) {
+    StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
+    if(errorMessage.getErrorSeverity() != ErrorSeverity.INFO){
+      GuiFactory.executeOnJavaFX(
+        () -&gt; GuiFactory.getErrorMessage(root, errorMessage)
+      );
+      if (errorMessage.getMessage().contains(&quot;You have been disconnected&quot;)) {
+        try {
+          Thread.sleep(2000);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        Client.setForceCloseApplication(true); 
+      }
+    } else {
+      GuiFactory.executeOnJavaFX(
+        () -&gt; GuiFactory.GameSnapshotFactory.updateChatHistory(root, errorMessage)
+      );
+    }
+  }
+
+  /** {@inheritDoc} */
+  public void terminateUserInterface() {
+    Platform.exit();
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void displayGameJoinGuide() {
+    GuiFactory.executeOnJavaFX(
+        () -&gt; GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.ENTER_GAME_SELECTION)));
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -63,26 +63,7 @@ Run the app with the following command line arguments:
 ---
 
 ## Development
-Project works fine as a stand-alone Maven project. Can be opened in any IDE, but a Docker container with ready-to-code extensions is also provided. If you want to use it follow these instructions:
-
-- Open the project with VSCode Developer Docker [Container](https://code.visualstudio.com/docs/devcontainers/containers), hence build the container (for MacOS users `cmd+shift+p` and type "Build Container").
-- There are two options to run tests:
-  - Use `Java Test Runner` extension: Enable Junit testing with `Java Test Runner` extension that you will find in the tool bar, it will ask you to choose the version to download, select `JUnit Jupiter`.
-  - Use Maven test runner embedded in the available plugin.
-
-### Code format
-Red Hat auto code formatter is available. Please run `cmd+shift+p` + `Format document with` and select `Red Hat` option before committing.
-Universal code format is required to maintain an unique format style.
-
-You can also enable live format compliance check with the `Checkstyle` [extension](https://marketplace.visualstudio.com/items?itemName=shengchen.vscode-checkstyle).
-Configuration:
-- `cmd+shift+p` + `Set the Checkstyle Version` -> select `built-in`
-- `cmd+shift+p` + `Set the Checkstyle Configuration File` -> select `Google's Style`
-`Checkstyle` should live check you code format.
-
-### Live bug checks
-Sonar lint extensions is available (auto enabled) to detect [issues](https://marketplace.visualstudio.com/items?itemName=SonarSource.sonarlint-vscode) during the development.
-Please follow all the best practices.
+Project works fine as a stand-alone Maven project.
 
 ### Generate Jacoco test coverage report
 To generate test coverage report launch JaCoCo with the following command from `<REPOSITORY_DIRECTORY>/is23am10`:

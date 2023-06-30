@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>/home/locav/IS23-AM10 (copia)/src/main/java/it/polimi/is23am10/client</OriginalElement>
+  <nodes>
+    <node x="456.5" y="446.0">it.polimi.is23am10.client.userinterface.helpers.OutputWrapper</node>
+    <node x="145.5" y="446.0">it.polimi.is23am10.client.userinterface.CommandLineInterface</node>
+    <node x="-267.5" y="446.0">it.polimi.is23am10.client.Client</node>
+    <node x="-77.0" y="446.0">it.polimi.is23am10.client.userinterface.UserInterface</node>
+    <node x="-324.5" y="286.0">it.polimi.is23am10.client.Client.MessageDeserializer</node>
+    <node x="-361.5" y="546.0">it.polimi.is23am10.client.RMIClient</node>
+    <node x="-429.5" y="446.0">it.polimi.is23am10.client.IClient</node>
+    <node x="-107.0" y="366.0">it.polimi.is23am10.client.userinterface.GraphicUserInterface</node>
+    <node x="-214.0" y="546.0">it.polimi.is23am10.client.SocketClient</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="it.polimi.is23am10.client.SocketClient" target="it.polimi.is23am10.client.Client" relationship="GENERALIZATION">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.Client" target="it.polimi.is23am10.client.IClient" relationship="REALIZATION">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.RMIClient" target="it.polimi.is23am10.client.Client" relationship="GENERALIZATION">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.Client.MessageDeserializer" target="it.polimi.is23am10.client.Client" relationship="INNER_CLASS">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.userinterface.CommandLineInterface" target="it.polimi.is23am10.client.userinterface.UserInterface" relationship="REALIZATION">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.Client" target="it.polimi.is23am10.client.userinterface.UserInterface" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.userinterface.GraphicUserInterface" target="it.polimi.is23am10.client.userinterface.UserInterface" relationship="REALIZATION">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+    <edge source="it.polimi.is23am10.client.userinterface.CommandLineInterface" target="it.polimi.is23am10.client.userinterface.helpers.OutputWrapper" relationship="TO_ONE">
+      <point x="0.0" y="-0.0" />
+      <point x="0.0" y="-0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="1.0" showDependencies="true" x="97.0" y="430.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

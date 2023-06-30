@@ -4,11 +4,8 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
-import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
-import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.score.Score;
-import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 
 /**
  * A virtual view with the state of a player, downscoped

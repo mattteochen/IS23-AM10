@@ -122,7 +122,6 @@ public final class Score implements Serializable {
    * extraPoint setter. Value can be only set to 1.
    * 
    */
-  // TODO: Check that extra points is given to only one player
   public void setExtraPoint() {
     this.extraPoint = 1;
   }

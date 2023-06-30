@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Board.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.model.items.board</a> &gt; <span class="el_source">Board.java</span></div><h1>Board.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.model.items.board;
+
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
+import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.server.model.items.tile.Tile;
+import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
+import it.polimi.is23am10.utils.IndexValidator;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+/**
+ * Game's board class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public class Board implements Serializable {
+
+  /**
+   * The allowed player values.
+   *
+   */
+<span class="fc" id="L32">  public static final List&lt;Integer&gt; allowedNumOfPlayers = Arrays.asList(2, 3, 4);</span>
+
+  /**
+   * The game board max row value.
+   * 
+   */
+<span class="fc" id="L38">  public static final Integer BOARD_GRID_ROWS = 9;</span>
+
+  /**
+   * The game board max col value.
+   * 
+   */
+<span class="fc" id="L44">  public static final Integer BOARD_GRID_COLS = 9;</span>
+
+  /**
+   * The number of tiles for each {@link TileType}.
+   * 
+   */
+<span class="fc" id="L50">  public static final Integer TILE_TYPE_NUM = 22;</span>
+
+  /**
+   * The number of players of the current grid.
+   * 
+   */
+  private Integer numOfPlayers;
+
+  /**
+   * A fixed 2d array referencing the physical grid instance.
+   * 
+   */
+  private Tile[][] boardGrid;
+
+  /**
+   * A fixed 2d array referencing a weight for each boardGrid cell.
+   * Each value represents the minimum number of players needed to get that square
+   * filled.
+   * 
+   * &lt;ul&gt;
+   * &lt;li&gt;Values &gt;4 are meant for squares out of the board
+   * &lt;li&gt;Values &lt;3 instead will always be filled
+   * &lt;/ul&gt;
+   */
+<span class="fc" id="L74">  private static final Integer[][] blackMap = {</span>
+      {
+<span class="fc" id="L76">          9, 9, 9, 3, 4, 9, 9, 9, 9</span>
+      },
+      {
+<span class="fc" id="L79">          9, 9, 9, 2, 2, 4, 9, 9, 9</span>
+      },
+      {
+<span class="fc" id="L82">          9, 9, 3, 2, 2, 2, 3, 9, 9</span>
+      },
+      {
+<span class="fc" id="L85">          9, 4, 2, 2, 2, 2, 2, 2, 3</span>
+      },
+      {
+<span class="fc" id="L88">          4, 2, 2, 2, 2, 2, 2, 2, 4</span>
+      },
+      {
+<span class="fc" id="L91">          3, 2, 2, 2, 2, 2, 2, 4, 9</span>
+      },
+      {
+<span class="fc" id="L94">          9, 9, 3, 2, 2, 2, 3, 9, 9</span>
+      },
+      {
+<span class="fc" id="L97">          9, 9, 9, 4, 2, 2, 9, 9, 9</span>
+      },
+      {
+<span class="fc" id="L100">          9, 9, 9, 9, 4, 3, 9, 9, 9</span>
+      }
+  };
+
+  /**
+   * A list containing the available tiles.
+   * 
+   */
+  private List&lt;Tile&gt; tileSack;
+
+  /**
+   * Constructor.
+   * 
+   * @param numOfPlayers The current game instance number of players.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
+   */
+  public Board(Integer numOfPlayers)
+<span class="fc" id="L118">      throws InvalidNumOfPlayersException, NullNumOfPlayersException {</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">    if (!validNumOfPlayers(numOfPlayers)) {</span>
+<span class="fc" id="L120">      throw new InvalidNumOfPlayersException(numOfPlayers);</span>
+    }
+    /**
+     * Save a reference about the current number of players.
+     * 
+     */
+<span class="fc" id="L126">    this.numOfPlayers = numOfPlayers;</span>
+<span class="fc" id="L127">    this.boardGrid = new Tile[BOARD_GRID_ROWS][BOARD_GRID_COLS];</span>
+
+<span class="fc" id="L129">    createInitialTileSack();</span>
+
+<span class="fc" id="L131">    fillBoardGrid();</span>
+<span class="fc" id="L132">  }</span>
+
+  /**
+   * Copy constructor for Board.
+   * 
+   * @param toCopy board to copy
+   */
+<span class="fc" id="L139">  public Board(Board toCopy) {</span>
+<span class="fc" id="L140">    numOfPlayers = toCopy.numOfPlayers;</span>
+<span class="fc" id="L141">    boardGrid = Arrays.stream(toCopy.boardGrid)</span>
+<span class="fc" id="L142">        .map(Tile[]::clone)</span>
+<span class="fc" id="L143">        .toArray(Tile[][]::new);</span>
+<span class="fc" id="L144">    tileSack = toCopy.tileSack.stream().map(Tile::new).collect(Collectors.toList());</span>
+<span class="fc" id="L145">  }</span>
+
+  /**
+   * Validate the number of players.
+   * 
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null..
+   */
+  private boolean validNumOfPlayers(Integer numOfPlayers) throws NullNumOfPlayersException {
+<span class="fc bfc" id="L153" title="All 2 branches covered.">    if (numOfPlayers == null) {</span>
+<span class="fc" id="L154">      throw new NullNumOfPlayersException();</span>
+    }
+<span class="fc" id="L156">    return allowedNumOfPlayers.contains(numOfPlayers);</span>
+  }
+
+  /**
+   * Extract a tile from the sack.
+   * This mutate the sack list.
+   * 
+   * @return The extracted tile.
+   * 
+   */
+  public Tile getTileFromSack() throws IndexOutOfBoundsException {
+<span class="fc" id="L167">    Tile tile = tileSack.get(tileSack.size() - 1);</span>
+<span class="fc" id="L168">    tileSack.remove(tileSack.size() - 1);</span>
+<span class="fc" id="L169">    return tile;</span>
+  }
+
+  /**
+   * Create the board tile sack.
+   * The complete sack has 22 tiles for each {@link TileType}.
+   * 
+   */
+  private void createInitialTileSack() {
+<span class="fc" id="L178">    tileSack = Stream.of(TileType.values())</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        .filter(t -&gt; !t.equals(TileType.EMPTY))</span>
+<span class="fc" id="L180">        .map(t -&gt; Stream.generate(() -&gt; new Tile(t)).limit(TILE_TYPE_NUM))</span>
+<span class="fc" id="L181">        .flatMap(stream -&gt; stream)</span>
+<span class="fc" id="L182">        .collect(Collectors.toList());</span>
+
+<span class="fc" id="L184">    Collections.shuffle(tileSack);</span>
+<span class="fc" id="L185">  }</span>
+
+  /**
+   * Fill the board grid based on the current player number.
+   * Note that this method works both when first filling the
+   * board AND when re-filling it partially mid-game.
+   * 
+   */
+  private void fillBoardGrid() throws IndexOutOfBoundsException {
+<span class="fc bfc" id="L194" title="All 2 branches covered.">    for (int i = 0; i &lt; Board.BOARD_GRID_ROWS; i++) {</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">      for (int j = 0; j &lt; Board.BOARD_GRID_COLS; j++) {</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if (blackMap[i][j] &lt;= numOfPlayers) {</span>
+<span class="fc bfc" id="L197" title="All 4 branches covered.">          if (boardGrid[i][j] == null || (boardGrid[i][j].getType().equals(TileType.EMPTY))) {</span>
+<span class="fc" id="L198">            boardGrid[i][j] = getTileFromSack();</span>
+          }
+        } else {
+<span class="fc" id="L201">          boardGrid[i][j] = new Tile(TileType.EMPTY);</span>
+        }
+      }
+    }
+<span class="fc" id="L205">  }</span>
+
+  /**
+   * boardGrid getter.
+   * 
+   * @return The board grid.
+   * 
+   */
+  public Tile[][] getBoardGrid() {
+<span class="fc" id="L214">    return boardGrid;</span>
+  }
+
+  /**
+   * Retrieve the number of tiles remained inside the sack.
+   * 
+   * @return The remained tiles inside the sack.
+   * 
+   */
+  public Integer getTileSackSize() {
+<span class="fc" id="L224">    return tileSack.size();</span>
+  }
+
+  /**
+   * View the tile in a specific board position.
+   * 
+   * @param row The row index.
+   * @param col The column index.
+   * @return The requested tile.
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * 
+   */
+  public Tile getTileAt(Integer row, Integer col)
+      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+<span class="fc bfc" id="L240" title="All 2 branches covered.">    if (!IndexValidator.validColIndex(col, Board.BOARD_GRID_COLS)) {</span>
+<span class="fc" id="L241">      throw new BoardGridColIndexOutOfBoundsException(col);</span>
+    }
+<span class="fc bfc" id="L243" title="All 2 branches covered.">    if (!IndexValidator.validRowIndex(row, Board.BOARD_GRID_ROWS)) {</span>
+<span class="fc" id="L244">      throw new BoardGridRowIndexOutOfBoundsException(row);</span>
+    }
+<span class="fc" id="L246">    return boardGrid[row][col];</span>
+  }
+
+  /**
+   * View the tile in a specific black map position.
+   * 
+   * @param row The row index.
+   * @param col The column index.
+   * @return The black map value.
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * 
+   */
+  public Integer getBlackMapAt(Integer row, Integer col)
+      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+<span class="fc bfc" id="L262" title="All 2 branches covered.">    if (!IndexValidator.validColIndex(col, Board.BOARD_GRID_COLS)) {</span>
+<span class="fc" id="L263">      throw new BoardGridColIndexOutOfBoundsException(col);</span>
+    }
+<span class="fc bfc" id="L265" title="All 2 branches covered.">    if (!IndexValidator.validRowIndex(row, Board.BOARD_GRID_ROWS)) {</span>
+<span class="fc" id="L266">      throw new BoardGridRowIndexOutOfBoundsException(row);</span>
+    }
+<span class="fc" id="L268">    return blackMap[row][col];</span>
+  }
+
+  /**
+   * Support method that removes a tile
+   * 
+   * @param row row index of removed tile
+   * @param col col index of removed tile
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   */
+  public void removeTileAt(Integer row, Integer col)
+      throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException, NullIndexValueException {
+<span class="pc bpc" id="L282" title="1 of 2 branches missed.">    if (!IndexValidator.validColIndex(col, Board.BOARD_GRID_COLS)) {</span>
+<span class="nc" id="L283">      throw new BoardGridColIndexOutOfBoundsException(col);</span>
+    }
+<span class="pc bpc" id="L285" title="1 of 2 branches missed.">    if (!IndexValidator.validRowIndex(row, Board.BOARD_GRID_ROWS)) {</span>
+<span class="nc" id="L286">      throw new BoardGridRowIndexOutOfBoundsException(row);</span>
+    }
+<span class="fc" id="L288">    boardGrid[row][col] = new Tile(TileType.EMPTY);</span>
+<span class="fc" id="L289">  }</span>
+
+  /**
+   * Retrieve the tile in a specific board position.
+   * This method removes the returned tile from the sack.
+   * 
+   * @param row The row index.
+   * @param col The column index.
+   * @return The requested tile.
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * 
+   */
+  public Tile takeTileAt(Integer row, Integer col)
+      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+<span class="fc bfc" id="L305" title="All 2 branches covered.">    if (!IndexValidator.validColIndex(col, Board.BOARD_GRID_COLS)) {</span>
+<span class="fc" id="L306">      throw new BoardGridColIndexOutOfBoundsException(col);</span>
+    }
+<span class="fc bfc" id="L308" title="All 2 branches covered.">    if (!IndexValidator.validRowIndex(row, Board.BOARD_GRID_ROWS)) {</span>
+<span class="fc" id="L309">      throw new BoardGridRowIndexOutOfBoundsException(row);</span>
+    }
+<span class="fc" id="L311">    Tile tile = boardGrid[row][col];</span>
+<span class="fc" id="L312">    boardGrid[row][col] = new Tile(TileType.EMPTY);</span>
+<span class="fc" id="L313">    return tile;</span>
+  }
+
+  /**
+   * Helper method used to determine if the board should be refilled or not.
+   * 
+   * @return Should board be refilled.
+   */
+  public boolean isRefillNeeded() {
+<span class="fc bfc" id="L322" title="All 2 branches covered.">    for (int i = 0; i &lt; Board.BOARD_GRID_ROWS; i++) {</span>
+<span class="fc bfc" id="L323" title="All 2 branches covered.">      for (int j = 0; j &lt; Board.BOARD_GRID_COLS; j++) {</span>
+<span class="fc bfc" id="L324" title="All 4 branches covered.">        if (boardGrid[i][j].getType() != TileType.EMPTY</span>
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">            &amp;&amp; ((i &gt; 0 &amp;&amp; boardGrid[i - 1][j].getType() != TileType.EMPTY) ||</span>
+<span class="fc bfc" id="L326" title="All 6 branches covered.">                (i &lt; Board.BOARD_GRID_ROWS - 1 &amp;&amp; boardGrid[i + 1][j].getType() != TileType.EMPTY) ||</span>
+<span class="pc bpc" id="L327" title="1 of 2 branches missed.">                (j &gt; 0 &amp;&amp; boardGrid[i][j - 1].getType() != TileType.EMPTY) ||</span>
+<span class="pc bpc" id="L328" title="1 of 4 branches missed.">                (j &lt; Board.BOARD_GRID_COLS - 1 &amp;&amp; boardGrid[i][j + 1].getType() != TileType.EMPTY))) {</span>
+<span class="fc" id="L329">          return false;</span>
+        }
+      }
+    }
+<span class="fc" id="L333">    return true;</span>
+  }
+
+  /**
+   * Method called at the end of the turn that
+   * checks if the Board needs to be refilled
+   * and proceeds if so.
+   */
+  public void refillIfNeeded() throws IndexOutOfBoundsException {
+<span class="fc bfc" id="L342" title="All 2 branches covered.">    if (isRefillNeeded()) {</span>
+<span class="fc" id="L343">      fillBoardGrid();</span>
+    }
+<span class="fc" id="L345">  }</span>
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public boolean equals(Object obj) {
+<span class="pc bpc" id="L353" title="1 of 2 branches missed.">    if (!(obj instanceof Board)) {</span>
+<span class="nc" id="L354">      return false;</span>
+    }
+<span class="fc" id="L356">    Board brd = (Board) obj;</span>
+<span class="pc bpc" id="L357" title="1 of 2 branches missed.">    if (numOfPlayers != brd.numOfPlayers) {</span>
+<span class="nc" id="L358">      return false;</span>
+    }
+<span class="pc bpc" id="L360" title="2 of 4 branches missed.">    return (Arrays.deepEquals(boardGrid, brd.boardGrid) &amp;&amp; tileSack.equals(brd.tileSack));</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public int hashCode() {
+<span class="nc" id="L369">    return numOfPlayers.hashCode() * boardGrid.hashCode() * tileSack.hashCode();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

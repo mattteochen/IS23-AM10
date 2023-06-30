@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClientConnectionChecker.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.controller</a> &gt; <span class="el_source">ClientConnectionChecker.java</span></div><h1>ClientConnectionChecker.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.controller;
+
+import java.rmi.RemoteException;
+import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.card.exceptions.NegativeMatchedBlockCountException;
+import it.polimi.is23am10.server.model.items.card.exceptions.NullMatchedBlockCountException;
+import it.polimi.is23am10.server.model.items.card.exceptions.NullScoreBlockListException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
+import it.polimi.is23am10.server.network.gamehandler.CurrentPlayerHandler;
+import it.polimi.is23am10.server.network.gamehandler.GameHandler;
+import it.polimi.is23am10.server.network.gamehandler.exceptions.GameSnapshotUpdateException;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
+import it.polimi.is23am10.utils.ErrorTypeString;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+
+/**
+ * The server client connection checker class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+@SuppressWarnings({ &quot;checkstyle:nonemptyatclausedescriptioncheck&quot; })
+public final class ClientConnectionChecker implements Runnable {
+
+  /**
+   * The logger, an instance of {@link Logger}.
+   *
+   */
+<span class="fc" id="L40">  protected Logger logger = LogManager.getLogger(ClientConnectionChecker.class);</span>
+  
+  /**
+   * The connected players.
+   *
+   */
+  protected Set&lt;AbstractPlayerConnector&gt; pcs;
+
+  /**
+   * The acive game handlers.
+   *
+   */
+  protected Set&lt;GameHandler&gt; ghs;
+
+  /**
+   * The max connection snoozer miss time: 15 seconds.
+   * This is 3 times the client snooze frequency.
+   *
+   */
+<span class="fc" id="L59">  protected final long MAX_SNOOZE_TIMEOUT_MS = 1000 * 15;</span>
+
+  /**
+   * The max game turn inactivity time.
+   *
+   */
+  protected long MAX_TURN_INACTIVITY_MS;
+
+  /**
+   * Constructor.
+   *
+   * @param maxTurnInactivityTimeMs the max configured game turn inactivity time in ms.
+   *
+   */
+<span class="fc" id="L73">  public ClientConnectionChecker(long maxTurnInactivityTimeMs) {</span>
+<span class="fc" id="L74">    MAX_TURN_INACTIVITY_MS = maxTurnInactivityTimeMs;</span>
+<span class="fc" id="L75">  }</span>
+
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  public void run() {
+    while(true) {
+      try {
+<span class="nc" id="L86">        checkAllPlayers();</span>
+<span class="nc" id="L87">        checkActivePlayersInactivity();</span>
+<span class="nc" id="L88">        Thread.sleep(5000);</span>
+<span class="nc" id="L89">      } catch (GameSnapshotUpdateException e) {</span>
+        // Logging as fatal here as it's failing to send a game snapshot. Other
+        // message delivery failures will be considered errors.
+<span class="nc" id="L92">        logger.fatal(&quot;{} {} {}&quot;,</span>
+            ServerDebugPrefixString.START_COMMAND_PREFIX,
+            ErrorTypeString.ERROR_UPDATING_GAME, e);
+        // Not adding the error here since it will not be possible to be sent
+        // to player if it already failed delivering a game.
+<span class="nc" id="L97">      } catch (InterruptedException e) {</span>
+<span class="nc" id="L98">        logger.error(e.getMessage());</span>
+<span class="nc" id="L99">      }</span>
+    } 
+  }
+
+  /**
+   * Advance the game state if an active player has been disconnected.
+   *
+   * @param pc the disconnected player connector reference.
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
+   * @throws NullPointerException Generic NPE.
+   * @throws InterruptedException Thread interruption exception.
+   * @throws NullGameHandlerInstance If it is not possible to retrieve a game handler referece by id.
+   * @throws GameSnapshotUpdateException If not able to push game update.
+   *
+   */
+  protected void advanceGame(AbstractPlayerConnector pc)
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+      NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException, NullPointerException,
+      NullMatchedBlockCountException, NegativeMatchedBlockCountException, InterruptedException, NullGameHandlerInstance, GameSnapshotUpdateException {
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">    if (pc == null) {</span>
+<span class="nc" id="L125">      logger.error(&quot;Can not advance the game state after the active player disconnection, null player connector received&quot;);</span>
+<span class="nc" id="L126">      return;</span>
+    }
+    //call next turn if the disconnected player is the active player
+<span class="fc" id="L129">    GameHandler handlerRef = ServerControllerState.getGameHandlerByUUID(pc.getGameId());</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">    if (handlerRef.getGame().getActivePlayer().equals(pc.getPlayer())) {</span>
+<span class="fc" id="L131">      handlerRef.getGame().nextTurn();</span>
+<span class="fc" id="L132">      handlerRef.pushGameState();</span>
+<span class="fc" id="L133">      handlerRef.updateCurrentPlayerHandler();</span>
+    }
+<span class="fc" id="L135">  }</span>
+
+  /**
+   * Perform connection check on all connected players.
+   * @throws GameSnapshotUpdateException
+   *
+   */
+  protected void checkAllPlayers() throws GameSnapshotUpdateException {
+    try {
+<span class="fc" id="L144">      pcs = ServerControllerState.getPlayersPool();</span>
+<span class="fc" id="L145">      synchronized(pcs) {</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">        for (AbstractPlayerConnector pc : pcs) {</span>
+<span class="pc bpc" id="L147" title="1 of 4 branches missed.">          if (pc.getPlayer().getIsConnected() &amp;&amp; expired(pc.getLastSnoozeMs(), System.currentTimeMillis(), MAX_SNOOZE_TIMEOUT_MS)) {</span>
+<span class="fc" id="L148">            logger.warn(&quot;Detected connection loss for {}, disconnecting the player&quot;, pc.getPlayer().getPlayerName());</span>
+<span class="fc" id="L149">            pc.getPlayer().setIsConnected(false);</span>
+
+            //call next turn if the disconnected player is the active player
+<span class="fc" id="L152">            advanceGame(pc);</span>
+          }
+<span class="fc" id="L154">        }</span>
+<span class="fc" id="L155">      }</span>
+<span class="nc" id="L156">    } catch(</span>
+      NullGameHandlerInstance | BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
+      | NullIndexValueException | NullPlayerBookshelfException | NullScoreBlockListException | NullPointerException
+      | NullMatchedBlockCountException | NegativeMatchedBlockCountException e) {
+<span class="nc" id="L160">      logger.error(&quot;{} {}&quot;, ErrorTypeString.ERROR_GAME_STATE, e);</span>
+<span class="nc" id="L161">    } catch(InterruptedException e) {</span>
+<span class="nc" id="L162">      logger.error(&quot;{} {}&quot;, ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);</span>
+<span class="pc" id="L163">    }</span>
+<span class="fc" id="L164">  }</span>
+
+  /**
+   * Perform activity check on all the active players across all games.
+   * @throws GameSnapshotUpdateException
+   *
+   */
+  protected void checkActivePlayersInactivity() throws GameSnapshotUpdateException {
+    try {
+<span class="fc" id="L173">      ghs = ServerControllerState.getGamePools();</span>
+<span class="fc" id="L174">      synchronized(ghs) {</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        for (GameHandler gh : ghs) {</span>
+<span class="fc" id="L176">          CurrentPlayerHandler h = gh.getCurrentPlayerHandler();</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">          if (h.getPlayer().getIsConnected()</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">            &amp;&amp; expired(</span>
+<span class="fc" id="L179">              h.getStartPlayingTimeMs(),</span>
+<span class="fc" id="L180">              System.currentTimeMillis(), MAX_TURN_INACTIVITY_MS)  </span>
+          ) {
+<span class="fc" id="L182">            AbstractPlayerConnector connectorRef = gh.getPlayerConnectorFromPlayer(h.getPlayer());</span>
+            //already notified, perform disconnectoion
+<span class="fc bfc" id="L184" title="All 2 branches covered.">            if (h.getNotified()) {</span>
+<span class="fc" id="L185">              logger.warn(&quot;Detected turn inactivity for {}, disconnecting the player&quot;, h.getPlayer().getPlayerName());</span>
+<span class="fc" id="L186">              h.getPlayer().setIsConnected(false);</span>
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">              if (connectorRef != null) {</span>
+<span class="fc" id="L188">                connectorRef.notify(new ErrorMessage(&quot;You have been disconnected due to inactivity&quot;, h.getPlayer(), ErrorSeverity.ERROR));</span>
+              } else {
+<span class="nc" id="L190">                logger.error(</span>
+                  &quot;{}: Failed to push warning message, can not find player connector from player&quot;, ErrorTypeString.ERROR_GAME_STATE);
+              }
+
+              //call next turn if the disconnected player is the active player
+<span class="fc" id="L195">              advanceGame(connectorRef);</span>
+            //notify disconnection warning
+            } else {
+<span class="fc" id="L198">              h.setNotified(true);</span>
+<span class="fc" id="L199">              h.setStartPlayingTimeMs(System.currentTimeMillis());</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">              if (connectorRef != null) {</span>
+<span class="fc" id="L201">                connectorRef.notify(</span>
+<span class="fc" id="L202">                  new ErrorMessage(&quot;You will be disconnected for inactivity in &quot; + String.valueOf(MAX_TURN_INACTIVITY_MS/1000) + &quot; seconds&quot;,</span>
+<span class="fc" id="L203">                    h.getPlayer(), ErrorSeverity.INFO));</span>
+              } else {
+<span class="nc" id="L205">                logger.error(&quot;{}: Failed to push warning message, can not find player connector from player&quot;, ErrorTypeString.ERROR_GAME_STATE);</span>
+              }
+            }
+          }
+<span class="fc" id="L209">        }</span>
+<span class="fc" id="L210">      }</span>
+<span class="nc" id="L211">    } catch(</span>
+      NullGameHandlerInstance | BookshelfGridColIndexOutOfBoundsException | BookshelfGridRowIndexOutOfBoundsException
+      | NullIndexValueException | NullPlayerBookshelfException | NullScoreBlockListException | NullPointerException
+      | NullMatchedBlockCountException | NegativeMatchedBlockCountException e) {
+<span class="nc" id="L215">      logger.error(&quot;{} {}&quot;, ErrorTypeString.ERROR_GAME_STATE, e);</span>
+<span class="nc" id="L216">    } catch(InterruptedException | RemoteException e) {</span>
+<span class="nc" id="L217">      logger.error(&quot;{} {}&quot;, ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);</span>
+<span class="pc" id="L218">    }</span>
+<span class="fc" id="L219">  }</span>
+
+  /**
+   * Check if a player activity is expired or not.
+   *
+   * @param lhs The left hand side of the operation.
+   * @param rhs The right hand side of the operation.
+   * @param limit The operation limit value.
+   * @return The requested check result.
+   *
+   */
+  protected boolean expired(long lhs, long rhs, long limit) {
+<span class="fc bfc" id="L231" title="All 2 branches covered.">    return rhs - lhs &gt; limit;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

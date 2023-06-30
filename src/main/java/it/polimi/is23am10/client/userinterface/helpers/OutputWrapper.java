@@ -1,8 +1,5 @@
 package it.polimi.is23am10.client.userinterface.helpers;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -11,36 +8,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import it.polimi.is23am10.client.userinterface.CommandLineInterface;
-import it.polimi.is23am10.server.model.factory.GameFactory;
-import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
-import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
-import it.polimi.is23am10.server.model.game.Game;
-import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
-import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
-import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
-import it.polimi.is23am10.server.model.game.exceptions.NullMaxPlayerException;
-import it.polimi.is23am10.server.model.game.exceptions.PlayerNotFoundException;
+
 import it.polimi.is23am10.server.model.items.board.Board;
-import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
-import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
 import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
-import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
-import it.polimi.is23am10.server.model.items.scoreblock.exceptions.NotValidScoreBlockValueException;
 import it.polimi.is23am10.server.model.items.tile.Tile;
 import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
-import it.polimi.is23am10.server.model.player.Player;
-import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
-import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
-import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
-import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
-import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
-import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
-import it.polimi.is23am10.server.network.messages.ChatMessage;
-import it.polimi.is23am10.server.network.messages.ErrorMessage;
-import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
@@ -255,9 +229,8 @@ public final class OutputWrapper implements Serializable {
     // Name.
     StringBuilder name = new StringBuilder();
     name.append(CLIStrings.newLine); // New Line for aesthetic purpose.
-    pos = 1;
-    for (VirtualPlayer vp : players) {
-      name.append(String.format(CLIStrings.playerIdx, pos++));
+    for (int i = 1; i < players.size() + 1; i++) {
+      name.append(String.format(CLIStrings.playerIdx, pos));
     }
     info(name.toString(), false);
 
@@ -489,56 +462,4 @@ public final class OutputWrapper implements Serializable {
     showDebug = toSet;
   }
 
-  // Runnable method to eyeball the various outputs.
-  // TODO: Remove in prod / once all outputs are testable from actual client.
-  public static void main(String[] args)
-      throws NullPlayerNameException, IOException, NullMaxPlayerException,
-      InvalidMaxPlayerException,
-      NullPlayerIdException, NullPlayerBookshelfException,
-      NullPlayerScoreException, NullPlayerPrivateCardException,
-      NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException,
-      NullNumOfPlayersException, NullAssignedPatternException,
-      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException,
-      NullPointerException {
-    OutputWrapper ow = new OutputWrapper(true);
-
-    ow.debug("THIS IS A DEBUG MESSAGE", false);
-    ow.info("THIS IS A INFO MESSAGE", false);
-    ow.chat("THIS IS A CHAT MESSAGE", false);
-    ow.warning("THIS IS A WARNING!!", false);
-    ow.error("THIS IS AN ERROR!!!", false);
-    ow.critical("THIS IS A CRITICAL ERROR!", false);
-
-    CommandLineInterface cli = new CommandLineInterface(false);
-
-    Player p1 = new Player();
-    p1.setPlayerName("Ned Flanders");
-
-    cli.displaySplashScreen();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    cli.displayChatMessage(new ChatMessage(p1, "Salve salvino"));
-    String choice = reader.readLine();
-
-    Game g = GameFactory.getNewGame("Romolo", 4);
-    g.addPlayer("Numa Pompilio");
-    g.addPlayer("Anco Marzio");
-    g.addPlayer("Lucio Tarquinio Prisco");
-
-    VirtualView vw1 = new VirtualView(GameFactory.getNewGame("bob", 2));
-    VirtualView vw2 = new VirtualView(g);
-
-    vw2.getPlayers().get(0).obfuscatePrivateCard();
-
-    List<VirtualView> games = List.of(
-        vw1, vw2);
-    cli.displayAvailableGames(games);
-
-    cli.displayError(new ErrorMessage("L'ultimo che finisce è scemo", ErrorSeverity.WARNING));
-
-    String gameChoice = reader.readLine();
-
-    cli.displayVirtualView(null, vw2);
-  }
 }
