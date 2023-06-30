@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OutputWrapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.client.userinterface.helpers</a> &gt; <span class="el_source">OutputWrapper.java</span></div><h1>OutputWrapper.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.client.userinterface.helpers;
+
+import java.io.Serializable;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+
+import it.polimi.is23am10.server.model.items.board.Board;
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.tile.Tile;
+import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
+import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
+import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+
+/**
+ * An helper class with all the methods needed to properly print
+ * CLI messages for client. It wraps System.out enriching it with colors.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public final class OutputWrapper implements Serializable {
+
+  /**
+   * Enum containing the output types.
+   */
+<span class="fc" id="L36">  public enum OutputLevel {</span>
+<span class="fc" id="L37">    DEBUG,</span>
+<span class="fc" id="L38">    INFO,</span>
+<span class="fc" id="L39">    CHAT,</span>
+<span class="fc" id="L40">    WARNING,</span>
+<span class="fc" id="L41">    ERROR,</span>
+<span class="fc" id="L42">    CRITICAL</span>
+  }
+
+<span class="fc" id="L45">  private final Integer CLEAN_SCREEN_REPS = 100;</span>
+
+  // Variable padding sizes for string formatting.
+<span class="fc" id="L48">  public static final Integer XXS_PADDING = 4;</span>
+<span class="fc" id="L49">  public static final Integer XS_PADDING = 6;</span>
+<span class="fc" id="L50">  public static final Integer S_PADDING = 11;</span>
+<span class="fc" id="L51">  public static final Integer M_PADDING = 12;</span>
+<span class="fc" id="L52">  public static final Integer L_PADDING = 14;</span>
+<span class="fc" id="L53">  public static final Integer XL_PADDING = 16;</span>
+<span class="fc" id="L54">  public static final Integer XXL_PADDING = 18;</span>
+<span class="fc" id="L55">  public static final Integer HUNDRED_PADDING = 100;</span>
+<span class="fc" id="L56">  public static final Integer MIN_PADDING_FOR_NAMES = 15;</span>
+
+  /**
+   * A flag relative to the instance of {@link OutputWrapper}
+   * set with constructor, used for showing or hiding debug lines.
+   */
+<span class="fc" id="L62">  private boolean showDebug = false;</span>
+
+  /**
+   * A map that associates output levels to their string
+   * template. A template uses ANSI codes to display colors.
+   */
+<span class="fc" id="L68">  private final Map&lt;OutputLevel, String&gt; debugTemplates = Map.of(</span>
+      OutputLevel.DEBUG, ANSICodes.BLUE + &quot;🔎 %s&quot; + ANSICodes.RESET,
+      OutputLevel.INFO, &quot;%s&quot;,
+      OutputLevel.CHAT, ANSICodes.GREEN + &quot;💬 %s&quot; + ANSICodes.RESET,
+      OutputLevel.WARNING, ANSICodes.YELLOW + &quot;🔶 %s&quot; + ANSICodes.RESET,
+      OutputLevel.ERROR, ANSICodes.RED + &quot;🔴 %s&quot; + ANSICodes.RESET,
+      OutputLevel.CRITICAL, ANSICodes.PURPLE_BACKGROUND + &quot;⚫️ %s&quot; + ANSICodes.RESET);
+
+  /**
+   * A map that associates TileType to their Java source code encoding.
+   * 
+   */
+<span class="fc" id="L80">  private static final Map&lt;TileType, String&gt; emojiMap = Map.of(</span>
+      TileType.BOOK, &quot;📔&quot;, // NOTEBOOK WITH DECORATIVE COVER
+      TileType.CAT, &quot;🐈&quot;, // CAT
+      TileType.FRAME, &quot;🟧&quot;, // ORANGE SQUARE ,
+      TileType.GAME, &quot;🎮&quot;, // VIDEO GAME,
+      TileType.PLANT, &quot;🍀&quot;, // FOUR LEAF CLOVER
+      TileType.TROPHY, &quot;🏆&quot;, // TROPHY
+      TileType.EMPTY, &quot;⬜&quot; // WHITE LARGE SQUARE
+  );
+
+  /**
+   * A map that associates a boolean referring to the online/offline player status
+   * to green/red emoticon. *
+   */
+<span class="fc" id="L94">  private static final Map&lt;Boolean, String&gt; onlineOffline = Map.of(</span>
+<span class="fc" id="L95">      true, &quot;🟢&quot;, // ONLINE</span>
+<span class="fc" id="L96">      false, &quot;🔴&quot; // OFFLINE</span>
+  );
+
+  /**
+   * Public constructor for OutputWrapper.
+   *
+   * @param showDebug instance-specific debug flag.
+   */
+<span class="fc" id="L104">  public OutputWrapper(boolean showDebug) {</span>
+<span class="fc" id="L105">    this.showDebug = showDebug;</span>
+<span class="fc" id="L106">  }</span>
+
+  /**
+   * Prints a debug line on console.
+   *
+   * @param string     Debug string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
+   */
+  public void debug(String string, boolean cleanFirst) {
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">    if (showDebug) {</span>
+<span class="nc" id="L117">      printString(OutputLevel.DEBUG, string, cleanFirst);</span>
+    }
+<span class="fc" id="L119">  }</span>
+
+  /**
+   * Prints a info line on console.
+   *
+   * @param string     Info string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
+   */
+  public void info(String string, boolean cleanFirst) {
+<span class="fc" id="L129">    printString(OutputLevel.INFO, string, cleanFirst);</span>
+<span class="fc" id="L130">  }</span>
+
+  /**
+   * Private method to print repeated sequence of char.
+   */
+  private static String repeatString(String str, int count) {
+<span class="fc" id="L136">    return String.join(&quot;&quot;, Collections.nCopies(count, str));</span>
+  }
+
+  /**
+   * Print the current game status on console.
+   *
+   * @param vw         The virtualView.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
+   */
+  public void show(VirtualView vw, boolean cleanFirst) {
+
+    // Print game board.
+<span class="fc" id="L149">    Board gameBoard = vw.getGameBoard();</span>
+
+    // Header.
+<span class="fc" id="L152">    info(CLIStrings.boardStatus, false);</span>
+
+    // Index.
+<span class="fc" id="L155">    info(CLIStrings.indexBoard, false);</span>
+
+    // Top padding.
+<span class="fc" id="L158">    info(CLIStrings.topPaddingBoard, false);</span>
+
+    // Body.
+<span class="fc bfc" id="L161" title="All 2 branches covered.">    for (int i = 0; i &lt; Board.BOARD_GRID_ROWS; i++) {</span>
+<span class="fc" id="L162">      StringBuilder row = new StringBuilder();</span>
+<span class="fc" id="L163">      row.append(CLIStrings.tabBlackSquare);</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">      for (int j = 0; j &lt; Board.BOARD_GRID_COLS; j++) {</span>
+<span class="fc" id="L165">        Tile tile = gameBoard.getBoardGrid()[i][j];</span>
+<span class="fc" id="L166">        row.append(emojiMap.get(tile.getType()));</span>
+      }
+<span class="fc" id="L168">      row.append(String.format(CLIStrings.verticalBoardIndex, (i)));</span>
+<span class="fc" id="L169">      info(row.toString(), false);</span>
+    }
+
+    // Bottom padding.
+<span class="fc" id="L173">    info(CLIStrings.bottomPaddingBoard, false);</span>
+
+<span class="fc" id="L175">    List&lt;VirtualPlayer&gt; players = vw.getPlayers();</span>
+
+<span class="fc" id="L177">    int maxLength = Math.max(</span>
+<span class="fc" id="L178">      players.stream()</span>
+<span class="fc" id="L179">        .mapToInt(p -&gt; p.getPlayerName().length())</span>
+<span class="fc" id="L180">        .max().getAsInt(), </span>
+<span class="fc" id="L181">        MIN_PADDING_FOR_NAMES);</span>
+
+    // Print Player Status.
+<span class="fc" id="L184">    StringBuilder playersStatus = new StringBuilder();</span>
+    // Header.
+<span class="fc" id="L186">    playersStatus</span>
+<span class="fc" id="L187">        .append(String.format(CLIStrings.tableHeader1 + maxLength + CLIStrings.tableHeader2,</span>
+            CLIStrings.N, CLIStrings.status, CLIStrings.player, CLIStrings.role,
+            CLIStrings.bookshelfPoints, CLIStrings.scoreBlockPoints, CLIStrings.privatePoints, CLIStrings.extraPoints,
+            CLIStrings.totalScore))
+<span class="fc" id="L191">        .append(CLIStrings.newLine)</span>
+<span class="fc" id="L192">        .append(</span>
+<span class="fc" id="L193">            String.format(CLIStrings.tableLines1 + maxLength + CLIStrings.tableLines2,</span>
+<span class="fc" id="L194">                repeatString(CLIStrings.line, XXS_PADDING), repeatString(CLIStrings.line, XS_PADDING),</span>
+<span class="fc" id="L195">                repeatString(CLIStrings.line, maxLength), repeatString(CLIStrings.line, M_PADDING),</span>
+<span class="fc" id="L196">                repeatString(CLIStrings.line, XL_PADDING), repeatString(CLIStrings.line, XXL_PADDING),</span>
+<span class="fc" id="L197">                repeatString(CLIStrings.line, L_PADDING), repeatString(CLIStrings.line, M_PADDING),</span>
+<span class="fc" id="L198">                repeatString(CLIStrings.line, S_PADDING)))</span>
+<span class="fc" id="L199">        .append(CLIStrings.newLine);</span>
+
+    // Body.
+<span class="fc" id="L202">    int pos = 1;</span>
+<span class="fc bfc" id="L203" title="All 2 branches covered.">    for (VirtualPlayer vp : players) {</span>
+
+<span class="fc" id="L205">      String status = onlineOffline.get(vp.getIsConnected());</span>
+<span class="fc" id="L206">      String player = vp.getPlayerName();</span>
+<span class="fc" id="L207">      String role = &quot;&quot;;</span>
+<span class="fc" id="L208">      String totalScoreString = vp.getScore().getStringTotalScore();</span>
+<span class="fc" id="L209">      int extraPoints = vp.getScore().getExtraPoint();</span>
+<span class="fc" id="L210">      int bookshelfPoints = vp.getScore().getBookshelfPoints();</span>
+<span class="fc" id="L211">      int scoreBlocksPoint = vp.getScore().getScoreBlockPoints();</span>
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">      String privatePointsString = (vp.getScore().getPrivatePoints() == -1) ? &quot;?&quot; : vp.getScore().getPrivatePoints().toString();</span>
+
+<span class="fc bfc" id="L214" title="All 2 branches covered.">      if (vw.getFirstPlayer().equals(vp)) {</span>
+<span class="fc" id="L215">        role = CLIStrings.firstPlayer;</span>
+      }
+<span class="fc bfc" id="L217" title="All 2 branches covered.">      if (vw.getActivePlayer().equals(vp)) {</span>
+<span class="fc" id="L218">        role = CLIStrings.yourTurn;</span>
+      }
+
+<span class="fc" id="L221">      playersStatus</span>
+<span class="fc" id="L222">          .append(String.format(CLIStrings.tableBody1 + maxLength + CLIStrings.tableBody2,</span>
+<span class="fc" id="L223">              pos++, status, player, role, bookshelfPoints, scoreBlocksPoint, privatePointsString, extraPoints, totalScoreString))</span>
+<span class="fc" id="L224">          .append(CLIStrings.newLine);</span>
+<span class="fc" id="L225">    }</span>
+<span class="fc" id="L226">    info(playersStatus.toString(), false);</span>
+
+    // Print Bookshelfs.
+    // Name.
+<span class="fc" id="L230">    StringBuilder name = new StringBuilder();</span>
+<span class="fc" id="L231">    name.append(CLIStrings.newLine); // New Line for aesthetic purpose.</span>
+<span class="fc bfc" id="L232" title="All 2 branches covered.">    for (int i = 1; i &lt; players.size() + 1; i++) {</span>
+<span class="fc" id="L233">      name.append(String.format(CLIStrings.playerIdx, pos));</span>
+    }
+<span class="fc" id="L235">    info(name.toString(), false);</span>
+
+    // Index.
+<span class="fc" id="L238">    StringBuilder playerIndex = new StringBuilder();</span>
+<span class="fc" id="L239">    playerIndex.append(CLIStrings.newLine); // New Line for aesthetic purpose.</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">    for (VirtualPlayer vp : players) {</span>
+<span class="fc" id="L241">      playerIndex.append(CLIStrings.indexBookshelf);</span>
+<span class="fc" id="L242">    }</span>
+<span class="fc" id="L243">    info(playerIndex.toString(), false);</span>
+
+    // Top padding.
+<span class="fc" id="L246">    StringBuilder topPadding = new StringBuilder();</span>
+<span class="fc bfc" id="L247" title="All 2 branches covered.">    for (VirtualPlayer vp : players) {</span>
+<span class="fc" id="L248">      topPadding.append(CLIStrings.paddingBookshelf);</span>
+<span class="fc" id="L249">    }</span>
+<span class="fc" id="L250">    info(topPadding.toString(), false);</span>
+
+    // Body.
+<span class="fc bfc" id="L253" title="All 2 branches covered.">    for (int i = 0; i &lt; Bookshelf.BOOKSHELF_ROWS; i++) {</span>
+<span class="fc" id="L254">      StringBuilder row = new StringBuilder();</span>
+<span class="fc bfc" id="L255" title="All 2 branches covered.">      for (VirtualPlayer vp : players) {</span>
+<span class="fc" id="L256">        Bookshelf b = vp.getBookshelf();</span>
+<span class="fc" id="L257">        row.append(CLIStrings.tabBlackSquare);</span>
+<span class="fc bfc" id="L258" title="All 2 branches covered.">        for (int j = 0; j &lt; Bookshelf.BOOKSHELF_COLS; j++) {</span>
+          try {
+<span class="fc" id="L260">            row.append(emojiMap.get(b.getBookshelfGridAt(i, j).getType()));</span>
+<span class="nc" id="L261">          } catch (BookshelfGridColIndexOutOfBoundsException</span>
+              | BookshelfGridRowIndexOutOfBoundsException
+              | NullIndexValueException e) {
+<span class="nc" id="L264">            error(CLIStrings.bookshelfError, true);</span>
+<span class="fc" id="L265">          }</span>
+        }
+<span class="fc" id="L267">        row.append(CLIStrings.blackSquareTab);</span>
+<span class="fc" id="L268">      }</span>
+<span class="fc" id="L269">      info(row.toString(), false);</span>
+    }
+
+    // Bottom padding.
+<span class="fc" id="L273">    StringBuilder bottomPadding = new StringBuilder();</span>
+<span class="fc bfc" id="L274" title="All 2 branches covered.">    for (VirtualPlayer vp : players) {</span>
+<span class="fc" id="L275">      bottomPadding.append(CLIStrings.paddingBookshelf);</span>
+<span class="fc" id="L276">    }</span>
+<span class="fc" id="L277">    bottomPadding.append(CLIStrings.doubleNewLine); // New Line for aesthetic purpose.</span>
+<span class="fc" id="L278">    info(bottomPadding.toString(), false);</span>
+
+    // Print Shared Cards descriptions.
+<span class="fc" id="L281">    StringBuilder sharedCards = new StringBuilder();</span>
+
+<span class="fc" id="L283">    maxLength = Math.max(vw.getSharedCards().stream()</span>
+<span class="fc" id="L284">        .mapToInt(p -&gt; CLIStrings.sharedPatternsDesc.get(p).length())</span>
+<span class="fc" id="L285">        .max().getAsInt(),HUNDRED_PADDING);</span>
+
+    // Header.
+<span class="fc" id="L288">    sharedCards</span>
+<span class="fc" id="L289">        .append(String.format(CLIStrings.sharedCardsHeader + maxLength + CLIStrings.sharedCardHeaderDescription ,</span>
+            CLIStrings.idx, CLIStrings.description))
+<span class="fc" id="L291">        .append(CLIStrings.newLine)</span>
+<span class="fc" id="L292">        .append(</span>
+            String
+<span class="fc" id="L294">                .format(String.format(CLIStrings.sharedCardsHeader + maxLength + CLIStrings.sharedCardHeaderDescription,</span>
+<span class="fc" id="L295">                    repeatString(CLIStrings.line, XL_PADDING), repeatString(CLIStrings.line, maxLength))))</span>
+<span class="fc" id="L296">        .append(CLIStrings.newLine);</span>
+
+    // Body.
+<span class="fc bfc" id="L299" title="All 2 branches covered.">    for (Integer sc : vw.getSharedCards()) {</span>
+<span class="fc" id="L300">      sharedCards</span>
+<span class="fc" id="L301">          .append(String.format(CLIStrings.sharedCardsBody + maxLength + CLIStrings.sharedCardsBodyDescription, sc,</span>
+<span class="fc" id="L302">              CLIStrings.sharedPatternsDesc.get(sc)))</span>
+<span class="fc" id="L303">          .append(CLIStrings.newLine);</span>
+<span class="fc" id="L304">    }</span>
+<span class="fc" id="L305">    info(sharedCards.toString(), false);</span>
+
+    // Print Private Cards.
+<span class="fc" id="L308">    StringBuilder privateCards = new StringBuilder();</span>
+<span class="fc" id="L309">    privateCards.append(CLIStrings.newLine); // New Line for esthetic purpose.</span>
+<span class="fc" id="L310">    pos = 1;</span>
+    // Header
+<span class="fc bfc" id="L312" title="All 2 branches covered.">    for (VirtualPlayer vp : players) { </span>
+<span class="fc" id="L313">      privateCards.append(String.format(CLIStrings.privateCardIdx, pos++));</span>
+<span class="fc" id="L314">    }</span>
+<span class="fc" id="L315">    info(privateCards.toString(), false);</span>
+
+    // Index.
+<span class="fc" id="L318">    StringBuilder bsIndex = new StringBuilder();</span>
+<span class="fc" id="L319">    bsIndex.append(CLIStrings.newLine); // New Line for esthetic purpose.</span>
+<span class="fc bfc" id="L320" title="All 2 branches covered.">    for (VirtualPlayer vp : players) {</span>
+<span class="fc" id="L321">      bsIndex.append(CLIStrings.indexBookshelf);</span>
+<span class="fc" id="L322">    }</span>
+<span class="fc" id="L323">    info(bsIndex.toString(), false); </span>
+
+    // Top padding.
+<span class="fc" id="L326">    topPadding = new StringBuilder();</span>
+<span class="fc bfc" id="L327" title="All 2 branches covered.">    for (VirtualPlayer vp : players) {</span>
+<span class="fc" id="L328">      topPadding.append(CLIStrings.paddingBookshelf);</span>
+<span class="fc" id="L329">    }</span>
+<span class="fc" id="L330">    info(topPadding.toString(), false);</span>
+
+    // Body.
+<span class="fc bfc" id="L333" title="All 2 branches covered.">    for (int i = 0; i &lt; Bookshelf.BOOKSHELF_ROWS; i++) {</span>
+<span class="fc" id="L334">      StringBuilder row = new StringBuilder();</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">      for (VirtualPlayer vp : players) {</span>
+<span class="fc" id="L336">        Bookshelf b = PrivatePatternsHelper.getBookshelf(vp.getPrivateCardIndex());</span>
+<span class="fc" id="L337">        row.append(CLIStrings.tabBlackSquare);</span>
+<span class="fc bfc" id="L338" title="All 2 branches covered.">        for (int j = 0; j &lt; Bookshelf.BOOKSHELF_COLS; j++) {</span>
+          try {
+<span class="fc" id="L340">            row.append(emojiMap.get(b.getBookshelfGridAt(i, j).getType()));</span>
+<span class="nc" id="L341">          } catch (BookshelfGridColIndexOutOfBoundsException</span>
+              | BookshelfGridRowIndexOutOfBoundsException
+              | NullIndexValueException e) {
+<span class="nc" id="L344">            error(CLIStrings.bookshelfError, true);</span>
+<span class="fc" id="L345">          }</span>
+        }
+<span class="fc" id="L347">        row.append(CLIStrings.blackSquareTab);</span>
+<span class="fc" id="L348">      }</span>
+<span class="fc" id="L349">      info(row.toString(), false);</span>
+    }
+
+    // Bottom padding.
+<span class="fc" id="L353">    bottomPadding = new StringBuilder();</span>
+<span class="fc bfc" id="L354" title="All 2 branches covered.">    for (VirtualPlayer vp : players) {</span>
+<span class="fc" id="L355">      bottomPadding.append(CLIStrings.paddingBookshelf);</span>
+<span class="fc" id="L356">    }</span>
+<span class="fc" id="L357">    bottomPadding.append(CLIStrings.doubleNewLine); // New Line for esthetic purpose.</span>
+<span class="fc" id="L358">    info(bottomPadding.toString(), false);</span>
+<span class="fc" id="L359">  }</span>
+
+  /**
+   * Prints a chat message on console.
+   *
+   * @param string     Message string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
+   */
+  public void chat(String string, boolean cleanFirst) {
+<span class="fc" id="L369">    printString(OutputLevel.CHAT, string, cleanFirst);</span>
+<span class="fc" id="L370">  }</span>
+
+  /**
+   * Prints a warning line on console.
+   *
+   * @param string     Warning string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
+   */
+  public void warning(String string, boolean cleanFirst) {
+<span class="fc" id="L380">    printString(OutputLevel.WARNING, string, cleanFirst);</span>
+<span class="fc" id="L381">  }</span>
+
+  /**
+   * Prints a error line on console.
+   *
+   * @param string     Error string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
+   */
+  public void error(String string, boolean cleanFirst) {
+<span class="nc" id="L391">    printString(OutputLevel.ERROR, string, cleanFirst);</span>
+<span class="nc" id="L392">  }</span>
+
+  /**
+   * Prints a critical error line on console.
+   *
+   * @param string     Critical error string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console
+   *                   clean.
+   */
+  public void critical(String string, boolean cleanFirst) {
+<span class="nc" id="L402">    printString(OutputLevel.CRITICAL, string, cleanFirst);</span>
+<span class="nc" id="L403">  }</span>
+
+  /**
+   * Helper method to call to clean the console.
+   * 
+   */
+  public void clean() {
+<span class="fc bfc" id="L410" title="All 2 branches covered.">    for (int i = 0; i &lt; CLEAN_SCREEN_REPS; i++) {</span>
+<span class="fc" id="L411">      System.out.println();</span>
+    }
+<span class="fc" id="L413">  }</span>
+
+  /**
+   * Helper method to get current timestamp to show when in debug mode.
+   *
+   * @return Formatted timestamp as string.
+   */
+  private String getTimestamp() {
+<span class="nc" id="L421">    DateTimeFormatter dtf = DateTimeFormatter.ofPattern(&quot;yyyy/MM/dd HH:mm:ss&quot;);</span>
+<span class="nc" id="L422">    ZonedDateTime now = ZonedDateTime.now(ZoneId.systemDefault());</span>
+<span class="nc" id="L423">    return dtf.format(now);</span>
+  }
+
+  /**
+   * Helper method used by tests to retrieve the string to be printed
+   * before actually printing it.
+   *
+   * @param level  {@link OutputLevel} of the message.
+   * @param string The string of the message to display.
+   * @return The formatted string ready to be printed.
+   */
+  public String getString(OutputLevel level, String string) {
+<span class="fc" id="L435">    String template = debugTemplates.get(level);</span>
+<span class="pc bpc" id="L436" title="1 of 2 branches missed.">    if (showDebug) {</span>
+<span class="nc" id="L437">      template = String.format(&quot;[%s] %s&quot;, getTimestamp(), template);</span>
+    }
+<span class="fc" id="L439">    return String.format(template, string);</span>
+  }
+
+  /**
+   * Public method to print a string. Used from CLI.
+   *
+   * @param level      {@link OutputLevel} of the message.
+   * @param string     The string of the message to display.
+   * @param cleanFirst Flag that resets the console before print if true.
+   */
+  public void printString(OutputLevel level, String string, boolean cleanFirst) {
+<span class="fc bfc" id="L450" title="All 2 branches covered.">    if (cleanFirst) {</span>
+<span class="fc" id="L451">      clean();</span>
+    }
+<span class="fc" id="L453">    System.out.println(getString(level, string));</span>
+<span class="fc" id="L454">  }</span>
+
+  /**
+   * Setter for the debug flag.
+   *
+   * @param toSet Debug flag.
+   */
+  public void setDebug(boolean toSet) {
+<span class="nc" id="L462">    showDebug = toSet;</span>
+<span class="nc" id="L463">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

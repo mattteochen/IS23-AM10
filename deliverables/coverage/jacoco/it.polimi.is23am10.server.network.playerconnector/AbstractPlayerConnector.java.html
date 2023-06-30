@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractPlayerConnector.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.network.playerconnector</a> &gt; <span class="el_source">AbstractPlayerConnector.java</span></div><h1>AbstractPlayerConnector.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.network.playerconnector;
+
+import it.polimi.is23am10.server.model.game.Game;
+import it.polimi.is23am10.server.model.player.Player;
+import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
+import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
+
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+/**
+ * The player connector class definition.
+ * This class is responsible to handle clients' sockets connections.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+@SuppressWarnings({ &quot;checkstyle:nonemptyatclausedescriptioncheck&quot; })
+public abstract class AbstractPlayerConnector implements Serializable, IPlayerConnector {
+
+  /**
+   * The player inside a game session.
+   *
+   */
+  protected Player player;
+
+  /**
+   * The unique {@link Game} id reference.
+   *
+   */
+  protected UUID gameId;
+
+  /**
+   * The connector message queue.
+   *
+   */
+  protected BlockingQueue&lt;AbstractMessage&gt; msgQueue;
+
+  /**
+   * The client last alarm snooze time in ms truggered by the alarm.
+   *
+   */
+  protected long lastSnoozeMs;
+
+  /**
+   * Constructor.
+   *
+   *
+   * @param msgQueue The message queue instance.
+   * @throws NullBlockingQueueException If providing a null queue when building player connector.
+   *
+   */
+  protected AbstractPlayerConnector(LinkedBlockingQueue&lt;AbstractMessage&gt; msgQueue)
+<span class="fc" id="L60">      throws NullBlockingQueueException {</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">    if (msgQueue == null) {</span>
+<span class="fc" id="L62">      throw new NullBlockingQueueException();</span>
+    }
+<span class="fc" id="L64">    this.msgQueue = msgQueue;</span>
+<span class="fc" id="L65">    this.lastSnoozeMs = System.currentTimeMillis();</span>
+<span class="fc" id="L66">  }</span>
+
+  /**
+   * {@inheritDoc}
+   *
+   *
+   */
+  @Override
+  public synchronized UUID getGameId() {
+<span class="fc" id="L75">    return gameId;</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   *
+   */
+  @Override
+  public synchronized Player getPlayer() {
+<span class="fc" id="L85">    return player;</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   *
+   */
+  @Override
+  public AbstractMessage getMessageFromQueue() throws InterruptedException {
+<span class="fc bfc" id="L95" title="All 2 branches covered.">    if (msgQueue.isEmpty()) {</span>
+<span class="fc" id="L96">      return null;</span>
+    }
+    //synch is performed by the collection
+<span class="fc" id="L99">    return (msgQueue.take());</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   *
+   */
+  @Override
+  public synchronized int getMsgQueueSize() {
+<span class="fc" id="L109">    return msgQueue.size();</span>
+  }
+
+  /**
+   * Get the client last snooze time in ms.
+   *
+   * @return The ms of the last alarm snooze.
+   *
+   */
+  public long getLastSnoozeMs() {
+<span class="fc" id="L119">    return lastSnoozeMs;</span>
+  }
+
+  /**
+   * Notify the player an update.
+   * Different delivery strategies are applied based on the {@link AbstractMessage} dynamic type.
+   * This blocks undefinably until the queue is available (in case socket is used).
+   * {@link Game} model instances should leverage this
+   * queue to send responses to the client (i.e. game updates).
+   *
+   * @param message The message to be added.
+   * @throws InterruptedException On queue message insertion failure.
+   * @throws RemoteException On remote call failure.
+   *
+   */
+  public abstract void notify(AbstractMessage message) throws InterruptedException, RemoteException;
+
+  /**
+   * Setter for the associated game id.
+   *
+   * @param gameId The game id to associate to the current player connector.
+   *
+   */
+  public synchronized void setGameId(UUID gameId) {
+<span class="fc" id="L143">    this.gameId = gameId;</span>
+<span class="fc" id="L144">  }</span>
+
+  /**
+   * Setter for the player reference.
+   *
+   * @param player The player to associate to the current player connector.
+   *
+   */
+  @Override
+  public synchronized void setPlayer(Player player) {
+<span class="fc" id="L154">    this.player = player;</span>
+<span class="fc" id="L155">  }</span>
+
+  /**
+   * Set the client last snooze time in ms.
+   *
+   * @param lastSnoozeMs The snooze ms.
+   *
+   */
+  public void setLastSnoozeMs(long lastSnoozeMs) {
+<span class="fc" id="L164">    this.lastSnoozeMs = lastSnoozeMs;</span>
+<span class="fc" id="L165">  }</span>
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  public boolean equals(Object obj) {
+<span class="nc bnc" id="L172" title="All 2 branches missed.">    if (!(obj instanceof AbstractPlayerConnector)) {</span>
+<span class="nc" id="L173">      return false;</span>
+    }
+<span class="nc" id="L175">    AbstractPlayerConnector casted = (AbstractPlayerConnector) obj;</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">    return casted.getPlayer().equals(player)</span>
+<span class="nc bnc" id="L177" title="All 2 branches missed.">        &amp;&amp; casted.getGameId().equals(gameId);</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  public int hashCode() {
+<span class="fc" id="L185">    return player.hashCode() * gameId.hashCode();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

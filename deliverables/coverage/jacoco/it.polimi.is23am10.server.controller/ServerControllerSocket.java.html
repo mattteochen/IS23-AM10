@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ServerControllerSocket.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.controller</a> &gt; <span class="el_source">ServerControllerSocket.java</span></div><h1>ServerControllerSocket.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.controller;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
+
+import it.polimi.is23am10.server.command.AbstractCommand;
+import it.polimi.is23am10.server.command.AddPlayerCommand;
+import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
+import it.polimi.is23am10.server.command.MoveTilesCommand;
+import it.polimi.is23am10.server.command.SendChatMessageCommand;
+import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
+import it.polimi.is23am10.server.command.StartGameCommand;
+import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
+import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
+import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage;
+import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
+import it.polimi.is23am10.utils.Coordinates;
+import it.polimi.is23am10.utils.ErrorTypeString;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.rmi.RemoteException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+/**
+ * The server controller class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+@SuppressWarnings({ &quot;checkstyle:nonemptyatclausedescriptioncheck&quot; })
+public final class ServerControllerSocket implements Runnable {
+
+  /**
+   * The logger, an instance of {@link Logger}.
+   *
+   */
+<span class="fc" id="L55">  protected Logger logger = LogManager.getLogger(ServerControllerSocket.class);</span>
+
+  /**
+   * The single client connection instance of type {@link PlayerConnectorSocket}.
+   * This is the entry and exit point for out responsive application.
+   *
+   */
+  protected PlayerConnectorSocket playerConnector;
+
+  /**
+   * The {@link Gson} serializer and deserializer for game's
+   * {@link AbstractCommand}.
+   * We need a custom {@link Gson} instance as we have to deserialize polymorphic
+   * objects {@link AbstractCommand}.
+   *
+   */
+<span class="fc" id="L71">  protected Gson gson = new GsonBuilder()</span>
+<span class="fc" id="L72">      .registerTypeAdapter(AbstractCommand.class, new CommandDeserializer())</span>
+<span class="fc" id="L73">      .registerTypeAdapter(Coordinates.class, new CoordinatesDeserializer())</span>
+<span class="fc" id="L74">      .create();</span>
+
+  /**
+   * The action taker instance. This works on a given command {@link Opcode}.
+   *
+   */
+  protected ServerControllerAction serverControllerAction;
+
+  /**
+   * Constructor.
+   *
+   * @param playerConnector        The already build player connector instance
+   *                               with the low level socket instance.
+   * @param serverControllerAction The server action taker instance.
+   */
+  public ServerControllerSocket(PlayerConnectorSocket playerConnector,
+<span class="fc" id="L90">      ServerControllerAction serverControllerAction) {</span>
+<span class="fc" id="L91">    this.playerConnector = playerConnector;</span>
+<span class="fc" id="L92">    this.serverControllerAction = serverControllerAction;</span>
+<span class="fc" id="L93">  }</span>
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  public void run() {
+
+<span class="pc bpc" id="L102" title="1 of 4 branches missed.">    while (playerConnector != null &amp;&amp; !playerConnector.getConnector().isClosed()) {</span>
+      try {
+<span class="fc" id="L104">        AbstractCommand command = buildCommand();</span>
+<span class="fc" id="L105">        serverControllerAction.execute(playerConnector, command);</span>
+<span class="fc" id="L106">        update();</span>
+<span class="fc" id="L107">      } catch (IOException e) {</span>
+<span class="fc" id="L108">        logger.error(&quot;Failed to retrieve socket payload&quot;, e);</span>
+<span class="fc" id="L109">        break;</span>
+<span class="fc" id="L110">      } catch (JsonIOException | JsonSyntaxException e) {</span>
+<span class="fc" id="L111">        logger.error(&quot;Failed to parse socket payload&quot;, e);</span>
+<span class="fc" id="L112">      } catch (InterruptedException e) {</span>
+<span class="fc" id="L113">        logger.error(&quot;Failed get response message from the queue&quot;, e);</span>
+        // note, we are not raising the interrupted flag as we don't want to stop this
+        // thread.
+<span class="fc" id="L116">      }</span>
+    }
+    
+<span class="fc" id="L119">    playerConnector.getPlayer().setIsConnected(false);</span>
+<span class="fc" id="L120">    logger.info(&quot;Player {} disconnected&quot;, playerConnector.getPlayer().getPlayerName());</span>
+    try {
+<span class="fc" id="L122">      ServerControllerState.getGameHandlerByUUID(</span>
+<span class="fc" id="L123">          playerConnector.getGameId()).getPlayerConnectors()</span>
+<span class="fc" id="L124">          .stream()</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">          .filter(pc -&gt; !pc.getPlayer().getPlayerName().equals(playerConnector.getPlayer().getPlayerName()))</span>
+<span class="fc" id="L126">          .forEach(pc -&gt; {</span>
+            try {
+<span class="fc" id="L128">              pc.notify(</span>
+<span class="fc" id="L129">                  new ErrorMessage(String.format(ErrorTypeString.WARNING_PLAYER_DISCONNECT,</span>
+<span class="fc" id="L130">                      playerConnector.getPlayer().getPlayerName()), ErrorSeverity.INFO));</span>
+<span class="nc" id="L131">            } catch (InterruptedException | RemoteException e) {</span>
+<span class="nc" id="L132">              logger.error(&quot;{} {}&quot;, ErrorTypeString.ERROR_MESSAGE_DELIVERY, e);</span>
+<span class="fc" id="L133">            }</span>
+<span class="fc" id="L134">          });</span>
+<span class="fc" id="L135">    } catch (NullGameHandlerInstance e) {</span>
+<span class="fc" id="L136">      logger.error(&quot; {} {}&quot;, ErrorTypeString.ERROR_ADDING_HANDLER, e);</span>
+<span class="fc" id="L137">    }</span>
+<span class="fc" id="L138">  }</span>
+  /**
+   * Build the response message and sent it to the client when any game update is
+   * available.
+   *
+   * @throws IOException          On output stream failure.
+   * @throws InterruptedException On queue message retrieval failure.
+   * 
+   */
+  protected void update() throws InterruptedException, IOException {
+<span class="fc" id="L148">    AbstractMessage msg = playerConnector.getMessageFromQueue();</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">    if (msg != null) {</span>
+      PrintWriter printer;
+<span class="fc" id="L151">      synchronized (playerConnector.getConnector()) {</span>
+<span class="fc" id="L152">        printer = new PrintWriter(playerConnector.getConnector().getOutputStream(), true,</span>
+            StandardCharsets.UTF_8);
+<span class="fc" id="L154">        printer.println(gson.toJson(msg));</span>
+<span class="fc" id="L155">      }</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">      logger.info(&quot;{} sent to client {}&quot;, msg.getMessageType(), msg.getMessage() == null ? &quot;&quot;: msg.getMessage());</span>
+    }
+<span class="fc" id="L158">  }</span>
+
+  /**
+   * Build the player command deserializing the byte stream.
+   * The gson deserialization returns a base class type but if the byte stream
+   * contained a derived type, this can be casted at runtime on the need.
+   *
+   * @return An instance of the command object.
+   * @throws IOException         On output stream failure.
+   * @throws JsonIOException     On serialization failure due to I/O.
+   * @throws JsonSyntaxException On serialization failure due to malformed JSON.
+   * 
+   */
+  protected AbstractCommand buildCommand()
+      throws IOException, JsonIOException, JsonSyntaxException {
+    BufferedReader reader;
+<span class="fc" id="L174">    String payload = null;</span>
+<span class="fc" id="L175">    synchronized (playerConnector.getConnector()) {</span>
+<span class="fc" id="L176">      reader = new BufferedReader(</span>
+<span class="fc" id="L177">          new InputStreamReader(playerConnector.getConnector().getInputStream()));</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">      if (reader.ready()) {</span>
+<span class="fc" id="L179">        payload = reader.readLine();</span>
+      }
+<span class="fc" id="L181">    }</span>
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">    if (payload != null) {</span>
+<span class="fc" id="L183">      logger.info(&quot;Socket buffer reader received {}&quot;, payload);</span>
+    }
+<span class="fc" id="L185">    return gson.fromJson(payload, AbstractCommand.class);</span>
+  }
+
+  /**
+   * Custom deserializer class definition for {@link Gson} usage.
+   * This works on polymorphic {@link AbstractCommand} objects.
+   * 
+   */
+<span class="fc" id="L193">  class CommandDeserializer implements JsonDeserializer&lt;AbstractCommand&gt; {</span>
+    @Override
+    public AbstractCommand deserialize(
+        JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+<span class="fc" id="L198">      JsonObject jsonObject = json.getAsJsonObject();</span>
+
+<span class="fc" id="L200">      String className = &quot;&quot;;</span>
+      try {
+<span class="fc" id="L202">        className = jsonObject.get(&quot;className&quot;).getAsString();</span>
+<span class="fc" id="L203">      } catch (Exception e) {</span>
+<span class="fc" id="L204">        throw new JsonParseException(e);</span>
+<span class="fc" id="L205">      }</span>
+
+<span class="pc bpc" id="L207" title="2 of 7 branches missed.">      switch (className) {</span>
+        case &quot;it.polimi.is23am10.server.command.StartGameCommand&quot;:
+<span class="fc" id="L209">          return context.deserialize(jsonObject, StartGameCommand.class);</span>
+        case &quot;it.polimi.is23am10.server.command.AddPlayerCommand&quot;:
+<span class="fc" id="L211">          return context.deserialize(jsonObject, AddPlayerCommand.class);</span>
+        case &quot;it.polimi.is23am10.server.command.MoveTilesCommand&quot;:
+<span class="fc" id="L213">          return context.deserialize(jsonObject, MoveTilesCommand.class);</span>
+        case &quot;it.polimi.is23am10.server.command.GetAvailableGamesCommand&quot;:
+<span class="fc" id="L215">          return context.deserialize(jsonObject, GetAvailableGamesCommand.class);</span>
+        case &quot;it.polimi.is23am10.server.command.SendChatMessageCommand&quot;:
+<span class="nc" id="L217">          return context.deserialize(jsonObject, SendChatMessageCommand.class);</span>
+        case &quot;it.polimi.is23am10.server.command.SnoozeGameTimerCommand&quot;:
+<span class="nc" id="L219">          return context.deserialize(jsonObject, SnoozeGameTimerCommand.class);</span>
+        default:
+<span class="fc" id="L221">          throw new JsonParseException(&quot;Unknown class name: &quot; + className);</span>
+      }
+    }
+  }
+
+  /**
+   * Custom deserializer class definition for {@link Gson} usage.
+   * This works on {@link Coordinates} objects.
+   * 
+   */
+<span class="fc" id="L231">  class CoordinatesDeserializer implements JsonDeserializer&lt;Coordinates&gt; {</span>
+    @Override
+    public Coordinates deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+        throws JsonParseException {
+<span class="nc" id="L235">      JsonObject obj = json.getAsJsonObject();</span>
+<span class="nc" id="L236">      int row = obj.get(&quot;row&quot;).getAsInt();</span>
+<span class="nc" id="L237">      int col = obj.get(&quot;col&quot;).getAsInt();</span>
+<span class="nc" id="L238">      return new Coordinates(row, col);</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

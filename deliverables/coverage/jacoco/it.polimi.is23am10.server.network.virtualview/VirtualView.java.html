@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VirtualView.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.network.virtualview</a> &gt; <span class="el_source">VirtualView.java</span></div><h1>VirtualView.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.network.virtualview;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import it.polimi.is23am10.server.model.game.Game;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
+import it.polimi.is23am10.server.model.items.board.Board;
+
+/**
+ * A virtual view with the state of the game, downscoped
+ * to what is essential for the client to view
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public final class VirtualView implements Serializable {
+
+  /**
+   * Unique Game identifier
+   */
+  private UUID gameId;
+
+  /**
+   * Maximum number of players for this game
+   */
+  private Integer maxPlayers;
+
+  /**
+   * List of virtual players in the game
+   */
+  private List&lt;VirtualPlayer&gt; players;
+
+  /**
+   * VirtualPlayer currently playing
+   */
+  private VirtualPlayer activePlayer;
+
+  /**
+   * VirtualPlayer choosen as first
+   */
+  private VirtualPlayer firstPlayer;
+
+  /**
+   * VirtualPlayer who won the game
+   */
+  private VirtualPlayer winnerPlayer;
+
+  /**
+   * Instance of board where tiles are
+   */
+  private Board gameBoard;
+
+  /**
+   * List of the two shared cards index for this game session.
+   */
+  private List&lt;Integer&gt; sharedCards;
+
+  /**
+   * Boolean flag signaling game is over
+   */
+  private GameStatus status;
+
+  /**
+   * Getter for game id
+   * 
+   * @return game id
+   */
+  public UUID getGameId() {
+<span class="fc" id="L74">    return gameId;</span>
+  }
+
+  /**
+   * Getter for player list ({@link VirtualPlayer})
+   * 
+   * @return player list
+   */
+  public List&lt;VirtualPlayer&gt; getPlayers() {
+<span class="fc" id="L83">    return players;</span>
+  }
+
+  /**
+   * Getter for max players
+   * 
+   * @return max players
+   */
+  public Integer getMaxPlayers() {
+<span class="fc" id="L92">    return maxPlayers;</span>
+  }
+
+  /**
+   * Getter for active player
+   * 
+   * @return active player
+   */
+  public VirtualPlayer getActivePlayer() {
+<span class="fc" id="L101">    return activePlayer;</span>
+  }
+
+  /**
+   * Getter for first player
+   * 
+   * @return first player
+   */
+  public VirtualPlayer getFirstPlayer() {
+<span class="fc" id="L110">    return firstPlayer;</span>
+  }
+
+  /**
+   * Getter for winner player
+   * 
+   * @return winner player
+   */
+  public VirtualPlayer getWinnerPlayer() {
+<span class="fc" id="L119">    return winnerPlayer;</span>
+  }
+
+  /**
+   * Getter for game board
+   * 
+   * @return game board
+   */
+  public Board getGameBoard() {
+<span class="fc" id="L128">    return gameBoard;</span>
+  }
+
+  /**
+   * Getter for shared cards indexes
+   * 
+   * @return Pairs of shared cards indexes and descriptions.
+   */
+  public List&lt;Integer&gt; getSharedCards() {
+<span class="fc" id="L137">    return sharedCards;</span>
+  }
+
+  /**
+   * Getter for status.
+   * 
+   * @return game status.
+   */
+  public GameStatus getStatus() {
+<span class="fc" id="L146">    return status;</span>
+  }
+
+  /**
+   * Simple helper function to get the number of disconnected
+   * players to discount when looking for available games.
+   * @return disconnected player num.
+   */
+  public synchronized Integer getDisconnectedPlayersNum() {
+<span class="fc" id="L155">    return (int) players</span>
+<span class="fc" id="L156">      .stream()</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">      .filter(p -&gt; !p.getIsConnected())</span>
+<span class="fc" id="L158">      .count();</span>
+  }
+
+
+  /**
+   * Public constructor. Builds VirtualView out of {@link Game}
+   * 
+   * @param g instance of {@link Game} to &quot;virtualize&quot;
+   */
+<span class="fc" id="L167">  public VirtualView(Game g) {</span>
+<span class="fc" id="L168">    this.gameId = g.getGameId();</span>
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">    this.activePlayer = g.getActivePlayer() == null ? null : new VirtualPlayer(g.getActivePlayer());</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">    this.firstPlayer = g.getFirstPlayer() == null ? null : new VirtualPlayer(g.getFirstPlayer());</span>
+<span class="fc" id="L171">    this.gameBoard = new Board(g.getGameBoard());</span>
+<span class="fc" id="L172">    this.status = g.getStatus();</span>
+<span class="fc" id="L173">    this.maxPlayers = g.getMaxPlayer();</span>
+<span class="fc" id="L174">    this.players = g.getPlayers()</span>
+<span class="fc" id="L175">        .stream()</span>
+<span class="fc" id="L176">        .map(p -&gt; new VirtualPlayer(p))</span>
+<span class="fc" id="L177">        .collect(Collectors.toList());</span>
+
+<span class="fc" id="L179">    this.sharedCards = g.getSharedCard()</span>
+<span class="fc" id="L180">        .stream()</span>
+<span class="fc" id="L181">        .map(c -&gt; c.getPattern().getIndex())</span>
+<span class="fc" id="L182">        .collect(Collectors.toList());</span>
+
+<span class="fc bfc" id="L184" title="All 2 branches covered.">    this.winnerPlayer = g.getWinnerPlayer() == null ? null : new VirtualPlayer(g.getWinnerPlayer());</span>
+<span class="fc" id="L185">  }</span>
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean equals(Object obj) {
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">    if (!(obj instanceof VirtualView)) {</span>
+<span class="nc" id="L193">      return false;</span>
+    }
+
+<span class="fc" id="L196">    VirtualView view = (VirtualView) obj;</span>
+<span class="fc" id="L197">    return (gameId.equals(view.getGameId()));</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int hashCode() {
+<span class="fc" id="L205">    return gameId.hashCode();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

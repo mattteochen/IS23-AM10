@@ -96,6 +96,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    * @param pc Player connector.
    * @param ui User interface.
    * @throws UnknownHostException On localhost retrieval failure.
+   * @throws RemoteException
    */
   protected Client(IPlayerConnector pc, UserInterface ui)
       throws UnknownHostException, RemoteException {
@@ -299,7 +300,11 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
     }
   }
 
-  /** GameIdRef getter. */
+  /**
+   * Game id ref getter.
+   * 
+   * @return game id.
+   */
   protected UUID getGameIdRef() {
     synchronized (gameRefLock) {
       return gameIdRef;
@@ -357,7 +362,11 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
     }
   }
 
-  /** Virtual view setter. */
+  /**
+   * Virtual view setter.
+   * 
+   * @param vv virtual view to set.
+   */
   protected void setVirtualView(VirtualView vv) {
     synchronized (virtualViewLock) {
       this.virtualView = vv;
@@ -450,7 +459,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    *
    * @param name The player name.
    * @throws NullPlayerIdException
-   * @throws NullPlayerIdException
+   * @throws NullPlayerNameException
    */
   protected void setConnectorPlayer(String name)
       throws NullPlayerNameException, NullPlayerIdException {
@@ -730,6 +739,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    * @throws IOException
    * @throws NullPlayerIdException
    * @throws InterruptedException
+   * @throws ForceCloseApplicationException
    */
   protected void clientRunnerCore()
       throws IOException, InterruptedException, NullPlayerIdException, ForceCloseApplicationException {

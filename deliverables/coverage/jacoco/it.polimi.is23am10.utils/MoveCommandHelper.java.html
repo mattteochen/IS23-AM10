@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoveCommandHelper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.utils</a> &gt; <span class="el_source">MoveCommandHelper.java</span></div><h1>MoveCommandHelper.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
+
+/**
+ * Helper class to convert input move from index to coordinates.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public class MoveCommandHelper {
+
+  /**
+   * Private empty constructor for the class.
+   */
+  private MoveCommandHelper() {
+  }
+
+  /**
+   * Method that takes the column input of the player bookshelf and returns the list of the 
+   * first available empty coordinates.
+   * 
+   * @param idx column index.
+   * @param bs player bookshelf.
+   * @param nMoves number of moves made and of empty coords to check.
+   *
+   * @return list of first available empty coordinates of the bookshelf
+   * @throws BookshelfGridColIndexOutOfBoundsException
+   * @throws BookshelfGridRowIndexOutOfBoundsException
+   * @throws NullIndexValueException
+   * @throws WrongBookShelfPicksException
+   */
+  public static List&lt;Coordinates&gt; fromColIdxToCoord(String idx, Bookshelf bs , Integer nMoves) throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, WrongBookShelfPicksException{
+<span class="nc" id="L44">    List&lt;Coordinates&gt; bsCoord = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L45">    Integer columnIdx = idx.charAt(0) - 'A';</span>
+<span class="nc" id="L46">    Integer rowCount = 0;</span>
+    // If I got to the tile on top and there's no space left
+<span class="nc bnc" id="L48" title="All 2 branches missed.">    if(bs.getFreeRowsInCol(columnIdx) &lt; nMoves){</span>
+<span class="nc" id="L49">      throw new WrongBookShelfPicksException(</span>
+        &quot;Invalid bookshelf picks, selected a column with no sufficient space&quot;);
+    }
+
+<span class="nc bnc" id="L53" title="All 4 branches missed.">    for(int row = bs.getBookshelfGrid()[0].length ; rowCount &lt; nMoves &amp;&amp; row &gt;= 0 ; row--){</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">      if(bs.getBookshelfGridAt(row, columnIdx).getType() == TileType.EMPTY){</span>
+<span class="nc" id="L55">        bsCoord.add(new Coordinates(row, columnIdx));</span>
+<span class="nc" id="L56">        rowCount++;</span>
+      }
+    }
+
+<span class="nc" id="L60">    return bsCoord;</span>
+  }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

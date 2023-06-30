@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AppConfigContext.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.utils.config</a> &gt; <span class="el_source">AppConfigContext.java</span></div><h1>AppConfigContext.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.utils.config;
+
+/**
+ * The server config context class definition.
+ * 
+ */
+public class AppConfigContext {
+
+  /**
+   * The server socket port.
+   * 
+   */
+  private Integer serverSocketPort;
+
+
+  /**
+   * The server rmi port.
+   * 
+   */
+  private Integer serverRmiPort;
+
+  /**
+   * The max allowed connection for this server instance.
+   * This is a momentary max value.
+   * 
+   */
+  private Integer maxConnection;
+
+  /**
+   * The socket SO_KEEPALIVE flag.
+   * 
+   */
+  private boolean keepAlive;
+
+  /**
+   * The kind of app to launch. If false launches a client.
+   * 
+   */
+  private boolean isServer;
+
+  /**
+   * The interface to show if app is launched in Client mode.
+   * If false launches client in CLI mode.
+   * If {@link AppConfigContext#isServer} is true this flag is ignored,
+   * as server mode only supports CLI as interface, and for logging purpose only.
+   */
+  private boolean showGUI;
+
+  /**
+   * The communication method to use if app is launched is Client Mode.
+   * If false launches client over Socket connection.
+   * If {@link AppConfigContext#isServer} is true this flag is ignored,
+   * as server mode both receives RMI and socket connections
+   */
+  private boolean useRMI;
+
+  /**
+   * The network address where the server is running.
+   * 
+   */
+  private String serverAddress;
+
+  /**
+   * A simple flag that if enabled shows all verbose messages
+   * in console logs.
+   */
+  private boolean showDebug;
+
+  /**
+   * The maximum inactivity time allowed to a player when playing a game turn.
+   */
+  private long maxInactivityTimeMs;
+
+  /**
+   * Constructor.
+   * 
+   * @param serverSocketPort     The server port number.
+   * @param maxConnections The maximum allowed connections.
+   * @param keepAlive      The socket keep alive flag.
+   * @param serverRmiPort The server RMI port.
+   * @param isServer Run app in server mode flag.
+   * @param showGUI Show GUI client flag.
+   * @param useRMI Use RMI over socket flag.
+   * @param serverAddress Address where to find server.
+   * @param showDebug Show debug infos flag.
+   */
+  public AppConfigContext(Integer serverSocketPort, Integer serverRmiPort,
+<span class="nc" id="L88">      Integer maxConnections, boolean keepAlive, boolean isServer, boolean showGUI, boolean useRMI, String serverAddress, boolean showDebug, long maxInactivityTimeMs) {</span>
+<span class="nc" id="L89">    this.serverSocketPort = serverSocketPort;</span>
+<span class="nc" id="L90">    this.serverRmiPort = serverRmiPort;</span>
+<span class="nc" id="L91">    this.maxConnection = maxConnections;</span>
+<span class="nc" id="L92">    this.keepAlive = keepAlive;</span>
+<span class="nc" id="L93">    this.isServer = isServer;</span>
+<span class="nc" id="L94">    this.showGUI = showGUI;</span>
+<span class="nc" id="L95">    this.useRMI = useRMI;</span>
+<span class="nc" id="L96">    this.serverAddress = serverAddress;</span>
+<span class="nc" id="L97">    this.showDebug = showDebug;</span>
+<span class="nc" id="L98">    this.maxInactivityTimeMs = maxInactivityTimeMs;</span>
+<span class="nc" id="L99">  }</span>
+
+
+  /**
+   * Constructor with default values.
+   *
+   * 
+   */
+<span class="fc" id="L107">  public AppConfigContext() {</span>
+<span class="fc" id="L108">    this.serverSocketPort = AppConfig.getServerSocketPort();</span>
+<span class="fc" id="L109">    this.serverRmiPort = AppConfig.getServerRmiPort();</span>
+<span class="fc" id="L110">    this.maxConnection = AppConfig.getMaxConnections();</span>
+<span class="fc" id="L111">    this.keepAlive = AppConfig.getKeepAlive();</span>
+<span class="fc" id="L112">    this.isServer = AppConfig.getIsServer();</span>
+<span class="fc" id="L113">    this.showGUI = AppConfig.getShowGUI();</span>
+<span class="fc" id="L114">    this.useRMI = AppConfig.getUseRMI();</span>
+<span class="fc" id="L115">    this.serverAddress = AppConfig.getServerAddress();</span>
+<span class="fc" id="L116">    this.showDebug = AppConfig.getShowDebug();</span>
+<span class="fc" id="L117">    this.maxInactivityTimeMs = AppConfig.getMaxInactivityTime();</span>
+<span class="fc" id="L118">  }</span>
+
+  /**
+   * Server socket port getter.
+   *
+   * @return The instantiated server socket port.
+   * 
+   */
+  public Integer getServerSocketPort() {
+<span class="fc" id="L127">    return serverSocketPort;</span>
+  }
+
+  /**
+   * Server rmi port getter.
+   *
+   * @return The instantiated server rmi port.
+   * 
+   */
+  public Integer getServerRmiPort() {
+<span class="fc" id="L137">    return serverRmiPort;</span>
+  }
+
+  /**
+   * Max connections getter.
+   *
+   * @return The maximum allowed connections.
+   * 
+   */
+  public Integer getMaxConnections() {
+<span class="fc" id="L147">    return maxConnection;</span>
+  }
+
+  /**
+   * Keep alive getter.
+   *
+   * @return The keep alive flag.
+   * 
+   */
+  public boolean getKeepAlive() {
+<span class="fc" id="L157">    return keepAlive;</span>
+  }
+
+  /**
+   * Is server getter.
+   *
+   * @return The isServer flag.
+   * 
+   */
+  public boolean getIsServer() {
+<span class="fc" id="L167">    return isServer;</span>
+  }
+
+  /**
+   * Show GUI getter.
+   *
+   * @return The show GUI flag.
+   * 
+   */
+  public boolean getShowGUI() {
+<span class="fc" id="L177">    return showGUI;</span>
+  }
+
+  /**
+   * Use RMI getter.
+   *
+   * @return The use RMI flag.
+   * 
+   */
+  public boolean getUseRMI() {
+<span class="fc" id="L187">    return useRMI;</span>
+  }
+
+  /**
+   * Server address getter.
+   *
+   * @return The server address.
+   * 
+   */
+  public String getServerAddress() {
+<span class="fc" id="L197">    return serverAddress;</span>
+  }
+
+  /**
+   * Show debug getter.
+   *
+   * @return The debug flag.
+   * 
+   */
+  public boolean getShowDebug() {
+<span class="nc" id="L207">    return showDebug;</span>
+  }
+
+  /**
+   * Max inactivity time getter.
+   *
+   * @return The max inactivity time value in ms.
+   * 
+   */
+  public long getMaxInactivityTime() {
+<span class="fc" id="L217">    return maxInactivityTimeMs;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

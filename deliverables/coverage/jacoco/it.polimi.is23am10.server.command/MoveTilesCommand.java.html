@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoveTilesCommand.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.command</a> &gt; <span class="el_source">MoveTilesCommand.java</span></div><h1>MoveTilesCommand.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.command;
+
+import it.polimi.is23am10.utils.Coordinates;
+import it.polimi.is23am10.utils.MoveTileCommandTypeAdaptor;
+
+import java.util.Map;
+import java.util.UUID;
+import com.google.gson.annotations.JsonAdapter;
+import it.polimi.is23am10.server.model.items.board.Board;
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+
+/**
+ * The move tiles command class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public class MoveTilesCommand extends AbstractCommand {
+
+  /**
+   * The player who calls the operation.
+   */
+  private String movingPlayer;
+
+  /**
+   * Map that associates the position of a picked tile
+   * on the {@link Board} to the destination position to move
+   * that same tile inside user's {@link Bookshelf}.
+   */
+  @JsonAdapter(MoveTileCommandTypeAdaptor.class)
+  private Map&lt;Coordinates, Coordinates&gt; moves;
+
+  /**
+   * Game id to specify in which match this command
+   * is executed. Must match with game currently playing.
+   */
+  private UUID gameId;
+
+  /**
+   * An utility to be used during deserialization processes.
+   * 
+   */
+<span class="fc" id="L45">  @SuppressWarnings(&quot;unused&quot;)</span>
+<span class="fc" id="L46">  private final String className = this.getClass().getName();</span>
+
+  /**
+   * Public constructor.
+   *
+   * @param movingPlayer The player requesting the move action.
+   * @param gameId The game id reference.
+   * @param moves The map of moves. See javadoc above.
+   */
+  public MoveTilesCommand(String movingPlayer, UUID gameId, Map&lt;Coordinates, Coordinates&gt; moves) {
+<span class="fc" id="L56">    super(Opcode.MOVE_TILES);</span>
+<span class="fc" id="L57">    this.movingPlayer = movingPlayer;</span>
+<span class="fc" id="L58">    this.gameId = gameId;</span>
+<span class="fc" id="L59">    this.moves = moves;</span>
+<span class="fc" id="L60">  }</span>
+
+  /**
+   * Moving player getter.
+   */
+  public String getMovingPlayer() {
+<span class="fc" id="L66">    return movingPlayer;</span>
+  }
+
+  /**
+   * GameId getter.
+   */
+  public UUID getGameId() {
+<span class="fc" id="L73">    return gameId;</span>
+  }
+
+  /**
+   * Moves map getter.
+   */
+  public Map&lt;Coordinates, Coordinates&gt; getMoves() {
+<span class="fc" id="L80">    return moves;</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  public boolean equals(Object obj) {
+<span class="fc bfc" id="L89" title="All 2 branches covered.">    if (!(obj instanceof MoveTilesCommand)) {</span>
+<span class="fc" id="L90">      return false;</span>
+    }
+
+<span class="fc" id="L93">    MoveTilesCommand casted = (MoveTilesCommand) obj;</span>
+
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">    return (opcode == casted.getOpcode()</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        &amp;&amp; movingPlayer.equals(casted.getMovingPlayer())</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        &amp;&amp; gameId.equals(casted.getGameId())</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        &amp;&amp; moves.equals(casted.getMoves()));</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  public int hashCode() {
+<span class="fc" id="L107">    return movingPlayer.hashCode() * gameId.hashCode() * moves.hashCode();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

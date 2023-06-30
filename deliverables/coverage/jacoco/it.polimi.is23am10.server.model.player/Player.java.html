@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Player.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.model.player</a> &gt; <span class="el_source">Player.java</span></div><h1>Player.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.model.player;
+
+import it.polimi.is23am10.server.model.factory.PlayerFactory;
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.card.PrivateCard;
+import it.polimi.is23am10.server.model.items.card.exceptions.NegativeMatchedBlockCountException;
+import it.polimi.is23am10.server.model.items.card.exceptions.NullMatchedBlockCountException;
+import it.polimi.is23am10.server.model.items.card.exceptions.NullScoreBlockListException;
+import it.polimi.is23am10.server.model.items.scoreblock.ScoreBlock;
+import it.polimi.is23am10.server.model.pattern.PrivatePattern;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
+import it.polimi.is23am10.server.model.score.Score;
+import it.polimi.is23am10.server.model.game.Game;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import java.io.Serializable;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * The Player class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public class Player implements Serializable {
+
+  /**
+   * Copy constructor for Player class.
+   *
+   * @param player The player object to be copied.
+   */
+<span class="nc" id="L41">  public Player(Player player) {</span>
+<span class="nc" id="L42">    this.playerId = player.playerId;</span>
+<span class="nc" id="L43">    this.playerName = player.playerName;</span>
+<span class="nc" id="L44">  }</span>
+
+  /**
+   * Constructor for Player class.
+   *
+   */
+<span class="fc" id="L50">  public Player() {</span>
+<span class="fc" id="L51">  }</span>
+
+  /**
+   * A randomly generated {@link UUID} id.
+   * 
+   */
+  private UUID playerId;
+
+  /**
+   * The player name.
+   * Chosen by the player itself.
+   * 
+   */
+  private String playerName;
+
+  /**
+   * Status of the player.
+   * Tells us if he's connected or not.
+   * 
+   */
+  private boolean isConnected;
+
+  /**
+   * Status of the player.
+   * Tells us if he's connected or not.
+   * 
+   */
+  private boolean isActivePlayer;
+
+  /**
+   * The score storage for the player.
+   * It groups all the possible score values that a player can earn during a game.
+   * 
+   */
+  private Score score;
+
+  /**
+   * The player's bookshelf playground.
+   * 
+   */
+  private Bookshelf bookshelf;
+
+  /**
+   * The player's {@link PrivateCard} with a specific {@link PrivatePattern}.
+   * 
+   */
+  private PrivateCard privateCard;
+
+  /**
+   * A list of all {@link ScoreBlock} earned by the player.
+   * 
+   */
+  private List&lt;ScoreBlock&gt; scoreBlocks;
+
+  /**
+   * playerId setter.
+   *
+   * @param playerId The player id.
+   * 
+   */
+  public synchronized void setPlayerID(UUID playerId) throws NullPlayerIdException {
+<span class="fc bfc" id="L112" title="All 2 branches covered.">    if (playerId == null) {</span>
+<span class="fc" id="L113">      throw new NullPlayerIdException(&quot;[Class Player, Method setPlayerID]: Null player id&quot;);</span>
+    }
+<span class="fc" id="L115">    this.playerId = playerId;</span>
+<span class="fc" id="L116">  }</span>
+
+  /**
+   * playerName setter.
+   * The {@link PlayerFactory} has the ownership to guarantee the uniqueness of
+   * this
+   * name in a game instance.
+   *
+   * @param playerName The player name.
+   * 
+   */
+  public synchronized void setPlayerName(String playerName) throws NullPlayerNameException {
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">    if (playerName == null) {</span>
+<span class="nc" id="L129">      throw new NullPlayerNameException(&quot;[Class Player, method setPlayerName]: Null player name&quot;);</span>
+    }
+<span class="fc" id="L131">    this.playerName = playerName;</span>
+<span class="fc" id="L132">  }</span>
+
+  /**
+   * score setter.
+   *
+   * @param score The score.
+   * 
+   */
+  public synchronized void setScore(Score score) throws NullPlayerScoreException {
+<span class="fc bfc" id="L141" title="All 2 branches covered.">    if (score == null) {</span>
+<span class="fc" id="L142">      throw new NullPlayerScoreException(&quot;[Class Player, method setScore]: Null score&quot;);</span>
+    }
+<span class="fc" id="L144">    this.score = score;</span>
+<span class="fc" id="L145">  }</span>
+
+  /**
+   * bookshelf setter.
+   *
+   * @param bookshelf The bookshelf.
+   * 
+   */
+  public synchronized void setBookshelf(Bookshelf bookshelf) throws NullPlayerBookshelfException {
+<span class="fc bfc" id="L154" title="All 2 branches covered.">    if (bookshelf == null) {</span>
+<span class="fc" id="L155">      throw new NullPlayerBookshelfException(&quot;[Class Player, method setBookshelf]: Null bookshelf&quot;);</span>
+    }
+<span class="fc" id="L157">    this.bookshelf = bookshelf;</span>
+<span class="fc" id="L158">  }</span>
+
+  /**
+   * privateCard setter.
+   *
+   * @param privateCard The private card.
+   * 
+   */
+  public synchronized void setPrivateCard(PrivateCard privateCard) throws NullPlayerPrivateCardException {
+<span class="fc bfc" id="L167" title="All 2 branches covered.">    if (privateCard == null) {</span>
+<span class="fc" id="L168">      throw new NullPlayerPrivateCardException(&quot;[Class Player, method setPrivateCard]: Null private card&quot;);</span>
+    }
+<span class="fc" id="L170">    this.privateCard = privateCard;</span>
+<span class="fc" id="L171">  }</span>
+
+  /**
+   * scoreBlocks setter.
+   *
+   * @param scoreBlocks The score blocks list.
+   * 
+   */
+  public synchronized void setScoreBlocks(List&lt;ScoreBlock&gt; scoreBlocks) throws NullPlayerScoreBlocksException {
+<span class="fc bfc" id="L180" title="All 2 branches covered.">    if (scoreBlocks == null) {</span>
+<span class="fc" id="L181">      throw new NullPlayerScoreBlocksException(&quot;[Class Player, method setScoreBlocks]: Null score blocks&quot;);</span>
+    }
+<span class="fc" id="L183">    this.scoreBlocks = scoreBlocks;</span>
+<span class="fc" id="L184">  }</span>
+
+  /**
+   * Method to add a scoreblock to the player.
+   * 
+   * @param scoreBlock The scoreblock to add.
+   */
+  public synchronized void addScoreBlock(ScoreBlock scoreBlock) {
+<span class="nc" id="L192">    scoreBlocks.add(scoreBlock);</span>
+<span class="nc" id="L193">  }</span>
+
+  /**
+   * playerId getter.
+   *
+   * @return The player's id.
+   * 
+   */
+  public synchronized UUID getPlayerID() {
+<span class="fc" id="L202">    return playerId;</span>
+  }
+
+  /**
+   * playerName getter.
+   *
+   * @return The player's name.
+   * 
+   */
+  public synchronized String getPlayerName() {
+<span class="fc" id="L212">    return playerName;</span>
+  }
+
+  /**
+   * score getter.
+   *
+   * @return The player's score.
+   * 
+   */
+  public synchronized Score getScore() {
+<span class="fc" id="L222">    return score;</span>
+  }
+
+  /**
+   * bookshelf getter.
+   *
+   * @return The player's bookshelf.
+   * 
+   */
+  public synchronized Bookshelf getBookshelf() {
+<span class="fc" id="L232">    return bookshelf;</span>
+  }
+
+  /**
+   * privateCard getter.
+   *
+   * @return The player's private card.
+   * 
+   */
+  public synchronized PrivateCard getPrivateCard() {
+<span class="fc" id="L242">    return privateCard;</span>
+  }
+
+  /**
+   * scoreBlocks getter.
+   *
+   * @return The player's score blocks list.
+   * 
+   */
+  public synchronized List&lt;ScoreBlock&gt; getScoreBlocks() {
+<span class="fc" id="L252">    return scoreBlocks;</span>
+  }
+
+  /**
+   * Function to be called by {@link Game} at the end of Player's turn.
+   * Updates its scores passing their score-giving objects to specific methods.
+   * 
+   * @throws NullPointerException Generic NPE.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
+   */
+  public void updateScore() throws NullPointerException, BookshelfGridColIndexOutOfBoundsException,
+      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException,
+      NullScoreBlockListException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+<span class="fc" id="L271">    score.setBookshelfPoints(bookshelf);</span>
+<span class="fc" id="L272">    score.setPrivatePoints(bookshelf, privateCard);</span>
+<span class="fc" id="L273">    score.setScoreBlockPoints(scoreBlocks);</span>
+<span class="fc" id="L274">  }</span>
+
+  /**
+   * Setter of connected status.
+   *
+   * @param status status of player connection.
+   */
+  public synchronized void setIsConnected(boolean status) {
+<span class="fc" id="L282">    this.isConnected = status;</span>
+<span class="fc" id="L283">  }</span>
+
+  /**
+   * Getter of connected status.
+   *
+   * @return status of player connection.
+   */
+  public synchronized boolean getIsConnected() {
+<span class="fc" id="L291">    return isConnected;</span>
+  }
+
+  /**
+   * Setter of active player status.
+   *
+   * @param status status of player.
+   */
+  public void setIsActivePlayer(boolean status) {
+<span class="fc" id="L300">    this.isActivePlayer = status;</span>
+<span class="fc" id="L301">  }</span>
+
+  /**
+   * Getter of active player status.
+   *
+   * @return status of player .
+   */
+  public boolean getIsActivePlayer() {
+<span class="nc" id="L309">    return isActivePlayer;</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public boolean equals(Object obj) {
+<span class="fc bfc" id="L318" title="All 2 branches covered.">    if (!(obj instanceof Player)) {</span>
+<span class="fc" id="L319">      return false;</span>
+    }
+<span class="fc" id="L321">    Player player = (Player) obj;</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">    return (playerId.equals(player.getPlayerID())</span>
+<span class="pc bpc" id="L323" title="1 of 2 branches missed.">        &amp;&amp; playerName.equals(player.getPlayerName()));</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public int hashCode() {
+<span class="fc" id="L332">    return playerName.hashCode() * playerId.hashCode();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

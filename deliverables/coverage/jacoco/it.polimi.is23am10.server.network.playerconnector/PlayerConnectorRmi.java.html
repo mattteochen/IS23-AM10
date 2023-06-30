@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlayerConnectorRmi.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.network.playerconnector</a> &gt; <span class="el_source">PlayerConnectorRmi.java</span></div><h1>PlayerConnectorRmi.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.network.playerconnector;
+
+import java.rmi.RemoteException;
+import java.util.concurrent.LinkedBlockingQueue;
+
+import it.polimi.is23am10.client.Client;
+import it.polimi.is23am10.client.IClient;
+import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
+
+/**
+ * The player connector class definition.
+ * This class is responsible to handle clients' sockets connections.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+@SuppressWarnings({ &quot;checkstyle:nonemptyatclausedescriptioncheck&quot; })
+public class PlayerConnectorRmi extends AbstractPlayerConnector {
+
+  /**
+   * The {@link Client} reference.
+   */
+  private IClient client;
+
+  /**
+   * Constructor.
+   *
+   * @param msgQueue The message queue instance.
+   * @throws NullBlockingQueueException If providing a null queue when building player connector.
+   *
+   */
+  public PlayerConnectorRmi(LinkedBlockingQueue&lt;AbstractMessage&gt; msgQueue, IClient client)
+      throws NullBlockingQueueException {
+<span class="fc" id="L37">    super(msgQueue);</span>
+<span class="fc" id="L38">    this.client = client;</span>
+<span class="fc" id="L39">  }</span>
+
+  /**
+   * Retrive the {@link Client} reference.
+   *
+   * @return The client reference.
+   *
+   */
+  public IClient getClient() {
+<span class="nc" id="L48">    return client;</span>
+  }
+
+  /**
+   * Set the {@link Client} reference.
+   *
+   * @param client The client reference.
+   *
+   */
+  public void setClient(IClient client) {
+<span class="nc" id="L58">    this.client = client;</span>
+<span class="nc" id="L59">  }</span>
+
+  /** {@inheritDoc} */
+  @Override
+  public void notify(AbstractMessage msg) throws InterruptedException, RemoteException {
+<span class="nc bnc" id="L64" title="All 2 branches missed.">    if (msg == null) {</span>
+<span class="nc" id="L65">      return;</span>
+    }
+<span class="nc" id="L67">    client.showServerMessage(msg);</span>
+<span class="nc" id="L68">  } </span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
