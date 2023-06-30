@@ -1,5 +1,6 @@
 it.polimi.is23am10
 it.polimi.is23am10.client
+it.polimi.is23am10.client.exceptions
 it.polimi.is23am10.client.interfaces
 it.polimi.is23am10.client.userinterface
 it.polimi.is23am10.client.userinterface.guifactory
