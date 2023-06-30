@@ -1,17 +1,15 @@
 package it.polimi.is23am10.server.network.messages;
 
-import java.util.List;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.ThreadLocalTypeAdapterFactory;
+import java.util.List;
 
 /**
- * A message containing a list of available games to be sent to the client.
- * Note that games are already converted to network-friendly {@link VirtualView}
+ * A message containing a list of available games to be sent to the client. Note that games are
+ * already converted to network-friendly {@link VirtualView}
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -20,24 +18,15 @@ import it.polimi.is23am10.utils.ThreadLocalTypeAdapterFactory;
  */
 public final class AvailableGamesMessage extends AbstractMessage {
 
-    /**
-   * An utility to be used during deserialization processes.
-   * 
-   */
+  /** An utility to be used during deserialization processes. */
   @SuppressWarnings("unused")
   private final String className = this.getClass().getName();
-  
-  /**
-   * Gson object for serialization and deserialization
-   */
-  protected final transient Gson gson = new GsonBuilder()
-.registerTypeAdapterFactory(new ThreadLocalTypeAdapterFactory())
-.create();
 
+  /** Gson object for serialization and deserialization */
+  protected final transient Gson gson =
+      new GsonBuilder().registerTypeAdapterFactory(new ThreadLocalTypeAdapterFactory()).create();
 
-  /**
-   * Player receiving the list.
-   */
+  /** Player receiving the list. */
   private Player receiver;
 
   /**
@@ -46,7 +35,7 @@ public final class AvailableGamesMessage extends AbstractMessage {
    * @param availableGames games to send.
    * @param receivers the optional receiver player.
    */
-  public AvailableGamesMessage(List<VirtualView> availableGames, Player ...receivers) {
+  public AvailableGamesMessage(List<VirtualView> availableGames, Player... receivers) {
     msgType = MessageType.AVAILABLE_GAMES;
     this.message = gson.toJson(availableGames);
     if (receivers != null && receivers.length > 0) {
@@ -55,8 +44,8 @@ public final class AvailableGamesMessage extends AbstractMessage {
   }
 
   /**
-   * Boolean to check if message is direct or broadcast.
-   * Overridden to false as this message can only be private.
+   * Boolean to check if message is direct or broadcast. Overridden to false as this message can
+   * only be private.
    *
    * @return is the message broadcast?
    */

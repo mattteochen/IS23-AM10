@@ -3,8 +3,7 @@ package it.polimi.is23am10.server.model.player.exceptions;
 import it.polimi.is23am10.server.model.player.Player;
 
 /**
- * Null player score blocks exception.
- * Can be used public methods of {@link Player}.
+ * Null player score blocks exception. Can be used public methods of {@link Player}.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)

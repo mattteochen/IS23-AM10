@@ -1,7 +1,6 @@
 package it.polimi.is23am10.server.controller.interfaces;
 
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
-
 import org.apache.logging.log4j.Logger;
 
 /**
@@ -16,4 +15,3 @@ import org.apache.logging.log4j.Logger;
 public interface ControllerConsumer<R, C> {
   R accept(Logger logger, AbstractPlayerConnector connector, C command);
 }
-

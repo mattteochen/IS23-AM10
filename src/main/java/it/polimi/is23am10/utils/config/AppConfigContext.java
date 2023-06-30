@@ -1,79 +1,49 @@
 package it.polimi.is23am10.utils.config;
 
-/**
- * The server config context class definition.
- * 
- */
+/** The server config context class definition. */
 public class AppConfigContext {
 
-  /**
-   * The server socket port.
-   * 
-   */
+  /** The server socket port. */
   private Integer serverSocketPort;
 
-
-  /**
-   * The server rmi port.
-   * 
-   */
+  /** The server rmi port. */
   private Integer serverRmiPort;
 
-  /**
-   * The max allowed connection for this server instance.
-   * This is a momentary max value.
-   * 
-   */
+  /** The max allowed connection for this server instance. This is a momentary max value. */
   private Integer maxConnection;
 
-  /**
-   * The socket SO_KEEPALIVE flag.
-   * 
-   */
+  /** The socket SO_KEEPALIVE flag. */
   private boolean keepAlive;
 
-  /**
-   * The kind of app to launch. If false launches a client.
-   * 
-   */
+  /** The kind of app to launch. If false launches a client. */
   private boolean isServer;
 
   /**
-   * The interface to show if app is launched in Client mode.
-   * If false launches client in CLI mode.
-   * If {@link AppConfigContext#isServer} is true this flag is ignored,
-   * as server mode only supports CLI as interface, and for logging purpose only.
+   * The interface to show if app is launched in Client mode. If false launches client in CLI mode.
+   * If {@link AppConfigContext#isServer} is true this flag is ignored, as server mode only supports
+   * CLI as interface, and for logging purpose only.
    */
   private boolean showGUI;
 
   /**
-   * The communication method to use if app is launched is Client Mode.
-   * If false launches client over Socket connection.
-   * If {@link AppConfigContext#isServer} is true this flag is ignored,
-   * as server mode both receives RMI and socket connections
+   * The communication method to use if app is launched is Client Mode. If false launches client
+   * over Socket connection. If {@link AppConfigContext#isServer} is true this flag is ignored, as
+   * server mode both receives RMI and socket connections
    */
   private boolean useRMI;
 
-  /**
-   * The network address where the server is running.
-   * 
-   */
+  /** The network address where the server is running. */
   private String serverAddress;
 
-  /**
-   * A simple flag that if enabled shows all verbose messages
-   * in console logs.
-   */
+  /** A simple flag that if enabled shows all verbose messages in console logs. */
   private boolean showDebug;
 
-  /**
-   * The maximum inactivity time allowed to a player when playing a game turn.
-   */
+  /** The maximum inactivity time allowed to a player when playing a game turn. */
   private long maxInactivityTimeMs;
-  
+
   /**
    * Constructor.
-   * 
+   *
    * @param serverSocketPort The server socket port number.
    * @param serverRmiPort The server rmi port number.
    * @param maxConnections The maximum allowed connections.
@@ -85,8 +55,17 @@ public class AppConfigContext {
    * @param showDebug Show debug infos flag.
    * @param maxInactivityTimeMs Milliseconds to wait for inactive players before disconnecting.
    */
-  public AppConfigContext(Integer serverSocketPort, Integer serverRmiPort,
-      Integer maxConnections, boolean keepAlive, boolean isServer, boolean showGUI, boolean useRMI, String serverAddress, boolean showDebug, long maxInactivityTimeMs) {
+  public AppConfigContext(
+      Integer serverSocketPort,
+      Integer serverRmiPort,
+      Integer maxConnections,
+      boolean keepAlive,
+      boolean isServer,
+      boolean showGUI,
+      boolean useRMI,
+      String serverAddress,
+      boolean showDebug,
+      long maxInactivityTimeMs) {
     this.serverSocketPort = serverSocketPort;
     this.serverRmiPort = serverRmiPort;
     this.maxConnection = maxConnections;
@@ -99,12 +78,7 @@ public class AppConfigContext {
     this.maxInactivityTimeMs = maxInactivityTimeMs;
   }
 
-
-  /**
-   * Constructor with default values.
-   *
-   * 
-   */
+  /** Constructor with default values. */
   public AppConfigContext() {
     this.serverSocketPort = AppConfig.getServerSocketPort();
     this.serverRmiPort = AppConfig.getServerRmiPort();
@@ -122,7 +96,6 @@ public class AppConfigContext {
    * Server socket port getter.
    *
    * @return The instantiated server socket port.
-   * 
    */
   public Integer getServerSocketPort() {
     return serverSocketPort;
@@ -132,7 +105,6 @@ public class AppConfigContext {
    * Server rmi port getter.
    *
    * @return The instantiated server rmi port.
-   * 
    */
   public Integer getServerRmiPort() {
     return serverRmiPort;
@@ -142,7 +114,6 @@ public class AppConfigContext {
    * Max connections getter.
    *
    * @return The maximum allowed connections.
-   * 
    */
   public Integer getMaxConnections() {
     return maxConnection;
@@ -152,7 +123,6 @@ public class AppConfigContext {
    * Keep alive getter.
    *
    * @return The keep alive flag.
-   * 
    */
   public boolean getKeepAlive() {
     return keepAlive;
@@ -162,7 +132,6 @@ public class AppConfigContext {
    * Is server getter.
    *
    * @return The isServer flag.
-   * 
    */
   public boolean getIsServer() {
     return isServer;
@@ -172,7 +141,6 @@ public class AppConfigContext {
    * Show GUI getter.
    *
    * @return The show GUI flag.
-   * 
    */
   public boolean getShowGUI() {
     return showGUI;
@@ -182,7 +150,6 @@ public class AppConfigContext {
    * Use RMI getter.
    *
    * @return The use RMI flag.
-   * 
    */
   public boolean getUseRMI() {
     return useRMI;
@@ -192,7 +159,6 @@ public class AppConfigContext {
    * Server address getter.
    *
    * @return The server address.
-   * 
    */
   public String getServerAddress() {
     return serverAddress;
@@ -202,7 +168,6 @@ public class AppConfigContext {
    * Show debug getter.
    *
    * @return The debug flag.
-   * 
    */
   public boolean getShowDebug() {
     return showDebug;
@@ -212,7 +177,6 @@ public class AppConfigContext {
    * Max inactivity time getter.
    *
    * @return The max inactivity time value in ms.
-   * 
    */
   public long getMaxInactivityTime() {
     return maxInactivityTimeMs;

@@ -10,25 +10,16 @@ package it.polimi.is23am10.server.command;
  */
 public class GetAvailableGamesCommand extends AbstractCommand {
 
-  /**
-   * An utility to be used during deserialization processes.
-   * 
-   */
+  /** An utility to be used during deserialization processes. */
   @SuppressWarnings("unused")
   private final String className = this.getClass().getName();
 
-  /**
-   * Constructor.
-   *
-   */
+  /** Constructor. */
   public GetAvailableGamesCommand() {
     super(Opcode.GET_GAMES);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(Object obj) {
     return (obj instanceof GetAvailableGamesCommand);

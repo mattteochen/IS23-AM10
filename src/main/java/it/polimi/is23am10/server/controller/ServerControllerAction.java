@@ -1,13 +1,12 @@
 package it.polimi.is23am10.server.controller;
 
 import it.polimi.is23am10.server.command.AbstractCommand;
-import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
+import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
 import it.polimi.is23am10.server.controller.interfaces.ControllerConsumer;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
-
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,28 +21,20 @@ import org.apache.logging.log4j.Logger;
  */
 public class ServerControllerAction implements IServerControllerAction {
 
-  /**
-   * The logger, an instance of {@link Logger}.
-   *
-   */
+  /** The logger, an instance of {@link Logger}. */
   private final Logger logger = LogManager.getLogger(ServerControllerAction.class);
 
-  /**
-   * A helper mapping to link a {@link Opcode} to the relative worker callback.
-   *
-   */
-  private final Map<Opcode, ControllerConsumer<Void, AbstractCommand>> actions = Map.of(
-      Opcode.START, startConsumer,
-      Opcode.ADD_PLAYER, addPlayerConsumer,
-      Opcode.MOVE_TILES, moveTilesConsumer,
-      Opcode.GET_GAMES, getAvailableGamesConsumer,
-      Opcode.SEND_CHAT_MESSAGE, sendChatMessageConsumer,
-      Opcode.GAME_TIMER, snoozeTimerConsumer);
+  /** A helper mapping to link a {@link Opcode} to the relative worker callback. */
+  private final Map<Opcode, ControllerConsumer<Void, AbstractCommand>> actions =
+      Map.of(
+          Opcode.START, startConsumer,
+          Opcode.ADD_PLAYER, addPlayerConsumer,
+          Opcode.MOVE_TILES, moveTilesConsumer,
+          Opcode.GET_GAMES, getAvailableGamesConsumer,
+          Opcode.SEND_CHAT_MESSAGE, sendChatMessageConsumer,
+          Opcode.GAME_TIMER, snoozeTimerConsumer);
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public void execute(AbstractPlayerConnector connector, AbstractCommand command) {
     if (command == null || connector == null) {
@@ -52,10 +43,7 @@ public class ServerControllerAction implements IServerControllerAction {
     actions.get(command.getOpcode()).accept(logger, connector, command);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public AvailableGamesMessage execute(GetAvailableGamesCommand command) {
     if (command == null) {

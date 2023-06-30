@@ -1,15 +1,13 @@
 package it.polimi.is23am10.server.network.virtualview;
 
-import java.io.Serializable;
-import java.util.UUID;
-
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.score.Score;
+import java.io.Serializable;
+import java.util.UUID;
 
 /**
- * A virtual view with the state of a player, downscoped
- * to what is essential for the client to view
+ * A virtual view with the state of a player, downscoped to what is essential for the client to view
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -18,39 +16,27 @@ import it.polimi.is23am10.server.model.score.Score;
  */
 public final class VirtualPlayer implements Serializable {
 
-  /**
-   * Unique player identifier.
-   */
+  /** Unique player identifier. */
   private UUID playerId;
 
-  /**
-   * Player's game name.
-   */
+  /** Player's game name. */
   private String playerName;
 
-  /**
-   * Player's score.
-   */
+  /** Player's score. */
   private Score score;
 
-  /**
-   * Player's bookshelf with its tiles.
-   */
+  /** Player's bookshelf with its tiles. */
   private Bookshelf bookshelf;
 
-  /**
-   * 1-12 number referencing the private card to show.
-   */
+  /** 1-12 number referencing the private card to show. */
   private Integer privateCardIndex;
 
-  /**
-   * Status of the player.
-   * 
-   */
+  /** Status of the player. */
   private boolean isConnected;
-  
+
   /**
    * Public constructor. Builds VirtualPlayer out of {@link Player}
+   *
    * @param p instance of {@link Player} to "virtualize".
    */
   public VirtualPlayer(Player p) {
@@ -66,6 +52,7 @@ public final class VirtualPlayer implements Serializable {
 
   /**
    * Getter for player id.
+   *
    * @return player id
    */
   public UUID getPlayerId() {
@@ -74,6 +61,7 @@ public final class VirtualPlayer implements Serializable {
 
   /**
    * Getter for score.
+   *
    * @return score
    */
   public Score getScore() {
@@ -82,6 +70,7 @@ public final class VirtualPlayer implements Serializable {
 
   /**
    * Getter for bookshelf.
+   *
    * @return bookshelf
    */
   public Bookshelf getBookshelf() {
@@ -90,6 +79,7 @@ public final class VirtualPlayer implements Serializable {
 
   /**
    * Getter for private card index.
+   *
    * @return private card index
    */
   public Integer getPrivateCardIndex() {
@@ -98,6 +88,7 @@ public final class VirtualPlayer implements Serializable {
 
   /**
    * Getter for player name.
+   *
    * @return player name
    */
   public String getPlayerName() {
@@ -106,6 +97,7 @@ public final class VirtualPlayer implements Serializable {
 
   /**
    * Getter for connected status.
+   *
    * @return connected status.
    */
   public boolean getIsConnected() {
@@ -113,18 +105,15 @@ public final class VirtualPlayer implements Serializable {
   }
 
   /**
-   * Void method used when pushing state
-   * to all players, in order to keep secret
-   * each player's card to other players.
+   * Void method used when pushing state to all players, in order to keep secret each player's card
+   * to other players.
    */
   public void obfuscatePrivateCard() {
     privateCardIndex = 0;
     score.obfuscatePrivatePoints();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof VirtualPlayer)) {
@@ -132,13 +121,10 @@ public final class VirtualPlayer implements Serializable {
     }
 
     VirtualPlayer player = (VirtualPlayer) obj;
-    return (playerId.equals(player.getPlayerId())
-        && playerName.equals(player.getPlayerName()));
+    return (playerId.equals(player.getPlayerId()) && playerName.equals(player.getPlayerName()));
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode() {
     return playerName.hashCode() * playerId.hashCode();

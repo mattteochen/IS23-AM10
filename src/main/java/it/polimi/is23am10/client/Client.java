@@ -8,7 +8,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
-
 import it.polimi.is23am10.client.exceptions.ForceCloseApplicationException;
 import it.polimi.is23am10.client.interfaces.AlarmConsumer;
 import it.polimi.is23am10.client.userinterface.UserInterface;
@@ -159,9 +158,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    */
   protected static IPlayerConnector playerConnector;
 
-  /**
-   * Maximum player name length.
-   */
+  /** Maximum player name length. */
   private final Integer MAX_PLAYER_NAME_LENGTH = 15;
 
   /**
@@ -209,11 +206,10 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
   }
 
   /**
-   * Set a force close application request.
-   * This method is defined as static as JavaFX thread must have access.
+   * Set a force close application request. This method is defined as static as JavaFX thread must
+   * have access.
    *
    * @param flag The request flag.
-   *
    */
   public static void setForceCloseApplication(boolean flag) {
     forceCloseApplication = flag;
@@ -301,7 +297,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
 
   /**
    * Game id ref getter.
-   * 
+   *
    * @return game id.
    */
   protected UUID getGameIdRef() {
@@ -363,7 +359,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
 
   /**
    * Virtual view setter.
-   * 
+   *
    * @param vv virtual view to set.
    */
   protected void setVirtualView(VirtualView vv) {
@@ -619,7 +615,7 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
     String selectedPlayerName = userInterface.getUserInput();
     if (selectedPlayerName != null) {
       selectedPlayerName = selectedPlayerName.stripLeading().split(" ")[0];
-      if (selectedPlayerName.length() > MAX_PLAYER_NAME_LENGTH){
+      if (selectedPlayerName.length() > MAX_PLAYER_NAME_LENGTH) {
         selectedPlayerName = selectedPlayerName.substring(0, MAX_PLAYER_NAME_LENGTH);
       }
       try {
@@ -696,7 +692,8 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
             } else {
               userInterface.displayError(
                   new ErrorMessage(
-                      "Insert the index of the game you want to join, if none present please create a new game",
+                      "Insert the index of the game you want to join, if none present please create"
+                          + " a new game",
                       ErrorSeverity.ERROR));
             }
             break;
@@ -741,9 +738,12 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
    * @throws ForceCloseApplicationException
    */
   protected void clientRunnerCore()
-      throws IOException, InterruptedException, NullPlayerIdException, ForceCloseApplicationException {
+      throws IOException,
+          InterruptedException,
+          NullPlayerIdException,
+          ForceCloseApplicationException {
 
-    //this flag is raised by external threads, as JavaFX
+    // this flag is raised by external threads, as JavaFX
     if (forceCloseApplication) {
       throw new ForceCloseApplicationException();
     }
@@ -771,14 +771,15 @@ public abstract class Client extends UnicastRemoteObject implements IClient {
     }
   }
 
-  /**
-   * Method to terminate the client and all client's threads.
-   */
+  /** Method to terminate the client and all client's threads. */
   public void terminateClient() {
     try {
       UnicastRemoteObject.unexportObject(this, true);
     } catch (NoSuchObjectException e) {
-      userInterface.displayError(new ErrorMessage("Unable to close connection safely. Please close client manually", ErrorSeverity.CRITICAL));
+      userInterface.displayError(
+          new ErrorMessage(
+              "Unable to close connection safely. Please close client manually",
+              ErrorSeverity.CRITICAL));
     }
     requestedDisconnection = true;
     alarm.cancel();

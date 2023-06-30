@@ -1,14 +1,5 @@
 package it.polimi.is23am10.client.userinterface.helpers;
 
-import java.io.Serializable;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-
 import it.polimi.is23am10.server.model.items.board.Board;
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
@@ -18,10 +9,17 @@ import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
 import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import java.io.Serializable;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
- * An helper class with all the methods needed to properly print
- * CLI messages for client. It wraps System.out enriching it with colors.
+ * An helper class with all the methods needed to properly print CLI messages for client. It wraps
+ * System.out enriching it with colors.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -30,9 +28,7 @@ import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
  */
 public final class OutputWrapper implements Serializable {
 
-  /**
-   * Enum containing the output types.
-   */
+  /** Enum containing the output types. */
   public enum OutputLevel {
     DEBUG,
     INFO,
@@ -56,45 +52,45 @@ public final class OutputWrapper implements Serializable {
   public static final Integer MIN_PADDING_FOR_NAMES = 15;
 
   /**
-   * A flag relative to the instance of {@link OutputWrapper}
-   * set with constructor, used for showing or hiding debug lines.
+   * A flag relative to the instance of {@link OutputWrapper} set with constructor, used for showing
+   * or hiding debug lines.
    */
   private boolean showDebug = false;
 
   /**
-   * A map that associates output levels to their string
-   * template. A template uses ANSI codes to display colors.
+   * A map that associates output levels to their string template. A template uses ANSI codes to
+   * display colors.
    */
-  private final Map<OutputLevel, String> debugTemplates = Map.of(
-      OutputLevel.DEBUG, ANSICodes.BLUE + "🔎 %s" + ANSICodes.RESET,
-      OutputLevel.INFO, "%s",
-      OutputLevel.CHAT, ANSICodes.GREEN + "💬 %s" + ANSICodes.RESET,
-      OutputLevel.WARNING, ANSICodes.YELLOW + "🔶 %s" + ANSICodes.RESET,
-      OutputLevel.ERROR, ANSICodes.RED + "🔴 %s" + ANSICodes.RESET,
-      OutputLevel.CRITICAL, ANSICodes.PURPLE_BACKGROUND + "⚫️ %s" + ANSICodes.RESET);
+  private final Map<OutputLevel, String> debugTemplates =
+      Map.of(
+          OutputLevel.DEBUG, ANSICodes.BLUE + "🔎 %s" + ANSICodes.RESET,
+          OutputLevel.INFO, "%s",
+          OutputLevel.CHAT, ANSICodes.GREEN + "💬 %s" + ANSICodes.RESET,
+          OutputLevel.WARNING, ANSICodes.YELLOW + "🔶 %s" + ANSICodes.RESET,
+          OutputLevel.ERROR, ANSICodes.RED + "🔴 %s" + ANSICodes.RESET,
+          OutputLevel.CRITICAL, ANSICodes.PURPLE_BACKGROUND + "⚫️ %s" + ANSICodes.RESET);
+
+  /** A map that associates TileType to their Java source code encoding. */
+  private static final Map<TileType, String> emojiMap =
+      Map.of(
+          TileType.BOOK, "📔", // NOTEBOOK WITH DECORATIVE COVER
+          TileType.CAT, "🐈", // CAT
+          TileType.FRAME, "🟧", // ORANGE SQUARE ,
+          TileType.GAME, "🎮", // VIDEO GAME,
+          TileType.PLANT, "🍀", // FOUR LEAF CLOVER
+          TileType.TROPHY, "🏆", // TROPHY
+          TileType.EMPTY, "⬜" // WHITE LARGE SQUARE
+          );
 
   /**
-   * A map that associates TileType to their Java source code encoding.
-   * 
+   * A map that associates a boolean referring to the online/offline player status to green/red
+   * emoticon. *
    */
-  private static final Map<TileType, String> emojiMap = Map.of(
-      TileType.BOOK, "📔", // NOTEBOOK WITH DECORATIVE COVER
-      TileType.CAT, "🐈", // CAT
-      TileType.FRAME, "🟧", // ORANGE SQUARE ,
-      TileType.GAME, "🎮", // VIDEO GAME,
-      TileType.PLANT, "🍀", // FOUR LEAF CLOVER
-      TileType.TROPHY, "🏆", // TROPHY
-      TileType.EMPTY, "⬜" // WHITE LARGE SQUARE
-  );
-
-  /**
-   * A map that associates a boolean referring to the online/offline player status
-   * to green/red emoticon. *
-   */
-  private static final Map<Boolean, String> onlineOffline = Map.of(
-      true, "🟢", // ONLINE
-      false, "🔴" // OFFLINE
-  );
+  private static final Map<Boolean, String> onlineOffline =
+      Map.of(
+          true, "🟢", // ONLINE
+          false, "🔴" // OFFLINE
+          );
 
   /**
    * Public constructor for OutputWrapper.
@@ -108,9 +104,8 @@ public final class OutputWrapper implements Serializable {
   /**
    * Prints a debug line on console.
    *
-   * @param string     Debug string to display.
-   * @param cleanFirst Flag to set if message should be preceded by a console
-   *                   clean.
+   * @param string Debug string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console clean.
    */
   public void debug(String string, boolean cleanFirst) {
     if (showDebug) {
@@ -121,17 +116,14 @@ public final class OutputWrapper implements Serializable {
   /**
    * Prints a info line on console.
    *
-   * @param string     Info string to display.
-   * @param cleanFirst Flag to set if message should be preceded by a console
-   *                   clean.
+   * @param string Info string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console clean.
    */
   public void info(String string, boolean cleanFirst) {
     printString(OutputLevel.INFO, string, cleanFirst);
   }
 
-  /**
-   * Private method to print repeated sequence of char.
-   */
+  /** Private method to print repeated sequence of char. */
   private static String repeatString(String str, int count) {
     return String.join("", Collections.nCopies(count, str));
   }
@@ -139,9 +131,8 @@ public final class OutputWrapper implements Serializable {
   /**
    * Print the current game status on console.
    *
-   * @param vw         The virtualView.
-   * @param cleanFirst Flag to set if message should be preceded by a console
-   *                   clean.
+   * @param vw The virtualView.
+   * @param cleanFirst Flag to set if message should be preceded by a console clean.
    */
   public void show(VirtualView vw, boolean cleanFirst) {
 
@@ -174,27 +165,39 @@ public final class OutputWrapper implements Serializable {
 
     List<VirtualPlayer> players = vw.getPlayers();
 
-    int maxLength = Math.max(
-      players.stream()
-        .mapToInt(p -> p.getPlayerName().length())
-        .max().getAsInt(), 
-        MIN_PADDING_FOR_NAMES);
+    int maxLength =
+        Math.max(
+            players.stream().mapToInt(p -> p.getPlayerName().length()).max().getAsInt(),
+            MIN_PADDING_FOR_NAMES);
 
     // Print Player Status.
     StringBuilder playersStatus = new StringBuilder();
     // Header.
     playersStatus
-        .append(String.format(CLIStrings.tableHeader1 + maxLength + CLIStrings.tableHeader2,
-            CLIStrings.N, CLIStrings.status, CLIStrings.player, CLIStrings.role,
-            CLIStrings.bookshelfPoints, CLIStrings.scoreBlockPoints, CLIStrings.privatePoints, CLIStrings.extraPoints,
-            CLIStrings.totalScore))
+        .append(
+            String.format(
+                CLIStrings.tableHeader1 + maxLength + CLIStrings.tableHeader2,
+                CLIStrings.N,
+                CLIStrings.status,
+                CLIStrings.player,
+                CLIStrings.role,
+                CLIStrings.bookshelfPoints,
+                CLIStrings.scoreBlockPoints,
+                CLIStrings.privatePoints,
+                CLIStrings.extraPoints,
+                CLIStrings.totalScore))
         .append(CLIStrings.newLine)
         .append(
-            String.format(CLIStrings.tableLines1 + maxLength + CLIStrings.tableLines2,
-                repeatString(CLIStrings.line, XXS_PADDING), repeatString(CLIStrings.line, XS_PADDING),
-                repeatString(CLIStrings.line, maxLength), repeatString(CLIStrings.line, M_PADDING),
-                repeatString(CLIStrings.line, XL_PADDING), repeatString(CLIStrings.line, XXL_PADDING),
-                repeatString(CLIStrings.line, L_PADDING), repeatString(CLIStrings.line, M_PADDING),
+            String.format(
+                CLIStrings.tableLines1 + maxLength + CLIStrings.tableLines2,
+                repeatString(CLIStrings.line, XXS_PADDING),
+                repeatString(CLIStrings.line, XS_PADDING),
+                repeatString(CLIStrings.line, maxLength),
+                repeatString(CLIStrings.line, M_PADDING),
+                repeatString(CLIStrings.line, XL_PADDING),
+                repeatString(CLIStrings.line, XXL_PADDING),
+                repeatString(CLIStrings.line, L_PADDING),
+                repeatString(CLIStrings.line, M_PADDING),
                 repeatString(CLIStrings.line, S_PADDING)))
         .append(CLIStrings.newLine);
 
@@ -209,7 +212,10 @@ public final class OutputWrapper implements Serializable {
       int extraPoints = vp.getScore().getExtraPoint();
       int bookshelfPoints = vp.getScore().getBookshelfPoints();
       int scoreBlocksPoint = vp.getScore().getScoreBlockPoints();
-      String privatePointsString = (vp.getScore().getPrivatePoints() == -1) ? "?" : vp.getScore().getPrivatePoints().toString();
+      String privatePointsString =
+          (vp.getScore().getPrivatePoints() == -1)
+              ? "?"
+              : vp.getScore().getPrivatePoints().toString();
 
       if (vw.getFirstPlayer().equals(vp)) {
         role = CLIStrings.firstPlayer;
@@ -219,8 +225,18 @@ public final class OutputWrapper implements Serializable {
       }
 
       playersStatus
-          .append(String.format(CLIStrings.tableBody1 + maxLength + CLIStrings.tableBody2,
-              pos++, status, player, role, bookshelfPoints, scoreBlocksPoint, privatePointsString, extraPoints, totalScoreString))
+          .append(
+              String.format(
+                  CLIStrings.tableBody1 + maxLength + CLIStrings.tableBody2,
+                  pos++,
+                  status,
+                  player,
+                  role,
+                  bookshelfPoints,
+                  scoreBlocksPoint,
+                  privatePointsString,
+                  extraPoints,
+                  totalScoreString))
           .append(CLIStrings.newLine);
     }
     info(playersStatus.toString(), false);
@@ -280,26 +296,40 @@ public final class OutputWrapper implements Serializable {
     // Print Shared Cards descriptions.
     StringBuilder sharedCards = new StringBuilder();
 
-    maxLength = Math.max(vw.getSharedCards().stream()
-        .mapToInt(p -> CLIStrings.sharedPatternsDesc.get(p).length())
-        .max().getAsInt(),HUNDRED_PADDING);
+    maxLength =
+        Math.max(
+            vw.getSharedCards().stream()
+                .mapToInt(p -> CLIStrings.sharedPatternsDesc.get(p).length())
+                .max()
+                .getAsInt(),
+            HUNDRED_PADDING);
 
     // Header.
     sharedCards
-        .append(String.format(CLIStrings.sharedCardsHeader + maxLength + CLIStrings.sharedCardHeaderDescription ,
-            CLIStrings.idx, CLIStrings.description))
+        .append(
+            String.format(
+                CLIStrings.sharedCardsHeader + maxLength + CLIStrings.sharedCardHeaderDescription,
+                CLIStrings.idx,
+                CLIStrings.description))
         .append(CLIStrings.newLine)
         .append(
-            String
-                .format(String.format(CLIStrings.sharedCardsHeader + maxLength + CLIStrings.sharedCardHeaderDescription,
-                    repeatString(CLIStrings.line, XL_PADDING), repeatString(CLIStrings.line, maxLength))))
+            String.format(
+                String.format(
+                    CLIStrings.sharedCardsHeader
+                        + maxLength
+                        + CLIStrings.sharedCardHeaderDescription,
+                    repeatString(CLIStrings.line, XL_PADDING),
+                    repeatString(CLIStrings.line, maxLength))))
         .append(CLIStrings.newLine);
 
     // Body.
     for (Integer sc : vw.getSharedCards()) {
       sharedCards
-          .append(String.format(CLIStrings.sharedCardsBody + maxLength + CLIStrings.sharedCardsBodyDescription, sc,
-              CLIStrings.sharedPatternsDesc.get(sc)))
+          .append(
+              String.format(
+                  CLIStrings.sharedCardsBody + maxLength + CLIStrings.sharedCardsBodyDescription,
+                  sc,
+                  CLIStrings.sharedPatternsDesc.get(sc)))
           .append(CLIStrings.newLine);
     }
     info(sharedCards.toString(), false);
@@ -309,7 +339,7 @@ public final class OutputWrapper implements Serializable {
     privateCards.append(CLIStrings.newLine); // New Line for esthetic purpose.
     pos = 1;
     // Header
-    for (VirtualPlayer vp : players) { 
+    for (VirtualPlayer vp : players) {
       privateCards.append(String.format(CLIStrings.privateCardIdx, pos++));
     }
     info(privateCards.toString(), false);
@@ -320,7 +350,7 @@ public final class OutputWrapper implements Serializable {
     for (VirtualPlayer vp : players) {
       bsIndex.append(CLIStrings.indexBookshelf);
     }
-    info(bsIndex.toString(), false); 
+    info(bsIndex.toString(), false);
 
     // Top padding.
     topPadding = new StringBuilder();
@@ -361,9 +391,8 @@ public final class OutputWrapper implements Serializable {
   /**
    * Prints a chat message on console.
    *
-   * @param string     Message string to display.
-   * @param cleanFirst Flag to set if message should be preceded by a console
-   *                   clean.
+   * @param string Message string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console clean.
    */
   public void chat(String string, boolean cleanFirst) {
     printString(OutputLevel.CHAT, string, cleanFirst);
@@ -372,9 +401,8 @@ public final class OutputWrapper implements Serializable {
   /**
    * Prints a warning line on console.
    *
-   * @param string     Warning string to display.
-   * @param cleanFirst Flag to set if message should be preceded by a console
-   *                   clean.
+   * @param string Warning string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console clean.
    */
   public void warning(String string, boolean cleanFirst) {
     printString(OutputLevel.WARNING, string, cleanFirst);
@@ -383,9 +411,8 @@ public final class OutputWrapper implements Serializable {
   /**
    * Prints a error line on console.
    *
-   * @param string     Error string to display.
-   * @param cleanFirst Flag to set if message should be preceded by a console
-   *                   clean.
+   * @param string Error string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console clean.
    */
   public void error(String string, boolean cleanFirst) {
     printString(OutputLevel.ERROR, string, cleanFirst);
@@ -394,18 +421,14 @@ public final class OutputWrapper implements Serializable {
   /**
    * Prints a critical error line on console.
    *
-   * @param string     Critical error string to display.
-   * @param cleanFirst Flag to set if message should be preceded by a console
-   *                   clean.
+   * @param string Critical error string to display.
+   * @param cleanFirst Flag to set if message should be preceded by a console clean.
    */
   public void critical(String string, boolean cleanFirst) {
     printString(OutputLevel.CRITICAL, string, cleanFirst);
   }
 
-  /**
-   * Helper method to call to clean the console.
-   * 
-   */
+  /** Helper method to call to clean the console. */
   public void clean() {
     for (int i = 0; i < CLEAN_SCREEN_REPS; i++) {
       System.out.println();
@@ -424,10 +447,9 @@ public final class OutputWrapper implements Serializable {
   }
 
   /**
-   * Helper method used by tests to retrieve the string to be printed
-   * before actually printing it.
+   * Helper method used by tests to retrieve the string to be printed before actually printing it.
    *
-   * @param level  {@link OutputLevel} of the message.
+   * @param level {@link OutputLevel} of the message.
    * @param string The string of the message to display.
    * @return The formatted string ready to be printed.
    */
@@ -442,8 +464,8 @@ public final class OutputWrapper implements Serializable {
   /**
    * Public method to print a string. Used from CLI.
    *
-   * @param level      {@link OutputLevel} of the message.
-   * @param string     The string of the message to display.
+   * @param level {@link OutputLevel} of the message.
+   * @param string The string of the message to display.
    * @param cleanFirst Flag that resets the console before print if true.
    */
   public void printString(OutputLevel level, String string, boolean cleanFirst) {
@@ -461,5 +483,4 @@ public final class OutputWrapper implements Serializable {
   public void setDebug(boolean toSet) {
     showDebug = toSet;
   }
-
 }

@@ -1,10 +1,9 @@
 package it.polimi.is23am10.server.network.messages;
 
-import it.polimi.is23am10.server.network.virtualview.VirtualView;
-import it.polimi.is23am10.utils.ThreadLocalTypeAdapterFactory;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import it.polimi.is23am10.utils.ThreadLocalTypeAdapterFactory;
 
 /**
  * A message containing a serialized JSON of a virtual view instance.
@@ -16,24 +15,18 @@ import com.google.gson.GsonBuilder;
  */
 public final class GameMessage extends AbstractMessage {
 
-    /**
-   * An utility to be used during deserialization processes.
-   * 
-   */
+  /** An utility to be used during deserialization processes. */
   @SuppressWarnings("unused")
   private final String className = this.getClass().getName();
-  
+
+  /** Gson object for serialization and deserialization */
+  protected final transient Gson gson =
+      new GsonBuilder().registerTypeAdapterFactory(new ThreadLocalTypeAdapterFactory()).create();
+
   /**
-   * Gson object for serialization and deserialization
-   */
-  protected final transient Gson gson = new GsonBuilder()
-    .registerTypeAdapterFactory(new ThreadLocalTypeAdapterFactory())
-    .create();
-  
-  /**
-   * Public constructor for virtualView message.
-   * Game object is serialized into JSON and set as message.
-   * 
+   * Public constructor for virtualView message. Game object is serialized into JSON and set as
+   * message.
+   *
    * @param virtualView virtual view to serialize
    */
   public GameMessage(VirtualView virtualView) {
@@ -42,9 +35,8 @@ public final class GameMessage extends AbstractMessage {
   }
 
   /**
-   * Getter for virtualView instance. It deserializes it from
-   * JSON message.
-   * 
+   * Getter for virtualView instance. It deserializes it from JSON message.
+   *
    * @return deserialized virtual view object
    */
   public VirtualView getGame() {

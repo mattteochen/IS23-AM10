@@ -9,7 +9,7 @@ package it.polimi.is23am10.server.model.game.exceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class NullPlayerException extends Exception {
-    public NullPlayerException(){
-        super("Player is null");
-    }
+  public NullPlayerException() {
+    super("Player is null");
+  }
 }

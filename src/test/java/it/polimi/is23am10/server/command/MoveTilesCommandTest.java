@@ -4,16 +4,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.UUID;
-
 import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import it.polimi.is23am10.utils.Coordinates;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck" })
+@SuppressWarnings({
+  "checkstyle:methodname",
+  "checkstyle:abbreviationaswordinnamecheck",
+  "checkstyle:linelengthcheck"
+})
 class MoveTilesCommandTest {
   @Test
   void EQUALS_should_COMPARE_CONTENT_EQUALITY() {
@@ -33,7 +35,8 @@ class MoveTilesCommandTest {
     Map<Coordinates, Coordinates> coordMap2 = new HashMap<>();
 
     final MoveTilesCommand item1 = new MoveTilesCommand("Steve", id1, coordMap1);
-    final MoveTilesCommand item1_duplicate = new MoveTilesCommand("Steve", id1_duplicate, coordMap1_duplicate);
+    final MoveTilesCommand item1_duplicate =
+        new MoveTilesCommand("Steve", id1_duplicate, coordMap1_duplicate);
     final MoveTilesCommand item2 = new MoveTilesCommand("Alice", id2, coordMap2);
     final Utils anotherCommand = new Utils(Opcode.NULL);
 
@@ -50,6 +53,8 @@ class MoveTilesCommandTest {
     Map<Coordinates, Coordinates> coordMap1 = new HashMap<>();
     final MoveTilesCommand item1 = new MoveTilesCommand("Player", id1, coordMap1);
 
-    assertEquals(item1.hashCode(), "Player".hashCode() * item1.getGameId().hashCode() * item1.getMoves().hashCode());
+    assertEquals(
+        item1.hashCode(),
+        "Player".hashCode() * item1.getGameId().hashCode() * item1.getMoves().hashCode());
   }
 }

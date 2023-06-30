@@ -9,13 +9,12 @@ import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
 import it.polimi.is23am10.server.model.items.tile.Tile;
 import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.AbstractMessage.MessageType;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
-import it.polimi.is23am10.server.network.messages.AbstractMessage.MessageType;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
-
 import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -30,12 +29,12 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -56,32 +55,21 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
- * GUI scene factory. Creates various GUI scenes for the application. Each scene
- * is created as a
- * static method in this class. The class also contains helper methods for
- * creating GUI components.
+ * GUI scene factory. Creates various GUI scenes for the application. Each scene is created as a
+ * static method in this class. The class also contains helper methods for creating GUI components.
  *
- * <p>
- * The class uses JavaFX for UI rendering.
+ * <p>The class uses JavaFX for UI rendering.
  *
- * <p>
- * The factory methods return JavaFX Scene objects that can be used to set the
- * application's
+ * <p>The factory methods return JavaFX Scene objects that can be used to set the application's
  * stage. The stages are stored in a static map for easy access.
  *
- * <p>
- * This class is not meant to be instantiated. All methods and members are
- * static.
+ * <p>This class is not meant to be instantiated. All methods and members are static.
  *
- * <p>
- * Example usage: ``` Scene splashScreenScene =
- * GuiFactory.getSplashScreenScene();
+ * <p>Example usage: ``` Scene splashScreenScene = GuiFactory.getSplashScreenScene();
  * GuiFactory.stages.put(GuiFactory.SCENE.SPLASH_SCREEN, splashScreenScene);
  * primaryStage.setScene(splashScreenScene); primaryStage.show(); ```
  *
- * <p>
- * Note: This is a simplified example and assumes the necessary JavaFX setup has
- * been done.
+ * <p>Note: This is a simplified example and assumes the necessary JavaFX setup has been done.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -90,12 +78,10 @@ import javafx.stage.Stage;
  */
 public final class GuiFactory {
 
-  private GuiFactory() {
-  }
+  private GuiFactory() {}
 
   /**
-   * An enum representing different scenes that can be created by the factory. Add
-   * more values to
+   * An enum representing different scenes that can be created by the factory. Add more values to
    * represent additional scenes in the application.
    */
   public enum SCENE {
@@ -132,7 +118,7 @@ public final class GuiFactory {
 
   /**
    * Helper method to retrieve the current player's name from PC.
-   * 
+   *
    * @return Player name.
    */
   protected static String getMyPlayerName() {
@@ -144,10 +130,9 @@ public final class GuiFactory {
   }
 
   /**
-   * Creates a {@link BackgroundImage} with the specified image path and
-   * brightness.
+   * Creates a {@link BackgroundImage} with the specified image path and brightness.
    *
-   * @param path       The path to the image file.
+   * @param path The path to the image file.
    * @param brightness The brightness value to apply to the image (-1.0 to 1.0).
    * @return The created BackgroundImage object.
    */
@@ -168,7 +153,7 @@ public final class GuiFactory {
 
   /**
    * Creates a {@link ImageView} out of resource path.
-   * 
+   *
    * @param path The path of the image file.
    * @return The imageView.
    */
@@ -181,8 +166,8 @@ public final class GuiFactory {
    * Creates a {@link Label} with the specified content, font weight, and size.
    *
    * @param content The text content of the label.
-   * @param weight  The font weight of the label.
-   * @param size    The font size of the label.
+   * @param weight The font weight of the label.
+   * @param size The font size of the label.
    * @return The created Label object.
    */
   protected static Label getLabel(String content, FontWeight weight, int size, Color... colors) {
@@ -195,17 +180,15 @@ public final class GuiFactory {
   }
 
   /**
-   * Creates a {@link TextField} with the specified placeholder, width, height,
-   * font weight, font
+   * Creates a {@link TextField} with the specified placeholder, width, height, font weight, font
    * size, and callback.
    *
    * @param placeholder The placeholder text for the text field.
-   * @param w           The desired width of the text field.
-   * @param h           The desired width of the text field.
-   * @param weight      The font weight of the text field.
-   * @param size        The font size of the text field.
-   * @param cb          The callback function to be executed when the text field
-   *                    action is triggered.
+   * @param w The desired width of the text field.
+   * @param h The desired width of the text field.
+   * @param weight The font weight of the text field.
+   * @param size The font size of the text field.
+   * @param cb The callback function to be executed when the text field action is triggered.
    * @return The created TextField object.
    */
   protected static TextField getTextField(
@@ -213,8 +196,7 @@ public final class GuiFactory {
     TextField t = new TextField(placeholder);
     t.setMaxWidth(w);
     t.setMinWidth(h);
-    t.setStyle("-fx-background-radius: 16px;" +
-      "-fx-padding: 6px 14px; ");
+    t.setStyle("-fx-background-radius: 16px;" + "-fx-padding: 6px 14px; ");
     t.setFont(Font.font("Arial", weight, size));
     if (cb != null) {
       t.setOnAction(event -> cb.call(t.getText()));
@@ -223,27 +205,23 @@ public final class GuiFactory {
   }
 
   /**
-   * Creates a {@link Button} with the specified content, callback function, and
-   * optional text
+   * Creates a {@link Button} with the specified content, callback function, and optional text
    * fields.
    *
    * @param content The text content of the button.
-   * @param cb      The callback function to be executed when the button is
-   *                clicked.
-   * @param tfs     Optional text fields to be passed as arguments to the callback
-   *                function.
+   * @param cb The callback function to be executed when the button is clicked.
+   * @param tfs Optional text fields to be passed as arguments to the callback function.
    * @return The created Button object.
    */
   protected static Button getButton(String content, ButtonCallBack cb, TextField... tfs) {
     Button b = new Button(content);
     b.setStyle(
-      "-fx-padding: 6px 14px; " +
-      "-fx-border-width: 0px; " +
-      "-fx-text-fill: rgb(51,51,51); " +
-      "-fx-font-weight: 800; " +
-      "-fx-background-radius: 16px; " +
-      "-fx-background-color: #ffffff;"
-    );
+        "-fx-padding: 6px 14px; "
+            + "-fx-border-width: 0px; "
+            + "-fx-text-fill: rgb(51,51,51); "
+            + "-fx-font-weight: 800; "
+            + "-fx-background-radius: 16px; "
+            + "-fx-background-color: #ffffff;");
     if (cb != null) {
       b.setOnAction(event -> cb.call(tfs));
     }
@@ -252,13 +230,15 @@ public final class GuiFactory {
 
   /**
    * Method that creates and shows the alert modal for error messages
-   * 
-   * @param sp  The stack pane.
+   *
+   * @param sp The stack pane.
    * @param msg Message to be displayed.
    */
   public static void getErrorMessage(StackPane sp, ErrorMessage msg) {
-    Alert alert = msg.getErrorSeverity() == ErrorSeverity.WARNING ? new Alert(AlertType.WARNING)
-        : new Alert(AlertType.ERROR);
+    Alert alert =
+        msg.getErrorSeverity() == ErrorSeverity.WARNING
+            ? new Alert(AlertType.WARNING)
+            : new Alert(AlertType.ERROR);
     alert.setTitle("Error");
     alert.setHeaderText("An error occurred");
     alert.setContentText(msg.getMessage());
@@ -268,8 +248,7 @@ public final class GuiFactory {
   }
 
   /**
-   * Executes a callback inside of JavaFX thread. Mandatory for
-   * any scene-change related task.
+   * Executes a callback inside of JavaFX thread. Mandatory for any scene-change related task.
    *
    * @param r The callback to be executed.
    */
@@ -278,12 +257,9 @@ public final class GuiFactory {
   }
 
   /**
-   * Creates the splash screen scene. The splash screen scene consists of a stack
-   * pane with a
-   * background and an input name widget. The background image is retrieved from
-   * the
-   * SplashScreenFactory class. The input name widget contains a label, a text
-   * field, and a confirm
+   * Creates the splash screen scene. The splash screen scene consists of a stack pane with a
+   * background and an input name widget. The background image is retrieved from the
+   * SplashScreenFactory class. The input name widget contains a label, a text field, and a confirm
    * button. The confirm button triggers the CallBack.confirmNameCallBack.
    *
    * @return The created splash screen scene.
@@ -298,12 +274,9 @@ public final class GuiFactory {
   }
 
   /**
-   * Creates the enter game selection scene. The enter game selection scene
-   * consists of a stack pane
-   * with a background and a selection widget. The background image is retrieved
-   * from the
-   * EnterGameSelectionScreenFactory class. The selection widget contains a label
-   * and two buttons
+   * Creates the enter game selection scene. The enter game selection scene consists of a stack pane
+   * with a background and a selection widget. The background image is retrieved from the
+   * EnterGameSelectionScreenFactory class. The selection widget contains a label and two buttons
    * (create new game and join game).
    *
    * @return The created enter game selection scene.
@@ -318,8 +291,7 @@ public final class GuiFactory {
   }
 
   /**
-   * Creates and returns a new JavaFX Scene for the create new game selection
-   * screen.
+   * Creates and returns a new JavaFX Scene for the create new game selection screen.
    *
    * @return The JavaFX Scene for the create new game selection screen.
    */
@@ -389,14 +361,10 @@ public final class GuiFactory {
   }
 
   /**
-   * Factory class for creating the splash screen UI components. Contains methods
-   * to create the
-   * background image, input name label, input name text field, and the entire
-   * input name widget.
+   * Factory class for creating the splash screen UI components. Contains methods to create the
+   * background image, input name label, input name text field, and the entire input name widget.
    *
-   * <p>
-   * This class is not meant to be instantiated. All methods and members are
-   * static.
+   * <p>This class is not meant to be instantiated. All methods and members are static.
    */
   class SplashScreenFactory {
     private static final String SPLASH_SCREEN_IMG_PATH = "/assets/bg/in_lobby1.png";
@@ -404,8 +372,7 @@ public final class GuiFactory {
     protected static TextField textField;
 
     /**
-     * Creates a {@link BackgroundImage} for the splash screen using the specified
-     * image path and
+     * Creates a {@link BackgroundImage} for the splash screen using the specified image path and
      * brightness.
      *
      * @return The created BackgroundImage object for the splash screen.
@@ -415,18 +382,16 @@ public final class GuiFactory {
     }
 
     /**
-     * Creates a {@link Label} for the input name with the specified content, font
-     * weight, and size.
+     * Creates a {@link Label} for the input name with the specified content, font weight, and size.
      *
      * @return The created Label object for the input name.
      */
     protected static Label getInputNameLabel() {
-      return getLabel("Please choose your name", FontWeight.BOLD, 40,Color.BLACK);
+      return getLabel("Please choose your name", FontWeight.BOLD, 40, Color.BLACK);
     }
 
     /**
-     * Creates a {@link TextField} for entering the name with the specified
-     * placeholder, width,
+     * Creates a {@link TextField} for entering the name with the specified placeholder, width,
      * height, font weight, font size, and callback.
      *
      * @return The created TextField object for entering the name.
@@ -437,8 +402,7 @@ public final class GuiFactory {
     }
 
     /**
-     * Creates a {@link VBox} that contains the input name label, input name text
-     * field, and confirm
+     * Creates a {@link VBox} that contains the input name label, input name text field, and confirm
      * button.
      *
      * @return The created VBox widget for the input name.
@@ -456,10 +420,7 @@ public final class GuiFactory {
     }
   }
 
-  /**
-   * GUI end game screen factory. Creates GUI components for the enter game end
-   * screen.
-   */
+  /** GUI end game screen factory. Creates GUI components for the enter game end screen. */
   class EndGameSceneFactory {
     private static final String SELECTION_SCREEN_IMG_PATH = "/assets/bg/in_lobby1.png";
 
@@ -478,7 +439,7 @@ public final class GuiFactory {
      * @return The label for the enter game selection screen.
      */
     protected static Label getEndGameLabel() {
-      return getLabel(CLIStrings.gameOverString, FontWeight.BOLD, 40,Color.BLACK);
+      return getLabel(CLIStrings.gameOverString, FontWeight.BOLD, 40, Color.BLACK);
     }
 
     /**
@@ -494,15 +455,17 @@ public final class GuiFactory {
           .sorted(
               Comparator.comparing(p -> p.getScore().getVisibleScore(), Comparator.reverseOrder()))
           .forEach(
-              p -> root.getChildren()
-                  .add(
-                      getLabel(
-                          String.format(
-                              CLIStrings.playerScoreString,
-                              p.getPlayerName(),
-                              p.getScore().getTotalScore()),
-                          FontWeight.BOLD,
-                          30,Color.BLACK)));
+              p ->
+                  root.getChildren()
+                      .add(
+                          getLabel(
+                              String.format(
+                                  CLIStrings.playerScoreString,
+                                  p.getPlayerName(),
+                                  p.getScore().getTotalScore()),
+                              FontWeight.BOLD,
+                              30,
+                              Color.BLACK)));
       return root;
     }
 
@@ -521,8 +484,7 @@ public final class GuiFactory {
   }
 
   /**
-   * GUI enter game selection screen factory. Creates GUI components for the enter
-   * game selection
+   * GUI enter game selection screen factory. Creates GUI components for the enter game selection
    * screen.
    */
   class EnterGameSelectionScreenFactory {
@@ -543,7 +505,7 @@ public final class GuiFactory {
      * @return The label for the enter game selection screen.
      */
     protected static Label getSelectionOptionLabel() {
-      return getLabel("Please choose your one option", FontWeight.BOLD, 40,Color.BLACK);
+      return getLabel("Please choose your one option", FontWeight.BOLD, 40, Color.BLACK);
     }
 
     /**
@@ -568,18 +530,18 @@ public final class GuiFactory {
   }
 
   /**
-   * The NewGameFactory class provides static methods to create various UI
-   * components for setting up
+   * The NewGameFactory class provides static methods to create various UI components for setting up
    * a new game.
    */
   class NewGameFactory {
     private static final String SPLASH_SCREEN_IMG_PATH = "/assets/bg/in_lobby1.png";
 
     /** A map of text fields associated with player numbers. */
-    protected static Map<String, TextField> textFields = Map.of(
-        "2", new TextField(),
-        "3", new TextField(),
-        "4", new TextField());
+    protected static Map<String, TextField> textFields =
+        Map.of(
+            "2", new TextField(),
+            "3", new TextField(),
+            "4", new TextField());
 
     /**
      * Retrieves the background image.
@@ -596,7 +558,7 @@ public final class GuiFactory {
      * @return The label for inputting the player number.
      */
     protected static Label getInputPlayerNumberLabel() {
-      return getLabel("Choose max players number", FontWeight.BOLD, 40,Color.BLACK);
+      return getLabel("Choose max players number", FontWeight.BOLD, 40, Color.BLACK);
     }
 
     /**
@@ -631,8 +593,7 @@ public final class GuiFactory {
   }
 
   /**
-   * The JoinGameFactory class provides static methods to create various UI
-   * components for setting
+   * The JoinGameFactory class provides static methods to create various UI components for setting
    * up a game to join.
    */
   class JoinGameFactory {
@@ -653,34 +614,40 @@ public final class GuiFactory {
      * @return The label for inputting the game server selection.
      */
     protected static Label getInputJoinGameLabel() {
-      return getLabel("Select a game server", FontWeight.BOLD, 40,Color.BLACK);
+      return getLabel("Select a game server", FontWeight.BOLD, 40, Color.BLACK);
     }
 
     /**
      * Creates a button for selecting the game id.
      *
      * @param index The game server index.
-     * @param vv    The game server virtual view.
+     * @param vv The game server virtual view.
      * @return The button for selecting the game server.
      */
     protected static Button getGameIdButton(Integer index, VirtualView vv) {
       String id = vv.getGameId().toString();
       TextField tf = new TextField(id);
       tf.setText(String.valueOf(index));
-      String disconnectedPlayers = (vv.getDisconnectedPlayersNum() > 0)
-          ? String.format(CLIStrings.disconnectedPlayers, vv.getDisconnectedPlayersNum())
-          : "";
-      return getButton(String.format(CLIStrings.availableGameString,
-          index, vv.getPlayers().size(), vv.getMaxPlayers(), disconnectedPlayers, vv.getGameId()),
-          CallBack.confirmJoinGameCallBack, tf);
+      String disconnectedPlayers =
+          (vv.getDisconnectedPlayersNum() > 0)
+              ? String.format(CLIStrings.disconnectedPlayers, vv.getDisconnectedPlayersNum())
+              : "";
+      return getButton(
+          String.format(
+              CLIStrings.availableGameString,
+              index,
+              vv.getPlayers().size(),
+              vv.getMaxPlayers(),
+              disconnectedPlayers,
+              vv.getGameId()),
+          CallBack.confirmJoinGameCallBack,
+          tf);
     }
 
     /**
-     * Creates a VBox container with input widgets for setting up game server
-     * selection.
+     * Creates a VBox container with input widgets for setting up game server selection.
      *
-     * @return The VBox container with input widgets for choosing the server to
-     *         join.
+     * @return The VBox container with input widgets for choosing the server to join.
      */
     protected static VBox getJoinGameWidget(List<VirtualView> vvs) {
       List<Button> buttons = new ArrayList<>();
@@ -696,7 +663,9 @@ public final class GuiFactory {
       if (buttons.size() > 0) {
         listView.setItems(FXCollections.observableArrayList(buttons));
         listView.setPrefWidth(600);
-        listView.setStyle("-fx-focus-color: -fx-control-inner-background ; -fx-faint-focus-color: -fx-control-inner-background ;");
+        listView.setStyle(
+            "-fx-focus-color: -fx-control-inner-background ; -fx-faint-focus-color:"
+                + " -fx-control-inner-background ;");
       }
       hbox.getChildren()
           .add(
@@ -712,10 +681,7 @@ public final class GuiFactory {
     }
   }
 
-  /**
-   * GUI waiting for a game to start. Creates GUI components for the waiting
-   * phase.
-   */
+  /** GUI waiting for a game to start. Creates GUI components for the waiting phase. */
   class WaitGameFactory {
     private static final String SELECTION_SCREEN_IMG_PATH = "/assets/bg/in_lobby1.png";
 
@@ -734,7 +700,7 @@ public final class GuiFactory {
      * @return The label for the waiting game.
      */
     protected static Label getWaitingLabel() {
-      return getLabel("Waiting for other players...", FontWeight.BOLD, 40,Color.BLACK);
+      return getLabel("Waiting for other players...", FontWeight.BOLD, 40, Color.BLACK);
     }
 
     /**
@@ -751,10 +717,7 @@ public final class GuiFactory {
     }
   }
 
-  /**
-   * GUI waiting for a game snapshot. Creates GUI components for the game
-   * snapshot.
-   */
+  /** GUI waiting for a game snapshot. Creates GUI components for the game snapshot. */
   public class GameSnapshotFactory {
     private static final String SELECTION_SCREEN_IMG_PATH = "/assets/bg/in_game1.png";
     private static final String FRAME_IMG = "/assets/tiles/frame.png";
@@ -790,50 +753,53 @@ public final class GuiFactory {
     private static final String COMMON_TWELVE = "/assets/shared/c12.png";
 
     /** Associate a {@link TileType} to a image path. */
-    private static Map<TileType, String> imagesMap = Map.of(
-        TileType.FRAME, FRAME_IMG,
-        TileType.CAT, CAT_IMG,
-        TileType.GAME, GAME_IMG,
-        TileType.BOOK, BOOK_IMG,
-        TileType.PLANT, PLANT_IMG,
-        TileType.TROPHY, TROPHY_IMG,
-        TileType.EMPTY, EMPTY_IMG);
+    private static Map<TileType, String> imagesMap =
+        Map.of(
+            TileType.FRAME, FRAME_IMG,
+            TileType.CAT, CAT_IMG,
+            TileType.GAME, GAME_IMG,
+            TileType.BOOK, BOOK_IMG,
+            TileType.PLANT, PLANT_IMG,
+            TileType.TROPHY, TROPHY_IMG,
+            TileType.EMPTY, EMPTY_IMG);
 
     /** Associate a private card index to its image path. */
-    protected static Map<Integer, String> privateCardMap = new HashMap<>() {
-      {
-        put(1, PRIVATE_ONE);
-        put(2, PRIVATE_TWO);
-        put(3, PRIVATE_THREE);
-        put(4, PRIVATE_FOUR);
-        put(5, PRIVATE_FIVE);
-        put(6, PRIVATE_SIX);
-        put(7, PRIVATE_SEVEN);
-        put(8, PRIVATE_EIGHT);
-        put(9, PRIVATE_NINE);
-        put(10, PRIVATE_TEN);
-        put(11, PRIVATE_ELEVEN);
-        put(12, PRIVATE_TWELVE);
-      }
-    };
+    protected static Map<Integer, String> privateCardMap =
+        new HashMap<>() {
+          {
+            put(1, PRIVATE_ONE);
+            put(2, PRIVATE_TWO);
+            put(3, PRIVATE_THREE);
+            put(4, PRIVATE_FOUR);
+            put(5, PRIVATE_FIVE);
+            put(6, PRIVATE_SIX);
+            put(7, PRIVATE_SEVEN);
+            put(8, PRIVATE_EIGHT);
+            put(9, PRIVATE_NINE);
+            put(10, PRIVATE_TEN);
+            put(11, PRIVATE_ELEVEN);
+            put(12, PRIVATE_TWELVE);
+          }
+        };
 
     /** Associate a common goal card index to its image path. */
-    protected static Map<Integer, String> commonCardMap = new HashMap<>() {
-      {
-        put(1, COMMON_ONE);
-        put(2, COMMON_TWO);
-        put(3, COMMON_THREE);
-        put(4, COMMON_FOUR);
-        put(5, COMMON_FIVE);
-        put(6, COMMON_SIX);
-        put(7, COMMON_SEVEN);
-        put(8, COMMON_EIGHT);
-        put(9, COMMON_NINE);
-        put(10, COMMON_TEN);
-        put(11, COMMON_ELEVEN);
-        put(12, COMMON_TWELVE);
-      }
-    };
+    protected static Map<Integer, String> commonCardMap =
+        new HashMap<>() {
+          {
+            put(1, COMMON_ONE);
+            put(2, COMMON_TWO);
+            put(3, COMMON_THREE);
+            put(4, COMMON_FOUR);
+            put(5, COMMON_FIVE);
+            put(6, COMMON_SIX);
+            put(7, COMMON_SEVEN);
+            put(8, COMMON_EIGHT);
+            put(9, COMMON_NINE);
+            put(10, COMMON_TEN);
+            put(11, COMMON_ELEVEN);
+            put(12, COMMON_TWELVE);
+          }
+        };
 
     /** Chat input text field. */
     protected static TextField textField;
@@ -860,7 +826,7 @@ public final class GuiFactory {
       GridPane gp = new GridPane();
       gp.setHgap(5);
       gp.setVgap(5);
-      gp.setPadding(new Insets(0,20,0,20));
+      gp.setPadding(new Insets(0, 20, 0, 20));
 
       Tile[][] b = vv.getGameBoard().getBoardGrid();
       for (int i = 0; i < Board.BOARD_GRID_ROWS; i++) {
@@ -901,7 +867,7 @@ public final class GuiFactory {
       GridPane gp = new GridPane();
       gp.setHgap(5);
       gp.setVgap(5);
-      gp.setPadding(new Insets(5,10,0,10));
+      gp.setPadding(new Insets(5, 10, 0, 10));
 
       Tile[][] b = bs.getBookshelfGrid();
       for (int i = 0; i < b.length; i++) {
@@ -972,47 +938,49 @@ public final class GuiFactory {
       VBox status = new VBox();
       status.setAlignment(Pos.CENTER);
       status.setSpacing(5);
-      status.getChildren().add(getLabel("Status", FontWeight.BLACK, 15,Color.BLACK));
+      status.getChildren().add(getLabel("Status", FontWeight.BLACK, 15, Color.BLACK));
       VBox players = new VBox();
       players.setAlignment(Pos.CENTER);
       players.setSpacing(5);
-      players.getChildren().add(getLabel("Players", FontWeight.BOLD, 15,Color.BLACK));
+      players.getChildren().add(getLabel("Players", FontWeight.BOLD, 15, Color.BLACK));
       VBox firstPlayer = new VBox();
       firstPlayer.setAlignment(Pos.CENTER);
       firstPlayer.setSpacing(5);
       firstPlayer
           .getChildren()
           .addAll(
-              getLabel("First player", FontWeight.BOLD, 15,Color.BLACK),
-              getLabel(vv.getFirstPlayer().getPlayerName(), FontWeight.BOLD, 13,Color.BLACK));
+              getLabel("First player", FontWeight.BOLD, 15, Color.BLACK),
+              getLabel(vv.getFirstPlayer().getPlayerName(), FontWeight.BOLD, 13, Color.BLACK));
       VBox roles = new VBox();
       roles.setAlignment(Pos.CENTER);
       roles.setSpacing(5);
       roles
           .getChildren()
           .addAll(
-              getLabel("Active turn", FontWeight.BOLD, 15,Color.BLACK),
-              getLabel(vv.getActivePlayer().getPlayerName(), FontWeight.BOLD, 13,Color.BLACK));
+              getLabel("Active turn", FontWeight.BOLD, 15, Color.BLACK),
+              getLabel(vv.getActivePlayer().getPlayerName(), FontWeight.BOLD, 13, Color.BLACK));
       VBox bsPoints = new VBox();
       bsPoints.setAlignment(Pos.CENTER);
       bsPoints.setSpacing(5);
-      bsPoints.getChildren().add(getLabel("BookShelf points", FontWeight.BOLD, 15,Color.BLACK));
+      bsPoints.getChildren().add(getLabel("BookShelf points", FontWeight.BOLD, 15, Color.BLACK));
       VBox scoreBlocksPoints = new VBox();
       scoreBlocksPoints.setAlignment(Pos.CENTER);
       scoreBlocksPoints.setSpacing(5);
-      scoreBlocksPoints.getChildren().add(getLabel("Score blocks points", FontWeight.BOLD, 15,Color.BLACK));
+      scoreBlocksPoints
+          .getChildren()
+          .add(getLabel("Score blocks points", FontWeight.BOLD, 15, Color.BLACK));
       VBox pvtPoints = new VBox();
       pvtPoints.setAlignment(Pos.CENTER);
       pvtPoints.setSpacing(5);
-      pvtPoints.getChildren().add(getLabel("Private points", FontWeight.BOLD, 15,Color.BLACK));
+      pvtPoints.getChildren().add(getLabel("Private points", FontWeight.BOLD, 15, Color.BLACK));
       VBox extraPoints = new VBox();
       extraPoints.setAlignment(Pos.CENTER);
       extraPoints.setSpacing(5);
-      extraPoints.getChildren().add(getLabel("Extra points", FontWeight.BOLD, 15,Color.BLACK));
+      extraPoints.getChildren().add(getLabel("Extra points", FontWeight.BOLD, 15, Color.BLACK));
       VBox totalScore = new VBox();
       totalScore.setAlignment(Pos.CENTER);
       totalScore.setSpacing(5);
-      totalScore.getChildren().add(getLabel("Total score", FontWeight.BOLD, 15,Color.BLACK));
+      totalScore.getChildren().add(getLabel("Total score", FontWeight.BOLD, 15, Color.BLACK));
       for (VirtualPlayer vp : vv.getPlayers()) {
         status
             .getChildren()
@@ -1022,13 +990,23 @@ public final class GuiFactory {
                     FontWeight.BOLD,
                     13,
                     vp.getIsConnected() ? Color.DARKGREEN : Color.DARKRED));
-        players.getChildren().add(getLabel(vp.getPlayerName(), FontWeight.BOLD, 13,Color.BLACK));
+        players.getChildren().add(getLabel(vp.getPlayerName(), FontWeight.BOLD, 13, Color.BLACK));
         bsPoints
             .getChildren()
-            .add(getLabel(vp.getScore().getBookshelfPoints().toString(), FontWeight.BOLD, 13,Color.BLACK));
+            .add(
+                getLabel(
+                    vp.getScore().getBookshelfPoints().toString(),
+                    FontWeight.BOLD,
+                    13,
+                    Color.BLACK));
         scoreBlocksPoints
             .getChildren()
-            .add(getLabel(vp.getScore().getScoreBlockPoints().toString(), FontWeight.BOLD, 13,Color.BLACK));
+            .add(
+                getLabel(
+                    vp.getScore().getScoreBlockPoints().toString(),
+                    FontWeight.BOLD,
+                    13,
+                    Color.BLACK));
         pvtPoints
             .getChildren()
             .add(
@@ -1037,13 +1015,16 @@ public final class GuiFactory {
                         ? "?"
                         : vp.getScore().getPrivatePoints().toString(),
                     FontWeight.BOLD,
-                    13,Color.BLACK));
+                    13,
+                    Color.BLACK));
         extraPoints
             .getChildren()
-            .add(getLabel(vp.getScore().getExtraPoint().toString(), FontWeight.BOLD, 13,Color.BLACK));
+            .add(
+                getLabel(
+                    vp.getScore().getExtraPoint().toString(), FontWeight.BOLD, 13, Color.BLACK));
         totalScore
             .getChildren()
-            .add(getLabel(vp.getScore().getStringTotalScore(), FontWeight.BOLD, 13,Color.BLACK));
+            .add(getLabel(vp.getScore().getStringTotalScore(), FontWeight.BOLD, 13, Color.BLACK));
       }
       HBox root = new HBox();
       root.setSpacing(30);
@@ -1064,102 +1045,111 @@ public final class GuiFactory {
 
     /**
      * Method used to retrieve the input text field to send messages.
-     * 
+     *
      * @return the textfield.
      */
     protected static TextField getChatTextField() {
       textField = getTextField("Enter your message here", 180, 100, FontWeight.NORMAL, 12, null);
-      textField.setStyle("-fx-focus-color: -fx-control-inner-background ; -fx-faint-focus-color: -fx-control-inner-background ;");
+      textField.setStyle(
+          "-fx-focus-color: -fx-control-inner-background ; -fx-faint-focus-color:"
+              + " -fx-control-inner-background ;");
       return textField;
     }
 
     /**
-     * Method used to retrieve the horizontal component of input textfield and send
-     * button.
-     * 
+     * Method used to retrieve the horizontal component of input textfield and send button.
+     *
      * @return send message box.
      */
     protected static HBox getSendMessageBox() {
       HBox hbox = new HBox();
       hbox.setSpacing(5);
       hbox.setAlignment(Pos.CENTER_RIGHT);
-      hbox.getChildren().addAll(
-          getChatTextField(),
-          getButton("Send", CallBack.sendMessageCallBack, textField));
+      hbox.getChildren()
+          .addAll(getChatTextField(), getButton("Send", CallBack.sendMessageCallBack, textField));
       return hbox;
-    };
+    }
+    ;
 
     /**
      * Method used to retrieve the chat history component.
-     * 
+     *
      * @return chat history component.
      */
     protected static VBox getChatHistory() {
       VBox chatHistory = new VBox();
       chatMessagesListView = new ListView<String>();
-      //chatMessagesListView.setStyle("-fx-control-inner-background: #A9562A");
+      // chatMessagesListView.setStyle("-fx-control-inner-background: #A9562A");
       chatMessagesListView.setPadding(new Insets(0));
-      chatMessagesListView.setStyle("-fx-focus-color: -fx-control-inner-background ; -fx-faint-focus-color: -fx-control-inner-background ;");
+      chatMessagesListView.setStyle(
+          "-fx-focus-color: -fx-control-inner-background ; -fx-faint-focus-color:"
+              + " -fx-control-inner-background ;");
       chatMessagesListView.setPrefWidth(300);
       chatMessagesListView.setPrefHeight(550);
 
       // this 'magheggio' is needed to have a message that doesn't overflow in chat
-      chatMessagesListView.setCellFactory(list -> new ListCell<String>() {
-        private final Text textNode = new Text();
-        {
-          textNode.wrappingWidthProperty().bind(chatMessagesListView.widthProperty().subtract(20));
-        }
+      chatMessagesListView.setCellFactory(
+          list ->
+              new ListCell<String>() {
+                private final Text textNode = new Text();
 
-        @Override
-        protected void updateItem(String item, boolean empty) {
-          super.updateItem(item, empty);
+                {
+                  textNode
+                      .wrappingWidthProperty()
+                      .bind(chatMessagesListView.widthProperty().subtract(20));
+                }
 
-          if (empty || item == null) {
-            setGraphic(null);
-          } else {
-            textNode.setText(item);
-            setGraphic(textNode);
-          }
-        }
-      });
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                  super.updateItem(item, empty);
+
+                  if (empty || item == null) {
+                    setGraphic(null);
+                  } else {
+                    textNode.setText(item);
+                    setGraphic(textNode);
+                  }
+                }
+              });
 
       chatHistory.setAlignment(Pos.CENTER);
-      chatHistory.getChildren().addAll(
-          chatMessagesListView);
+      chatHistory.getChildren().addAll(chatMessagesListView);
       return chatHistory;
     }
 
     /**
      * Method used to retrieve the whole chat component.
-     * 
+     *
      * @return chat component.
      */
     protected static VBox getChat() {
       VBox chat = new VBox();
       chat.setSpacing(10);
       chat.setAlignment(Pos.TOP_RIGHT);
-      chat.getChildren().addAll(
-          getChatHistory(),
-          getSendMessageBox());
+      chat.getChildren().addAll(getChatHistory(), getSendMessageBox());
 
       return chat;
     }
 
     /**
-     * Private method used to retrieve a VBox containing the buttons
-     * to navigate to all bookshelves.
+     * Private method used to retrieve a VBox containing the buttons to navigate to all bookshelves.
      */
     private static VBox getBSButtons(VirtualView vv) {
       VBox bsButtons = new VBox();
       bsButtons.setSpacing(5);
       bsButtons.setAlignment(Pos.CENTER);
       for (VirtualPlayer vp : vv.getPlayers()) {
-        bsButtons.getChildren().add(
-            getButton(String.format("Show %s's bookshelf", vp.getPlayerName()), CallBack.switchToPlayerBookshelf,
-                new TextField(vp.getBookshelf().getBookshelfString()), new TextField(vp.getPlayerName())));
+        bsButtons
+            .getChildren()
+            .add(
+                getButton(
+                    String.format("Show %s's bookshelf", vp.getPlayerName()),
+                    CallBack.switchToPlayerBookshelf,
+                    new TextField(vp.getBookshelf().getBookshelfString()),
+                    new TextField(vp.getPlayerName())));
       }
       return bsButtons;
-    } 
+    }
 
     /**
      * Retrieves the widget (container) for game snapshot.
@@ -1174,24 +1164,35 @@ public final class GuiFactory {
       VBox playerItems = new VBox();
       playerItems.setAlignment(Pos.TOP_CENTER);
       playerItems.setSpacing(5);
-      playerItems.getChildren().add(getLabel("Your Private Card", FontWeight.BOLD, 20,Color.BLACK));
+      playerItems
+          .getChildren()
+          .add(getLabel("Your Private Card", FontWeight.BOLD, 20, Color.BLACK));
       playerItems.getChildren().add(getPrivateCard(vv));
-      playerItems.getChildren().add(getLabel("Common Goals", FontWeight.BOLD, 20,Color.BLACK));
+      playerItems.getChildren().add(getLabel("Common Goals", FontWeight.BOLD, 20, Color.BLACK));
       playerItems.getChildren().add(commonGoals);
       VBox gameBoard = new VBox();
       gameBoard.setSpacing(10);
       gameBoard.setAlignment(Pos.TOP_CENTER);
-      gameBoard.getChildren().addAll(getLabel("Game Board", FontWeight.BOLD, 20,Color.BLACK), getGameBoard(vv));
+      gameBoard
+          .getChildren()
+          .addAll(getLabel("Game Board", FontWeight.BOLD, 20, Color.BLACK), getGameBoard(vv));
       VBox bookShelf = new VBox();
       bookShelf.setSpacing(10);
       bookShelf.setAlignment(Pos.TOP_CENTER);
       bookShelf
           .getChildren()
-          .addAll(getLabel(String.format("%s's Bookshelf", vv.getActivePlayer().getPlayerName()), FontWeight.BOLD, 20,Color.BLACK), getBookShelfGridPane(vv.getActivePlayer().getBookshelf()), getBSButtons(vv));
+          .addAll(
+              getLabel(
+                  String.format("%s's Bookshelf", vv.getActivePlayer().getPlayerName()),
+                  FontWeight.BOLD,
+                  20,
+                  Color.BLACK),
+              getBookShelfGridPane(vv.getActivePlayer().getBookshelf()),
+              getBSButtons(vv));
       VBox chat = new VBox();
       chat.setAlignment(Pos.TOP_RIGHT);
       chat.setPadding(new Insets(10, 15, 10, 10));
-      chat.getChildren().addAll(getLabel("Chat", FontWeight.BOLD, 20,Color.BLACK), getChat());
+      chat.getChildren().addAll(getLabel("Chat", FontWeight.BOLD, 20, Color.BLACK), getChat());
       HBox gameStage = new HBox();
       gameStage.setAlignment(Pos.CENTER);
       gameStage.getChildren().addAll(gameBoard, bookShelf, playerItems, chat);
@@ -1205,7 +1206,7 @@ public final class GuiFactory {
 
     /**
      * Method used to update the bookshelf currently on stage.
-     * 
+     *
      * @param sp scene's stackpane.
      * @param bs bookshelf to show.
      * @param bsOwner string name of the BS owner.
@@ -1220,10 +1221,9 @@ public final class GuiFactory {
     }
 
     /**
-     * Method used to update the current game widget scene dynamically. Must be
-     * wrapped in executeOnJavaFX
-     * when called to make sure it's properly runned into JavaFX's thread.
-     * 
+     * Method used to update the current game widget scene dynamically. Must be wrapped in
+     * executeOnJavaFX when called to make sure it's properly runned into JavaFX's thread.
+     *
      * @param oldSP The old stack pane to update.
      * @param oldVw The old virtual view to check what changed.
      * @param newVw The new virtual view.
@@ -1240,7 +1240,8 @@ public final class GuiFactory {
         gameBoard.getChildren().set(1, GameSnapshotFactory.getGameBoard(newVw));
       }
 
-      updateBookshelf(oldSP, newVw.getActivePlayer().getBookshelf(), newVw.getActivePlayer().getPlayerName());
+      updateBookshelf(
+          oldSP, newVw.getActivePlayer().getBookshelf(), newVw.getActivePlayer().getPlayerName());
       bookShelf.getChildren().set(2, getBSButtons(newVw));
     }
 
@@ -1248,7 +1249,7 @@ public final class GuiFactory {
      * Method used to update the chat widget dynamically.
      *
      * @param oldSP it's the old stackpane of the chat.
-     * @param msg   the message to be added.
+     * @param msg the message to be added.
      */
     public static void updateChatHistory(StackPane oldSP, AbstractMessage msg) {
       VBox root = (VBox) oldSP.getChildren().get(0);
@@ -1261,10 +1262,18 @@ public final class GuiFactory {
       if (msg.getMessageType() == MessageType.CHAT_MESSAGE) {
         ChatMessage chatMsg = (ChatMessage) msg;
         if (chatMsg.isBroadcast()) {
-          chatMessages.getItems().add(chatMsg.getSender().getPlayerName() + ": " + chatMsg.getMessage());
+          chatMessages
+              .getItems()
+              .add(chatMsg.getSender().getPlayerName() + ": " + chatMsg.getMessage());
         } else {
-          chatMessages.getItems().add(
-              chatMsg.getSender().getPlayerName() + " > " + chatMsg.getReceiverName() + ": " + chatMsg.getMessage());
+          chatMessages
+              .getItems()
+              .add(
+                  chatMsg.getSender().getPlayerName()
+                      + " > "
+                      + chatMsg.getReceiverName()
+                      + ": "
+                      + chatMsg.getMessage());
         }
       } else if (msg.getClass() == ErrorMessage.class) {
         ErrorMessage infoMsg = (ErrorMessage) msg;
@@ -1275,10 +1284,8 @@ public final class GuiFactory {
   }
 
   /**
-   * The UserMoveBuilder class is a utility class that helps in constructing a
-   * user's move. It
-   * provides methods to append tile coordinates and destination column to the
-   * move, clear the move,
+   * The UserMoveBuilder class is a utility class that helps in constructing a user's move. It
+   * provides methods to append tile coordinates and destination column to the move, clear the move,
    * and retrieve the constructed move as a string.
    */
   class UserMoveBuilder {

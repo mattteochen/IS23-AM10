@@ -9,25 +9,18 @@ import java.io.Serializable;
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
  * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
- * 
  */
 public class Coordinates implements Serializable {
 
-  /**
-   * The row index of the coordinates.
-   * 
-   */
+  /** The row index of the coordinates. */
   private Integer row;
 
-  /**
-   * The column index of the coordinates.
-   * 
-   */
+  /** The column index of the coordinates. */
   private Integer col;
 
   /**
    * Constructor of Coordinates given the two indexes.
-   * 
+   *
    * @param r row index.
    * @param c column index.
    */
@@ -36,10 +29,7 @@ public class Coordinates implements Serializable {
     this.col = c;
   }
 
-  /**
-   * Empty constructor that sets the coordinates in the origin.
-   * 
-   */
+  /** Empty constructor that sets the coordinates in the origin. */
   public Coordinates() {
     this.row = 0;
     this.col = 0;
@@ -47,7 +37,7 @@ public class Coordinates implements Serializable {
 
   /**
    * Row getter.
-   * 
+   *
    * @return row index.
    */
   public Integer getRow() {
@@ -56,7 +46,7 @@ public class Coordinates implements Serializable {
 
   /**
    * Column getter.
-   * 
+   *
    * @return column index.
    */
   public Integer getCol() {
@@ -65,7 +55,7 @@ public class Coordinates implements Serializable {
 
   /**
    * Row setter.
-   * 
+   *
    * @param r row index.
    */
   public void setRow(Integer r) {
@@ -74,17 +64,14 @@ public class Coordinates implements Serializable {
 
   /**
    * Column setter
-   * 
+   *
    * @param c column index.
    */
   public void setCol(Integer c) {
     this.col = c;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof Coordinates)) {
@@ -95,10 +82,7 @@ public class Coordinates implements Serializable {
     return (coordinates.getCol() == col && coordinates.getRow() == row);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode() {
     /*
@@ -111,7 +95,7 @@ public class Coordinates implements Serializable {
     return this.row + (tmp * tmp);
   }
 
-  @Override 
+  @Override
   public String toString() {
     return String.format("%s %s", row, col);
   }

@@ -10,21 +10,14 @@ package it.polimi.is23am10.utils;
  */
 public class CommandSyntaxValidator {
 
-  /**
-   * Max number of players.
-   */
-  private final static int MAX_PLAYERS_LIMIT = 4;
+  /** Max number of players. */
+  private static final int MAX_PLAYERS_LIMIT = 4;
 
-  /**
-   * Min number of players.
-   */
-  private final static int MIN_PLAYERS_LIMIT = 2;
+  /** Min number of players. */
+  private static final int MIN_PLAYERS_LIMIT = 2;
 
-  /**
-   * Empty constructor.
-   */
-  private CommandSyntaxValidator() {
-  }
+  /** Empty constructor. */
+  private CommandSyntaxValidator() {}
 
   /**
    * Method validator of game index input.
@@ -61,7 +54,7 @@ public class CommandSyntaxValidator {
       return false;
     }
     // Not a number
-    if (!s.chars().allMatch(Character::isDigit)){
+    if (!s.chars().allMatch(Character::isDigit)) {
       return false;
     }
     // Index out of bounds
@@ -78,16 +71,16 @@ public class CommandSyntaxValidator {
    * @return true if valid.
    */
   public static boolean validateCoord(String s) {
-    
+
     // Null parameter or invalid length
     if (s == null || s.length() != 2) {
       return false;
     }
 
-    // First and second char are digits 
+    // First and second char are digits
     if (s.substring(0, 0).chars().allMatch(Character::isDigit)
         || s.substring(1, 1).chars().allMatch(Character::isDigit)) {
-      return true; 
+      return true;
     }
     return false;
   }
@@ -99,17 +92,15 @@ public class CommandSyntaxValidator {
    * @return true if valid.
    */
   public static boolean validateColIdx(String s) {
-    
+
     // Null parameter or invalid length
     if (s == null || s.length() != 1) {
       return false;
     }
 
-
     // Col index is one of the possible ones.
-    if ( s.charAt(0) >= 'A' &&
-        s.charAt(0) <= 'E' ) {
-      return true; 
+    if (s.charAt(0) >= 'A' && s.charAt(0) <= 'E') {
+      return true;
     }
 
     return false;

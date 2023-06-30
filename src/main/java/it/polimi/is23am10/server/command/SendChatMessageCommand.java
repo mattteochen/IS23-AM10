@@ -12,22 +12,14 @@ import it.polimi.is23am10.server.network.messages.ChatMessage;
  */
 public class SendChatMessageCommand extends AbstractCommand {
 
-  /**
-   * An utility to be used during deserialization processes.
-   * 
-   */
+  /** An utility to be used during deserialization processes. */
   @SuppressWarnings("unused")
   private final String className = this.getClass().getName();
 
-  /**
-   * Chat message to be sent
-   */
+  /** Chat message to be sent */
   private ChatMessage msg;
 
-  /**
-   * Constructor.
-   *
-   */
+  /** Constructor. */
   public SendChatMessageCommand(ChatMessage m) {
     super(Opcode.SEND_CHAT_MESSAGE);
     this.msg = m;
@@ -42,14 +34,9 @@ public class SendChatMessageCommand extends AbstractCommand {
     return msg;
   }
 
-
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(Object obj) {
     return (obj instanceof SendChatMessageCommand);
   }
 }
-

@@ -2,27 +2,8 @@ package it.polimi.is23am10.client.userinterface;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.net.Socket;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 
 import it.polimi.is23am10.client.Client;
-import it.polimi.is23am10.client.SocketClient;
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.client.userinterface.helpers.OutputWrapper.OutputLevel;
 import it.polimi.is23am10.server.model.factory.GameFactory;
@@ -49,11 +30,18 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreExceptio
 import it.polimi.is23am10.server.model.score.Score;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
-import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
-import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConnector;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.List;
+import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 public class CommandLineInterfaceTest {
   private final PrintStream standardOut = System.out;
@@ -73,7 +61,9 @@ public class CommandLineInterfaceTest {
   @Test
   void displaySplashScreen_should_display_splash_screen() {
     cli.displaySplashScreen();
-    assertOutput(OutputLevel.INFO, CLIStrings.welcomeString.stripLeading() + "\n" + CLIStrings.insertPlayerNameString);
+    assertOutput(
+        OutputLevel.INFO,
+        CLIStrings.welcomeString.stripLeading() + "\n" + CLIStrings.insertPlayerNameString);
   }
 
   @Test
@@ -83,36 +73,71 @@ public class CommandLineInterfaceTest {
   }
 
   @Test
-  void displayAvailableGames_should_display_games() throws NullMaxPlayerException, InvalidMaxPlayerException,
-      NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
-      NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException,
-      NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException,
-      PlayerNotFoundException {
+  void displayAvailableGames_should_display_games()
+      throws NullMaxPlayerException,
+          InvalidMaxPlayerException,
+          NullPlayerNameException,
+          NullPlayerIdException,
+          NullPlayerBookshelfException,
+          NullPlayerScoreException,
+          NullPlayerPrivateCardException,
+          NullPlayerScoreBlocksException,
+          DuplicatePlayerNameException,
+          AlreadyInitiatedPatternException,
+          NullPlayerNamesException,
+          InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          NullAssignedPatternException,
+          FullGameException,
+          NotValidScoreBlockValueException,
+          PlayerNotFoundException {
 
     VirtualView vw1 = new VirtualView(GameFactory.getNewGame("bob", 2));
     VirtualView vw2 = new VirtualView(GameFactory.getNewGame("nicoletta", 3));
-    List<VirtualView> games = List.of(
-        vw1, vw2);
+    List<VirtualView> games = List.of(vw1, vw2);
     cli.displayAvailableGames(games);
 
-    final String expectedString = String.format("%s\n%s\n%s",
-        CLIStrings.listGamesString,
-        String.format(CLIStrings.availableGameString, 0, vw1.getPlayers().size(), vw1.getMaxPlayers(), "",
-            vw1.getGameId()),
-        String.format(CLIStrings.availableGameString, 1, vw2.getPlayers().size(), vw2.getMaxPlayers(), "",
-            vw2.getGameId()));
+    final String expectedString =
+        String.format(
+            "%s\n%s\n%s",
+            CLIStrings.listGamesString,
+            String.format(
+                CLIStrings.availableGameString,
+                0,
+                vw1.getPlayers().size(),
+                vw1.getMaxPlayers(),
+                "",
+                vw1.getGameId()),
+            String.format(
+                CLIStrings.availableGameString,
+                1,
+                vw2.getPlayers().size(),
+                vw2.getMaxPlayers(),
+                "",
+                vw2.getGameId()));
 
     assertOutput(OutputLevel.INFO, expectedString);
   }
 
   @Test
   void displayVirtualView_should_display_leaderboard()
-      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
-      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
-      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException,
-      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
+      throws NullMaxPlayerException,
+          InvalidMaxPlayerException,
+          NullPlayerNameException,
+          NullPlayerIdException,
+          NullPlayerBookshelfException,
+          NullPlayerScoreException,
+          NullPlayerPrivateCardException,
+          NullPlayerScoreBlocksException,
+          DuplicatePlayerNameException,
+          AlreadyInitiatedPatternException,
+          NullPlayerNamesException,
+          InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          NullAssignedPatternException,
+          FullGameException,
+          NotValidScoreBlockValueException,
+          PlayerNotFoundException {
     final String player1Name = "nicoletta";
     final String player2Name = "giovanni";
 
@@ -127,23 +152,37 @@ public class CommandLineInterfaceTest {
     VirtualView vw = new VirtualView(g);
     cli.displayVirtualView(null, vw);
 
-    final String expectedString = String.format("%s\n%s\n%s\n%s\n%s",
-        CLIStrings.currentStateString,
-        CLIStrings.gameOverString,
-        String.format(CLIStrings.playerScoreString, player2Name, 1),
-        String.format(CLIStrings.playerScoreString, player1Name, 0),
-        String.format(CLIStrings.winnerString, player2Name));
+    final String expectedString =
+        String.format(
+            "%s\n%s\n%s\n%s\n%s",
+            CLIStrings.currentStateString,
+            CLIStrings.gameOverString,
+            String.format(CLIStrings.playerScoreString, player2Name, 1),
+            String.format(CLIStrings.playerScoreString, player1Name, 0),
+            String.format(CLIStrings.winnerString, player2Name));
 
     assertOutput(OutputLevel.INFO, expectedString);
   }
 
   @Test
-  void displayVirtualView_should_display_lastRound() throws NullMaxPlayerException, InvalidMaxPlayerException,
-      NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
-      NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
-      AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException,
-      NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException,
-      PlayerNotFoundException {
+  void displayVirtualView_should_display_lastRound()
+      throws NullMaxPlayerException,
+          InvalidMaxPlayerException,
+          NullPlayerNameException,
+          NullPlayerIdException,
+          NullPlayerBookshelfException,
+          NullPlayerScoreException,
+          NullPlayerPrivateCardException,
+          NullPlayerScoreBlocksException,
+          DuplicatePlayerNameException,
+          AlreadyInitiatedPatternException,
+          NullPlayerNamesException,
+          InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          NullAssignedPatternException,
+          FullGameException,
+          NotValidScoreBlockValueException,
+          PlayerNotFoundException {
     Game g = GameFactory.getNewGame("giovanni", 2);
     g.setStatus(GameStatus.LAST_ROUND);
     g.setFirstPlayer(g.getActivePlayer());
@@ -154,11 +193,23 @@ public class CommandLineInterfaceTest {
 
   @Test
   void displayVirtualView_should_display_game_state()
-      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException,
-      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
-      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException,
-      FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
+      throws NullMaxPlayerException,
+          InvalidMaxPlayerException,
+          NullPlayerNameException,
+          NullPlayerIdException,
+          NullPlayerBookshelfException,
+          NullPlayerScoreException,
+          NullPlayerPrivateCardException,
+          NullPlayerScoreBlocksException,
+          DuplicatePlayerNameException,
+          AlreadyInitiatedPatternException,
+          NullPlayerNamesException,
+          InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          NullAssignedPatternException,
+          FullGameException,
+          NotValidScoreBlockValueException,
+          PlayerNotFoundException {
     String playerName = "giovanni";
     Game g = GameFactory.getNewGame(playerName, 2);
     g.setFirstPlayer(g.getActivePlayer());
@@ -192,7 +243,10 @@ public class CommandLineInterfaceTest {
 
   @Test
   void displayChatMessage_should_display_private_message()
-      throws NullPlayerNameException, NullPlayerIdException, NullSocketConnectorException, NullBlockingQueueException {
+      throws NullPlayerNameException,
+          NullPlayerIdException,
+          NullSocketConnectorException,
+          NullBlockingQueueException {
     String textMessage = "valar";
     String playerName = "Jaqen";
     String receiverName = "Arya";
@@ -218,7 +272,8 @@ public class CommandLineInterfaceTest {
   }
 
   @Test
-  void displayChatMessage_should_display_broadcast_message() throws NullPlayerNameException, NullPlayerIdException {
+  void displayChatMessage_should_display_broadcast_message()
+      throws NullPlayerNameException, NullPlayerIdException {
     String textMessage = "valar morghulis";
     String playerName = "Jaqen H'ghar";
     Player p = new Player();
@@ -227,7 +282,8 @@ public class CommandLineInterfaceTest {
     ChatMessage m = new ChatMessage(p, textMessage);
     cli.displayChatMessage(m);
 
-    final String expectedString = String.format(CLIStrings.broadcastMessageString, playerName, textMessage);
+    final String expectedString =
+        String.format(CLIStrings.broadcastMessageString, playerName, textMessage);
     assertOutput(OutputLevel.CHAT, expectedString);
   }
 

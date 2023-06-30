@@ -1,24 +1,18 @@
 package it.polimi.is23am10.utils;
 
-import java.lang.reflect.Type;
-import java.util.Map;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-
-import java.util.HashMap;
-
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * Internal used class.
- * 
- */
+/** Internal used class. */
 class CustomKeySerializer implements JsonSerializer<Coordinates> {
   @Override
   public JsonElement serialize(Coordinates src, Type typeOfSrc, JsonSerializationContext context) {
@@ -29,10 +23,7 @@ class CustomKeySerializer implements JsonSerializer<Coordinates> {
   }
 }
 
-/**
- * Internal used class.
- * 
- */
+/** Internal used class. */
 class CustomKeyDeserializer implements JsonDeserializer<Coordinates> {
   @Override
   public Coordinates deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
@@ -43,15 +34,17 @@ class CustomKeyDeserializer implements JsonDeserializer<Coordinates> {
     return new Coordinates(row, col);
   }
 }
-  
+
 /**
- * Custom deserializer class definition for Gson usage.
- * This works {@link Map} with {@link Coordinates} as keys.
- * 
+ * Custom deserializer class definition for Gson usage. This works {@link Map} with {@link
+ * Coordinates} as keys.
  */
-public class MoveTileCommandTypeAdaptor implements JsonSerializer<Map<Coordinates, Coordinates>>, JsonDeserializer<Map<Coordinates, Coordinates>> {
+public class MoveTileCommandTypeAdaptor
+    implements JsonSerializer<Map<Coordinates, Coordinates>>,
+        JsonDeserializer<Map<Coordinates, Coordinates>> {
   @Override
-  public JsonElement serialize(Map<Coordinates, Coordinates> src, Type typeOfSrc, JsonSerializationContext context) {
+  public JsonElement serialize(
+      Map<Coordinates, Coordinates> src, Type typeOfSrc, JsonSerializationContext context) {
     JsonObject obj = new JsonObject();
     for (Map.Entry<Coordinates, Coordinates> entry : src.entrySet()) {
       obj.add(context.serialize(entry.getKey()).toString(), context.serialize(entry.getValue()));
@@ -60,7 +53,8 @@ public class MoveTileCommandTypeAdaptor implements JsonSerializer<Map<Coordinate
   }
 
   @Override
-  public Map<Coordinates, Coordinates> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+  public Map<Coordinates, Coordinates> deserialize(
+      JsonElement json, Type typeOfT, JsonDeserializationContext context)
       throws JsonParseException {
     JsonObject obj = json.getAsJsonObject();
     Map<Coordinates, Coordinates> map = new HashMap<>();

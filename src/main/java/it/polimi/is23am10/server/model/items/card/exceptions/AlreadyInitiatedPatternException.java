@@ -4,8 +4,7 @@ import it.polimi.is23am10.server.model.items.card.AbstractCard;
 import it.polimi.is23am10.server.model.pattern.AbstractPattern;
 
 /**
- * Custom exception for duplicate {@link AbstractCard} {@link AbstractPattern}
- * initialization.
+ * Custom exception for duplicate {@link AbstractCard} {@link AbstractPattern} initialization.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)

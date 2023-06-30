@@ -10,22 +10,13 @@ package it.polimi.is23am10.server.command;
  */
 public class StartGameCommand extends AbstractCommand {
 
-  /**
-   * The player name who has started a game.
-   * 
-   */
+  /** The player name who has started a game. */
   private String startingPlayerName;
 
-  /**
-   * The chosen max player value.
-   * 
-   */
+  /** The chosen max player value. */
   private Integer maxPlayers;
 
-  /**
-   * An utility to be used during deserialization processes.
-   * 
-   */
+  /** An utility to be used during deserialization processes. */
   @SuppressWarnings("unused")
   private final String className = this.getClass().getName();
 
@@ -34,7 +25,6 @@ public class StartGameCommand extends AbstractCommand {
    *
    * @param startingPlayerName The chosen player name who has started a game request.
    * @param maxPlayers The chosen max player value for the game request.
-   * 
    */
   public StartGameCommand(String startingPlayerName, Integer maxPlayers) {
     super(Opcode.START);
@@ -46,7 +36,6 @@ public class StartGameCommand extends AbstractCommand {
    * Starting player name getter.
    *
    * @return The player name.
-   * 
    */
   public String getStartingPlayerName() {
     return startingPlayerName;
@@ -56,16 +45,12 @@ public class StartGameCommand extends AbstractCommand {
    * Max player getter.
    *
    * @return The max player value allowed for the requested game.
-   * 
    */
   public Integer getMaxPlayers() {
     return maxPlayers;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof StartGameCommand)) {
@@ -79,10 +64,7 @@ public class StartGameCommand extends AbstractCommand {
         && maxPlayers == (casted.getMaxPlayers()));
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode() {
     return startingPlayerName.hashCode();

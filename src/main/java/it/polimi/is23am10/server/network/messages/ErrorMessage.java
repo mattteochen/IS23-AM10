@@ -1,8 +1,6 @@
 package it.polimi.is23am10.server.network.messages;
 
-
 import it.polimi.is23am10.server.model.player.Player;
-
 
 /**
  * A message containing an error message to be sent to the client.
@@ -14,25 +12,20 @@ import it.polimi.is23am10.server.model.player.Player;
  */
 public final class ErrorMessage extends AbstractMessage {
 
-    /**
-   * An utility to be used during deserialization processes.
-   * 
-   */
+  /** An utility to be used during deserialization processes. */
   @SuppressWarnings("unused")
   private final String className = this.getClass().getName();
-  
-  /**
-   * Not mandatory. Not null if direct message.
-   */
+
+  /** Not mandatory. Not null if direct message. */
   private Player receiver;
 
   /**
-   * Three degrees of severity.
-   * Rule of thumb: 
+   * Three degrees of severity. Rule of thumb:
+   *
    * <ul>
-   * <li>Warning = something changed the flow of the game. User must be aware.
-   * <li>Error = something unexpected happened but game can continue.
-   * <li>Critical = something so bad happened that the game must end.
+   *   <li>Warning = something changed the flow of the game. User must be aware.
+   *   <li>Error = something unexpected happened but game can continue.
+   *   <li>Critical = something so bad happened that the game must end.
    * </ul>
    */
   public enum ErrorSeverity {

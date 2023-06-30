@@ -3,8 +3,7 @@ package it.polimi.is23am10.server.model.items.board.exceptions;
 import it.polimi.is23am10.server.model.items.board.Board;
 
 /**
- * Custom exception for wrong number of players.
- * initialization.
+ * Custom exception for wrong number of players. initialization.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -13,6 +12,10 @@ import it.polimi.is23am10.server.model.items.board.Board;
  */
 public class InvalidNumOfPlayersException extends Exception {
   public InvalidNumOfPlayersException(Integer num) {
-    super("The number of players must be a value in: " + Board.allowedNumOfPlayers.toString() + ". Received: " + num);
+    super(
+        "The number of players must be a value in: "
+            + Board.allowedNumOfPlayers.toString()
+            + ". Received: "
+            + num);
   }
 }

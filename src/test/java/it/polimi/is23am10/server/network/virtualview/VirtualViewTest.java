@@ -3,10 +3,6 @@ package it.polimi.is23am10.server.network.virtualview;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.stream.Collectors;
-
-import org.junit.jupiter.api.Test;
-
 import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
@@ -26,18 +22,31 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.Test;
 
-/**
- * Tests for virtual view class.
- */
+/** Tests for virtual view class. */
 public class VirtualViewTest {
   @Test
-  public void constructor_should_create_VirtualView() 
-    throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException, NullPlayerIdException, 
-    NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException, 
-    DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException, 
-    NullNumOfPlayersException, NullAssignedPatternException, FullGameException, PlayerNotFoundException, NotValidScoreBlockValueException {
-    
+  public void constructor_should_create_VirtualView()
+      throws NullMaxPlayerException,
+          InvalidMaxPlayerException,
+          NullPlayerNameException,
+          NullPlayerIdException,
+          NullPlayerBookshelfException,
+          NullPlayerScoreException,
+          NullPlayerPrivateCardException,
+          NullPlayerScoreBlocksException,
+          DuplicatePlayerNameException,
+          AlreadyInitiatedPatternException,
+          NullPlayerNamesException,
+          InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          NullAssignedPatternException,
+          FullGameException,
+          PlayerNotFoundException,
+          NotValidScoreBlockValueException {
+
     Game g = GameFactory.getNewGame("test", 4);
     g.assignPlayers();
     VirtualView vv = new VirtualView(g);
@@ -49,8 +58,13 @@ public class VirtualViewTest {
     assertEquals(g.getGameBoard(), vv.getGameBoard());
     assertEquals(g.getGameId(), vv.getGameId());
     assertEquals(g.getMaxPlayer(), vv.getMaxPlayers());
-    assertEquals(g.getPlayers().stream().map(p -> new VirtualPlayer(p)).collect(Collectors.toList()), vv.getPlayers());
-    assertEquals(g.getSharedCard().stream().map(sc -> sc.getPattern().getIndex()).collect(Collectors.toList()), vv.getSharedCards());
-
+    assertEquals(
+        g.getPlayers().stream().map(p -> new VirtualPlayer(p)).collect(Collectors.toList()),
+        vv.getPlayers());
+    assertEquals(
+        g.getSharedCard().stream()
+            .map(sc -> sc.getPattern().getIndex())
+            .collect(Collectors.toList()),
+        vv.getSharedCards());
   }
 }

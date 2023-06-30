@@ -16,15 +16,25 @@ import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
-    "checkstyle:onetoplevelclasscheck", "checkstyle:variabledeclarationusagedistancecheck",
-    "checkstyle:operatorwrapcheck", "checkstyle:multiplevariabledeclarationscheck", "checkstyle:membernamecheck",
-    "checkstyle:nonemptyatclausedescriptioncheck" })
+@SuppressWarnings({
+  "checkstyle:methodname",
+  "checkstyle:abbreviationaswordinnamecheck",
+  "checkstyle:linelengthcheck",
+  "checkstyle:onetoplevelclasscheck",
+  "checkstyle:variabledeclarationusagedistancecheck",
+  "checkstyle:operatorwrapcheck",
+  "checkstyle:multiplevariabledeclarationscheck",
+  "checkstyle:membernamecheck",
+  "checkstyle:nonemptyatclausedescriptioncheck"
+})
 class BoardTest {
   @Test
   public void constructor_should_create_Board()
-      throws InvalidNumOfPlayersException, NullNumOfPlayersException,
-      BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+      throws InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          BoardGridRowIndexOutOfBoundsException,
+          BoardGridColIndexOutOfBoundsException,
+          NullIndexValueException {
     // 132 total tiles, 37 removed from sack in constructor
     final Integer EXPECTED_TILES = 132 - 37;
     final Integer NUM_PLAYERS = 3;
@@ -48,22 +58,25 @@ class BoardTest {
 
   @Test
   public void copyConstructor_should_copy_Board()
-      throws InvalidNumOfPlayersException, NullNumOfPlayersException,
-      BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+      throws InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          BoardGridRowIndexOutOfBoundsException,
+          BoardGridColIndexOutOfBoundsException,
+          NullIndexValueException {
     final Integer NUM_PLAYERS = 3;
 
     Board original = new Board(NUM_PLAYERS);
-    
+
     original.getBoardGrid()[0][0] = new Tile(TileType.CAT);
     Board copied = new Board(original);
-    //assert array on different memory
+    // assert array on different memory
     assertNotEquals(original.getBoardGrid(), copied.getBoardGrid());
     for (int i = 0; i < Board.BOARD_GRID_COLS; i++) {
-      //assert internal arrays on different memory
+      // assert internal arrays on different memory
       assertNotEquals(original.getBoardGrid()[i], copied.getBoardGrid()[i]);
     }
     copied.getBoardGrid()[0][0] = new Tile(TileType.PLANT);
-    //assert no changes reflected on original array
+    // assert no changes reflected on original array
     assertNotEquals(original.getBoardGrid()[0][0], copied.getBoardGrid()[0][0]);
   }
 
@@ -80,8 +93,12 @@ class BoardTest {
   }
 
   @Test
-  public void getTileAt_should_return_right_tile() throws InvalidNumOfPlayersException, NullNumOfPlayersException,
-      BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+  public void getTileAt_should_return_right_tile()
+      throws InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          BoardGridRowIndexOutOfBoundsException,
+          BoardGridColIndexOutOfBoundsException,
+          NullIndexValueException {
     final Integer NUM_PLAYERS = 3;
     final Integer row = 3;
     final Integer col = 5;
@@ -91,8 +108,11 @@ class BoardTest {
 
   @Test
   public void getTileAt_should_throw_BoardGridRowIndexOutOfBoundsException()
-      throws InvalidNumOfPlayersException, NullNumOfPlayersException, BoardGridRowIndexOutOfBoundsException,
-      BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+      throws InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          BoardGridRowIndexOutOfBoundsException,
+          BoardGridColIndexOutOfBoundsException,
+          NullIndexValueException {
     final Integer NUM_PLAYERS = 3;
     final Integer row = 12;
     final Integer col = 3;
@@ -101,8 +121,12 @@ class BoardTest {
   }
 
   @Test
-  public void removeTileAt_should_remove_tile() throws InvalidNumOfPlayersException, NullNumOfPlayersException,
-      BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+  public void removeTileAt_should_remove_tile()
+      throws InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          BoardGridRowIndexOutOfBoundsException,
+          BoardGridColIndexOutOfBoundsException,
+          NullIndexValueException {
     final Integer NUM_PLAYERS = 3;
     final Integer row = 3;
     final Integer col = 5;
@@ -112,8 +136,12 @@ class BoardTest {
   }
 
   @Test
-  public void refill_should_be_needed() throws InvalidNumOfPlayersException, NullNumOfPlayersException,
-      BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException, NullIndexValueException {
+  public void refill_should_be_needed()
+      throws InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          BoardGridColIndexOutOfBoundsException,
+          BoardGridRowIndexOutOfBoundsException,
+          NullIndexValueException {
     final Integer NUM_PLAYERS = 3;
     Board b = new Board(NUM_PLAYERS);
     // removing tiles in order to have a board that need to be refilled
@@ -128,8 +156,12 @@ class BoardTest {
   }
 
   @Test
-  public void refill_should_not_be_needed() throws InvalidNumOfPlayersException, NullNumOfPlayersException,
-      BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException, NullIndexValueException {
+  public void refill_should_not_be_needed()
+      throws InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          BoardGridColIndexOutOfBoundsException,
+          BoardGridRowIndexOutOfBoundsException,
+          NullIndexValueException {
     final Integer NUM_PLAYERS = 3;
     Board b = new Board(NUM_PLAYERS);
 
@@ -137,8 +169,12 @@ class BoardTest {
   }
 
   @Test
-  public void refillIfNeeded_should_refill_correctly() throws InvalidNumOfPlayersException, NullNumOfPlayersException,
-      BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException, NullIndexValueException {
+  public void refillIfNeeded_should_refill_correctly()
+      throws InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          BoardGridColIndexOutOfBoundsException,
+          BoardGridRowIndexOutOfBoundsException,
+          NullIndexValueException {
     final Integer NUM_PLAYERS = 3;
     Board b = new Board(NUM_PLAYERS);
     // removing tiles in order to have a board that need to be refilled
@@ -164,8 +200,10 @@ class BoardTest {
   /**
    * Testing row boundaries in getTileAt.
    *
-   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
-   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is
+   *     null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid
+   *     number of them.
    */
   @Test
   public void getTileAtAt_should_throw_BoardGridRowIndexOutOfBoundsException()
@@ -175,15 +213,17 @@ class BoardTest {
     final Integer INVALID_ROW = 99;
     final Integer VALID_COL = 1;
     Board board = new Board(NUM_PLAYERS);
-    assertThrows(BoardGridRowIndexOutOfBoundsException.class,
-        () -> board.getTileAt(INVALID_ROW, VALID_COL));
+    assertThrows(
+        BoardGridRowIndexOutOfBoundsException.class, () -> board.getTileAt(INVALID_ROW, VALID_COL));
   }
 
   /**
    * Testing column boundaries in takeTileAt.
    *
-   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
-   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is
+   *     null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid
+   *     number of them.
    */
   @Test
   public void getTileAt_should_throw_BoardGridColIndexOutOfBoundsException()
@@ -193,15 +233,17 @@ class BoardTest {
     final Integer VALID_ROW = 1;
     final Integer INVALID_COL = 99;
     Board board = new Board(NUM_PLAYERS);
-    assertThrows(BoardGridColIndexOutOfBoundsException.class,
-        () -> board.getTileAt(VALID_ROW, INVALID_COL));
+    assertThrows(
+        BoardGridColIndexOutOfBoundsException.class, () -> board.getTileAt(VALID_ROW, INVALID_COL));
   }
 
   /**
    * Testing row boundaries in takeTileAt.
    *
-   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
-   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is
+   *     null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid
+   *     number of them.
    */
   @Test
   public void getBookShelfGridAt_should_throw_BoardGridRowIndexOutOfBoundsException()
@@ -211,15 +253,18 @@ class BoardTest {
     final Integer INVALID_ROW = 99;
     final Integer VALID_COL = 1;
     Board board = new Board(NUM_PLAYERS);
-    assertThrows(BoardGridRowIndexOutOfBoundsException.class,
+    assertThrows(
+        BoardGridRowIndexOutOfBoundsException.class,
         () -> board.takeTileAt(INVALID_ROW, VALID_COL));
   }
 
   /**
    * Testing column boundaries in takeTileAt.
    *
-   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
-   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is
+   *     null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid
+   *     number of them.
    */
   @Test
   public void getBookShelfGridAt_should_throw_BoardGridColIndexOutOfBoundsException()
@@ -229,15 +274,18 @@ class BoardTest {
     final Integer VALID_ROW = 1;
     final Integer INVALID_COL = 99;
     Board board = new Board(NUM_PLAYERS);
-    assertThrows(BoardGridColIndexOutOfBoundsException.class,
+    assertThrows(
+        BoardGridColIndexOutOfBoundsException.class,
         () -> board.takeTileAt(VALID_ROW, INVALID_COL));
   }
 
   /**
    * Testing row boundaries in getBlackMapAt.
    *
-   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
-   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is
+   *     null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid
+   *     number of them.
    */
   @Test
   public void getBlackMapAt_should_throw_BoardGridRowIndexOutOfBoundsException()
@@ -247,15 +295,18 @@ class BoardTest {
     final Integer INVALID_ROW = 99;
     final Integer VALID_COL = 1;
     Board board = new Board(NUM_PLAYERS);
-    assertThrows(BoardGridRowIndexOutOfBoundsException.class,
+    assertThrows(
+        BoardGridRowIndexOutOfBoundsException.class,
         () -> board.getBlackMapAt(INVALID_ROW, VALID_COL));
   }
 
   /**
    * Testing column boundaries in getBlackMapAt.
    *
-   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
-   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is
+   *     null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid
+   *     number of them.
    */
   @Test
   public void getBlackMapAt_should_throw_BoardGridColIndexOutOfBoundsException()
@@ -265,7 +316,8 @@ class BoardTest {
     final Integer VALID_ROW = 1;
     final Integer INVALID_COL = 99;
     Board board = new Board(NUM_PLAYERS);
-    assertThrows(BoardGridColIndexOutOfBoundsException.class,
+    assertThrows(
+        BoardGridColIndexOutOfBoundsException.class,
         () -> board.getBlackMapAt(VALID_ROW, INVALID_COL));
   }
 }

@@ -25,22 +25,21 @@ public final class CallBack {
         GraphicUserInterface.addMsgQueue(tfs[0].getText());
       };
 
-  /**
-   * Callback for "see XYZ's bookshelf" button. Textfield received is player's name.
-   */
+  /** Callback for "see XYZ's bookshelf" button. Textfield received is player's name. */
   public static ButtonCallBack switchToPlayerBookshelf =
       (tfs) -> {
-          StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
-          GuiFactory.executeOnJavaFX( () ->
-            {
+        StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
+        GuiFactory.executeOnJavaFX(
+            () -> {
               try {
-                GuiFactory.GameSnapshotFactory.updateBookshelf(root, new Bookshelf(tfs[0].getText()), tfs[1].getText());
-              } catch (NullPointerException | WrongLengthBookshelfStringException
+                GuiFactory.GameSnapshotFactory.updateBookshelf(
+                    root, new Bookshelf(tfs[0].getText()), tfs[1].getText());
+              } catch (NullPointerException
+                  | WrongLengthBookshelfStringException
                   | WrongCharBookshelfStringException e) {
                 return;
               }
-            }
-        );
+            });
       };
 
   /**
@@ -93,11 +92,10 @@ public final class CallBack {
   /**
    * A callback implementation to send a chat message. This callback adds the send chat message
    * command to the message queue of the GraphicUserInterface.
-   * 
    */
   public static ButtonCallBack sendMessageCallBack =
       (tfs) -> {
-        if(tfs[0].getText().stripLeading().length() > 0){
+        if (tfs[0].getText().stripLeading().length() > 0) {
           GraphicUserInterface.addMsgQueue(CommandsBuilder.sendChatMessageCmd(tfs[0].getText()));
         }
         tfs[0].clear();

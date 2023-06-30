@@ -20,10 +20,7 @@ public class PrivatePattern<T> extends AbstractPattern<T> {
     super(rule, cardIndex);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   @SuppressWarnings("unchecked")
   public boolean equals(Object obj) {
@@ -33,10 +30,7 @@ public class PrivatePattern<T> extends AbstractPattern<T> {
     return this.rule == ((PrivatePattern<T>) obj).getRule();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode() {
     return rule.hashCode();

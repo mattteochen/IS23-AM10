@@ -12,52 +12,31 @@ import java.io.Serializable;
  */
 public abstract class AbstractCommand implements Serializable {
 
-  /**
-   * Opcodes to communicate the action taken by a player.
-   * 
-   */
+  /** Opcodes to communicate the action taken by a player. */
   public enum Opcode {
-    /**
-     * Start a new game command.
-     */
+    /** Start a new game command. */
     START,
-    /**
-     * Add a new player to existing game command.
-     */
+    /** Add a new player to existing game command. */
     ADD_PLAYER,
-    /**
-     * Move tiles from board to user's bookshelf command.
-     */
+    /** Move tiles from board to user's bookshelf command. */
     MOVE_TILES,
-    /**
-     * Retrieve existing games to join command.
-     */
+    /** Retrieve existing games to join command. */
     GET_GAMES,
-    /**
-     * Send chat message command
-     */
+    /** Send chat message command */
     SEND_CHAT_MESSAGE,
-    /**
-     * Game timer snooze command.
-     */
+    /** Game timer snooze command. */
     GAME_TIMER,
-    /**
-     * Null command.
-     */
+    /** Null command. */
     NULL
   }
 
-  /**
-   * The opcode instance for the current command instance.
-   * 
-   */
+  /** The opcode instance for the current command instance. */
   protected Opcode opcode;
 
   /**
    * The opcode instance for the current command instance.
-   * 
+   *
    * @param opcode command op code.
-   * 
    */
   protected AbstractCommand(Opcode opcode) {
     this.opcode = opcode != null ? opcode : Opcode.NULL;
@@ -67,7 +46,6 @@ public abstract class AbstractCommand implements Serializable {
    * Opcode getter.
    *
    * @return The current command Opcode.
-   * 
    */
   public Opcode getOpcode() {
     return opcode;

@@ -13,19 +13,18 @@ import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
 import it.polimi.is23am10.utils.exceptions.MissingParameterException;
 import org.junit.jupiter.api.Test;
 
-/**
- * Argument parser tests.
- */
+/** Argument parser tests. */
 public class ArgParserTest {
 
   @Test
   void set_socket_port_argument_should_set_server_port()
-      throws InvalidArgumentException, MissingParameterException, NumberFormatException,
-      InvalidPortNumberException, InvalidMaxConnectionsNumberException {
+      throws InvalidArgumentException,
+          MissingParameterException,
+          NumberFormatException,
+          InvalidPortNumberException,
+          InvalidMaxConnectionsNumberException {
     final String serverPort = "8888";
-    final String[] mockCommand = {
-        "--socket-port", serverPort
-    };
+    final String[] mockCommand = {"--socket-port", serverPort};
     ArgParser.parse(mockCommand);
     assertEquals(Integer.parseInt(serverPort), AppConfig.getServerSocketPort());
 
@@ -37,12 +36,13 @@ public class ArgParserTest {
 
   @Test
   void set_max_inactivity_time_argument_should_set_max_inactivity_time()
-      throws InvalidArgumentException, MissingParameterException, NumberFormatException,
-      InvalidPortNumberException, InvalidMaxConnectionsNumberException {
+      throws InvalidArgumentException,
+          MissingParameterException,
+          NumberFormatException,
+          InvalidPortNumberException,
+          InvalidMaxConnectionsNumberException {
     final long time = 1000 * 60 * 10;
-    final String[] mockCommand = {
-        ArgParser.MAX_CLIENT_INACTIVITY_TIME, String.valueOf(time)
-    };
+    final String[] mockCommand = {ArgParser.MAX_CLIENT_INACTIVITY_TIME, String.valueOf(time)};
     ArgParser.parse(mockCommand);
     assertEquals(time, AppConfig.getMaxInactivityTime());
 
@@ -53,21 +53,20 @@ public class ArgParserTest {
   @Test
   void missing_time_argument_should_throw_missing_parameter_exception()
       throws InvalidArgumentException, MissingParameterException {
-    final String[] mockCommand = {
-        ArgParser.MAX_CLIENT_INACTIVITY_TIME
-    };
+    final String[] mockCommand = {ArgParser.MAX_CLIENT_INACTIVITY_TIME};
 
     assertThrows(MissingParameterException.class, () -> ArgParser.parse(mockCommand));
   }
 
   @Test
   void set_rmi_port_argument_should_set_server_port()
-      throws InvalidArgumentException, MissingParameterException, NumberFormatException,
-      InvalidPortNumberException, InvalidMaxConnectionsNumberException {
+      throws InvalidArgumentException,
+          MissingParameterException,
+          NumberFormatException,
+          InvalidPortNumberException,
+          InvalidMaxConnectionsNumberException {
     final String serverPort = "8888";
-    final String[] mockCommand = {
-        "--rmi-port", serverPort
-    };
+    final String[] mockCommand = {"--rmi-port", serverPort};
     ArgParser.parse(mockCommand);
     assertEquals(Integer.parseInt(serverPort), AppConfig.getServerRmiPort());
 
@@ -80,21 +79,20 @@ public class ArgParserTest {
   @Test
   void missing_port_argument_should_throw_missing_parameter_exception()
       throws InvalidArgumentException, MissingParameterException {
-    final String[] mockCommand = {
-        "--socket-port"
-    };
+    final String[] mockCommand = {"--socket-port"};
 
     assertThrows(MissingParameterException.class, () -> ArgParser.parse(mockCommand));
   }
 
   @Test
   void set_max_connections_argument_should_set_max_connections()
-      throws InvalidArgumentException, MissingParameterException, NumberFormatException,
-      InvalidPortNumberException, InvalidMaxConnectionsNumberException {
+      throws InvalidArgumentException,
+          MissingParameterException,
+          NumberFormatException,
+          InvalidPortNumberException,
+          InvalidMaxConnectionsNumberException {
     final String serverMaxConnections = "7";
-    final String[] mockCommand = {
-        "--max-connections", serverMaxConnections
-    };
+    final String[] mockCommand = {"--max-connections", serverMaxConnections};
     ArgParser.parse(mockCommand);
     assertEquals(Integer.parseInt(serverMaxConnections), AppConfig.getMaxConnections());
 
@@ -107,21 +105,20 @@ public class ArgParserTest {
   @Test
   void missing_max_connections_argument_should_throw_missing_parameter_exception()
       throws InvalidArgumentException, MissingParameterException {
-    final String[] mockCommand = {
-        "--max-connections"
-    };
+    final String[] mockCommand = {"--max-connections"};
 
     assertThrows(MissingParameterException.class, () -> ArgParser.parse(mockCommand));
   }
 
   @Test
   void set_keep_alive_should_set_keep_alive()
-      throws InvalidArgumentException, MissingParameterException, NumberFormatException,
-      InvalidPortNumberException, InvalidMaxConnectionsNumberException {
+      throws InvalidArgumentException,
+          MissingParameterException,
+          NumberFormatException,
+          InvalidPortNumberException,
+          InvalidMaxConnectionsNumberException {
     final String serverKeepAlive = "false";
-    final String[] mockCommand = {
-        "--keep-alive", serverKeepAlive
-    };
+    final String[] mockCommand = {"--keep-alive", serverKeepAlive};
     ArgParser.parse(mockCommand);
     assertEquals(Boolean.parseBoolean(serverKeepAlive), AppConfig.getKeepAlive());
 
@@ -134,18 +131,19 @@ public class ArgParserTest {
   @Test
   void missing_keep_alive_argument_should_throw_missing_parameter_exception()
       throws InvalidArgumentException, MissingParameterException {
-    final String[] mockCommand = {
-        "--keep-alive"
-    };
+    final String[] mockCommand = {"--keep-alive"};
 
     assertThrows(MissingParameterException.class, () -> ArgParser.parse(mockCommand));
   }
 
   @Test
-  void isServer_argument_should_set_isServer() throws NumberFormatException, InvalidArgumentException, MissingParameterException, InvalidPortNumberException, InvalidMaxConnectionsNumberException{
-    final String[] mockCommand = {
-      "--is-server"
-    };
+  void isServer_argument_should_set_isServer()
+      throws NumberFormatException,
+          InvalidArgumentException,
+          MissingParameterException,
+          InvalidPortNumberException,
+          InvalidMaxConnectionsNumberException {
+    final String[] mockCommand = {"--is-server"};
     assertFalse(AppConfig.getIsServer());
     ArgParser.parse(mockCommand);
 
@@ -154,10 +152,13 @@ public class ArgParserTest {
   }
 
   @Test
-  void showGUI_argument_should_set_showGUI() throws NumberFormatException, InvalidArgumentException, MissingParameterException, InvalidPortNumberException, InvalidMaxConnectionsNumberException{
-    final String[] mockCommand = {
-      "--show-gui"
-    };
+  void showGUI_argument_should_set_showGUI()
+      throws NumberFormatException,
+          InvalidArgumentException,
+          MissingParameterException,
+          InvalidPortNumberException,
+          InvalidMaxConnectionsNumberException {
+    final String[] mockCommand = {"--show-gui"};
     assertFalse(AppConfig.getShowGUI());
     ArgParser.parse(mockCommand);
 
@@ -166,10 +167,13 @@ public class ArgParserTest {
   }
 
   @Test
-  void useRMI_argument_should_set_useRMI() throws NumberFormatException, InvalidArgumentException, MissingParameterException, InvalidPortNumberException, InvalidMaxConnectionsNumberException{
-    final String[] mockCommand = {
-      "--use-rmi"
-    };
+  void useRMI_argument_should_set_useRMI()
+      throws NumberFormatException,
+          InvalidArgumentException,
+          MissingParameterException,
+          InvalidPortNumberException,
+          InvalidMaxConnectionsNumberException {
+    final String[] mockCommand = {"--use-rmi"};
     assertFalse(AppConfig.getUseRMI());
     ArgParser.parse(mockCommand);
 
@@ -178,11 +182,14 @@ public class ArgParserTest {
   }
 
   @Test
-  void address_argument_should_set_address() throws NumberFormatException, InvalidArgumentException, MissingParameterException, InvalidPortNumberException, InvalidMaxConnectionsNumberException {
+  void address_argument_should_set_address()
+      throws NumberFormatException,
+          InvalidArgumentException,
+          MissingParameterException,
+          InvalidPortNumberException,
+          InvalidMaxConnectionsNumberException {
     final String ipAddress = "192.168.1.100";
-    final String[] mockCommand = {
-      "--address", ipAddress
-    };
+    final String[] mockCommand = {"--address", ipAddress};
 
     assertEquals("localhost", AppConfig.getServerAddress());
     ArgParser.parse(mockCommand);
@@ -194,9 +201,7 @@ public class ArgParserTest {
   @Test
   void invalid_address_argument_should_throw_invalid_argument_exception() {
     final String ipAddress = "3000.22.1.33";
-    final String[] mockCommand = {
-      "--address", ipAddress
-    };
+    final String[] mockCommand = {"--address", ipAddress};
 
     assertThrows(InvalidArgumentException.class, () -> ArgParser.parse(mockCommand));
   }
@@ -204,9 +209,7 @@ public class ArgParserTest {
   @Test
   void missing_address_argument_should_throw_missing_parameter_exception()
       throws InvalidArgumentException, MissingParameterException {
-    final String[] mockCommand = {
-        "--address"
-    };
+    final String[] mockCommand = {"--address"};
 
     assertThrows(MissingParameterException.class, () -> ArgParser.parse(mockCommand));
   }
@@ -214,9 +217,7 @@ public class ArgParserTest {
   @Test
   void invalid_argument_should_throw_invalid_argument_exception()
       throws InvalidArgumentException, MissingParameterException {
-    final String[] mockCommand = {
-        "--optimus-prime"
-    };
+    final String[] mockCommand = {"--optimus-prime"};
 
     assertThrows(InvalidArgumentException.class, () -> ArgParser.parse(mockCommand));
   }
@@ -225,9 +226,7 @@ public class ArgParserTest {
   void low_port_number_should_throw_invalid_port_number_exception()
       throws InvalidArgumentException, MissingParameterException {
     final String serverPort = "700";
-    final String[] mockCommand = {
-        "--socket-port", serverPort
-    };
+    final String[] mockCommand = {"--socket-port", serverPort};
 
     assertThrows(InvalidPortNumberException.class, () -> ArgParser.parse(mockCommand));
   }
@@ -236,9 +235,7 @@ public class ArgParserTest {
   void high_port_number_should_throw_invalid_port_number_exception()
       throws InvalidArgumentException, MissingParameterException {
     final String serverPort = "70000";
-    final String[] mockCommand = {
-        "--socket-port", serverPort
-    };
+    final String[] mockCommand = {"--socket-port", serverPort};
 
     assertThrows(InvalidPortNumberException.class, () -> ArgParser.parse(mockCommand));
   }
@@ -247,9 +244,7 @@ public class ArgParserTest {
   void negative_max_connections_should_throw_invalid_max_connections_exception()
       throws InvalidArgumentException, MissingParameterException {
     final String serverMaxConnections = "-1";
-    final String[] mockCommand = {
-        "--max-connections", serverMaxConnections
-    };
+    final String[] mockCommand = {"--max-connections", serverMaxConnections};
 
     assertThrows(InvalidMaxConnectionsNumberException.class, () -> ArgParser.parse(mockCommand));
   }
@@ -258,11 +253,8 @@ public class ArgParserTest {
   void high_max_connections_should_throw_invalid_max_connections_exception()
       throws InvalidArgumentException, MissingParameterException {
     final String serverMaxConnections = "100";
-    final String[] mockCommand = {
-        "--max-connections", serverMaxConnections
-    };
+    final String[] mockCommand = {"--max-connections", serverMaxConnections};
 
     assertThrows(InvalidMaxConnectionsNumberException.class, () -> ArgParser.parse(mockCommand));
   }
-
 }
