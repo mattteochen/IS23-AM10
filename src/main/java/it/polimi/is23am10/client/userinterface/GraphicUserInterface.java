@@ -4,15 +4,13 @@ import it.polimi.is23am10.client.Client;
 import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory;
 import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory.SCENE;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
-
-import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.List;
-
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
@@ -32,14 +30,10 @@ import javafx.stage.Stage;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 class VirtualViewPair {
-  /**
-   * The new {@link VirtualView}.
-   */
+  /** The new {@link VirtualView}. */
   VirtualView newVw;
 
-  /**
-   * The old {@link VirtualView}.
-   */
+  /** The old {@link VirtualView}. */
   VirtualView oldVw;
 
   /**
@@ -56,21 +50,13 @@ class VirtualViewPair {
 
 class VirtualViewSceneHandler {
 
-  /**
-   * A list {@link VirtualViewPair} to be shown.
-   */
+  /** A list {@link VirtualViewPair} to be shown. */
   private static final Queue<VirtualViewPair> gameSnapshots = new LinkedList<VirtualViewPair>();
 
-  /**
-   * Custom lock object.
-   *
-   */
+  /** Custom lock object. */
   protected static final Object queueLock = new Object();
 
-  /**
-   * Utility flag to stop the handler thread.
-   *
-   */
+  /** Utility flag to stop the handler thread. */
   protected static volatile boolean stop = false;
 
   /**
@@ -79,7 +65,7 @@ class VirtualViewSceneHandler {
    * @param vwp The {@link VirtualViewPair}.
    */
   protected static void addVirtualViewPair(VirtualViewPair vwp) {
-    synchronized(queueLock) {
+    synchronized (queueLock) {
       gameSnapshots.add(vwp);
       queueLock.notifyAll();
     }
@@ -108,49 +94,46 @@ class VirtualViewSceneHandler {
           StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
           final VirtualView oldVw = vwp.oldVw;
           final VirtualView newVw = vwp.newVw;
-          GuiFactory.executeOnJavaFX(() -> GuiFactory.GameSnapshotFactory.updateGameWidget(root, oldVw, newVw));
+          GuiFactory.executeOnJavaFX(
+              () -> GuiFactory.GameSnapshotFactory.updateGameWidget(root, oldVw, newVw));
         }
       }
     }
   }
 
-  /**
-   * Run the game scene handler thread.
-   *
-   */
+  /** Run the game scene handler thread. */
   protected static void runGameSnapShotHandler() {
-    new Thread(() -> {
-        while(!stop) {
-          VirtualViewPair vwp = null;
-          try {
-            synchronized(queueLock) {
-              while(gameSnapshots.size() == 0) {
-                queueLock.wait();
+    new Thread(
+            () -> {
+              while (!stop) {
+                VirtualViewPair vwp = null;
+                try {
+                  synchronized (queueLock) {
+                    while (gameSnapshots.size() == 0) {
+                      queueLock.wait();
+                    }
+                    if (stop) {
+                      return;
+                    }
+                    vwp = gameSnapshots.poll();
+                  }
+                  if (vwp != null) {
+                    setScene(vwp);
+                  }
+                } catch (NullPointerException | InterruptedException e) {
+                  System.out.println("Internal error occured. You have been shut down");
+                  Platform.exit();
+                  terminateHandler();
+                }
               }
-              if (stop) {
-                return;
-              }
-              vwp = gameSnapshots.poll();
-            }
-            if (vwp != null) {
-              setScene(vwp); 
-            }
-          } catch(NullPointerException | InterruptedException e) {
-            System.out.println("Internal error occured. You have been shut down");
-            Platform.exit(); 
-            terminateHandler();
-          }
-        }
-    }).start();
+            })
+        .start();
   }
 
-  /**
-   * Terminate the handler.
-   *
-   */
+  /** Terminate the handler. */
   protected static void terminateHandler() {
     stop = true;
-    //wake up the thread
+    // wake up the thread
     addVirtualViewPair(null);
   }
 }
@@ -166,15 +149,12 @@ class VirtualViewSceneHandler {
 public final class GraphicUserInterface extends Application implements UserInterface, Serializable {
 
   /**
-   * Queue containing all the inputs the user sent trough readline. Content to be
-   * consumed by client
+   * Queue containing all the inputs the user sent trough readline. Content to be consumed by client
    * controller on premise.
    */
   private static final BlockingQueue<String> userInputQueue = new LinkedBlockingQueue<>();
 
-  /**
-   * Constructor.
-   */
+  /** Constructor. */
   public GraphicUserInterface() {
     VirtualViewSceneHandler.runGameSnapShotHandler();
   }
@@ -206,21 +186,23 @@ public final class GraphicUserInterface extends Application implements UserInter
   public void start(Stage stage) {
     GuiFactory.mainStage = stage;
     stage.setResizable(false);
-    Map<SCENE, Scene> m = Map.of(
-        SCENE.SPLASH_SCREEN, GuiFactory.getSplashScreenScene(),
-        SCENE.ENTER_GAME_SELECTION, GuiFactory.getEnterGameSelectionScene(),
-        SCENE.CREATE_GAME, GuiFactory.getCreateNewGameSelectionScene(),
-        SCENE.WAIT_GAME, GuiFactory.getWaitGameScene()
-    // some scenes require the {@link VirtualView}, they are built later
-    );
+    Map<SCENE, Scene> m =
+        Map.of(
+            SCENE.SPLASH_SCREEN, GuiFactory.getSplashScreenScene(),
+            SCENE.ENTER_GAME_SELECTION, GuiFactory.getEnterGameSelectionScene(),
+            SCENE.CREATE_GAME, GuiFactory.getCreateNewGameSelectionScene(),
+            SCENE.WAIT_GAME, GuiFactory.getWaitGameScene()
+            // some scenes require the {@link VirtualView}, they are built later
+            );
     GuiFactory.stages.putAll(m);
 
     stage.setTitle("MyShelfie - IS23AM10");
     stage.setScene(GuiFactory.stages.get(SCENE.SPLASH_SCREEN));
-    stage.setOnCloseRequest(e -> {
-      Client.setForceCloseApplication(true);
-      VirtualViewSceneHandler.terminateHandler();
-    });
+    stage.setOnCloseRequest(
+        e -> {
+          Client.setForceCloseApplication(true);
+          VirtualViewSceneHandler.terminateHandler();
+        });
     stage.show();
   }
 
@@ -232,9 +214,11 @@ public final class GraphicUserInterface extends Application implements UserInter
   /** {@inheritDoc} */
   public void displaySplashScreen() {
     // this will perform javaFX init process and show the first scene
-    new Thread(() -> {
-      launch();
-    }).start();
+    new Thread(
+            () -> {
+              launch();
+            })
+        .start();
   }
 
   /** {@inheritDoc} */
@@ -258,21 +242,18 @@ public final class GraphicUserInterface extends Application implements UserInter
   /** {@inheritDoc}} */
   public void displayError(ErrorMessage errorMessage) {
     StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
-    if(errorMessage.getErrorSeverity() != ErrorSeverity.INFO){
-      GuiFactory.executeOnJavaFX(
-        () -> GuiFactory.getErrorMessage(root, errorMessage)
-      );
+    if (errorMessage.getErrorSeverity() != ErrorSeverity.INFO) {
+      GuiFactory.executeOnJavaFX(() -> GuiFactory.getErrorMessage(root, errorMessage));
       if (errorMessage.getMessage().contains("You have been disconnected")) {
         try {
           Thread.sleep(2000);
         } catch (InterruptedException e) {
         }
-        Client.setForceCloseApplication(true); 
+        Client.setForceCloseApplication(true);
       }
     } else {
       GuiFactory.executeOnJavaFX(
-        () -> GuiFactory.GameSnapshotFactory.updateChatHistory(root, errorMessage)
-      );
+          () -> GuiFactory.GameSnapshotFactory.updateChatHistory(root, errorMessage));
     }
   }
 

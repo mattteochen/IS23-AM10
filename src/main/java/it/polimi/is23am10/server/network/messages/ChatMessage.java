@@ -2,7 +2,6 @@ package it.polimi.is23am10.server.network.messages;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.utils.ThreadLocalTypeAdapterFactory;
 
@@ -16,39 +15,26 @@ import it.polimi.is23am10.utils.ThreadLocalTypeAdapterFactory;
  */
 public final class ChatMessage extends AbstractMessage {
 
-    /**
-   * An utility to be used during deserialization processes.
-   * 
-   */
+  /** An utility to be used during deserialization processes. */
   @SuppressWarnings("unused")
   private final String className = this.getClass().getName();
-  
-    /**
-   * Gson object for serialization and deserialization
-   */
-  protected final transient Gson gson = new GsonBuilder()
-    .registerTypeAdapterFactory(new ThreadLocalTypeAdapterFactory())
-    .create();
-  
-  /**
-   * Not mandatory. Not null if direct message.
-   */
+
+  /** Gson object for serialization and deserialization */
+  protected final transient Gson gson =
+      new GsonBuilder().registerTypeAdapterFactory(new ThreadLocalTypeAdapterFactory()).create();
+
+  /** Not mandatory. Not null if direct message. */
   private Player receiver;
 
-  /**
-   * Not mandatory, used for alt constructor.
-   */
+  /** Not mandatory, used for alt constructor. */
   private String receiverName;
 
-
-  /**
-   * Player sending the message.
-   */
+  /** Player sending the message. */
   protected Player sender;
 
   /**
    * Public constructor for building a direct message.
-   * 
+   *
    * @param sender the player sending the message
    * @param chatMessage the actual message
    * @param receiver the player receiving the message
@@ -62,7 +48,7 @@ public final class ChatMessage extends AbstractMessage {
 
   /**
    * Public constructor for building a direct message.
-   * 
+   *
    * @param sender the player sending the message
    * @param chatMessage the actual message
    * @param receiver the player name receiving the message
@@ -76,11 +62,11 @@ public final class ChatMessage extends AbstractMessage {
 
   /**
    * Public constructor for building a broadcast message.
-   * 
+   *
    * @param sender the player sending the message
    * @param chatMessage the actual message
    */
-  public ChatMessage(Player sender, String chatMessage){
+  public ChatMessage(Player sender, String chatMessage) {
     msgType = MessageType.CHAT_MESSAGE;
     this.sender = sender;
     message = chatMessage;
@@ -88,7 +74,7 @@ public final class ChatMessage extends AbstractMessage {
 
   /**
    * Boolean to check if message is direct or broadcast.
-   * 
+   *
    * @return is the message broadcast?
    */
   public boolean isBroadcast() {
@@ -97,7 +83,7 @@ public final class ChatMessage extends AbstractMessage {
 
   /**
    * Getter for the receiving player.
-   * 
+   *
    * @return the player instance
    */
   public Player getReceiver() {
@@ -106,7 +92,7 @@ public final class ChatMessage extends AbstractMessage {
 
   /**
    * Getter for the receiving player.
-   * 
+   *
    * @return the player instance
    */
   public String getReceiverName() {
@@ -121,5 +107,4 @@ public final class ChatMessage extends AbstractMessage {
   public Player getSender() {
     return sender;
   }
-
 }

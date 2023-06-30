@@ -12,7 +12,10 @@ import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
  */
 public abstract class CommandSerializationErrorException extends RuntimeException {
   protected CommandSerializationErrorException(String command, String type) {
-    super(command + " command not processed. Failed to obtain "
-        + type + " during deserialization process");
+    super(
+        command
+            + " command not processed. Failed to obtain "
+            + type
+            + " during deserialization process");
   }
 }

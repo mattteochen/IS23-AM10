@@ -11,41 +11,21 @@ import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public final class ServerDebugPrefixString {
-  /**
-   * Private constructor.
-   *
-   */
-  private ServerDebugPrefixString() {
+  /** Private constructor. */
+  private ServerDebugPrefixString() {}
 
-  }
-
-  /**
-   * {@link Opcode#START} prefix string.
-   *
-   */
+  /** {@link Opcode#START} prefix string. */
   public static final String START_COMMAND_PREFIX = "START ->";
 
-  /**
-   * {@link Opcode#ADD_PLAYER} prefix string.
-   *
-   */
+  /** {@link Opcode#ADD_PLAYER} prefix string. */
   public static final String ADD_PLAYER_COMMAND_PREFIX = "ADD_PLAYER ->";
 
-  /**
-   * {@link Opcode#MOVE_TILES} prefix string.
-   *
-   */
+  /** {@link Opcode#MOVE_TILES} prefix string. */
   public static final String MOVE_TILES_COMMAND_PREFIX = "MOVE_TILES ->";
 
-  /**
-   * {@link Opcode#SEND_CHAT_MESSAGE} prefix string.
-   *
-   */
+  /** {@link Opcode#SEND_CHAT_MESSAGE} prefix string. */
   public static final String SEND_CHAT_MESSAGE_COMMAND_PREFIX = "SEND_CHAT_MESSAGE ->";
-  
-  /**  
-   * {@link Opcode#GAME_TIMER} prefix string.
-   *
-   */
+
+  /** {@link Opcode#GAME_TIMER} prefix string. */
   public static final String SNOOZE_TIMER_COMMAND_PREFIX = "SNOOZE_TIMER ->";
 }

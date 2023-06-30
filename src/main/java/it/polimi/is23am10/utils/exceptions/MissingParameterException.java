@@ -10,6 +10,6 @@ package it.polimi.is23am10.utils.exceptions;
  */
 public class MissingParameterException extends Exception {
   public MissingParameterException(String arg) {
-    super("The argument" + arg  + "is missing the parameter");
+    super("The argument" + arg + "is missing the parameter");
   }
 }

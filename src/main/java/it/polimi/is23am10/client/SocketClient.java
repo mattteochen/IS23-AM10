@@ -11,9 +11,9 @@ import it.polimi.is23am10.server.command.SnoozeGameTimerCommand;
 import it.polimi.is23am10.server.command.StartGameCommand;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
+import it.polimi.is23am10.server.network.messages.AbstractMessage.MessageType;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
-import it.polimi.is23am10.server.network.messages.AbstractMessage.MessageType;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.utils.Coordinates;
@@ -41,15 +41,10 @@ public class SocketClient extends Client {
   /** The {@link BufferedReader} buffer size. */
   private final int BUFFER_LENGHT = 102400;
 
-  /**
-   * The input stream instance to be linked with
-   * {@link PlayerConnectorSocket#getConnector()}.
-   */
+  /** The input stream instance to be linked with {@link PlayerConnectorSocket#getConnector()}. */
   DataInputStream dis;
 
-  /**
-   * The buffer reader instance to be linked with the {@link SocketClient#dis}.
-   */
+  /** The buffer reader instance to be linked with the {@link SocketClient#dis}. */
   BufferedReader br;
 
   /**
@@ -63,42 +58,34 @@ public class SocketClient extends Client {
     super(pc, ui);
   }
 
-  /**
-   * Thread used to poll for messages from server.
-   * 
-   */
+  /** Thread used to poll for messages from server. */
   private transient Thread messageHandler;
 
-  /**
-   * Flag used to signal the client sent a snooze command and
-   * is waiting for the ACK reply.
-   * 
-   */
+  /** Flag used to signal the client sent a snooze command and is waiting for the ACK reply. */
   private boolean waitingForACK;
 
-  /**
-   * Lock for waitingForACK flag.
-   * 
-   */
+  /** Lock for waitingForACK flag. */
   private final Object ackWaitLock = new Object();
 
   /** Socket alarm snoozer. */
-  protected AlarmConsumer snoozer = () -> {
-    // skip if the client has not inserted the name: server won't have any reference
-    // to player and therefore won't be able to snooze it.
-    if (((PlayerConnectorSocket) playerConnector).getPlayer() == null) {
-      return;
-    }
-    try {
-      snoozeAlarm();
-    } catch (IOException e) {
-      userInterface.displayError(
-          new ErrorMessage(
-              "Internal job failed, you might have lost connection to the server. Try re-joining",
-              ErrorSeverity.CRITICAL));
-      terminateClient();
-    }
-  };
+  protected AlarmConsumer snoozer =
+      () -> {
+        // skip if the client has not inserted the name: server won't have any reference
+        // to player and therefore won't be able to snooze it.
+        if (((PlayerConnectorSocket) playerConnector).getPlayer() == null) {
+          return;
+        }
+        try {
+          snoozeAlarm();
+        } catch (IOException e) {
+          userInterface.displayError(
+              new ErrorMessage(
+                  "Internal job failed, you might have lost connection to the server. Try"
+                      + " re-joining",
+                  ErrorSeverity.CRITICAL));
+          terminateClient();
+        }
+      };
 
   /** {@inheritDoc} */
   @Override
@@ -149,10 +136,11 @@ public class SocketClient extends Client {
         return;
       } catch (ForceCloseApplicationException e) {
         terminateClient();
-        //close the socket to unbock the buffer reader thread, that may be in a blocked state
+        // close the socket to unbock the buffer reader thread, that may be in a blocked state
         try {
           ((PlayerConnectorSocket) playerConnector).getConnector().close();
-        } catch(IOException socketException) {}
+        } catch (IOException socketException) {
+        }
         return;
       }
     }
@@ -165,7 +153,8 @@ public class SocketClient extends Client {
    * @throws IOException Possibly thrown by readline.
    */
   protected AbstractMessage parseServerMessage() throws IOException {
-    if (playerConnector.getPlayer() != null && playerConnector.getPlayer().getPlayerName() != null) {
+    if (playerConnector.getPlayer() != null
+        && playerConnector.getPlayer().getPlayerName() != null) {
       String payload = br.readLine();
       return payload == null ? null : gson.fromJson(payload, AbstractMessage.class);
     } else {
@@ -187,11 +176,12 @@ public class SocketClient extends Client {
     String req;
     synchronized (playerConnectorLock) {
       PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
-      SnoozeGameTimerCommand cmd = new SnoozeGameTimerCommand(playerConnectorSocket.getPlayer().getPlayerName());
+      SnoozeGameTimerCommand cmd =
+          new SnoozeGameTimerCommand(playerConnectorSocket.getPlayer().getPlayerName());
       req = gson.toJson(cmd);
     }
     sendMessage(req);
-    synchronized (ackWaitLock){
+    synchronized (ackWaitLock) {
       waitingForACK = true;
     }
   }
@@ -216,10 +206,11 @@ public class SocketClient extends Client {
   @Override
   void moveTiles(Map<Coordinates, Coordinates> moves) throws IOException {
     PlayerConnectorSocket playerConnectorSocket = (PlayerConnectorSocket) playerConnector;
-    MoveTilesCommand command = new MoveTilesCommand(
-        playerConnectorSocket.getPlayer().getPlayerName(),
-        playerConnectorSocket.getGameId(),
-        moves);
+    MoveTilesCommand command =
+        new MoveTilesCommand(
+            playerConnectorSocket.getPlayer().getPlayerName(),
+            playerConnectorSocket.getGameId(),
+            moves);
     String req = gson.toJson(command);
     sendMessage(req);
   }
@@ -239,64 +230,66 @@ public class SocketClient extends Client {
    */
   protected void sendMessage(String req) throws IOException {
     synchronized (playerConnectorLock) {
-      PrintWriter epson = new PrintWriter(
-          ((PlayerConnectorSocket) playerConnector).getConnector().getOutputStream(),
-          true,
-          StandardCharsets.UTF_8);
+      PrintWriter epson =
+          new PrintWriter(
+              ((PlayerConnectorSocket) playerConnector).getConnector().getOutputStream(),
+              true,
+              StandardCharsets.UTF_8);
       epson.println(req);
     }
   }
 
   /**
-   * Poll payloads from the socket stream and process {@link AbstractMessage} that
-   * can be
+   * Poll payloads from the socket stream and process {@link AbstractMessage} that can be
    * recognized.
    */
   public void runInputMessageHandler() throws IOException {
     synchronized (playerConnectorLock) {
-      dis = new DataInputStream(
-          ((PlayerConnectorSocket) playerConnector).getConnector().getInputStream());
+      dis =
+          new DataInputStream(
+              ((PlayerConnectorSocket) playerConnector).getConnector().getInputStream());
     }
     br = new BufferedReader(new InputStreamReader(dis), BUFFER_LENGHT);
 
-    messageHandler = new Thread(
-        () -> {
-          while (isSocketConnected() && !hasRequestedDisconnection()) {
-            // retrieve and show server messages, it includes chat messages
-            try {
-              AbstractMessage serverMessage = parseServerMessage();
-              synchronized (ackWaitLock){
-                if (serverMessage != null) {
-                  if (serverMessage.getMessageType() == MessageType.SNOOZE_ACK) {
-                    waitingForACK = false;
+    messageHandler =
+        new Thread(
+            () -> {
+              while (isSocketConnected() && !hasRequestedDisconnection()) {
+                // retrieve and show server messages, it includes chat messages
+                try {
+                  AbstractMessage serverMessage = parseServerMessage();
+                  synchronized (ackWaitLock) {
+                    if (serverMessage != null) {
+                      if (serverMessage.getMessageType() == MessageType.SNOOZE_ACK) {
+                        waitingForACK = false;
+                      }
+                      showServerMessage(serverMessage);
+                    } else {
+                      if (waitingForACK) {
+                        userInterface.displayError(
+                            new ErrorMessage(
+                                "No snooze ACK received. Server is probably dead. Closing client.",
+                                ErrorSeverity.ERROR));
+                        terminateClient();
+                        return;
+                      }
+                    }
                   }
-                  showServerMessage(serverMessage);
-                } else {
-                  if (waitingForACK) {
+                } catch (IOException | NullPointerException e) {
+                  // notify this only if the error is not raised by a wanted action
+                  if (!forceCloseApplication) {
                     userInterface.displayError(
                         new ErrorMessage(
-                            "No snooze ACK received. Server is probably dead. Closing client.",
+                            "Internal module error, please report this message:" + e.getMessage(),
                             ErrorSeverity.ERROR));
+                  }
+                  if (!hasRequestedDisconnection()) {
                     terminateClient();
                     return;
                   }
                 }
               }
-            } catch (IOException | NullPointerException e) {
-              //notify this only if the error is not raised by a wanted action
-              if (!forceCloseApplication) {
-                userInterface.displayError(
-                    new ErrorMessage(
-                        "Internal module error, please report this message:" + e.getMessage(),
-                        ErrorSeverity.ERROR));
-              }
-              if (!hasRequestedDisconnection()) {
-                terminateClient();
-                return;
-              }
-            }
-          }
-        });
+            });
     messageHandler.start();
   }
 }

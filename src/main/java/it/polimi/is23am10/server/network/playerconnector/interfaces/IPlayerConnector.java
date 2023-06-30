@@ -1,11 +1,10 @@
 package it.polimi.is23am10.server.network.playerconnector.interfaces;
 
+import it.polimi.is23am10.server.model.player.Player;
+import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.UUID;
-
-import it.polimi.is23am10.server.model.player.Player;
-import it.polimi.is23am10.server.network.messages.AbstractMessage;
 
 /**
  * The player connector interface definition.
@@ -22,7 +21,6 @@ public interface IPlayerConnector extends Remote {
    *
    * @return The player reference.
    * @throws RemoteException On RMI failure.
-   *
    */
   Player getPlayer() throws RemoteException;
 
@@ -31,7 +29,6 @@ public interface IPlayerConnector extends Remote {
    *
    * @param p The player to be set.
    * @throws RemoteException
-   *
    */
   void setPlayer(Player p) throws RemoteException;
 
@@ -40,7 +37,6 @@ public interface IPlayerConnector extends Remote {
    *
    * @return The game id.
    * @throws RemoteException On RMI failure.
-   *
    */
   UUID getGameId() throws RemoteException;
 
@@ -49,18 +45,15 @@ public interface IPlayerConnector extends Remote {
    *
    * @return The blocking message queue size.
    * @throws RemoteException On RMI failure.
-   *
    */
   int getMsgQueueSize() throws RemoteException;
 
   /**
-   * Retrieve a message from the queue.
-   * This deletes the retrieved message.
+   * Retrieve a message from the queue. This deletes the retrieved message.
    *
    * @return The oldest message if present.
    * @throws InterruptedException On msg queue failure.
    * @throws RemoteException On RMI failure.
-   *
    */
   AbstractMessage getMessageFromQueue() throws RemoteException, InterruptedException;
 }

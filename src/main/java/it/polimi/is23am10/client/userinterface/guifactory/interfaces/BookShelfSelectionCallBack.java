@@ -1,8 +1,8 @@
 package it.polimi.is23am10.client.userinterface.guifactory.interfaces;
 
 /**
- * The BookShelfSelectionCallBack interface represents a callback for bookshelf selection events.
- * It defines a single method, `call`, which is invoked when a bookshelf selection event occurs.
+ * The BookShelfSelectionCallBack interface represents a callback for bookshelf selection events. It
+ * defines a single method, `call`, which is invoked when a bookshelf selection event occurs.
  */
 @FunctionalInterface
 public interface BookShelfSelectionCallBack {
@@ -14,4 +14,3 @@ public interface BookShelfSelectionCallBack {
    */
   void call(String action);
 }
-

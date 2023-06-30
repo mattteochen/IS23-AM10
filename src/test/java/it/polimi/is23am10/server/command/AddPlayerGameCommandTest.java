@@ -3,12 +3,15 @@ package it.polimi.is23am10.server.command;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
-import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
-
-@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck" })
+@SuppressWarnings({
+  "checkstyle:methodname",
+  "checkstyle:abbreviationaswordinnamecheck",
+  "checkstyle:linelengthcheck"
+})
 class AddPlayerGameCommandTest {
 
   final UUID uuid = UUID.randomUUID();

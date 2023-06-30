@@ -3,11 +3,14 @@ package it.polimi.is23am10.server.command;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
 import org.junit.jupiter.api.Test;
 
-import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
-
-@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck" })
+@SuppressWarnings({
+  "checkstyle:methodname",
+  "checkstyle:abbreviationaswordinnamecheck",
+  "checkstyle:linelengthcheck"
+})
 class SnoozeGameTimerCommandTest {
   @Test
   void EQUALS_should_COMPARE_CONTENT_EQUALITY() {

@@ -22,44 +22,33 @@ import java.util.Map;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class Bookshelf implements Serializable {
-  /**
-   * The bookshelf max rows value.
-   */
+  /** The bookshelf max rows value. */
   public static final int BOOKSHELF_ROWS = 6;
 
-  /**
-   * The bookshelf max columns value.
-   */
+  /** The bookshelf max columns value. */
   public static final int BOOKSHELF_COLS = 5;
 
   /**
-   * The support map to reference each {@link TileType} with a char.
-   * Used for the constructor of Bookshelf made for tests.
-   * 
+   * The support map to reference each {@link TileType} with a char. Used for the constructor of
+   * Bookshelf made for tests.
    */
-  transient Map<String, TileType> tileMap = Map.of(
-      "C", TileType.CAT,
-      "B", TileType.BOOK,
-      "G", TileType.GAME,
-      "F", TileType.FRAME,
-      "T", TileType.TROPHY,
-      "P", TileType.PLANT,
-      "X", TileType.EMPTY);
+  transient Map<String, TileType> tileMap =
+      Map.of(
+          "C", TileType.CAT,
+          "B", TileType.BOOK,
+          "G", TileType.GAME,
+          "F", TileType.FRAME,
+          "T", TileType.TROPHY,
+          "P", TileType.PLANT,
+          "X", TileType.EMPTY);
 
-  /**
-   * Max bookshelf grid size.
-   */
+  /** Max bookshelf grid size. */
   private static final int BOOKSHELF_SIZE = BOOKSHELF_COLS * BOOKSHELF_ROWS;
 
-  /**
-   * A fixed 2d array referencing the physical bookshelf instance.
-   * 
-   */
+  /** A fixed 2d array referencing the physical bookshelf instance. */
   private Tile[][] bookshelfGrid;
 
-  /**
-   * Constructor for the Bookshelf instance.
-   */
+  /** Constructor for the Bookshelf instance. */
   public Bookshelf() {
     bookshelfGrid = new Tile[BOOKSHELF_ROWS][BOOKSHELF_COLS];
     for (int i = 0; i < BOOKSHELF_ROWS; i++) {
@@ -71,17 +60,22 @@ public class Bookshelf implements Serializable {
 
   /**
    * Method used to get a string representation for a bookshelf.
-   * 
+   *
    * @return string representation of this bookshelf.
    */
-  public String getBookshelfString(){
+  public String getBookshelfString() {
     StringBuilder toReturn = new StringBuilder();
     for (int i = 0; i < BOOKSHELF_ROWS; i++) {
       for (int j = 0; j < BOOKSHELF_COLS; j++) {
-        // Apparently needed because "Local variable i defined in an enclosing scope must be final or effectively final Java(536871575)"
+        // Apparently needed because "Local variable i defined in an enclosing scope must be final
+        // or effectively final Java(536871575)"
         final Integer ii = i;
         final Integer jj = j;
-        toReturn.append(tileMap.keySet().stream().filter(s -> tileMap.get(s) == (bookshelfGrid[ii][jj]).getType()).findFirst().get());
+        toReturn.append(
+            tileMap.keySet().stream()
+                .filter(s -> tileMap.get(s) == (bookshelfGrid[ii][jj]).getType())
+                .findFirst()
+                .get());
       }
     }
     return toReturn.toString();
@@ -89,33 +83,31 @@ public class Bookshelf implements Serializable {
 
   /**
    * Copy constructor of Bookshelf.
-   * 
+   *
    * @param toCopy original instance
    */
   public Bookshelf(Bookshelf toCopy) {
-    bookshelfGrid = Arrays.stream(toCopy.bookshelfGrid)
-        .map(Tile[]::clone)
-        .toArray(Tile[][]::new);
+    bookshelfGrid = Arrays.stream(toCopy.bookshelfGrid).map(Tile[]::clone).toArray(Tile[][]::new);
   }
 
   /**
-   * This constructor takes a 30 char long string containing the content
-   * of a bookshelf, with each tile associated to a letter, as shown below
-   * and builds and returns the matching bookshelf object.
-   * 
-   * @param bookshelfString A string that allows us to fill the bookshelfGrid with
-   *                        the
-   *                        correspondence between each char and the position in
-   *                        the
-   *                        grid, there's a map to help us matching the char with
-   *                        the {@link TileType}
-   * @throws WrongLengthBookshelfStringException If when building a bookshelf based on string, it is of an invalid length.
-   * @throws WrongCharBookshelfStringException If when building a bookshelf based on string, it contains an invalid character.
+   * This constructor takes a 30 char long string containing the content of a bookshelf, with each
+   * tile associated to a letter, as shown below and builds and returns the matching bookshelf
+   * object.
+   *
+   * @param bookshelfString A string that allows us to fill the bookshelfGrid with the
+   *     correspondence between each char and the position in the grid, there's a map to help us
+   *     matching the char with the {@link TileType}
+   * @throws WrongLengthBookshelfStringException If when building a bookshelf based on string, it is
+   *     of an invalid length.
+   * @throws WrongCharBookshelfStringException If when building a bookshelf based on string, it
+   *     contains an invalid character.
    * @throws NullPointerException Generic NPE.
    */
   public Bookshelf(String bookshelfString)
-      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
-      NullPointerException {
+      throws WrongLengthBookshelfStringException,
+          WrongCharBookshelfStringException,
+          NullPointerException {
 
     if (bookshelfString.length() != BOOKSHELF_SIZE) {
       throw new WrongLengthBookshelfStringException(
@@ -125,7 +117,8 @@ public class Bookshelf implements Serializable {
     for (String c : tileChars) {
       if (!tileMap.containsKey(c)) {
         throw new WrongCharBookshelfStringException(
-            "[Class Bookshelf, method constructor]: Bookshelf string contains invalid char exception");
+            "[Class Bookshelf, method constructor]: Bookshelf string contains invalid char"
+                + " exception");
       }
     }
     bookshelfGrid = new Tile[BOOKSHELF_ROWS][BOOKSHELF_COLS];
@@ -145,19 +138,21 @@ public class Bookshelf implements Serializable {
 
   /**
    * Set a {@link Tile} inside the bookshelf grid.
-   * 
-   * @param row  The bookshelf grid row's value.
-   * @param col  The bookshelf grid col's value.
+   *
+   * @param row The bookshelf grid row's value.
+   * @param col The bookshelf grid col's value.
    * @param tile The tile to be set.
    * @throws NullIndexValueException If the index provided is null.
-   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of
+   *     bounds.
    * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
    * @throws NullTileException If tile is null.
-   * 
    */
   public void setBookshelfGridIndex(Integer row, Integer col, Tile tile)
-      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-      NullIndexValueException, NullTileException {
+      throws BookshelfGridColIndexOutOfBoundsException,
+          BookshelfGridRowIndexOutOfBoundsException,
+          NullIndexValueException,
+          NullTileException {
     if (!IndexValidator.validRowIndex(row, Bookshelf.BOOKSHELF_ROWS)) {
       throw new BookshelfGridRowIndexOutOfBoundsException(row);
     }
@@ -172,9 +167,8 @@ public class Bookshelf implements Serializable {
 
   /**
    * bookshelfGrid getter.
-   * 
+   *
    * @return The bookshelf's 6x5 playground grid.
-   * 
    */
   public Tile[][] getBookshelfGrid() {
     return bookshelfGrid;
@@ -182,18 +176,19 @@ public class Bookshelf implements Serializable {
 
   /**
    * bookshelfGrid index getter.
-   * 
+   *
    * @param row The bookshelf grid's row value.
    * @param col The bookshelf grid's col value.
    * @return The tile at the given indexes.
    * @throws NullIndexValueException If the index provided is null.
-   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of
+   *     bounds.
    * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
-   * 
    */
   public Tile getBookshelfGridAt(Integer row, Integer col)
-      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-      NullIndexValueException {
+      throws BookshelfGridColIndexOutOfBoundsException,
+          BookshelfGridRowIndexOutOfBoundsException,
+          NullIndexValueException {
     if (!IndexValidator.validRowIndex(row, Bookshelf.BOOKSHELF_ROWS)) {
       throw new BookshelfGridRowIndexOutOfBoundsException(row);
     }
@@ -219,10 +214,8 @@ public class Bookshelf implements Serializable {
     return true;
   }
 
-
   /**
-   * Retrieve the number of {@link TileType#EMPTY} inside the bookshelf for a
-   * given column.
+   * Retrieve the number of {@link TileType#EMPTY} inside the bookshelf for a given column.
    *
    * @param column The column to be checked
    * @return The number of {@link TileType#EMPTY}
@@ -232,7 +225,8 @@ public class Bookshelf implements Serializable {
    */
   public int getFreeRowsInCol(int column)
       throws BookshelfGridColIndexOutOfBoundsException,
-      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
+          BookshelfGridRowIndexOutOfBoundsException,
+          NullIndexValueException {
     int res = 0;
     for (int i = 0; i < BOOKSHELF_ROWS; i++) {
       if (getBookshelfGridAt(i, column).isEmpty()) {
@@ -242,10 +236,7 @@ public class Bookshelf implements Serializable {
     return res;
   }
 
-  /**
-   * {@inheritDoc}
-   * 
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof Bookshelf)) {
@@ -255,10 +246,7 @@ public class Bookshelf implements Serializable {
     return (Arrays.deepEquals(bookshelfGrid, bs.bookshelfGrid));
   }
 
-  /**
-   * {@inheritDoc}
-   * 
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode() {
     return bookshelfGrid.hashCode();

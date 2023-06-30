@@ -10,23 +10,17 @@ package it.polimi.is23am10.server.model.pattern;
  */
 public abstract class AbstractPattern<T> {
 
-  /**
-   * The assigned rule to this pattern.
-   * 
-   */
+  /** The assigned rule to this pattern. */
   protected T rule;
 
-  /**
-   * A 1-12 number to identify the card sprite in view
-   */
+  /** A 1-12 number to identify the card sprite in view */
   private Integer cardIndex;
 
   /**
    * Constructor.
-   * 
+   *
    * @param rule The rule assigned to the current pattern..
    * @param cardIndex The card index associated
-   * 
    */
   protected AbstractPattern(T rule, Integer cardIndex) {
     this.rule = rule;
@@ -44,11 +38,10 @@ public abstract class AbstractPattern<T> {
 
   /**
    * CardIndex getter
-   * 
+   *
    * @return The index
    */
   public Integer getIndex() {
     return cardIndex;
   }
-  
 }

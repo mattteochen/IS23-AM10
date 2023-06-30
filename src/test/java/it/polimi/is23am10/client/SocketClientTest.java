@@ -10,26 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.rmi.RemoteException;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
-
 import com.google.gson.Gson;
-
 import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
@@ -41,32 +22,41 @@ import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.network.messages.AbstractMessage;
 import it.polimi.is23am10.server.network.messages.ChatMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage;
-import it.polimi.is23am10.server.network.messages.GameMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
+import it.polimi.is23am10.server.network.messages.GameMessage;
 import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.rmi.RemoteException;
+import java.util.concurrent.LinkedBlockingQueue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 
 @Disabled
 public class SocketClientTest {
 
-  @Mock
-  PlayerConnectorSocket playerConnectorSocket;
+  @Mock PlayerConnectorSocket playerConnectorSocket;
 
-  @Mock
-  InetAddress serverAddress;
+  @Mock InetAddress serverAddress;
 
-  @Mock
-  VirtualView virtualView;
+  @Mock VirtualView virtualView;
 
-  @Mock
-  UserInterface userInterface;
+  @Mock UserInterface userInterface;
 
-  @Spy
-  @InjectMocks
-  SocketClient socketClient;
+  @Spy @InjectMocks SocketClient socketClient;
 
   @BeforeEach
   public void setup() {
@@ -76,7 +66,10 @@ public class SocketClientTest {
 
   @Test
   void constructor_should_create_SocketClientTest()
-      throws NullSocketConnectorException, NullBlockingQueueException, UnknownHostException, RemoteException {
+      throws NullSocketConnectorException,
+          NullBlockingQueueException,
+          UnknownHostException,
+          RemoteException {
     Socket socket = new Socket();
     PlayerConnectorSocket pc = new PlayerConnectorSocket(socket, new LinkedBlockingQueue<>());
     UserInterface ui = new CommandLineInterface(true);
@@ -103,7 +96,11 @@ public class SocketClientTest {
   }
 
   @Test
-  void handlePlayerNameSelection_should_run_playerNameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException {
+  void handlePlayerNameSelection_should_run_playerNameSelection()
+      throws IOException,
+          InterruptedException,
+          NullSocketConnectorException,
+          NullBlockingQueueException {
     AbstractMessage msg = new ErrorMessage("New Message", null);
     Player p = mock(Player.class);
     String pn = "Benny";
@@ -118,7 +115,13 @@ public class SocketClientTest {
   }
 
   @Test
-  void handleCommand_should_run_handleCommand() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, InvalidNumOfPlayersException, NullNumOfPlayersException {
+  void handleCommand_should_run_handleCommand()
+      throws IOException,
+          InterruptedException,
+          NullSocketConnectorException,
+          NullBlockingQueueException,
+          InvalidNumOfPlayersException,
+          NullNumOfPlayersException {
     String pn = "Benny";
     String command = "move 42 -> 06";
     VirtualView vw = mock(VirtualView.class);
@@ -138,7 +141,6 @@ public class SocketClientTest {
     when(vw.getStatus()).thenReturn(GameStatus.STARTED);
     when(vp.getBookshelf()).thenReturn(new Bookshelf());
     when(vw.getGameBoard()).thenReturn(new Board(4));
-
 
     socketClient.handleCommands();
   }

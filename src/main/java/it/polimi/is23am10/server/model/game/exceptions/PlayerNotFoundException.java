@@ -1,6 +1,5 @@
 package it.polimi.is23am10.server.model.game.exceptions;
 
-
 /**
  * Custom exception to handle player not found.
  *
@@ -10,7 +9,7 @@ package it.polimi.is23am10.server.model.game.exceptions;
  * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
  */
 public class PlayerNotFoundException extends Exception {
-    public PlayerNotFoundException(){
-        super("Player not found");
-    }
+  public PlayerNotFoundException() {
+    super("Player not found");
+  }
 }

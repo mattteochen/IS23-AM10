@@ -10,8 +10,9 @@ package it.polimi.is23am10.utils.exceptions;
  */
 public class ColIndexOutOfBoundsException extends Exception {
   public ColIndexOutOfBoundsException(String item, Integer col, Integer maxValue) {
-    super(col < 0 ? item + " grid column index can not be negative"
-        : item + " grid column index can not be greater than " + maxValue);
+    super(
+        col < 0
+            ? item + " grid column index can not be negative"
+            : item + " grid column index can not be greater than " + maxValue);
   }
-
 }

@@ -12,10 +12,7 @@ import java.io.Serializable;
  */
 public class Tile implements Serializable {
 
-  /**
-   * An enumeration about the available tile types.
-   * 
-   */
+  /** An enumeration about the available tile types. */
   public enum TileType {
     CAT,
     BOOK,
@@ -26,37 +23,27 @@ public class Tile implements Serializable {
     EMPTY
   }
 
-  /**
-   * The instance Tile type.
-   * 
-   */
+  /** The instance Tile type. */
   private TileType type;
 
-  
-  /**
-  * Constructor.
-   * If the desired type has null value, an empty tile will be set.
-   * 
-   */
+  /** Constructor. If the desired type has null value, an empty tile will be set. */
   public Tile(TileType type) {
     this.type = type == null ? TileType.EMPTY : type;
   }
 
   /**
    * Copy constructor for Tile.
-   * 
+   *
    * @param toCopy tile to copy
    */
   public Tile(Tile toCopy) {
     type = toCopy.getType();
   }
 
-  
-   /**
+  /**
    * type getter.
-   * 
+   *
    * @return The type of the current Tile instance.
-   * 
    */
   public TileType getType() {
     return type;
@@ -64,9 +51,8 @@ public class Tile implements Serializable {
 
   /**
    * The method that allows us to manually change the type of a specific Tile.
-   * 
+   *
    * @throws NullPointerException Generic NPE.
-   * 
    * @param tt The tile type we want to set for the tile.
    */
   public void setTile(TileType tt) throws NullPointerException {
@@ -76,11 +62,7 @@ public class Tile implements Serializable {
     type = tt;
   }
 
-
-  /**
-   * {@inheritDoc}}
-   * 
-   */
+  /** {@inheritDoc}} */
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof Tile)) {
@@ -90,10 +72,7 @@ public class Tile implements Serializable {
     return tile.getType() == type;
   }
 
-  /**
-   * {@inheritDoc}}
-   * 
-   */
+  /** {@inheritDoc}} */
   @Override
   public int hashCode() {
     return type.toString().hashCode();
@@ -101,9 +80,8 @@ public class Tile implements Serializable {
 
   /**
    * Method that checks if the Tile's {@link TileType} is EMPTY or not.
-   * 
-   * @return True if the tile has {@link TileType#EMPTY}. 
-   * 
+   *
+   * @return True if the tile has {@link TileType#EMPTY}.
    */
   public boolean isEmpty() {
     return (this.getType() == TileType.EMPTY);

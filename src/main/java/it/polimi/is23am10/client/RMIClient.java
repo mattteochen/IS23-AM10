@@ -42,23 +42,23 @@ public class RMIClient extends Client {
   /** The {@link ServerControllerAction} server object. */
   protected transient IServerControllerAction serverControllerActionServer;
 
-  /**
-   * Rmi alarm snoozer.
-   * 
-   */
-  protected transient AlarmConsumer snoozer = () -> {
-    if (!hasJoined()) {
-      return;
-    }
-    try {
-      snoozeAlarm();
-    } catch(RemoteException e) {
-      userInterface.displayError(
-        new ErrorMessage("Internal job failed, you might have lost connection to the server. Try re-joining", ErrorSeverity.ERROR));
-      terminateClient();
-    }
-  };
-
+  /** Rmi alarm snoozer. */
+  protected transient AlarmConsumer snoozer =
+      () -> {
+        if (!hasJoined()) {
+          return;
+        }
+        try {
+          snoozeAlarm();
+        } catch (RemoteException e) {
+          userInterface.displayError(
+              new ErrorMessage(
+                  "Internal job failed, you might have lost connection to the server. Try"
+                      + " re-joining",
+                  ErrorSeverity.ERROR));
+          terminateClient();
+        }
+      };
 
   /**
    * Public constructor for client using RMI as communication method.
@@ -103,7 +103,7 @@ public class RMIClient extends Client {
                 ErrorSeverity.CRITICAL));
         terminateClient();
         return;
-      } catch(ForceCloseApplicationException e) {
+      } catch (ForceCloseApplicationException e) {
         terminateClient();
         return;
       }

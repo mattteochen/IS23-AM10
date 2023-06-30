@@ -4,9 +4,8 @@ import it.polimi.is23am10.utils.config.exceptions.InvalidMaxConnectionsNumberExc
 import it.polimi.is23am10.utils.config.exceptions.InvalidPortNumberException;
 
 /**
- * The application config class definition.
- * If not set otherwise all the configuration parameters for the application
- * are set to default values here.
+ * The application config class definition. If not set otherwise all the configuration parameters
+ * for the application are set to default values here.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -15,100 +14,57 @@ import it.polimi.is23am10.utils.config.exceptions.InvalidPortNumberException;
  */
 public final class AppConfig {
 
-  /**
-   * Private constructor.
-   * 
-   */
-  private AppConfig() {
+  /** Private constructor. */
+  private AppConfig() {}
 
-  }
-
-  /**
-   * The lower bound of port numbers.
-   * 
-   */
+  /** The lower bound of port numbers. */
   public static final Integer MIN_PORT_NUMBER = 1024;
 
-  /**
-   * The upper bound of port numbers.
-   * 
-   */
+  /** The upper bound of port numbers. */
   public static final Integer MAX_PORT_NUMBER = 65535;
 
-  /**
-   * The lower bound of connection numbers.
-   * 
-   */
+  /** The lower bound of connection numbers. */
   public static final Integer MIN_CONNECTIONS_NUMBER = 0;
 
-  /**
-   * The upper bound of connection numbers.
-   * 
-   */
+  /** The upper bound of connection numbers. */
   public static final Integer MAX_CONNECTIONS_NUMBER = 10;
 
-  /**
-   * The server config server port.
-   * 
-   */
+  /** The server config server port. */
   private static Integer serverSocketPort = 9001;
 
-  /**
-   * The server config rmi port.
-   * 
-   */
+  /** The server config rmi port. */
   private static Integer serverRmiPort = 9002;
 
-  /**
-   * The max allowed connection for this server instance.
-   * This is a momentary max value.
-   * 
-   */
+  /** The max allowed connection for this server instance. This is a momentary max value. */
   private static Integer maxConnection = 8;
 
-  /**
-   * The socket SO_KEEPALIVE flag.
-   * 
-   */
+  /** The socket SO_KEEPALIVE flag. */
   private static boolean keepAlive = true;
 
-  /**
-   * The kind of app to launch. If false launches a client.
-   * 
-   */
+  /** The kind of app to launch. If false launches a client. */
   private static boolean isServer = false;
 
   /**
-   * The interface to show if app is launched in Client mode.
-   * If false launches client in CLI mode.
-   * If {@link AppConfigContext#isServer} is true this flag is ignored,
-   * as server mode only supports CLI as interface, and for logging purpose only.
+   * The interface to show if app is launched in Client mode. If false launches client in CLI mode.
+   * If {@link AppConfigContext#isServer} is true this flag is ignored, as server mode only supports
+   * CLI as interface, and for logging purpose only.
    */
   private static boolean showGUI = false;
 
-    /**
-   * The communication method to use if app is launched is Client Mode.
-   * If false launches client over Socket connection.
-   * If {@link AppConfigContext#isServer} is true this flag is ignored,
-   * as server mode both receives RMI and socket connections
+  /**
+   * The communication method to use if app is launched is Client Mode. If false launches client
+   * over Socket connection. If {@link AppConfigContext#isServer} is true this flag is ignored, as
+   * server mode both receives RMI and socket connections
    */
   private static boolean useRMI = false;
 
-  /**
-   * A simple flag that if enabled shows all verbose messages
-   * in console logs.
-   */
+  /** A simple flag that if enabled shows all verbose messages in console logs. */
   private static boolean showDebug = false;
 
-  /**
-   * The network address where the server is running.
-   * 
-   */
+  /** The network address where the server is running. */
   private static String serverAddress = "localhost";
 
-  /**
-   * The maximum inactivity time allowed to a player when playing a game turn.
-   */
+  /** The maximum inactivity time allowed to a player when playing a game turn. */
   private static long maxInactivityTimeMs = 1000 * 60 * 2;
 
   /**
@@ -143,9 +99,9 @@ public final class AppConfig {
    * @param maxConn number of max connections.
    * @throws InvalidMaxConnectionsNumberException invalid number of maxConn.
    */
-  public static void setMaxConnections(Integer maxConn) 
+  public static void setMaxConnections(Integer maxConn)
       throws InvalidMaxConnectionsNumberException {
-    if (maxConn < MIN_CONNECTIONS_NUMBER || maxConn > MAX_CONNECTIONS_NUMBER){
+    if (maxConn < MIN_CONNECTIONS_NUMBER || maxConn > MAX_CONNECTIONS_NUMBER) {
       throw new InvalidMaxConnectionsNumberException();
     }
     maxConnection = maxConn;
@@ -155,17 +111,15 @@ public final class AppConfig {
    * Keep alive setter.
    *
    * @param k keep alive status.
-   * 
    */
   public static void setKeepAlive(boolean k) {
     keepAlive = k;
   }
-  
+
   /**
    * Keep alive setter.
    *
    * @param is launch server app
-   * 
    */
   public static void setIsServer(boolean is) {
     isServer = is;
@@ -175,7 +129,6 @@ public final class AppConfig {
    * Show GUI setter.
    *
    * @param sg show GUI if client
-   * 
    */
   public static void setShowGUI(boolean sg) {
     showGUI = sg;
@@ -185,7 +138,6 @@ public final class AppConfig {
    * Use RMI setter.
    *
    * @param rmi use RMI or not (socket).
-   * 
    */
   public static void setUseRMI(boolean rmi) {
     useRMI = rmi;
@@ -195,7 +147,6 @@ public final class AppConfig {
    * Show verbose debug.
    *
    * @param debug show debug or not.
-   * 
    */
   public static void setShowDebug(boolean debug) {
     showDebug = debug;
@@ -205,7 +156,6 @@ public final class AppConfig {
    * Server address setter.
    *
    * @param address Server address.
-   * 
    */
   public static void setServerAddress(String address) {
     serverAddress = address;
@@ -224,7 +174,6 @@ public final class AppConfig {
    * Server port getter.
    *
    * @return The instantiated server port.
-   * 
    */
   public static Integer getServerSocketPort() {
     return serverSocketPort;
@@ -234,7 +183,6 @@ public final class AppConfig {
    * Server port getter.
    *
    * @return The instantiated server port.
-   * 
    */
   public static Integer getServerRmiPort() {
     return serverRmiPort;
@@ -244,7 +192,6 @@ public final class AppConfig {
    * Max connections getter.
    *
    * @return The maximum allowed connections.
-   * 
    */
   public static Integer getMaxConnections() {
     return maxConnection;
@@ -254,7 +201,6 @@ public final class AppConfig {
    * Keep alive getter.
    *
    * @return The keep alive flag.
-   * 
    */
   public static boolean getKeepAlive() {
     return keepAlive;
@@ -264,7 +210,6 @@ public final class AppConfig {
    * Is server getter.
    *
    * @return The isServer flag.
-   * 
    */
   public static boolean getIsServer() {
     return isServer;
@@ -274,17 +219,15 @@ public final class AppConfig {
    * Show GUI getter.
    *
    * @return The show GUI flag.
-   * 
    */
   public static boolean getShowGUI() {
     return showGUI;
   }
-  
+
   /**
    * Use RMI getter.
    *
    * @return The use RMI flag.
-   * 
    */
   public static boolean getUseRMI() {
     return useRMI;
@@ -294,7 +237,6 @@ public final class AppConfig {
    * Server address getter.
    *
    * @return The server address.
-   * 
    */
   public static String getServerAddress() {
     return serverAddress;
@@ -304,7 +246,6 @@ public final class AppConfig {
    * Show debug getter.
    *
    * @return The debug flag.
-   * 
    */
   public static boolean getShowDebug() {
     return showDebug;
@@ -314,7 +255,6 @@ public final class AppConfig {
    * Max inactivity time getter.
    *
    * @return The max inactivity time.
-   * 
    */
   public static long getMaxInactivityTime() {
     return maxInactivityTimeMs;

@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import it.polimi.is23am10.server.Server.ServerStatus;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
 import it.polimi.is23am10.utils.config.AppConfigContext;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -28,31 +27,32 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-@SuppressWarnings({ "deprecation", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck",
-    "checkstyle:linelengthcheck",
-    "checkstyle:onetoplevelclasscheck", "checkstyle:variabledeclarationusagedistancecheck",
-    "checkstyle:operatorwrapcheck", "checkstyle:multiplevariabledeclarationscheck", "checkstyle:membernamecheck",
-    "checkstyle:nonemptyatclausedescriptioncheck", "checkstyle:typenamecheck" })
+@SuppressWarnings({
+  "deprecation",
+  "checkstyle:methodname",
+  "checkstyle:abbreviationaswordinnamecheck",
+  "checkstyle:linelengthcheck",
+  "checkstyle:onetoplevelclasscheck",
+  "checkstyle:variabledeclarationusagedistancecheck",
+  "checkstyle:operatorwrapcheck",
+  "checkstyle:multiplevariabledeclarationscheck",
+  "checkstyle:membernamecheck",
+  "checkstyle:nonemptyatclausedescriptioncheck",
+  "checkstyle:typenamecheck"
+})
 class ServerTest {
 
-  @Mock
-  ServerSocket serverSocket;
+  @Mock ServerSocket serverSocket;
 
-  @Mock
-  ExecutorService executorService;
+  @Mock ExecutorService executorService;
 
-  @Mock
-  IServerControllerAction rmiServer;
+  @Mock IServerControllerAction rmiServer;
 
-  @Mock
-  IServerControllerAction rmiStub;
+  @Mock IServerControllerAction rmiStub;
 
-  @Mock
-  Registry rmiRegistry;
+  @Mock Registry rmiRegistry;
 
-  @Spy
-  @InjectMocks
-  Server server;
+  @Spy @InjectMocks Server server;
 
   AppConfigContext ctx = new AppConfigContext();
 

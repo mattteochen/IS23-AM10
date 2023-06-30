@@ -10,18 +10,12 @@ package it.polimi.is23am10.server.model.pattern;
  */
 public class SharedPattern<T> extends AbstractPattern<T> {
 
-  /**
-   * The constructor of the class SharedPattern.
-   *
-   */
+  /** The constructor of the class SharedPattern. */
   public SharedPattern(T rule, Integer cardIndex) {
     super(rule, cardIndex);
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   @SuppressWarnings("unchecked")
   public boolean equals(Object obj) {
@@ -31,10 +25,7 @@ public class SharedPattern<T> extends AbstractPattern<T> {
     return this.rule == ((SharedPattern<T>) obj).getRule();
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode() {
     return this.getIndex().hashCode();

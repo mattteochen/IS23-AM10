@@ -9,7 +9,6 @@ import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
 import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.utils.config.AppConfigContext;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -21,8 +20,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * The Server entry point class definition.
- * This has only static methods and this class should not be instantiated.
+ * The Server entry point class definition. This has only static methods and this class should not
+ * be instantiated.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
@@ -31,53 +30,39 @@ import org.apache.logging.log4j.Logger;
  */
 public class Server {
 
-  /**
-   * The serverSocket status.
-   *
-   */
+  /** The serverSocket status. */
   public enum ServerStatus {
     STARTED,
     STOPPED
   }
 
-  /**
-   * Logger instance.
-   *
-   */
+  /** Logger instance. */
   protected final Logger logger = LogManager.getLogger(Server.class);
 
-  /**
-   * Socket serverSocket instance.
-   *
-   */
+  /** Socket serverSocket instance. */
   protected ServerSocket serverSocket;
 
-  /**
-   * Socket socket clients connected.
-   *
-   */
+  /** Socket socket clients connected. */
   protected static int socketClientsConnected = 0;
 
-  /**
-   * Server thread executor service manager.
-   *
-   */
+  /** Server thread executor service manager. */
   protected ExecutorService executorService;
 
   /**
    * Constructor.
    *
-   * @param serverSocket                    The server socket reference of a newly
-   *                                        connected client.
-   * @param executorService                 The built thread executor service.
-   * @param rmiServerControllerActionServer An built instance of the implementing
-   *                                        class.
-   * @param rmiRegistry                     A built instance of the RMI registry.
+   * @param serverSocket The server socket reference of a newly connected client.
+   * @param executorService The built thread executor service.
+   * @param rmiServerControllerActionServer An built instance of the implementing class.
+   * @param rmiRegistry A built instance of the RMI registry.
    * @throws RemoteException On rebind failure.
-   *
    */
-  public Server(ServerSocket serverSocket, ExecutorService executorService,
-      IServerControllerAction rmiServerControllerActionServer, Registry rmiRegistry) throws RemoteException {
+  public Server(
+      ServerSocket serverSocket,
+      ExecutorService executorService,
+      IServerControllerAction rmiServerControllerActionServer,
+      Registry rmiRegistry)
+      throws RemoteException {
     this.executorService = executorService;
     this.serverSocket = serverSocket;
     ServerControllerRmiBindings.setRmiRegistry(rmiRegistry);
@@ -85,12 +70,10 @@ public class Server {
   }
 
   /**
-   * Server entry point.
-   * A new {@link ServerSocket} instance is spawned and in a
-   * infinity loop listens for clients connections.
+   * Server entry point. A new {@link ServerSocket} instance is spawned and in a infinity loop
+   * listens for clients connections.
    *
    * @param ctx An instance of the server configuration.
-   *
    */
   public void start(AppConfigContext ctx) {
     logger.info("Starting Spurious Dragon, try to kill me...");
@@ -105,14 +88,22 @@ public class Server {
           Socket client = serverSocket.accept();
           client.setKeepAlive(ctx.getKeepAlive());
           setSocketClientConnected(getSocketClientsConnected() + 1);
-          executorService.execute(new ServerControllerSocket(
-            new PlayerConnectorSocket(client,
-            new LinkedBlockingQueue<>()),
-            new ServerControllerAction()));
-          logger.info("Received new connection " + "(" + getSocketClientsConnected() + "/" + ctx.getMaxConnections() + ")" );
+          executorService.execute(
+              new ServerControllerSocket(
+                  new PlayerConnectorSocket(client, new LinkedBlockingQueue<>()),
+                  new ServerControllerAction()));
+          logger.info(
+              "Received new connection "
+                  + "("
+                  + getSocketClientsConnected()
+                  + "/"
+                  + ctx.getMaxConnections()
+                  + ")");
         } else {
           serverSocket.accept();
-          logger.error("Socket connection cannot be established as the server has reached its maximum socket client connections capacity.");
+          logger.error(
+              "Socket connection cannot be established as the server has reached its maximum socket"
+                  + " client connections capacity.");
         }
       } catch (IOException | NullSocketConnectorException | NullBlockingQueueException e) {
         logger.error("Failed to process connection", e);
@@ -124,7 +115,6 @@ public class Server {
    * Stop the serverSocket.
    *
    * @throws IOException On socket closure failing.
-   *
    */
   public void stop() throws IOException {
     if (serverSocket != null && !serverSocket.isClosed()) {
@@ -136,7 +126,6 @@ public class Server {
    * Check the current serverSocket status.
    *
    * @return The an enum {@link ServerStatus} stating the current status.
-   *
    */
   public ServerStatus status() {
     return serverSocket == null || serverSocket.isClosed()
@@ -148,9 +137,8 @@ public class Server {
    * Get the current number of clients connected to the socket.
    *
    * @return The connect clients number.
-   *
    */
-  public static int getSocketClientsConnected(){
+  public static int getSocketClientsConnected() {
     return socketClientsConnected;
   }
 
@@ -158,9 +146,8 @@ public class Server {
    * Set the current number of clients connected to the socket.
    *
    * @param scc The connect clients number.
-   *
    */
-  public static void setSocketClientConnected(int scc){
+  public static void setSocketClientConnected(int scc) {
     socketClientsConnected = scc;
   }
 }

@@ -32,9 +32,12 @@ class MovesValidatorTest {
 
   @BeforeEach
   void setup()
-      throws InvalidNumOfPlayersException, NullNumOfPlayersException,
-      BookshelfGridColIndexOutOfBoundsException,
-      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullTileException {
+      throws InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          BookshelfGridColIndexOutOfBoundsException,
+          BookshelfGridRowIndexOutOfBoundsException,
+          NullIndexValueException,
+          NullTileException {
     tile = new Tile(TileType.BOOK);
     emptyTile = new Tile(TileType.EMPTY);
     board = new Board(4);
@@ -49,11 +52,15 @@ class MovesValidatorTest {
 
   @Test
   void validator_should_validate_correct_moves()
-      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
-      BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-      WrongMovesNumberException,
-      WrongGameBoardPicksException, NullIndexValueException,
-      WrongBookShelfPicksException, NullTileException {
+      throws BoardGridRowIndexOutOfBoundsException,
+          BoardGridColIndexOutOfBoundsException,
+          BookshelfGridColIndexOutOfBoundsException,
+          BookshelfGridRowIndexOutOfBoundsException,
+          WrongMovesNumberException,
+          WrongGameBoardPicksException,
+          NullIndexValueException,
+          WrongBookShelfPicksException,
+          NullTileException {
     Map<Coordinates, Coordinates> moves = new HashMap<>();
     moves.put(new Coordinates(4, 0), new Coordinates(5, 0));
     moves.put(new Coordinates(5, 0), new Coordinates(4, 0));
@@ -69,34 +76,44 @@ class MovesValidatorTest {
 
   @Test
   void validator_should_throw_WrongMovesNumberException()
-      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
-      BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-      WrongMovesNumberException,
-      WrongGameBoardPicksException, NullIndexValueException,
-      WrongBookShelfPicksException, NullTileException {
+      throws BoardGridRowIndexOutOfBoundsException,
+          BoardGridColIndexOutOfBoundsException,
+          BookshelfGridColIndexOutOfBoundsException,
+          BookshelfGridRowIndexOutOfBoundsException,
+          WrongMovesNumberException,
+          WrongGameBoardPicksException,
+          NullIndexValueException,
+          WrongBookShelfPicksException,
+          NullTileException {
     Map<Coordinates, Coordinates> moves = new HashMap<>();
     moves.put(new Coordinates(3, 0), new Coordinates(4, 0));
     moves.put(new Coordinates(4, 0), new Coordinates(5, 0));
     moves.put(new Coordinates(5, 0), new Coordinates(3, 0));
     moves.put(new Coordinates(6, 0), new Coordinates(2, 0));
 
-    assertThrows(WrongMovesNumberException.class,
+    assertThrows(
+        WrongMovesNumberException.class,
         () -> MovesValidator.validateGameMoves(moves, bookBookshelf, board));
   }
 
   @Test
   void validator_should_throws_WrongGameBoardPicksException()
-      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
-      BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-      WrongMovesNumberException,
-      WrongGameBoardPicksException, NullIndexValueException,
-      WrongBookShelfPicksException, NullTileException {
+      throws BoardGridRowIndexOutOfBoundsException,
+          BoardGridColIndexOutOfBoundsException,
+          BookshelfGridColIndexOutOfBoundsException,
+          BookshelfGridRowIndexOutOfBoundsException,
+          WrongMovesNumberException,
+          WrongGameBoardPicksException,
+          NullIndexValueException,
+          WrongBookShelfPicksException,
+          NullTileException {
     Map<Coordinates, Coordinates> moves = new HashMap<>();
     // diagonal choices
     moves.put(new Coordinates(4, 0), new Coordinates(5, 0));
     moves.put(new Coordinates(5, 1), new Coordinates(4, 0));
 
-    assertThrows(WrongGameBoardPicksException.class,
+    assertThrows(
+        WrongGameBoardPicksException.class,
         () -> MovesValidator.validateGameMoves(moves, bookBookshelf, board));
 
     // gap between choices
@@ -104,14 +121,16 @@ class MovesValidatorTest {
     moves.put(new Coordinates(4, 0), new Coordinates(5, 0));
     moves.put(new Coordinates(4, 2), new Coordinates(4, 0));
 
-    assertThrows(WrongGameBoardPicksException.class,
+    assertThrows(
+        WrongGameBoardPicksException.class,
         () -> MovesValidator.validateGameMoves(moves, bookBookshelf, board));
 
     // empty tile
     moves.clear();
     moves.put(new Coordinates(3, 0), new Coordinates(5, 0));
     moves.put(new Coordinates(3, 1), new Coordinates(4, 0));
-    assertThrows(WrongGameBoardPicksException.class,
+    assertThrows(
+        WrongGameBoardPicksException.class,
         () -> MovesValidator.validateGameMoves(moves, bookBookshelf, board));
 
     // not empty side
@@ -119,23 +138,29 @@ class MovesValidatorTest {
     moves.put(new Coordinates(4, 3), new Coordinates(5, 0));
     moves.put(new Coordinates(4, 2), new Coordinates(4, 0));
 
-    assertThrows(WrongGameBoardPicksException.class,
+    assertThrows(
+        WrongGameBoardPicksException.class,
         () -> MovesValidator.validateGameMoves(moves, bookBookshelf, board));
   }
 
   @Test
   void validator_should_throws_WrongBookShelfPicksException()
-      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
-      BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
-      WrongMovesNumberException,
-      WrongGameBoardPicksException, NullIndexValueException,
-      WrongBookShelfPicksException, NullTileException {
+      throws BoardGridRowIndexOutOfBoundsException,
+          BoardGridColIndexOutOfBoundsException,
+          BookshelfGridColIndexOutOfBoundsException,
+          BookshelfGridRowIndexOutOfBoundsException,
+          WrongMovesNumberException,
+          WrongGameBoardPicksException,
+          NullIndexValueException,
+          WrongBookShelfPicksException,
+          NullTileException {
     Map<Coordinates, Coordinates> moves = new HashMap<>();
     // diagonal choices
     moves.put(new Coordinates(4, 0), new Coordinates(5, 0));
     moves.put(new Coordinates(5, 0), new Coordinates(4, 1));
 
-    assertThrows(WrongBookShelfPicksException.class,
+    assertThrows(
+        WrongBookShelfPicksException.class,
         () -> MovesValidator.validateGameMoves(moves, bookBookshelf, board));
 
     // no sufficient space
@@ -143,14 +168,16 @@ class MovesValidatorTest {
     moves.put(new Coordinates(4, 0), new Coordinates(5, 0));
     moves.put(new Coordinates(5, 0), new Coordinates(4, 0));
 
-    assertThrows(WrongBookShelfPicksException.class,
+    assertThrows(
+        WrongBookShelfPicksException.class,
         () -> MovesValidator.validateGameMoves(moves, notEmptyBookShelf, board));
 
     // no adjacent selection
     moves.clear();
     moves.put(new Coordinates(4, 0), new Coordinates(5, 0));
     moves.put(new Coordinates(5, 0), new Coordinates(3, 0));
-    assertThrows(WrongBookShelfPicksException.class,
+    assertThrows(
+        WrongBookShelfPicksException.class,
         () -> MovesValidator.validateGameMoves(moves, bookBookshelf, board));
 
     // put on top of a non empty tile
@@ -163,7 +190,8 @@ class MovesValidatorTest {
     moves.put(new Coordinates(4, 0), new Coordinates(3, 0));
     moves.put(new Coordinates(5, 0), new Coordinates(4, 0));
 
-    assertThrows(WrongBookShelfPicksException.class,
+    assertThrows(
+        WrongBookShelfPicksException.class,
         () -> MovesValidator.validateGameMoves(moves, notEmptyBookShelf, board));
 
     // put in a not empty tile
@@ -176,7 +204,8 @@ class MovesValidatorTest {
     moves.put(new Coordinates(4, 0), new Coordinates(5, 0));
     moves.put(new Coordinates(5, 0), new Coordinates(4, 0));
 
-    assertThrows(WrongBookShelfPicksException.class,
+    assertThrows(
+        WrongBookShelfPicksException.class,
         () -> MovesValidator.validateGameMoves(moves, notEmptyBookShelf, board));
   }
 }

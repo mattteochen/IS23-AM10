@@ -3,8 +3,6 @@ package it.polimi.is23am10.server.network.messages;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.jupiter.api.Test;
-
 import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
@@ -26,18 +24,30 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksEx
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
 import it.polimi.is23am10.server.network.messages.AbstractMessage.MessageType;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import org.junit.jupiter.api.Test;
 
-/**
- * Tests for the game message class
- */
+/** Tests for the game message class */
 public class GameMessageTest {
   @Test
-  public void constructor_should_create_GameMessage() 
-    throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
-    NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException, 
-    AlreadyInitiatedPatternException, NullPlayerNamesException, NullAssignedPatternException, NullMaxPlayerException,
-    InvalidMaxPlayerException, InvalidNumOfPlayersException, NullNumOfPlayersException, FullGameException, PlayerNotFoundException, NotValidScoreBlockValueException {
-    
+  public void constructor_should_create_GameMessage()
+      throws NullPlayerNameException,
+          NullPlayerIdException,
+          NullPlayerBookshelfException,
+          NullPlayerScoreException,
+          NullPlayerPrivateCardException,
+          NullPlayerScoreBlocksException,
+          DuplicatePlayerNameException,
+          AlreadyInitiatedPatternException,
+          NullPlayerNamesException,
+          NullAssignedPatternException,
+          NullMaxPlayerException,
+          InvalidMaxPlayerException,
+          InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          FullGameException,
+          PlayerNotFoundException,
+          NotValidScoreBlockValueException {
+
     final Game game = GameFactory.getNewGame("sender", 4);
     game.assignPlayers();
     final VirtualView virtualView = new VirtualView(game);
@@ -46,10 +56,10 @@ public class GameMessageTest {
 
     assertNotNull(gm);
 
-    assertNotNull(gm.getMessage()); 
+    assertNotNull(gm.getMessage());
     assertEquals(chatMessage, gm.getMessage());
 
-    assertNotNull(gm.getMessageType()); 
+    assertNotNull(gm.getMessageType());
     assertEquals(MessageType.GAME_SNAPSHOT, gm.getMessageType());
 
     assertNotNull(gm.getGame());

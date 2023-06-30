@@ -12,43 +12,29 @@ import java.io.Serializable;
  */
 public class AbstractMessage implements Serializable {
 
-  /**
-   * Message in string. Plaintext or JSON.
-   */
+  /** Message in string. Plaintext or JSON. */
   protected String message;
 
-  /**
-   * Enum for type of message sent.
-   */
+  /** Enum for type of message sent. */
   public enum MessageType {
-    /**
-     * Message containing a VirtualView, representing a game snapshot.
-     */
+    /** Message containing a VirtualView, representing a game snapshot. */
     GAME_SNAPSHOT,
-    /**
-     * Message containing a chat textual exchange between players.
-     */
+    /** Message containing a chat textual exchange between players. */
     CHAT_MESSAGE,
-    /**
-     * Message containing an error to display to the player.
-     */
+    /** Message containing an error to display to the player. */
     ERROR_MESSAGE,
-    /**
-     * Message containing the available games joinable by player.
-     */
+    /** Message containing the available games joinable by player. */
     AVAILABLE_GAMES,
     /**
-     * ACK message sent from server to client to confirm that the timer has
-     * been snoozed. If not received by client implies client termination.
+     * ACK message sent from server to client to confirm that the timer has been snoozed. If not
+     * received by client implies client termination.
      */
     SNOOZE_ACK
   }
 
-  /**
-   * Type of message sent.
-   */
+  /** Type of message sent. */
   protected MessageType msgType;
-  
+
   /**
    * Getter for message.
    *

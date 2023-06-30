@@ -10,16 +10,10 @@ package it.polimi.is23am10.server.command;
  */
 public class SnoozeGameTimerCommand extends AbstractCommand {
 
-  /**
-   * The player name who has snoozed the game timer.
-   * 
-   */
+  /** The player name who has snoozed the game timer. */
   private String playerName;
 
-  /**
-   * An utility to be used during deserialization processes.
-   * 
-   */
+  /** An utility to be used during deserialization processes. */
   @SuppressWarnings("unused")
   private final String className = this.getClass().getName();
 
@@ -27,7 +21,6 @@ public class SnoozeGameTimerCommand extends AbstractCommand {
    * Constructor.
    *
    * @param playerName The player name.
-   * 
    */
   public SnoozeGameTimerCommand(String playerName) {
     super(Opcode.GAME_TIMER);
@@ -38,16 +31,12 @@ public class SnoozeGameTimerCommand extends AbstractCommand {
    * Player name getter.
    *
    * @return The player name.
-   * 
    */
   public String getPlayerName() {
     return playerName;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof SnoozeGameTimerCommand)) {
@@ -56,14 +45,10 @@ public class SnoozeGameTimerCommand extends AbstractCommand {
 
     SnoozeGameTimerCommand casted = (SnoozeGameTimerCommand) obj;
 
-    return (opcode == casted.getOpcode()
-        && playerName.equals(casted.getPlayerName()));
+    return (opcode == casted.getOpcode() && playerName.equals(casted.getPlayerName()));
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode() {
     return playerName.hashCode();

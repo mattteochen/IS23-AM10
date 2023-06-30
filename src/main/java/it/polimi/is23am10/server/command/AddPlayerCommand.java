@@ -12,22 +12,13 @@ import java.util.UUID;
  */
 public class AddPlayerCommand extends AbstractCommand {
 
-  /**
-   * The player name to add.
-   * 
-   */
+  /** The player name to add. */
   private String playerName;
 
-  /**
-   * The game id reference.
-   * 
-   */
+  /** The game id reference. */
   private UUID gameId;
 
-  /**
-   * An utility to be used during deserialization processes.
-   * 
-   */
+  /** An utility to be used during deserialization processes. */
   @SuppressWarnings("unused")
   private final String className = this.getClass().getName();
 
@@ -36,7 +27,6 @@ public class AddPlayerCommand extends AbstractCommand {
    *
    * @param playerName The player name to add.
    * @param gameId The game instance id.
-   * 
    */
   public AddPlayerCommand(String playerName, UUID gameId) {
     super(Opcode.ADD_PLAYER);
@@ -48,7 +38,6 @@ public class AddPlayerCommand extends AbstractCommand {
    * Starting player name getter.
    *
    * @return The player name.
-   * 
    */
   public String getPlayerName() {
     return playerName;
@@ -58,16 +47,12 @@ public class AddPlayerCommand extends AbstractCommand {
    * Game id getter.
    *
    * @return The game id reference.
-   * 
    */
   public UUID getGameId() {
     return gameId;
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof AddPlayerCommand)) {
@@ -81,13 +66,10 @@ public class AddPlayerCommand extends AbstractCommand {
         && gameId.equals(casted.getGameId()));
   }
 
-  /**
-   * {@inheritDoc}
-   *
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode() {
-    //we can have same player name for multiple games!
+    // we can have same player name for multiple games!
     return playerName.hashCode() * gameId.hashCode();
   }
 }

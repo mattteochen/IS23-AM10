@@ -3,8 +3,8 @@ package it.polimi.is23am10.server.model.items.bookshelf.exceptions;
 import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
 
 /**
- * bookshelfString given to the constructor has wrong length
- * Can be used public methods of {@link Bookshelf}.
+ * bookshelfString given to the constructor has wrong length Can be used public methods of {@link
+ * Bookshelf}.
  *
  * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
  * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)

@@ -6,11 +6,6 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.util.Arrays;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.server.model.game.Game;
@@ -31,29 +26,45 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-/**
- * Test class to check Player Factory work
- * and exceptions thrown.
- */
-@SuppressWarnings({ "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck", "checkstyle:linelengthcheck",
-    "checkstyle:onetoplevelclasscheck", "checkstyle:variabledeclarationusagedistancecheck" })
+/** Test class to check Player Factory work and exceptions thrown. */
+@SuppressWarnings({
+  "checkstyle:methodname",
+  "checkstyle:abbreviationaswordinnamecheck",
+  "checkstyle:linelengthcheck",
+  "checkstyle:onetoplevelclasscheck",
+  "checkstyle:variabledeclarationusagedistancecheck"
+})
 public class GameFactoryTest {
 
   String dummyPlayerName = "myNewPlayer";
 
   @BeforeEach
-  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {
-  }
+  public void clear_used_pattern_list_to_avoid_using_all_patterns_in_tests() {}
 
   @Test
   public void getNewGame_should_return_player()
-      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
-      NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
-      NullPlayerPrivateCardException,
-      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
-      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException, NullAssignedPatternException, 
-      FullGameException, PlayerNotFoundException, NotValidScoreBlockValueException {
+      throws NullMaxPlayerException,
+          InvalidMaxPlayerException,
+          NullPlayerNameException,
+          NullPlayerIdException,
+          NullPlayerBookshelfException,
+          NullPlayerScoreException,
+          NullPlayerPrivateCardException,
+          NullPlayerScoreBlocksException,
+          DuplicatePlayerNameException,
+          AlreadyInitiatedPatternException,
+          NullPlayerNamesException,
+          InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          NullAssignedPatternException,
+          FullGameException,
+          PlayerNotFoundException,
+          NotValidScoreBlockValueException {
 
     Integer dummyPlayerNum = 4;
 

@@ -9,23 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.Registry;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import it.polimi.is23am10.client.userinterface.CommandLineInterface;
 import it.polimi.is23am10.client.userinterface.UserInterface;
 import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
@@ -47,38 +30,47 @@ import it.polimi.is23am10.server.network.playerconnector.interfaces.IPlayerConne
 import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
+import java.util.concurrent.LinkedBlockingQueue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 
-/**
- * Rmi client tests.
- */
+/** Rmi client tests. */
 @RunWith(MockitoJUnitRunner.class)
-@SuppressWarnings({ "deprecation", "checkstyle:methodname", "checkstyle:abbreviationaswordinnamecheck",
-    "checkstyle:linelengthcheck", "checkstyle:onetoplevelclasscheck" })
+@SuppressWarnings({
+  "deprecation",
+  "checkstyle:methodname",
+  "checkstyle:abbreviationaswordinnamecheck",
+  "checkstyle:linelengthcheck",
+  "checkstyle:onetoplevelclasscheck"
+})
 public class RMIClientTest {
-  @Mock
-  PlayerConnectorRmi playerConnectorRmi;
+  @Mock PlayerConnectorRmi playerConnectorRmi;
 
-  @Mock
-  InetAddress serverAddress;
+  @Mock InetAddress serverAddress;
 
-  @Mock
-  VirtualView virtualView;
+  @Mock VirtualView virtualView;
 
-  @Mock
-  UserInterface userInterface;
+  @Mock UserInterface userInterface;
 
-  @Mock
-  Registry rmiRegistry;
+  @Mock Registry rmiRegistry;
 
-  @Mock
-  IServerControllerAction serverControllerActionServer;
+  @Mock IServerControllerAction serverControllerActionServer;
 
-  @Mock
-  IPlayerConnector playerConnectorServer;
+  @Mock IPlayerConnector playerConnectorServer;
 
-  @Spy
-  @InjectMocks
-  RMIClient rmiClient;
+  @Spy @InjectMocks RMIClient rmiClient;
 
   @BeforeEach
   public void setup() {
@@ -88,7 +80,10 @@ public class RMIClientTest {
 
   @Test
   void constructor_should_create_RMIClientTest()
-      throws NullSocketConnectorException, NullBlockingQueueException, UnknownHostException, RemoteException {
+      throws NullSocketConnectorException,
+          NullBlockingQueueException,
+          UnknownHostException,
+          RemoteException {
     PlayerConnectorRmi pc = new PlayerConnectorRmi(new LinkedBlockingQueue<>(), null);
     UserInterface ui = new CommandLineInterface(true);
 
@@ -98,7 +93,12 @@ public class RMIClientTest {
   }
 
   @Test
-  void run_should_runCoreCycle() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException {
+  void run_should_runCoreCycle()
+      throws IOException,
+          InterruptedException,
+          NullSocketConnectorException,
+          NullBlockingQueueException,
+          NullPlayerNameException {
     AbstractMessage msg = new ErrorMessage("New Message", null);
 
     doReturn(false, true).when(rmiClient).hasRequestedDisconnection();
@@ -113,7 +113,12 @@ public class RMIClientTest {
   }
 
   @Test
-  void handlePlayerNameSelection_should_run_playerNameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException {
+  void handlePlayerNameSelection_should_run_playerNameSelection()
+      throws IOException,
+          InterruptedException,
+          NullSocketConnectorException,
+          NullBlockingQueueException,
+          NullPlayerNameException {
     AbstractMessage msg = new ErrorMessage("New Message", null);
     Player p = mock(Player.class);
     String pn = "Benny";
@@ -130,7 +135,18 @@ public class RMIClientTest {
   }
 
   @Test
-  void handleCommand_should_run_handleCommand() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException, NotBoundException, InvalidNumOfPlayersException, NullNumOfPlayersException, BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException, NullIndexValueException {
+  void handleCommand_should_run_handleCommand()
+      throws IOException,
+          InterruptedException,
+          NullSocketConnectorException,
+          NullBlockingQueueException,
+          NullPlayerNameException,
+          NotBoundException,
+          InvalidNumOfPlayersException,
+          NullNumOfPlayersException,
+          BoardGridRowIndexOutOfBoundsException,
+          BoardGridColIndexOutOfBoundsException,
+          NullIndexValueException {
     String pn = "Benny";
     String command = "move 42 -> 06";
     VirtualView vw = mock(VirtualView.class);
@@ -151,8 +167,6 @@ public class RMIClientTest {
     when(vp.getBookshelf()).thenReturn(new Bookshelf());
     when(vw.getGameBoard()).thenReturn(new Board(4));
 
-
     rmiClient.handleCommands();
   }
-
 }
