@@ -70,20 +70,6 @@ public class AppConfigContext {
    * The maximum inactivity time allowed to a player when playing a game turn.
    */
   private long maxInactivityTimeMs;
-
-  /**
-   * Constructor.
-   * 
-   * @param serverSocketPort     The server port number.
-   * @param maxConnections The maximum allowed connections.
-   * @param keepAlive      The socket keep alive flag.
-   * @param serverRmiPort The server RMI port.
-   * @param isServer Run app in server mode flag.
-   * @param showGUI Show GUI client flag.
-   * @param useRMI Use RMI over socket flag.
-   * @param serverAddress Address where to find server.
-   * @param showDebug Show debug infos flag.
-   */
   
   /**
    * Constructor.
