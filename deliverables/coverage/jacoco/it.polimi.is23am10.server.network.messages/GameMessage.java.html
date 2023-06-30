@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameMessage.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.network.messages</a> &gt; <span class="el_source">GameMessage.java</span></div><h1>GameMessage.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.network.messages;
+
+import it.polimi.is23am10.server.network.virtualview.VirtualView;
+import it.polimi.is23am10.utils.ThreadLocalTypeAdapterFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+/**
+ * A message containing a serialized JSON of a virtual view instance.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public final class GameMessage extends AbstractMessage {
+
+    /**
+   * An utility to be used during deserialization processes.
+   * 
+   */
+<span class="fc" id="L23">  @SuppressWarnings(&quot;unused&quot;)</span>
+<span class="fc" id="L24">  private final String className = this.getClass().getName();</span>
+  
+  /**
+   * Gson object for serialization and deserialization
+   */
+<span class="fc" id="L29">  protected final transient Gson gson = new GsonBuilder()</span>
+<span class="fc" id="L30">    .registerTypeAdapterFactory(new ThreadLocalTypeAdapterFactory())</span>
+<span class="fc" id="L31">    .create();</span>
+  
+  /**
+   * Public constructor for virtualView message.
+   * Game object is serialized into JSON and set as message.
+   * 
+   * @param virtualView virtual view to serialize
+   */
+<span class="fc" id="L39">  public GameMessage(VirtualView virtualView) {</span>
+<span class="fc" id="L40">    msgType = MessageType.GAME_SNAPSHOT;</span>
+<span class="fc" id="L41">    message = gson.toJson(virtualView);</span>
+<span class="fc" id="L42">  }</span>
+
+  /**
+   * Getter for virtualView instance. It deserializes it from
+   * JSON message.
+   * 
+   * @return deserialized virtual view object
+   */
+  public VirtualView getGame() {
+<span class="fc" id="L51">    return gson.fromJson(message, VirtualView.class);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

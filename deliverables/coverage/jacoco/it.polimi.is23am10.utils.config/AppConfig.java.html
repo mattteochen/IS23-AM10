@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AppConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.utils.config</a> &gt; <span class="el_source">AppConfig.java</span></div><h1>AppConfig.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.utils.config;
+
+import it.polimi.is23am10.utils.config.exceptions.InvalidMaxConnectionsNumberException;
+import it.polimi.is23am10.utils.config.exceptions.InvalidPortNumberException;
+
+/**
+ * The application config class definition.
+ * If not set otherwise all the configuration parameters for the application
+ * are set to default values here.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public final class AppConfig {
+
+  /**
+   * Private constructor.
+   * 
+   */
+  private AppConfig() {
+
+  }
+
+  /**
+   * The lower bound of port numbers.
+   * 
+   */
+<span class="fc" id="L30">  public static final Integer MIN_PORT_NUMBER = 1024;</span>
+
+  /**
+   * The upper bound of port numbers.
+   * 
+   */
+<span class="fc" id="L36">  public static final Integer MAX_PORT_NUMBER = 65535;</span>
+
+  /**
+   * The lower bound of connection numbers.
+   * 
+   */
+<span class="fc" id="L42">  public static final Integer MIN_CONNECTIONS_NUMBER = 0;</span>
+
+  /**
+   * The upper bound of connection numbers.
+   * 
+   */
+<span class="fc" id="L48">  public static final Integer MAX_CONNECTIONS_NUMBER = 10;</span>
+
+  /**
+   * The server config server port.
+   * 
+   */
+<span class="fc" id="L54">  private static Integer serverSocketPort = 9001;</span>
+
+  /**
+   * The server config rmi port.
+   * 
+   */
+<span class="fc" id="L60">  private static Integer serverRmiPort = 9002;</span>
+
+  /**
+   * The max allowed connection for this server instance.
+   * This is a momentary max value.
+   * 
+   */
+<span class="fc" id="L67">  private static Integer maxConnection = 8;</span>
+
+  /**
+   * The socket SO_KEEPALIVE flag.
+   * 
+   */
+<span class="fc" id="L73">  private static boolean keepAlive = true;</span>
+
+  /**
+   * The kind of app to launch. If false launches a client.
+   * 
+   */
+<span class="fc" id="L79">  private static boolean isServer = false;</span>
+
+  /**
+   * The interface to show if app is launched in Client mode.
+   * If false launches client in CLI mode.
+   * If {@link AppConfigContext#isServer} is true this flag is ignored,
+   * as server mode only supports CLI as interface, and for logging purpose only.
+   */
+<span class="fc" id="L87">  private static boolean showGUI = false;</span>
+
+    /**
+   * The communication method to use if app is launched is Client Mode.
+   * If false launches client over Socket connection.
+   * If {@link AppConfigContext#isServer} is true this flag is ignored,
+   * as server mode both receives RMI and socket connections
+   */
+<span class="fc" id="L95">  private static boolean useRMI = false;</span>
+
+  /**
+   * A simple flag that if enabled shows all verbose messages
+   * in console logs.
+   */
+<span class="fc" id="L101">  private static boolean showDebug = false;</span>
+
+  /**
+   * The network address where the server is running.
+   * 
+   */
+<span class="fc" id="L107">  private static String serverAddress = &quot;localhost&quot;;</span>
+
+  /**
+   * The maximum inactivity time allowed to a player when playing a game turn.
+   */
+<span class="fc" id="L112">  private static long maxInactivityTimeMs = 1000 * 60 * 2;</span>
+
+  /**
+   * Server port setter.
+   *
+   * @param p port number.
+   * @throws InvalidPortNumberException invalid port number.
+   */
+  public static void setServerSocketPort(Integer p) throws InvalidPortNumberException {
+<span class="fc bfc" id="L121" title="All 4 branches covered.">    if (p &lt; MIN_PORT_NUMBER || p &gt; MAX_PORT_NUMBER) {</span>
+<span class="fc" id="L122">      throw new InvalidPortNumberException();</span>
+    }
+<span class="fc" id="L124">    serverSocketPort = p;</span>
+<span class="fc" id="L125">  }</span>
+
+  /**
+   * Server port setter.
+   *
+   * @param p port number.
+   * @throws InvalidPortNumberException invalid port number.
+   */
+  public static void setServerRmiPort(Integer p) throws InvalidPortNumberException {
+<span class="pc bpc" id="L134" title="2 of 4 branches missed.">    if (p &lt; MIN_PORT_NUMBER || p &gt; MAX_PORT_NUMBER) {</span>
+<span class="nc" id="L135">      throw new InvalidPortNumberException();</span>
+    }
+<span class="fc" id="L137">    serverRmiPort = p;</span>
+<span class="fc" id="L138">  }</span>
+
+  /**
+   * Max connections setter.
+   *
+   * @param maxConn number of max connections.
+   * @throws InvalidMaxConnectionsNumberException invalid number of maxConn.
+   */
+  public static void setMaxConnections(Integer maxConn) 
+      throws InvalidMaxConnectionsNumberException {
+<span class="fc bfc" id="L148" title="All 4 branches covered.">    if (maxConn &lt; MIN_CONNECTIONS_NUMBER || maxConn &gt; MAX_CONNECTIONS_NUMBER){</span>
+<span class="fc" id="L149">      throw new InvalidMaxConnectionsNumberException();</span>
+    }
+<span class="fc" id="L151">    maxConnection = maxConn;</span>
+<span class="fc" id="L152">  }</span>
+
+  /**
+   * Keep alive setter.
+   *
+   * @param k keep alive status.
+   * 
+   */
+  public static void setKeepAlive(boolean k) {
+<span class="fc" id="L161">    keepAlive = k;</span>
+<span class="fc" id="L162">  }</span>
+  
+  /**
+   * Keep alive setter.
+   *
+   * @param is launch server app
+   * 
+   */
+  public static void setIsServer(boolean is) {
+<span class="fc" id="L171">    isServer = is;</span>
+<span class="fc" id="L172">  }</span>
+
+  /**
+   * Show GUI setter.
+   *
+   * @param sg show GUI if client
+   * 
+   */
+  public static void setShowGUI(boolean sg) {
+<span class="fc" id="L181">    showGUI = sg;</span>
+<span class="fc" id="L182">  }</span>
+
+  /**
+   * Use RMI setter.
+   *
+   * @param rmi use RMI or not (socket).
+   * 
+   */
+  public static void setUseRMI(boolean rmi) {
+<span class="fc" id="L191">    useRMI = rmi;</span>
+<span class="fc" id="L192">  }</span>
+
+  /**
+   * Show verbose debug.
+   *
+   * @param debug show debug or not.
+   * 
+   */
+  public static void setShowDebug(boolean debug) {
+<span class="nc" id="L201">    showDebug = debug;</span>
+<span class="nc" id="L202">  }</span>
+
+  /**
+   * Server address setter.
+   *
+   * @param address Server address.
+   * 
+   */
+  public static void setServerAddress(String address) {
+<span class="fc" id="L211">    serverAddress = address;</span>
+<span class="fc" id="L212">  }</span>
+
+  /**
+   * Max inactivity time setter.
+   *
+   * @param time max inactivity time in ms.
+   */
+  public static void setMaxInactivityTimeMs(long time) {
+<span class="fc" id="L220">    maxInactivityTimeMs = time;</span>
+<span class="fc" id="L221">  }</span>
+
+  /**
+   * Server port getter.
+   *
+   * @return The instantiated server port.
+   * 
+   */
+  public static Integer getServerSocketPort() {
+<span class="fc" id="L230">    return serverSocketPort;</span>
+  }
+
+  /**
+   * Server port getter.
+   *
+   * @return The instantiated server port.
+   * 
+   */
+  public static Integer getServerRmiPort() {
+<span class="fc" id="L240">    return serverRmiPort;</span>
+  }
+
+  /**
+   * Max connections getter.
+   *
+   * @return The maximum allowed connections.
+   * 
+   */
+  public static Integer getMaxConnections() {
+<span class="fc" id="L250">    return maxConnection;</span>
+  }
+
+  /**
+   * Keep alive getter.
+   *
+   * @return The keep alive flag.
+   * 
+   */
+  public static boolean getKeepAlive() {
+<span class="fc" id="L260">    return keepAlive;</span>
+  }
+
+  /**
+   * Is server getter.
+   *
+   * @return The isServer flag.
+   * 
+   */
+  public static boolean getIsServer() {
+<span class="fc" id="L270">    return isServer;</span>
+  }
+
+  /**
+   * Show GUI getter.
+   *
+   * @return The show GUI flag.
+   * 
+   */
+  public static boolean getShowGUI() {
+<span class="fc" id="L280">    return showGUI;</span>
+  }
+  
+  /**
+   * Use RMI getter.
+   *
+   * @return The use RMI flag.
+   * 
+   */
+  public static boolean getUseRMI() {
+<span class="fc" id="L290">    return useRMI;</span>
+  }
+
+  /**
+   * Server address getter.
+   *
+   * @return The server address.
+   * 
+   */
+  public static String getServerAddress() {
+<span class="fc" id="L300">    return serverAddress;</span>
+  }
+
+  /**
+   * Show debug getter.
+   *
+   * @return The debug flag.
+   * 
+   */
+  public static boolean getShowDebug() {
+<span class="fc" id="L310">    return showDebug;</span>
+  }
+
+  /**
+   * Max inactivity time getter.
+   *
+   * @return The max inactivity time.
+   * 
+   */
+  public static long getMaxInactivityTime() {
+<span class="fc" id="L320">    return maxInactivityTimeMs;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

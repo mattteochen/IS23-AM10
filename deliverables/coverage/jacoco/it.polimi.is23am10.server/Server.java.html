@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Server.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server</a> &gt; <span class="el_source">Server.java</span></div><h1>Server.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server;
+
+import it.polimi.is23am10.server.controller.ClientConnectionChecker;
+import it.polimi.is23am10.server.controller.ServerControllerAction;
+import it.polimi.is23am10.server.controller.ServerControllerRmiBindings;
+import it.polimi.is23am10.server.controller.ServerControllerSocket;
+import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
+import it.polimi.is23am10.server.network.playerconnector.exceptions.NullBlockingQueueException;
+import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
+import it.polimi.is23am10.utils.config.AppConfigContext;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+/**
+ * The Server entry point class definition.
+ * This has only static methods and this class should not be instantiated.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public class Server {
+
+  /**
+   * The serverSocket status.
+   *
+   */
+<span class="fc" id="L38">  public enum ServerStatus {</span>
+<span class="fc" id="L39">    STARTED,</span>
+<span class="fc" id="L40">    STOPPED</span>
+  }
+
+  /**
+   * Logger instance.
+   *
+   */
+<span class="fc" id="L47">  protected final Logger logger = LogManager.getLogger(Server.class);</span>
+
+  /**
+   * Socket serverSocket instance.
+   *
+   */
+  protected ServerSocket serverSocket;
+
+  /**
+   * Socket socket clients connected.
+   *
+   */
+<span class="fc" id="L59">  protected static int socketClientsConnected = 0;</span>
+
+  /**
+   * Server thread executor service manager.
+   *
+   */
+  protected ExecutorService executorService;
+
+  /**
+   * Constructor.
+   *
+   * @param serverSocket                    The server socket reference of a newly
+   *                                        connected client.
+   * @param executorService                 The built thread executor service.
+   * @param rmiServerControllerActionServer An built instance of the implementing
+   *                                        class.
+   * @param rmiRegistry                     A built instance of the RMI registry.
+   * @throws RemoteException On rebind failure.
+   *
+   */
+  public Server(ServerSocket serverSocket, ExecutorService executorService,
+<span class="fc" id="L80">      IServerControllerAction rmiServerControllerActionServer, Registry rmiRegistry) throws RemoteException {</span>
+<span class="fc" id="L81">    this.executorService = executorService;</span>
+<span class="fc" id="L82">    this.serverSocket = serverSocket;</span>
+<span class="fc" id="L83">    ServerControllerRmiBindings.setRmiRegistry(rmiRegistry);</span>
+<span class="fc" id="L84">    ServerControllerRmiBindings.rebindServerControllerAction(rmiServerControllerActionServer);</span>
+<span class="fc" id="L85">  }</span>
+
+  /**
+   * Server entry point.
+   * A new {@link ServerSocket} instance is spawned and in a
+   * infinity loop listens for clients connections.
+   *
+   * @param ctx An instance of the server configuration.
+   *
+   */
+  public void start(AppConfigContext ctx) {
+<span class="fc" id="L96">    logger.info(&quot;Starting Spurious Dragon, try to kill me...&quot;);</span>
+    // https://www.youtube.com/watch?v=Jo6fKboqfMs&amp;ab_channel=memesammler
+
+<span class="fc" id="L99">    executorService.execute(new ClientConnectionChecker(ctx.getMaxInactivityTime()));</span>
+
+    // start the socket server
+<span class="fc bfc" id="L102" title="All 2 branches covered.">    while (!serverSocket.isClosed()) {</span>
+      try {
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        if (getSocketClientsConnected() &lt; ctx.getMaxConnections()) {</span>
+<span class="fc" id="L105">          Socket client = serverSocket.accept();</span>
+<span class="fc" id="L106">          client.setKeepAlive(ctx.getKeepAlive());</span>
+<span class="fc" id="L107">          setSocketClientConnected(getSocketClientsConnected() + 1);</span>
+<span class="fc" id="L108">          executorService.execute(new ServerControllerSocket(</span>
+            new PlayerConnectorSocket(client,
+            new LinkedBlockingQueue&lt;&gt;()),
+            new ServerControllerAction()));
+<span class="fc" id="L112">          logger.info(&quot;Received new connection &quot; + &quot;(&quot; + getSocketClientsConnected() + &quot;/&quot; + ctx.getMaxConnections() + &quot;)&quot; );</span>
+<span class="fc" id="L113">        } else {</span>
+<span class="nc" id="L114">          serverSocket.accept();</span>
+<span class="nc" id="L115">          logger.error(&quot;Socket connection cannot be established as the server has reached its maximum socket client connections capacity.&quot;);</span>
+        }
+<span class="fc" id="L117">      } catch (IOException | NullSocketConnectorException | NullBlockingQueueException e) {</span>
+<span class="fc" id="L118">        logger.error(&quot;Failed to process connection&quot;, e);</span>
+<span class="fc" id="L119">      }</span>
+    }
+<span class="fc" id="L121">  }</span>
+
+  /**
+   * Stop the serverSocket.
+   *
+   * @throws IOException On socket closure failing.
+   *
+   */
+  public void stop() throws IOException {
+<span class="pc bpc" id="L130" title="2 of 4 branches missed.">    if (serverSocket != null &amp;&amp; !serverSocket.isClosed()) {</span>
+<span class="fc" id="L131">      serverSocket.close();</span>
+    }
+<span class="fc" id="L133">  }</span>
+
+  /**
+   * Check the current serverSocket status.
+   *
+   * @return The an enum {@link ServerStatus} stating the current status.
+   *
+   */
+  public ServerStatus status() {
+<span class="pc bpc" id="L142" title="1 of 4 branches missed.">    return serverSocket == null || serverSocket.isClosed()</span>
+<span class="fc" id="L143">        ? ServerStatus.STOPPED</span>
+<span class="fc" id="L144">        : ServerStatus.STARTED;</span>
+  }
+
+  /**
+   * Get the current number of clients connected to the socket.
+   *
+   * @return The connect clients number.
+   *
+   */
+  public static int getSocketClientsConnected(){
+<span class="fc" id="L154">    return socketClientsConnected;</span>
+  }
+
+  /**
+   * Set the current number of clients connected to the socket.
+   *
+   * @param scc The connect clients number.
+   *
+   */
+  public static void setSocketClientConnected(int scc){
+<span class="fc" id="L164">    socketClientsConnected = scc;</span>
+<span class="fc" id="L165">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

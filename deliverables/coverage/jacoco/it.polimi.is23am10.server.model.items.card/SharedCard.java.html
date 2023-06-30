@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SharedCard.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.model.items.card</a> &gt; <span class="el_source">SharedCard.java</span></div><h1>SharedCard.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.model.items.card;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+
+import it.polimi.is23am10.server.model.factory.SharedPatternFactory;
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.server.model.items.card.exceptions.NullScoreBlockListException;
+import it.polimi.is23am10.server.model.items.scoreblock.ScoreBlock;
+import it.polimi.is23am10.server.model.items.scoreblock.exceptions.NotValidScoreBlockValueException;
+import it.polimi.is23am10.server.model.pattern.SharedPattern;
+import it.polimi.is23am10.server.model.player.Player;
+
+/**
+ * Shared card object.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public class SharedCard extends AbstractCard&lt;Predicate&lt;Bookshelf&gt;, SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;&gt; {
+
+  /**
+   * A list of {@link ScoreBlock} instances.
+   * They are used to track the score points that the current shared card instance
+   * can assign to the players.
+   * 
+   */
+  private List&lt;ScoreBlock&gt; scoreBlocks;
+
+  /**
+   * List of players who satisfied the pattern and won the SB.
+   * Used to prevent one player from taking two SBs.
+   */
+  private List&lt;Player&gt; cardWinners;
+
+  /**
+   * A map to get the correct list of scoreblocks
+   * by number of players playing. Order is reversed as first
+   * to pick gets the highest valued SB.
+   */
+<span class="fc" id="L46">  private Map&lt;Integer,List&lt;Integer&gt;&gt; scoreBlocksMap = Map.of(</span>
+<span class="fc" id="L47">    2, List.of(8,4),</span>
+<span class="fc" id="L48">    3, List.of(8,6,4),</span>
+<span class="fc" id="L49">    4, List.of(8,6,4,2)</span>
+  );
+
+  /**
+   * Constructor.
+   *
+   * @param usedSharedPatterns is a list of SharedPattern used to store the already
+   *                     used.
+   * @param numPlayers the number of players in the game.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   */
+  public SharedCard(List&lt;SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;&gt; usedSharedPatterns, Integer numPlayers)
+<span class="fc" id="L61">      throws AlreadyInitiatedPatternException, NotValidScoreBlockValueException {</span>
+<span class="fc" id="L62">    cardWinners = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L63">    scoreBlocks = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">    for (Integer scoreBlockValue : scoreBlocksMap.get(numPlayers)) {</span>
+<span class="fc" id="L65">        scoreBlocks.add(new ScoreBlock(scoreBlockValue));</span>
+<span class="fc" id="L66">    }</span>
+<span class="fc" id="L67">    setPattern(SharedPatternFactory.getNotUsedPattern(usedSharedPatterns));</span>
+<span class="fc" id="L68">  }</span>
+
+  /**
+   * ScoreBlocks setter.
+   * 
+   * @param scoreBlockList The score block list.
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * 
+   */
+  public void setScoreBlocks(List&lt;ScoreBlock&gt; scoreBlockList) throws NullScoreBlockListException {
+<span class="fc bfc" id="L78" title="All 2 branches covered.">    if (scoreBlockList == null) {</span>
+<span class="fc" id="L79">      throw new NullScoreBlockListException(</span>
+<span class="fc" id="L80">          &quot;[Class &quot; + this.getClass() + &quot;, method setScoreBlock]: Null score block list&quot;);</span>
+    }
+<span class="fc" id="L82">    scoreBlocks = scoreBlockList;</span>
+<span class="fc" id="L83">  }</span>
+
+  /**
+   * scoreBlocks getter.
+   * 
+   * @return The current score block points assigned to this card instance.
+   * 
+   */
+  public List&lt;ScoreBlock&gt; getScoreBlocks() {
+<span class="fc" id="L92">    return scoreBlocks;</span>
+  }
+
+  /**
+   * cardWinners getter.
+   * 
+   * @return The list of player who got a SB from this card.
+   * 
+   */
+  public List&lt;Player&gt; getCardWinners() {
+<span class="nc" id="L102">    return cardWinners;</span>
+  }
+
+  /**
+   * Method used to add a player to the winner array.
+   * When a player is added it's not allowed to take
+   * another scoreblock from this card.
+   * 
+   * @param player the player to add to array
+   */
+  public void addCardWinner(Player player) {
+<span class="nc" id="L113">    cardWinners.add(player);</span>
+<span class="nc" id="L114">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

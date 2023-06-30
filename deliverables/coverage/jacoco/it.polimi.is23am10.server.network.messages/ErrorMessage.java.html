@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ErrorMessage.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.network.messages</a> &gt; <span class="el_source">ErrorMessage.java</span></div><h1>ErrorMessage.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.network.messages;
+
+
+import it.polimi.is23am10.server.model.player.Player;
+
+
+/**
+ * A message containing an error message to be sent to the client.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public final class ErrorMessage extends AbstractMessage {
+
+    /**
+   * An utility to be used during deserialization processes.
+   * 
+   */
+<span class="fc" id="L21">  @SuppressWarnings(&quot;unused&quot;)</span>
+<span class="fc" id="L22">  private final String className = this.getClass().getName();</span>
+  
+  /**
+   * Not mandatory. Not null if direct message.
+   */
+  private Player receiver;
+
+  /**
+   * Three degrees of severity.
+   * Rule of thumb: 
+   * &lt;ul&gt;
+   * &lt;li&gt;Warning = something changed the flow of the game. User must be aware.
+   * &lt;li&gt;Error = something unexpected happened but game can continue.
+   * &lt;li&gt;Critical = something so bad happened that the game must end.
+   * &lt;/ul&gt;
+   */
+<span class="fc" id="L38">  public enum ErrorSeverity {</span>
+<span class="fc" id="L39">    INFO,</span>
+<span class="fc" id="L40">    WARNING,</span>
+<span class="fc" id="L41">    ERROR,</span>
+<span class="fc" id="L42">    CRITICAL</span>
+  }
+
+  private ErrorSeverity errorSeverity;
+
+  /**
+   * Public constructor for ErrorMessage.
+   *
+   * @param errorMessage message to send.
+   * @param receiver player who receives the message.
+   */
+<span class="fc" id="L53">  public ErrorMessage(String errorMessage, Player receiver, ErrorSeverity errorSeverity) {</span>
+<span class="fc" id="L54">    msgType = MessageType.ERROR_MESSAGE;</span>
+<span class="fc" id="L55">    this.message = errorMessage;</span>
+<span class="fc" id="L56">    this.receiver = receiver;</span>
+<span class="fc" id="L57">    this.errorSeverity = errorSeverity;</span>
+<span class="fc" id="L58">  }</span>
+
+  /**
+   * Public constructor for ErrorMessage in broadcast.
+   *
+   * @param errorMessage message to send.
+   */
+<span class="fc" id="L65">  public ErrorMessage(String errorMessage, ErrorSeverity errorSeverity) {</span>
+<span class="fc" id="L66">    msgType = MessageType.ERROR_MESSAGE;</span>
+<span class="fc" id="L67">    this.message = errorMessage;</span>
+<span class="fc" id="L68">    this.errorSeverity = errorSeverity;</span>
+<span class="fc" id="L69">  }</span>
+
+  /**
+   * Boolean to check if message is direct or broadcast.
+   *
+   * @return is the message broadcast?
+   */
+  public boolean isBroadcast() {
+<span class="nc bnc" id="L77" title="All 2 branches missed.">    return receiver == null;</span>
+  }
+
+  /**
+   * Getter for the receiving player.
+   *
+   * @return the player instance
+   */
+  public Player getReceiver() {
+<span class="nc" id="L86">    return receiver;</span>
+  }
+
+  /**
+   * Getter for the severity.
+   *
+   * @return the severity of the error.
+   */
+  public ErrorSeverity getErrorSeverity() {
+<span class="nc" id="L95">    return errorSeverity;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

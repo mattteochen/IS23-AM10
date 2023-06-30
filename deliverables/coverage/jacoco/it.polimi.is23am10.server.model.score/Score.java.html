@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Score.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.model.score</a> &gt; <span class="el_source">Score.java</span></div><h1>Score.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.model.score;
+
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.card.PrivateCard;
+import it.polimi.is23am10.server.model.items.card.exceptions.NegativeMatchedBlockCountException;
+import it.polimi.is23am10.server.model.items.card.exceptions.NullMatchedBlockCountException;
+import it.polimi.is23am10.server.model.items.card.exceptions.NullScoreBlockListException;
+import it.polimi.is23am10.server.model.items.scoreblock.ScoreBlock;
+import it.polimi.is23am10.server.model.items.tile.Tile;
+import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+
+/**
+ * The Score class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+
+public final class Score implements Serializable {
+  /**
+   * Integer referencing the extra point given to the first player
+   * to complete their bookshelf.
+   * 
+   */
+  private Integer extraPoint;
+
+  /**
+   * Integer referencing the points the player receives from
+   * the groups of same type tiles in their bookshelf.
+   * 
+   */
+  private Integer bookshelfPoints;
+
+  /**
+   * Integer referencing the points the player receives from
+   * completing shared goals.
+   * 
+   */
+  private Integer scoreBlockPoints;
+
+  /**
+   * Integer referencing the points the player receives from
+   * completing their private (secret) goal.
+   * 
+   */
+  private Integer privatePoints;
+
+  /**
+   * Map that allows the conversion from number of matches 
+   * in private cards to points received.
+   */
+<span class="fc" id="L63">  public static final Map&lt;Integer, Integer&gt; privateCardPointsMap = Map.of(</span>
+<span class="fc" id="L64">      0, 0,</span>
+<span class="fc" id="L65">      1, 1,</span>
+<span class="fc" id="L66">      2, 2,</span>
+<span class="fc" id="L67">      3, 4,</span>
+<span class="fc" id="L68">      4, 6,</span>
+<span class="fc" id="L69">      5, 9,</span>
+<span class="fc" id="L70">      6, 12</span>
+      );
+
+  /**
+   * Map that allows the conversion from number of groups
+   * in player's bookshelf to points received.
+   */
+<span class="fc" id="L77">  private static final Map&lt;Integer, Integer&gt; bookshelfPointsMap = Map.of(</span>
+<span class="fc" id="L78">      3, 2,</span>
+<span class="fc" id="L79">      4, 3,</span>
+<span class="fc" id="L80">      5, 5,</span>
+<span class="fc" id="L81">      6, 8</span>
+      );
+
+  /**
+   * Integer representing the minimum group size
+   * for counting bookshelf points.
+   */
+<span class="fc" id="L88">  private static final Integer MIN_GROUP_SIZE = 3;</span>
+
+  /**
+   * Integer representing the maximum &quot;useful&quot; group
+   * size for counting bookshelf points. Bigger groups
+   * count as groups of MAX_GROUP_SIZE
+   */
+<span class="fc" id="L95">  private static final Integer MAX_GROUP_SIZE = 6;</span>
+
+  /**
+   * Constructor.
+   * Set all the default values.
+   * 
+   */
+<span class="fc" id="L102">  public Score() {</span>
+<span class="fc" id="L103">    extraPoint = 0;</span>
+<span class="fc" id="L104">    bookshelfPoints = 0;</span>
+<span class="fc" id="L105">    scoreBlockPoints = 0;</span>
+<span class="fc" id="L106">    privatePoints = 0;</span>
+<span class="fc" id="L107">  }</span>
+
+  /**
+   * Copy constructor to generate another copy of same Score.
+   * 
+   * @param toCopy score to copy
+   */
+<span class="fc" id="L114">  public Score(Score toCopy) {</span>
+<span class="fc" id="L115">    bookshelfPoints = toCopy.getBookshelfPoints();</span>
+<span class="fc" id="L116">    extraPoint = toCopy.getExtraPoint();</span>
+<span class="fc" id="L117">    scoreBlockPoints = toCopy.getScoreBlockPoints();</span>
+<span class="fc" id="L118">    privatePoints = toCopy.getPrivatePoints();</span>
+<span class="fc" id="L119">  }</span>
+
+  /**
+   * extraPoint setter. Value can be only set to 1.
+   * 
+   */
+  public void setExtraPoint() {
+<span class="fc" id="L126">    this.extraPoint = 1;</span>
+<span class="fc" id="L127">  }</span>
+
+  /**
+   * bookshelfPoints setter.
+   * 
+   * @param bs The bookshelf object to check for groups in.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPointerException Generic NPE.
+   * 
+   */
+  public void setBookshelfPoints(Bookshelf bs) 
+      throws NullPointerException, BookshelfGridColIndexOutOfBoundsException,
+      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException, NullPlayerBookshelfException {
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">    if (bs == null) {</span>
+<span class="nc" id="L144">      throw new NullPlayerBookshelfException(&quot;[Score:setBookshelfPoints]&quot;);</span>
+    }
+
+<span class="fc" id="L147">    List&lt;Integer&gt; groupsSizes = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L148">    Integer[][] visitedMap = new Integer[Bookshelf.BOOKSHELF_ROWS][Bookshelf.BOOKSHELF_COLS];</span>
+
+    // Traverse each tile in the grid
+<span class="fc bfc" id="L151" title="All 2 branches covered.">    for (int i = 0; i &lt; Bookshelf.BOOKSHELF_ROWS; i++) {</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">      for (int j = 0; j &lt; Bookshelf.BOOKSHELF_COLS; j++) {</span>
+        // Check if the tile has already been visited
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        if (visitedMap[i][j] == null) {</span>
+<span class="fc" id="L155">          Tile tile = bs.getBookshelfGridAt(i, j);</span>
+<span class="fc bfc" id="L156" title="All 2 branches covered.">          if (!tile.isEmpty()) {</span>
+<span class="fc" id="L157">            int groupSize = countAdjacentTilesRecursive(bs, i, j, visitedMap, tile.getType());</span>
+
+            // I only consider valid groups.
+<span class="fc bfc" id="L160" title="All 4 branches covered.">            if (groupSize &gt;= MIN_GROUP_SIZE &amp;&amp; groupSize &lt;= MAX_GROUP_SIZE) {</span>
+<span class="fc" id="L161">              groupsSizes.add(groupSize);</span>
+            }
+<span class="fc bfc" id="L163" title="All 2 branches covered.">            if (groupSize &gt; MAX_GROUP_SIZE) {</span>
+<span class="fc" id="L164">              groupsSizes.add(MAX_GROUP_SIZE);</span>
+            }
+          }
+        }
+      }
+    }
+
+<span class="fc" id="L171">    bookshelfPoints = groupsSizes.stream().mapToInt(bookshelfPointsMap::get).sum();</span>
+<span class="fc" id="L172">  }</span>
+
+  /**
+   * scoreBlockPoints setter.
+   * 
+   * @param scoreBlocks The scoreblock list to get points from.
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * 
+   */
+  public void setScoreBlockPoints(List&lt;ScoreBlock&gt; scoreBlocks) throws NullScoreBlockListException {
+<span class="fc bfc" id="L182" title="All 2 branches covered.">    if (scoreBlocks == null) {</span>
+<span class="fc" id="L183">      throw new NullScoreBlockListException(&quot;[Score:setScoreBlockPoints]&quot;);</span>
+    }
+<span class="fc" id="L185">    scoreBlockPoints = scoreBlocks.stream().mapToInt(sb -&gt; sb.getScore()).sum();</span>
+<span class="fc" id="L186">  }</span>
+
+  /**
+   * privatePoints setter.
+   * 
+   * @param pc The private card to get points from.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
+   * @throws NullPointerException Generic NPE.
+   * 
+   */
+  public void setPrivatePoints(Bookshelf bs, PrivateCard pc) throws NullPointerException, NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+<span class="fc bfc" id="L198" title="All 2 branches covered.">    if (pc == null) {</span>
+<span class="fc" id="L199">      throw new NullPointerException(&quot;[Score:setPrivatePoints]&quot;);</span>
+    }
+<span class="fc" id="L201">    pc.setMatchedBlocksCount(pc.getPattern().getRule().apply(bs));</span>
+<span class="fc" id="L202">    privatePoints = privateCardPointsMap.get(pc.getMatchedBlocksCount());</span>
+<span class="fc" id="L203">  }</span>
+
+  public void obfuscatePrivatePoints() {
+<span class="fc" id="L206">    privatePoints = -1;</span>
+<span class="fc" id="L207">  }</span>
+
+  /**
+   * extraPoints getter.
+   * 
+   * @return The extra points value.
+   * 
+   */
+  public Integer getExtraPoint() {
+<span class="fc" id="L216">    return extraPoint;</span>
+  }
+
+  /**
+   * bookshelfPoints getter.
+   * 
+   * @return The bookshelf points value.
+   * 
+   */
+  public Integer getBookshelfPoints() {
+<span class="fc" id="L226">    return bookshelfPoints;</span>
+  }
+
+  /**
+   * scoreBlockPoints getter.
+   * 
+   * @return The score block points value.
+   * 
+   */
+  public Integer getScoreBlockPoints() {
+<span class="fc" id="L236">    return scoreBlockPoints;</span>
+  }
+
+  /**
+   * privatePoints getter.
+   * 
+   * @return The private points value.
+   * 
+   */
+  public Integer getPrivatePoints() {
+<span class="fc" id="L246">    return privatePoints;</span>
+  }
+
+  /**
+   * Helper function to help with BFS in bookshelf to find groups of same tile type.
+   * NOTE: this function should be called from setBookshelfPoints()
+   * 
+   * @param bs Bookshelf to check for groups in
+   * @param row Row index 
+   * @param col Column index
+   * @param visitedMap map to prevent repeatedly checking same spots
+   * @param type type of tile to check for
+   * @return integer representing the count of items in that group
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   */
+  private int countAdjacentTilesRecursive(Bookshelf bs, int row, int col, Integer[][] visitedMap, TileType type) 
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
+    // Check if the current tile is within the grid bounds and has the same type as the original tile, is not empty not visited
+<span class="fc bfc" id="L266" title="All 8 branches covered.">    if (</span>
+        row &lt; 0 || row &gt;= Bookshelf.BOOKSHELF_ROWS 
+        || col &lt; 0 || col &gt;= Bookshelf.BOOKSHELF_COLS 
+<span class="fc bfc" id="L269" title="All 2 branches covered.">        || bs.getBookshelfGridAt(row, col).getType() != type </span>
+<span class="pc bpc" id="L270" title="1 of 4 branches missed.">        || bs.getBookshelfGridAt(row, col).getType() == TileType.EMPTY </span>
+        || visitedMap[row][col] != null
+    ) {
+<span class="fc" id="L273">      return 0;</span>
+    }
+    
+    // Mark the current tile as visited by setting it to 1
+<span class="fc" id="L277">    visitedMap[row][col] = 1;</span>
+    
+    // Recursively count the adjacent tiles with the same type
+<span class="fc" id="L280">    int count = 1;</span>
+<span class="fc" id="L281">    count += countAdjacentTilesRecursive(bs, row + 1, col, visitedMap, type);</span>
+<span class="fc" id="L282">    count += countAdjacentTilesRecursive(bs, row - 1, col, visitedMap, type);</span>
+<span class="fc" id="L283">    count += countAdjacentTilesRecursive(bs, row, col + 1, visitedMap, type);</span>
+<span class="fc" id="L284">    count += countAdjacentTilesRecursive(bs, row, col - 1, visitedMap, type);</span>
+    
+<span class="fc" id="L286">    return count;</span>
+  }
+
+  /**
+   * Getter method that returns the total score
+   * computing it from all the available scores.
+   * 
+   * @return total score.
+   */
+  public Integer getTotalScore() {
+<span class="fc" id="L296">    return extraPoint + scoreBlockPoints + privatePoints + bookshelfPoints;</span>
+  }
+
+  /**
+   * Method used to retrieve the total score from a
+   * possibly obfuscated score. It ignores the invalidated privatescore.
+   * Used for sorting purposes in CLI.
+   * 
+   * @return visible score.
+   */
+  public Integer getVisibleScore() {
+<span class="pc bpc" id="L307" title="1 of 2 branches missed.">    return (privatePoints != -1) ? getTotalScore() : extraPoint + scoreBlockPoints + bookshelfPoints;</span>
+  }
+
+  /**
+   * Method used to retrieve a string representing the
+   * total score. If score is obfuscated (private card points)
+   * it returns a partial score and a graphic indication of possibly missing points.
+   * 
+   * @return String representing total score.
+   */
+  public String getStringTotalScore() {
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">    return (privatePoints != -1) ? getTotalScore().toString() : String.format(&quot;%d (+?)&quot;, getVisibleScore());</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public boolean equals(Object obj) {
+<span class="pc bpc" id="L327" title="1 of 2 branches missed.">    if (!(obj instanceof Score)) {</span>
+<span class="nc" id="L328">      return false;</span>
+    }
+<span class="fc" id="L330">    Score sc = (Score) obj;</span>
+<span class="fc" id="L331">    return (</span>
+<span class="pc bpc" id="L332" title="1 of 2 branches missed.">      extraPoint == sc.getExtraPoint() </span>
+<span class="pc bpc" id="L333" title="1 of 2 branches missed.">      &amp;&amp; scoreBlockPoints == sc.getScoreBlockPoints() </span>
+<span class="pc bpc" id="L334" title="1 of 2 branches missed.">      &amp;&amp; privatePoints == sc.getPrivatePoints()</span>
+<span class="pc bpc" id="L335" title="1 of 2 branches missed.">      &amp;&amp; bookshelfPoints == sc.getBookshelfPoints());</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public int hashCode() {
+<span class="nc" id="L344">    return extraPoint.hashCode() * scoreBlockPoints.hashCode() * privatePoints.hashCode() * bookshelfPoints.hashCode();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

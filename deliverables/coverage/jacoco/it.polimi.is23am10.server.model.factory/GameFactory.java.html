@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.model.factory</a> &gt; <span class="el_source">GameFactory.java</span></div><h1>GameFactory.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.model.factory;
+
+import java.util.Arrays;
+
+import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
+import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.server.model.game.Game;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
+import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
+import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
+import it.polimi.is23am10.server.model.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.server.model.game.exceptions.PlayerNotFoundException;
+import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
+import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.server.model.items.card.SharedCard;
+import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.server.model.items.scoreblock.exceptions.NotValidScoreBlockValueException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
+
+/**
+ * The GameFactory class definition.
+ * This creates a new {@link Game} object.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+@SuppressWarnings({ &quot;checkstyle:nonemptyatclausedescriptioncheck&quot; })
+public final class GameFactory {
+  /**
+   * Private constructor.
+   *
+   */
+  private GameFactory() {
+
+  }
+
+  /**
+   * Create a new {@link Game} instance.
+   *
+   * @param startingPlayerName The starting player name, who has requested the
+   *                           game.
+   * @param maxPlayerNum       The desired maximum player number, specified by the
+   *                           first player.
+   * @throws NullMaxPlayerException If no value for maximum number of players in the game is provided.
+   * @throws InvalidMaxPlayerException If value for maximum number of players in the game is not valid.
+   * @throws NullPlayerNameException If player name is null.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws NullPlayerNamesException If, while adding multiple players, the list of player names is null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
+   * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
+   * @throws PlayerNotFoundException If the player with the name provided is not found.
+   * 
+   */
+  public static Game getNewGame(String startingPlayerName, Integer maxPlayerNum)
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+      NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
+      NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
+      DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      NullPlayerNamesException, InvalidNumOfPlayersException, NullNumOfPlayersException,
+      NullAssignedPatternException,FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {
+
+<span class="fc" id="L78">    Game game = new Game();</span>
+<span class="fc" id="L79">    game.setMaxPlayers(maxPlayerNum);</span>
+<span class="fc" id="L80">    SharedCard firstCard = new SharedCard(game.getAssignedSharedPatterns(), game.getMaxPlayer());</span>
+<span class="fc" id="L81">    game.addAssignedSharedPattern(firstCard.getPattern());</span>
+<span class="fc" id="L82">    SharedCard secondCard = new SharedCard(game.getAssignedSharedPatterns(), game.getMaxPlayer());</span>
+<span class="fc" id="L83">    game.addAssignedSharedPattern(secondCard.getPattern());</span>
+
+<span class="fc" id="L85">    game.addPlayer(startingPlayerName);</span>
+    // For testing purposes, setting active player to the &quot;creator&quot; player. Will be randomized once all players join.
+<span class="fc" id="L87">    game.setActivePlayer(game.getPlayerByName(startingPlayerName));</span>
+<span class="fc" id="L88">    game.setGameBoard();</span>
+<span class="fc" id="L89">    game.setSharedCards(Arrays.asList(firstCard, secondCard));</span>
+<span class="fc" id="L90">    game.setStatus(GameStatus.WAITING_FOR_PLAYERS);</span>
+
+<span class="fc" id="L92">    return game;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

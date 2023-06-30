@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ThreadLocalTypeAdapterFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.utils</a> &gt; <span class="el_source">ThreadLocalTypeAdapterFactory.java</span></div><h1>ThreadLocalTypeAdapterFactory.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.utils;
+
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import java.io.IOException;
+
+<span class="fc" id="L12">public class ThreadLocalTypeAdapterFactory implements TypeAdapterFactory {</span>
+  @Override
+  public &lt;T&gt; TypeAdapter&lt;T&gt; create(Gson gson, TypeToken&lt;T&gt; type) {
+<span class="pc bpc" id="L15" title="1 of 2 branches missed.">    if (ThreadLocal.class.isAssignableFrom(type.getRawType())) {</span>
+<span class="nc" id="L16">      return new TypeAdapter&lt;T&gt;() {</span>
+        @Override
+        public void write(JsonWriter out, T value) throws IOException {
+          // Write the thread-local value as a string
+<span class="nc" id="L20">          out.value(value.toString());</span>
+<span class="nc" id="L21">        }</span>
+
+        @Override
+        public T read(JsonReader in) throws IOException {
+          // Read the thread-local value as a string
+<span class="nc" id="L26">          String value = in.nextString();</span>
+
+          // Create a new thread-local with the same value
+<span class="nc" id="L29">          ThreadLocal&lt;String&gt; threadLocal = new ThreadLocal&lt;&gt;();</span>
+<span class="nc" id="L30">          threadLocal.set(value);</span>
+
+          @SuppressWarnings(&quot;unchecked&quot;)
+<span class="nc" id="L33">          T result = (T) threadLocal;</span>
+<span class="nc" id="L34">          return result;</span>
+        }
+      };
+    }
+
+    // For other types, use the default adapter
+<span class="fc" id="L40">    return null;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

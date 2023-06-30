@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Coordinates.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.utils</a> &gt; <span class="el_source">Coordinates.java</span></div><h1>Coordinates.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.utils;
+
+import java.io.Serializable;
+
+/**
+ * The Coordinate helper class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ * 
+ */
+public class Coordinates implements Serializable {
+
+  /**
+   * The row index of the coordinates.
+   * 
+   */
+  private Integer row;
+
+  /**
+   * The column index of the coordinates.
+   * 
+   */
+  private Integer col;
+
+  /**
+   * Constructor of Coordinates given the two indexes.
+   * 
+   * @param r row index.
+   * @param c column index.
+   */
+<span class="fc" id="L34">  public Coordinates(Integer r, Integer c) {</span>
+<span class="fc" id="L35">    this.row = r;</span>
+<span class="fc" id="L36">    this.col = c;</span>
+<span class="fc" id="L37">  }</span>
+
+  /**
+   * Empty constructor that sets the coordinates in the origin.
+   * 
+   */
+<span class="fc" id="L43">  public Coordinates() {</span>
+<span class="fc" id="L44">    this.row = 0;</span>
+<span class="fc" id="L45">    this.col = 0;</span>
+<span class="fc" id="L46">  }</span>
+
+  /**
+   * Row getter.
+   * 
+   * @return row index.
+   */
+  public Integer getRow() {
+<span class="fc" id="L54">    return row;</span>
+  }
+
+  /**
+   * Column getter.
+   * 
+   * @return column index.
+   */
+  public Integer getCol() {
+<span class="fc" id="L63">    return col;</span>
+  }
+
+  /**
+   * Row setter.
+   * 
+   * @param r row index.
+   */
+  public void setRow(Integer r) {
+<span class="fc" id="L72">    this.row = r;</span>
+<span class="fc" id="L73">  }</span>
+
+  /**
+   * Column setter
+   * 
+   * @param c column index.
+   */
+  public void setCol(Integer c) {
+<span class="fc" id="L81">    this.col = c;</span>
+<span class="fc" id="L82">  }</span>
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  public boolean equals(Object obj) {
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">    if (!(obj instanceof Coordinates)) {</span>
+<span class="nc" id="L91">      return false;</span>
+    }
+
+<span class="fc" id="L94">    Coordinates coordinates = (Coordinates) obj;</span>
+<span class="pc bpc" id="L95" title="2 of 4 branches missed.">    return (coordinates.getCol() == col &amp;&amp; coordinates.getRow() == row);</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  public int hashCode() {
+    /*
+     * A simple hashing function that gives me a unique number given two integers.
+     * https://stackoverflow.com/questions/22826326/good-hashcode-function-for-2d-
+     * coordinates
+     */
+
+<span class="fc" id="L110">    int tmp = (this.col + ((this.row + 1) / 2));</span>
+<span class="fc" id="L111">    return this.row + (tmp * tmp);</span>
+  }
+
+  @Override 
+  public String toString() {
+<span class="nc" id="L116">    return String.format(&quot;%s %s&quot;, row, col);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

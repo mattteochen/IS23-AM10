@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CommandsBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.client.userinterface.helpers</a> &gt; <span class="el_source">CommandsBuilder.java</span></div><h1>CommandsBuilder.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.client.userinterface.helpers;
+
+/**
+ * Game mode string constants.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+<span class="nc" id="L11">public final class CommandsBuilder {</span>
+
+  /**
+   * The command string for creating a game.
+   */
+  public final static String CREATE_GAME = &quot;c&quot;;
+
+  /**
+   * The command string for joining a game.
+   */
+  public final static String JOIN_GAME = &quot;j&quot;;
+
+  /**
+   * The command string for moving a tile.
+   */
+  public final static String MOVE_TILE = &quot;move&quot;;
+
+  /**
+   * The command string for sending a message
+   */
+  public final static String SEND_MESSAGE = &quot;chat&quot;;
+
+  /**
+   * Builds a create game command with the specified player name.
+   *
+   * @param pn The player name.
+   * @return The create game command string.
+   */
+  public final static String buildCreateGameCmd(String pn) {
+<span class="nc" id="L40">    return CREATE_GAME + &quot; &quot; + pn;</span>
+  }
+
+  /**
+   * Builds a join game command with the specified game ID.
+   *
+   * @param id The game ID.
+   * @return The join game command string.
+   */
+  public final static String buildJoinGameCmd(String id) {
+<span class="nc" id="L50">    return JOIN_GAME + &quot; &quot; + id;</span>
+  }
+
+  /**
+   * Builds a move tile command with the specified move.
+   *
+   * @param move The move to be performed.
+   * @return The move tile command string.
+   */
+  public final static String moveTileCmd(String move) {
+<span class="nc" id="L60">    return MOVE_TILE + &quot; &quot; + move;</span>
+  }
+
+  /**
+   * Builds a chat message and sends it.
+   * The syntax for the chat messages is the following:
+   * Broadcast: &quot;textContent&quot;
+   * To player: &quot;&gt; playerName textContent&quot;
+   *
+   * @param msg The msg to be sent.
+   * @return The send message command string.
+   */
+  public final static String sendChatMessageCmd(String msg) {
+<span class="nc bnc" id="L73" title="All 2 branches missed.">    if(msg.startsWith(&quot;&gt;&quot;)){</span>
+<span class="nc" id="L74">      String receiverName = msg.stripLeading().split(&quot; &quot;)[1];</span>
+<span class="nc" id="L75">      int indexToTrim = msg.stripLeading().indexOf(&quot; &quot;, msg.stripLeading().indexOf(&quot; &quot;) + 1);</span>
+<span class="nc" id="L76">      String msgTextTrimmed = msg.stripLeading().trim().substring(indexToTrim);</span>
+<span class="nc" id="L77">      return SEND_MESSAGE + &quot; &quot; + receiverName + &quot; \&quot;&quot; + msgTextTrimmed + &quot;\&quot; &quot;;  </span>
+    }
+<span class="nc" id="L79">    return SEND_MESSAGE + &quot; \&quot;&quot; + msg + &quot;\&quot; &quot;;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
