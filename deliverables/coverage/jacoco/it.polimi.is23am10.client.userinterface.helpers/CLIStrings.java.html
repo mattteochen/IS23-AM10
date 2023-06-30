@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CLIStrings.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.client.userinterface.helpers</a> &gt; <span class="el_source">CLIStrings.java</span></div><h1>CLIStrings.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.client.userinterface.helpers;
+
+import java.util.Map;
+
+/**
+ * An helper class containing all the strings to display
+ * to the user through UserInterface.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+<span class="nc" id="L14">public final class CLIStrings {</span>
+  public final static String welcomeString = 
+    &quot;&quot;&quot;
+      ███    ███ ██    ██     ███████ ██   ██ ███████ ██      ███████ ██ ███████ 
+      ████  ████  ██  ██      ██      ██   ██ ██      ██      ██      ██ ██      
+      ██ ████ ██   ████       ███████ ███████ █████   ██      █████   ██ █████   
+      ██  ██  ██    ██             ██ ██   ██ ██      ██      ██      ██ ██      
+      ██      ██    ██        ███████ ██   ██ ███████ ███████ ██      ██ ███████
+      
+      Politecnico di Milano - Software Engineering Project - Group IS23AM10
+      
+    &quot;&quot;&quot;;
+  public final static String joinOrCreateString = &quot;Great! Please choose how to proceed. You can create a new game or join an existing one.&quot;;
+  public final static String joinExisting = &quot; - To join an existing game run the command `j [idx]` specifying by the index of the game.&quot;;
+  public final static String createGame = &quot; - To create a new game run the command `c [2-4]` specifying the number of players.&quot;;
+  public final static String noGamesString = &quot;No available game to join at the moment. Please create one.&quot;;
+  public final static String insertPlayerNameString = &quot;Insert your player name here:&quot;;
+  public final static String listGamesString = &quot;Here a list of the available games. Join one by typing the relative index.&quot;;
+  public final static String disconnectedPlayers = &quot; (%d disconnected)&quot;;
+  public final static String availableGameString = &quot;[%d] - %d/%d joined%s - GameId: %s&quot;;
+  public final static String currentStateString = &quot;Current state of the game:&quot;;
+  public final static String gameOverString = &quot;Game is over. Here the leaderboard:&quot;;
+  public final static String playerScoreString = &quot;%s - Score: %d&quot;;
+  public final static String winnerString = &quot;WINNER: %s&quot;;
+  public final static String lastRoundString = &quot;Attention! Someone already completed their Bookshelf: this is last round&quot;;
+  public final static String nowPlaying = &quot;Now playing: %s&quot;;
+  public final static String moveTilesInviteString =  &quot;Now make your move specifying the `XY` of the tile you want to pick from board (max 3) followed by the column index of the bookshelf you want to put the tile in.&quot;;
+  public final static String moveTilesExampleString =  &quot;E.g. `move 12 22 25 A` moves the tiles with coordinates (1,2),(2,5) and (5,7) to the bookshelf first three available spots in your bookshelf column 'A' in that order.&quot;;
+  public final static String messageStringReceiver =  &quot;(%s -&gt; You): %s&quot;;
+  public final static String messageStringSender =  &quot;(You -&gt; %s): %s&quot;;
+  public final static String broadcastMessageString = &quot;(%s -&gt; All): %s&quot;;
+  public final static String errorMessage = &quot;(Server -&gt; You): %s&quot;;
+  public final static String broadcastErrorString = &quot;(Server -&gt; All): %s&quot;;
+  public final static String bottomPaddingBoard = &quot;\t⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛\n\n&quot;;
+  public final static String topPaddingBoard = &quot;\t⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛&quot; + ANSICodes.RED_BOLD + &quot;\sY\t&quot; + ANSICodes.RESET;
+  public final static String paddingBookshelf = &quot;\t⬛⬛⬛⬛⬛⬛⬛\t&quot;;
+  public final static String indexBoard = ANSICodes.RED_BOLD + &quot;\t\sX&quot; + ANSICodes.RESET + &quot; 0 1 2 3 4 5 6 7 8\t&quot;;
+  public final static String verticalBoardIndex = &quot;⬛\s%d\t&quot;;
+  public final static String indexBookshelf = &quot;\t\s\sA B C D E\s\t&quot;;
+  public final static String boardStatus = &quot;\n\tGame board status:\t\n&quot;;
+  public final static String playerIdx = &quot;\tPlayer #%d\t&quot;;
+  public final static String blackLargeSquare = &quot;&quot;;
+  public final static String tabBlackSquare = &quot;\t⬛&quot;;
+  public final static String blackSquareTab = &quot;⬛\t&quot;;
+  public final static String tab = &quot;\t&quot;;
+  public final static String newLine = &quot;\n&quot;;
+  public final static String doubleNewLine = &quot;\n\n&quot;;
+<span class="fc" id="L61">  public final static String tableHeader1 = &quot;\t%-&quot; + OutputWrapper.XXS_PADDING + &quot;s | %-&quot; + OutputWrapper.XS_PADDING + &quot;s | %-&quot;;</span>
+<span class="fc" id="L62">  public final static String tableHeader2 = &quot;s | %-&quot; + OutputWrapper.M_PADDING + &quot;s | %-&quot; + OutputWrapper.XL_PADDING</span>
+      + &quot;s | %-&quot; + OutputWrapper.XXL_PADDING + &quot;s | %-&quot; + 14 + &quot;s | %-&quot; + OutputWrapper.M_PADDING + &quot;s | %-&quot;
+      + OutputWrapper.S_PADDING + &quot;s &quot;;
+  public final static String N = &quot;No.&quot;;
+  public final static String status = &quot;Status&quot;;
+  public final static String player = &quot;Player&quot;;
+  public final static String role = &quot;Role&quot;;
+  public final static String scoreBlockPoints = &quot;Score Block Points&quot;;
+  public final static String bookshelfPoints = &quot;Bookshelf Points&quot;;
+  public final static String extraPoints = &quot;Extra Points&quot;;
+  public final static String totalScore = &quot;Total Score&quot;;
+  public final static String privatePoints = &quot;Private Points&quot;;
+<span class="fc" id="L74">  public final static String tableLines1 = &quot;\t%-&quot; + OutputWrapper.XXS_PADDING + &quot;s | %-&quot; + OutputWrapper.XS_PADDING + &quot;s | %-&quot;;</span>
+<span class="fc" id="L75">  public final static String tableLines2 = &quot;s | %-&quot; + OutputWrapper.M_PADDING + &quot;s | %-&quot; + OutputWrapper.XL_PADDING</span>
+      + &quot;s | %-&quot; + OutputWrapper.XXL_PADDING + &quot;s | %-&quot; + OutputWrapper.L_PADDING + &quot;s | %-&quot; + OutputWrapper.M_PADDING
+      + &quot;s | %-&quot; + OutputWrapper.S_PADDING + &quot;s&quot;;
+  public final static String firstPlayer = &quot;First Player&quot;;
+  public final static String yourTurn = &quot;Your turn&quot;;
+<span class="fc" id="L80">  public final static String tableBody1 = &quot;\t#%-&quot; + OutputWrapper.XXS_PADDING + &quot;d| %-&quot; + OutputWrapper.XS_PADDING + &quot;s | %-&quot;;</span>
+<span class="fc" id="L81">  public final static String tableBody2 = &quot;s | %-&quot; + OutputWrapper.M_PADDING + &quot;s | %-&quot; + OutputWrapper.XL_PADDING</span>
+      + &quot;d | %-&quot; + OutputWrapper.XXL_PADDING + &quot;d | %-&quot; + OutputWrapper.L_PADDING + &quot;s | %-&quot; + OutputWrapper.M_PADDING
+      + &quot;d | %-&quot; + OutputWrapper.S_PADDING + &quot;s&quot;;
+  public final static String line = &quot;-&quot;;
+  public final static String bookshelfError = &quot;Wrong bookshelf coordinates!&quot;;
+  public final static String inputError = &quot;Can't read your commands. Please re-join.&quot;;
+<span class="fc" id="L87">  public final static String sharedCardsHeader = &quot;\t%-&quot; + OutputWrapper.XL_PADDING + &quot;s | %-&quot;;</span>
+  public final static String sharedCardHeaderDescription = &quot;s &quot;;
+<span class="fc" id="L89">  public final static String sharedCardsBody = &quot;\t#%-&quot; + OutputWrapper.XL_PADDING + &quot;d| %-&quot;;</span>
+  public final static String sharedCardsBodyDescription = &quot;s &quot;;
+  public final static String idx = &quot;Shared Card Idx.&quot;;
+  public final static String description = &quot;Card Description&quot;;
+  public final static String privateCardIdx = &quot;\tPrivate Card #%d\t&quot;;
+<span class="fc" id="L94">  public final static Map&lt;Integer, String&gt; sharedPatternsDesc = Map.ofEntries(</span>
+<span class="fc" id="L95">    Map.entry(1, &quot;Two groups of four tiles of the same type forming a 2x2 square shape. The tile type of the two squares has to be the same.&quot;),</span>
+<span class="fc" id="L96">    Map.entry(2,  &quot;At least two full columns (filled with six tiles), having tiles of all different types.&quot;),</span>
+<span class="fc" id="L97">    Map.entry(3, &quot;Four separated groups made of four adjacent tiles of the same type. The tile's type of different groups can be different.&quot;),</span>
+<span class="fc" id="L98">    Map.entry(4, &quot;Six separated groups made of two adjacent tiles of the same type. The tile type of different groups can be different.&quot;),</span>
+<span class="fc" id="L99">    Map.entry(5, &quot;At least three full columns (filled with six tiles), having maximum three different tile types per column.&quot;),</span>
+<span class="fc" id="L100">    Map.entry(6,  &quot;At least two full rows (filled with five tiles), having tiles of all different types.&quot;),</span>
+<span class="fc" id="L101">    Map.entry(7, &quot;At least four full rows (filled with five tiles), having maximum three different tile types per row.&quot;),</span>
+<span class="fc" id="L102">    Map.entry(8, &quot;The four tiles at the corners of the bookshelf are of the same type.&quot;),</span>
+<span class="fc" id="L103">    Map.entry(9, &quot;At least eight tiles of the same type. There are no restrictions concerning their positions.&quot;),</span>
+<span class="fc" id="L104">    Map.entry(10,  &quot;Five tiles of the same type, forming an X shape.&quot;),</span>
+<span class="fc" id="L105">    Map.entry(11, &quot;Five tiles of the same type forming a diagonal.&quot;),</span>
+<span class="fc" id="L106">    Map.entry(12, &quot;Five columns with ascending or descending height. Starting from the first or the last column, the next column has to have one tile more. The tile types are not considered.&quot;)</span>
+  );
+  public final static String waitingForPlayers = &quot;Waiting for game to be full before starting, %d/%d joined. GameID: %s&quot;; 
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

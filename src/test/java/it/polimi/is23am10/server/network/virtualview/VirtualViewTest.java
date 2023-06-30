@@ -11,7 +11,6 @@ import it.polimi.is23am10.server.model.factory.GameFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.server.model.game.Game;
-import it.polimi.is23am10.server.model.game.Game.GameStatus;
 import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
 import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
 import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
@@ -27,8 +26,6 @@ import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
-import it.polimi.is23am10.server.network.virtualview.VirtualPlayer;
-import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
 /**
  * Tests for virtual view class.

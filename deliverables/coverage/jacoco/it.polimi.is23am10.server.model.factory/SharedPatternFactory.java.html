@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SharedPatternFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.model.factory</a> &gt; <span class="el_source">SharedPatternFactory.java</span></div><h1>SharedPatternFactory.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.model.factory;
+
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.server.model.items.tile.Tile;
+import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
+import it.polimi.is23am10.server.model.pattern.SharedPattern;
+
+/**
+ * Shared pattern factory object.
+ * 
+ * &lt;p&gt;
+ * NOTE: if not specified, each iteration of the player's bookshelf inside the
+ * functions is gonna be first over rows,then columns
+ * &lt;/p&gt;
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+
+public final class SharedPatternFactory {
+
+  /**
+   * Private constructor.
+   * 
+   */
+  private SharedPatternFactory() {
+
+  }
+
+  /**
+   * Number of occurrences need to comply checkTwoAdjacent rule.
+   */
+  private static final int TWO_ADJACENT_OCC = 6;
+
+  /**
+   * Number of occurrences need to comply checkFourAdjacent rule.
+   */
+  private static final int FOUR_ADJACENT_OCC = 4;
+
+  /**
+   * Number of occurrences need to comply checkSquares rule.
+   */
+  private static final int SQUARES_OCC = 2;
+
+  /**
+   * Number of occurrences need to comply checkMaxThreeTypesCol rule.
+   */
+  private static final int MAX_THREE_TYPES_COL_OCC = 3;
+
+  /**
+   * Number of occurrences need to comply checkEightDiff rule.
+   */
+  private static final int EIGHT_DIFF_OCC = 8;
+
+  /**
+   * Number of occurrences need to comply checkMaxThreeTypesRow rule.
+   */
+  private static final int MAX_THREE_TYPES_ROW_OCC = 4;
+
+  /**
+   * Number of occurrences need to comply checkTwoColsAllDiff rule.
+   */
+  private static final int COL_ALL_DIFF_OCC = 2;
+
+  /**
+   * Number of occurrences need to comply checkTwoRowsAllDiff rule.
+   */
+  private static final int ROW_ALL_DIFF_OCC = 2;
+
+  /**
+   * The random generator instance.
+   * 
+   */
+<span class="fc" id="L84">  private static final Random random = new Random();</span>
+
+  /**
+   * #1 in rulebook, #4 in images
+   * Rule that checks if there are at least six couples of the same tile type in
+   * adjacent positions (row or column).
+   *
+   */
+<span class="fc" id="L92">  public static final Predicate&lt;Bookshelf&gt; checkTwoAdjacent = bs -&gt; {</span>
+<span class="fc" id="L93">    int count = 0;</span>
+<span class="fc" id="L94">    Tile[][] grid = bs.getBookshelfGrid();</span>
+<span class="fc" id="L95">    Set&lt;String&gt; coordsAdjAlreadyCounted = new HashSet&lt;&gt;();</span>
+
+<span class="fc bfc" id="L97" title="All 2 branches covered.">    for (int i = 0; i &lt; grid.length; i++) {</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">      for (int j = 0; j &lt; grid[i].length; j++) {</span>
+<span class="fc bfc" id="L99" title="All 6 branches covered.">        if (i &lt; grid.length - 1 &amp;&amp; grid[i][j].equals(grid[i + 1][j]) &amp;&amp; !grid[i][j].isEmpty()</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            &amp;&amp; (!coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j))</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">                &amp;&amp; !coordsAdjAlreadyCounted.contains(String.valueOf(i + 1) + String.valueOf(j)))) {</span>
+<span class="fc" id="L102">          coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j));</span>
+<span class="fc" id="L103">          coordsAdjAlreadyCounted.add(String.valueOf(i + 1) + String.valueOf(j));</span>
+<span class="fc" id="L104">          count++;</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">          if (count &gt;= TWO_ADJACENT_OCC) {</span>
+<span class="fc" id="L106">            return true;</span>
+          }
+        }
+
+<span class="fc bfc" id="L110" title="All 6 branches covered.">        if (j &lt; grid[i].length - 1 &amp;&amp; grid[i][j].equals(grid[i][j + 1]) &amp;&amp; !grid[i][j + 1].isEmpty()</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">            &amp;&amp; (!coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j))</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">                &amp;&amp; !coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j + 1)))) {</span>
+<span class="fc" id="L113">          coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j));</span>
+<span class="fc" id="L114">          coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j + 1));</span>
+<span class="fc" id="L115">          count++;</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">          if (count &gt;= TWO_ADJACENT_OCC) {</span>
+<span class="nc" id="L117">            return true;</span>
+          }
+        }
+      }
+    }
+<span class="fc" id="L122">    return false;</span>
+  };
+
+  /*
+   * #2 in rulebook, #3 in images
+   * Rule that checks if the elements on all the corners match.
+   *
+   */
+<span class="fc" id="L130">  public static final Predicate&lt;Bookshelf&gt; checkCornersMatch = bs -&gt; {</span>
+<span class="fc" id="L131">    Tile[][] grid = bs.getBookshelfGrid();</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">    if (grid[0][0].isEmpty()) {</span>
+<span class="fc" id="L133">      return false;</span>
+    }
+<span class="fc bfc" id="L135" title="All 2 branches covered.">    return (grid[0][0].equals(grid[0][grid[0].length - 1]) &amp;&amp;</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        grid[0][0].equals(grid[grid.length - 1][0]) &amp;&amp;</span>
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">        grid[0][0].equals(grid[grid.length - 1][grid[0].length - 1]));</span>
+  };
+
+  /**
+   * #3 in rulebook, #8 in images
+   * Rule that checks if there are at least 4 separate groups of 4 elements of
+   * the same type in adjacent positions(row or column).
+   *
+   */
+<span class="fc" id="L146">  public static final Predicate&lt;Bookshelf&gt; checkFourAdjacent = bs -&gt; {</span>
+<span class="fc" id="L147">    int count = 0;</span>
+<span class="fc" id="L148">    Tile[][] grid = bs.getBookshelfGrid();</span>
+<span class="fc" id="L149">    Set&lt;String&gt; coordsAdjAlreadyCounted = new HashSet&lt;&gt;();</span>
+
+<span class="fc bfc" id="L151" title="All 2 branches covered.">    for (int i = 0; i &lt; grid.length; i++) {</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">      for (int j = 0; j &lt; grid[i].length; j++) {</span>
+<span class="fc bfc" id="L153" title="All 6 branches covered.">        if (i &lt; grid.length - 3 &amp;&amp; grid[i][j].equals(grid[i + 1][j]) &amp;&amp; grid[i][j].equals(grid[i + 2][j])</span>
+<span class="fc bfc" id="L154" title="All 4 branches covered.">            &amp;&amp; grid[i][j].equals(grid[i + 3][j]) &amp;&amp; !grid[i][j].isEmpty()</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">            &amp;&amp; (!coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j))</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">                &amp;&amp; !coordsAdjAlreadyCounted.contains(String.valueOf(i + 1) + String.valueOf(j))</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">                &amp;&amp; !coordsAdjAlreadyCounted.contains(String.valueOf(i + 2) + String.valueOf(j))</span>
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">                &amp;&amp; !coordsAdjAlreadyCounted.contains(String.valueOf(i + 3) + String.valueOf(j)))) {</span>
+<span class="fc" id="L159">          coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j));</span>
+<span class="fc" id="L160">          coordsAdjAlreadyCounted.add(String.valueOf(i + 1) + String.valueOf(j));</span>
+<span class="fc" id="L161">          coordsAdjAlreadyCounted.add(String.valueOf(i + 2) + String.valueOf(j));</span>
+<span class="fc" id="L162">          coordsAdjAlreadyCounted.add(String.valueOf(i + 3) + String.valueOf(j));</span>
+<span class="fc" id="L163">          count++;</span>
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">          if (count &gt;= FOUR_ADJACENT_OCC) {</span>
+<span class="nc" id="L165">            return true;</span>
+          }
+        }
+
+<span class="fc bfc" id="L169" title="All 6 branches covered.">        if (j &lt; grid[i].length - 3 &amp;&amp; grid[i][j].equals(grid[i][j + 1]) &amp;&amp; grid[i][j].equals(grid[i][j + 2])</span>
+<span class="fc bfc" id="L170" title="All 4 branches covered.">            &amp;&amp; grid[i][j].equals(grid[i][j + 3]) &amp;&amp; !grid[i][j].isEmpty()</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">            &amp;&amp; (!coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j))</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">                &amp;&amp; !coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j + 1))</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">                &amp;&amp; !coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j + 2))</span>
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">                &amp;&amp; !coordsAdjAlreadyCounted.contains(String.valueOf(i) + String.valueOf(j + 3)))) {</span>
+<span class="fc" id="L175">          coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j));</span>
+<span class="fc" id="L176">          coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j + 1));</span>
+<span class="fc" id="L177">          coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j + 2));</span>
+<span class="fc" id="L178">          coordsAdjAlreadyCounted.add(String.valueOf(i) + String.valueOf(j + 3));</span>
+<span class="fc" id="L179">          count++;</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">          if (count &gt;= FOUR_ADJACENT_OCC) {</span>
+<span class="fc" id="L181">            return true;</span>
+          }
+        }
+      }
+    }
+<span class="fc" id="L186">    return false;</span>
+  };
+
+  /**
+   * Support function that checks if there's a 2x2 square of tiles with the same
+   * type.
+   * 
+   * @param startRow Starting row from where I want to check if it's a valid
+   *                 square.
+   * @param startCol Starting col from where I want to check if it's a valid
+   *                 square.
+   * @param grid     bookshelf grid.
+   * @return True if the square is present.
+   */
+  private static final boolean isValidSquare(int startRow, int startCol, Tile[][] grid) {
+<span class="pc bpc" id="L201" title="4 of 8 branches missed.">    if (startRow &gt;= grid.length || startCol &gt;= grid[0].length || startRow &lt; 0 || startCol &lt; 0) {</span>
+<span class="nc" id="L202">      return false;</span>
+    }
+<span class="fc" id="L204">    TileType currType = grid[startRow][startCol].getType();</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">    return (grid[startRow][startCol].equals(grid[startRow + 1][startCol])</span>
+<span class="fc bfc" id="L206" title="All 2 branches covered.">        &amp;&amp; grid[startRow][startCol].equals(grid[startRow][startCol + 1])</span>
+<span class="pc bpc" id="L207" title="1 of 4 branches missed.">        &amp;&amp; grid[startRow][startCol].equals(grid[startRow + 1][startCol + 1]) &amp;&amp; currType != TileType.EMPTY);</span>
+  }
+
+  /*
+   * #4 in rulebook, #1 in images
+   * Rule that checks if there are at least two 2x2 squares of tiles of the same
+   * type (the type has to be the same for both the squares).
+   * 
+   */
+<span class="fc" id="L216">  public static final Predicate&lt;Bookshelf&gt; checkSquares = bs -&gt; {</span>
+<span class="fc" id="L217">    Tile[][] grid = bs.getBookshelfGrid();</span>
+<span class="fc" id="L218">    EnumMap&lt;TileType, Integer&gt; checkCount = new EnumMap&lt;&gt;(TileType.class);</span>
+
+<span class="fc bfc" id="L220" title="All 2 branches covered.">    for (int i = 0; i &lt; grid.length - 1; i++) {</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">      for (int j = 0; j &lt; grid[i].length - 1; j++) {</span>
+<span class="fc" id="L222">        TileType currType = grid[i][j].getType();</span>
+<span class="fc bfc" id="L223" title="All 2 branches covered.">        if (isValidSquare(i, j, grid)) {</span>
+<span class="fc bfc" id="L224" title="All 2 branches covered.">          if (!checkCount.containsKey(currType)) {</span>
+<span class="fc" id="L225">            checkCount.put(currType, 1);</span>
+          } else {
+<span class="fc" id="L227">            int oldCount = checkCount.get(currType);</span>
+<span class="fc" id="L228">            checkCount.put(currType, oldCount + 1);</span>
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">            if (checkCount.get(currType) &gt;= SQUARES_OCC) {</span>
+<span class="fc" id="L230">              return true;</span>
+            }
+          }
+        }
+      }
+    }
+<span class="fc" id="L236">    return false;</span>
+  };
+
+  /**
+   * #5 both in rulebook and images
+   * Rule that checks if there are at least three columns containing maximum 3
+   * different types of tiles.
+   *
+   */
+<span class="fc" id="L245">  public static final Predicate&lt;Bookshelf&gt; checkMaxThreeTypesInColumn = bs -&gt; {</span>
+<span class="fc" id="L246">    int countedColumns = 0;</span>
+<span class="fc" id="L247">    Tile[][] grid = bs.getBookshelfGrid();</span>
+
+    // here we want to check every column so we are iterating first over columns
+<span class="fc bfc" id="L250" title="All 2 branches covered.">    for (int i = 0; i &lt; grid[0].length; i++) {</span>
+<span class="fc" id="L251">      Set&lt;TileType&gt; seenTypes = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L252">      boolean isFull = true;</span>
+<span class="fc bfc" id="L253" title="All 2 branches covered.">      for (int j = 0; j &lt; grid.length; j++) {</span>
+<span class="fc bfc" id="L254" title="All 2 branches covered.">        if (grid[j][i].isEmpty()){</span>
+<span class="fc" id="L255">          isFull = false;</span>
+        }
+<span class="fc bfc" id="L257" title="All 4 branches covered.">        if (!grid[j][i].isEmpty() &amp;&amp; !seenTypes.contains(grid[j][i].getType())) {</span>
+<span class="fc" id="L258">          seenTypes.add(grid[j][i].getType());</span>
+        }
+      }
+<span class="fc bfc" id="L261" title="All 4 branches covered.">      if (seenTypes.size() &lt;= 3 &amp;&amp; isFull) {</span>
+<span class="fc" id="L262">        countedColumns++;</span>
+<span class="fc bfc" id="L263" title="All 2 branches covered.">        if (countedColumns &gt;= MAX_THREE_TYPES_COL_OCC) {</span>
+<span class="fc" id="L264">          return true;</span>
+        }
+      }
+    }
+<span class="fc" id="L268">    return false;</span>
+  };
+
+  /*
+   * #6 in rulebook, #9 in images 
+   * Rule that checks if there are at least eight different tiles of the same
+   * type.
+   *
+   */
+<span class="fc" id="L277">  public static final Predicate&lt;Bookshelf&gt; checkEightOfSameType = bs -&gt; {</span>
+<span class="fc" id="L278">    Tile[][] grid = bs.getBookshelfGrid();</span>
+<span class="fc" id="L279">    EnumMap&lt;TileType, Integer&gt; checkCount = new EnumMap&lt;&gt;(TileType.class);</span>
+<span class="fc bfc" id="L280" title="All 2 branches covered.">    for (int i = 0; i &lt; grid.length; i++) {</span>
+<span class="fc bfc" id="L281" title="All 2 branches covered.">      for (int j = 0; j &lt; grid[i].length; j++) {</span>
+<span class="fc bfc" id="L282" title="All 2 branches covered.">        if (!grid[i][j].isEmpty()) {</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">          if (!checkCount.containsKey(grid[i][j].getType())) {</span>
+<span class="fc" id="L284">            checkCount.put(grid[i][j].getType(), 1);</span>
+          } else {
+<span class="fc" id="L286">            int oldCount = checkCount.get(grid[i][j].getType());</span>
+<span class="fc" id="L287">            checkCount.put(grid[i][j].getType(), oldCount + 1);</span>
+          }
+<span class="fc bfc" id="L289" title="All 2 branches covered.">          if (checkCount.get(grid[i][j].getType()) &gt;= EIGHT_DIFF_OCC) {</span>
+<span class="fc" id="L290">            return true;</span>
+          }
+        }
+      }
+    }
+<span class="fc" id="L295">    return false;</span>
+  };
+
+  /**
+   * Supporting method checking ascendent diagonal in Bookshelf.
+   * 
+   * @param startingRowOffset tells us if the diagonal is shifted vertically.
+   * @param grid              bookshelf grid
+   * @return True if diagonal is present.
+   */
+  private static final boolean checkAscDiagonal(int startingRowOffset, Tile[][] grid) {
+<span class="pc bpc" id="L306" title="2 of 4 branches missed.">    if (startingRowOffset &gt;= grid.length || startingRowOffset &lt; 0) {</span>
+<span class="nc" id="L307">      return false;</span>
+    }
+<span class="pc bpc" id="L309" title="1 of 2 branches missed.">    for (int i = 0; i &lt; grid[0].length - 1; i++) {</span>
+<span class="fc bfc" id="L310" title="All 2 branches covered.">      if (!grid[i + startingRowOffset][i].equals(grid[i + 1 + startingRowOffset][i + 1])</span>
+<span class="fc bfc" id="L311" title="All 2 branches covered.">          || grid[i + startingRowOffset][i].isEmpty()) {</span>
+<span class="fc" id="L312">        break;</span>
+      }
+<span class="fc bfc" id="L314" title="All 2 branches covered.">      if (i == grid[0].length - 2) {</span>
+<span class="fc" id="L315">        return true;</span>
+      }
+    }
+<span class="fc" id="L318">    return false;</span>
+  }
+
+  /**
+   * Supporting method checking descendent diagonal in Bookshelf.
+   * 
+   * @param startingRowOffset tells us if the diagonal is shifted vertically.
+   * @param grid              bookshelf grid.
+   * @return True if diagonal is present.
+   */
+  private static final boolean checkDescDiagonal(int startingRowOffset, Tile[][] grid) {
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">    if (startingRowOffset &gt;= grid.length) {</span>
+<span class="nc" id="L330">      return false;</span>
+    }
+<span class="pc bpc" id="L332" title="1 of 2 branches missed.">    for (int i = 0; i &lt; grid[0].length - 1; i++) {</span>
+<span class="fc" id="L333">      if (!grid[grid.length - 1 - i - startingRowOffset][i]</span>
+<span class="fc bfc" id="L334" title="All 2 branches covered.">          .equals(grid[grid.length - 2 - i - startingRowOffset][i + 1])</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">          || grid[grid.length - 1 - i - startingRowOffset][i].isEmpty()) {</span>
+<span class="fc" id="L336">        break;</span>
+      }
+<span class="fc bfc" id="L338" title="All 2 branches covered.">      if (i == grid[0].length - 2) {</span>
+<span class="fc" id="L339">        return true;</span>
+      }
+    }
+<span class="fc" id="L342">    return false;</span>
+  }
+
+  /**
+   * #7 in rulebook, #11 in images
+   * Rule that checks if the diagonals are filled with tiles of the same type.
+   *
+   */
+<span class="fc" id="L350">  public static final Predicate&lt;Bookshelf&gt; checkDiagonalsSameType = bs -&gt; {</span>
+<span class="fc" id="L351">    Tile[][] grid = bs.getBookshelfGrid();</span>
+
+    // I'm cycling with i=0,1 meaning that I'm checking both the diagonals if the
+    // starting row is the first one(i=0) or the second one (i=1)
+<span class="fc bfc" id="L355" title="All 2 branches covered.">    for (int i = 0; i &lt;= 1; i++) {</span>
+<span class="fc bfc" id="L356" title="All 4 branches covered.">      if (checkAscDiagonal(i, grid) || checkDescDiagonal(i, grid)) {</span>
+<span class="fc" id="L357">        return true;</span>
+      }
+    }
+
+<span class="fc" id="L361">    return false;</span>
+  };
+
+  /**
+   * #8 in rulebook, #7 in images
+   * Rule that checks if there are maximum three different types in at least 4
+   * rows.
+   *
+   */
+<span class="fc" id="L370">  public static final Predicate&lt;Bookshelf&gt; checkMaxThreeTypesInRow = bs -&gt; {</span>
+<span class="fc" id="L371">    int countRows = 0;</span>
+<span class="fc" id="L372">    Tile[][] grid = bs.getBookshelfGrid();</span>
+<span class="fc bfc" id="L373" title="All 2 branches covered.">    for (int i = 0; i &lt; grid.length; i++) {</span>
+<span class="fc" id="L374">      Set&lt;TileType&gt; seenTypes = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L375">      boolean isFull = true;</span>
+<span class="fc bfc" id="L376" title="All 2 branches covered.">      for (int j = 0; j &lt; grid[0].length; j++) {</span>
+<span class="fc bfc" id="L377" title="All 2 branches covered.">        if (grid[i][j].isEmpty()) {</span>
+<span class="fc" id="L378">          isFull = false;</span>
+        }
+<span class="fc bfc" id="L380" title="All 4 branches covered.">        if (!grid[i][j].isEmpty() &amp;&amp; !seenTypes.contains(grid[i][j].getType())) {</span>
+<span class="fc" id="L381">          seenTypes.add(grid[i][j].getType());</span>
+        }
+      }
+
+<span class="fc bfc" id="L385" title="All 4 branches covered.">      if (seenTypes.size() &lt;= 3 &amp;&amp; isFull) {</span>
+<span class="fc" id="L386">        countRows++;</span>
+<span class="fc bfc" id="L387" title="All 2 branches covered.">        if (countRows &gt;= MAX_THREE_TYPES_ROW_OCC) {</span>
+<span class="fc" id="L388">          return true;</span>
+        }
+      }
+    }
+<span class="fc" id="L392">    return false;</span>
+  };
+
+  /**
+   * #9 in rulebook, #2 in images
+   * Rule that checks if there are at least two columns with all the elements of
+   * different type.
+   *
+   */
+<span class="fc" id="L401">  public static final Predicate&lt;Bookshelf&gt; checkTwoColumnAllDiff = bs -&gt; {</span>
+<span class="fc" id="L402">    int countColumns = 0;</span>
+<span class="fc" id="L403">    Tile[][] grid = bs.getBookshelfGrid();</span>
+    /*
+     * here I am iterating over columns first since I want to check if in a column
+     * there are all different types
+     * 
+     */
+<span class="fc bfc" id="L409" title="All 2 branches covered.">    for (int i = 0; i &lt; grid[0].length; i++) {</span>
+<span class="fc" id="L410">      Set&lt;TileType&gt; seenTypes = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L411" title="All 2 branches covered.">      for (int j = 0; j &lt; grid.length; j++) {</span>
+<span class="fc bfc" id="L412" title="All 4 branches covered.">        if (grid[j][i].isEmpty() || seenTypes.contains(grid[j][i].getType())) {</span>
+<span class="fc" id="L413">          break;</span>
+        }
+<span class="fc" id="L415">        seenTypes.add(grid[j][i].getType());</span>
+<span class="fc bfc" id="L416" title="All 2 branches covered.">        if (j == grid.length - 1) {</span>
+<span class="fc" id="L417">          countColumns++;</span>
+        }
+      }
+<span class="fc bfc" id="L420" title="All 2 branches covered.">      if (countColumns &gt;= COL_ALL_DIFF_OCC) {</span>
+<span class="fc" id="L421">        return true;</span>
+      }
+    }
+<span class="fc" id="L424">    return false;</span>
+
+  };
+
+  /**
+   * #10 in rulebook, #6 in images
+   * Rule that checks if there are at least two rows full of different types of
+   * tiles.
+   *
+   */
+<span class="fc" id="L434">  public static final Predicate&lt;Bookshelf&gt; checkTwoRowsAllDiff = bs -&gt; {</span>
+<span class="fc" id="L435">    int countRows = 0;</span>
+<span class="fc" id="L436">    Tile[][] grid = bs.getBookshelfGrid();</span>
+<span class="fc bfc" id="L437" title="All 2 branches covered.">    for (int i = 0; i &lt; grid.length; i++) {</span>
+<span class="fc" id="L438">      Set&lt;TileType&gt; seenTypes = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L439" title="All 2 branches covered.">      for (int j = 0; j &lt; grid[0].length; j++) {</span>
+<span class="fc bfc" id="L440" title="All 4 branches covered.">        if (grid[i][j].isEmpty() || seenTypes.contains(grid[i][j].getType())) {</span>
+<span class="fc" id="L441">          break;</span>
+        }
+<span class="fc" id="L443">        seenTypes.add(grid[i][j].getType());</span>
+<span class="fc bfc" id="L444" title="All 2 branches covered.">        if (j == grid[0].length - 1) {</span>
+<span class="fc" id="L445">          countRows++;</span>
+        }
+      }
+<span class="fc bfc" id="L448" title="All 2 branches covered.">      if (countRows &gt;= ROW_ALL_DIFF_OCC) {</span>
+<span class="fc" id="L449">        return true;</span>
+      }
+    }
+<span class="fc" id="L452">    return false;</span>
+
+  };
+
+  /**
+   * Support function that checks, starting from a tile in the grid, if it's part
+   * of an X shape of tiles with the same type.
+   * 
+   * @param row  Starting row index from where I start to check.
+   * @param col  Starting col index from where I start to check.
+   * @param grid Bookshelf grid.
+   * @return True if X shape is present.
+   * 
+   */
+  private static final boolean checkXShape(int row, int col, Tile[][] grid) {
+<span class="pc bpc" id="L467" title="4 of 8 branches missed.">    if (row &gt;= grid.length || col &gt;= grid[0].length || row &lt; 0 || col &lt; 0) {</span>
+<span class="nc" id="L468">      return false;</span>
+    }
+<span class="fc bfc" id="L470" title="All 2 branches covered.">    return (grid[row][col].equals(grid[row + 2][col]) &amp;&amp;</span>
+<span class="fc bfc" id="L471" title="All 2 branches covered.">        grid[row][col].equals(grid[row + 1][col + 1]) &amp;&amp;</span>
+<span class="pc bpc" id="L472" title="1 of 2 branches missed.">        grid[row][col].equals(grid[row + 2][col + 2]) &amp;&amp;</span>
+<span class="pc bpc" id="L473" title="1 of 4 branches missed.">        grid[row][col].equals(grid[row][col + 2]) &amp;&amp; !grid[row][col].isEmpty());</span>
+  }
+
+  /**
+   * #11 in rulebook, #10 in images
+   * Rule that checks if there are 5 tiles of the same type on a 'X' shape.
+   *
+   */
+<span class="fc" id="L481">  public static final Predicate&lt;Bookshelf&gt; checkTilesXShape = bs -&gt; {</span>
+<span class="fc" id="L482">    Tile[][] grid = bs.getBookshelfGrid();</span>
+
+<span class="fc bfc" id="L484" title="All 2 branches covered.">    for (int i = 0; i &lt; grid.length - 2; i++) {</span>
+<span class="fc bfc" id="L485" title="All 2 branches covered.">      for (int j = 0; j &lt; grid[0].length - 2; j++) {</span>
+<span class="fc bfc" id="L486" title="All 2 branches covered.">        if (checkXShape(i, j, grid)) {</span>
+<span class="fc" id="L487">          return true;</span>
+        }
+      }
+    }
+<span class="fc" id="L491">    return false;</span>
+  };
+
+  /**
+   * #12 both in rulebook and images
+   * Rule that checks if the columns in the bookshelf are ordered (asc o desc) and
+   * the rest of the bookshelf is filled with {@link TileType#EMPTY}.
+   *
+   */
+<span class="fc" id="L500">  public static final Predicate&lt;Bookshelf&gt; checkOrderedBookshelfColumns = bs -&gt; {</span>
+<span class="fc" id="L501">    Tile[][] grid = bs.getBookshelfGrid();</span>
+
+<span class="fc" id="L503">    Predicate&lt;Tile[][]&gt; checkDescOrder = g -&gt; {</span>
+<span class="fc bfc" id="L504" title="All 2 branches covered.">      for (int i = 0; i &lt; g.length; i++) {</span>
+<span class="fc bfc" id="L505" title="All 2 branches covered.">        for (int j = 0; j &lt; g[0].length; j++) {</span>
+<span class="fc bfc" id="L506" title="All 4 branches covered.">          if (j &gt;= i &amp;&amp; (!g[i][j].isEmpty())) {</span>
+<span class="fc" id="L507">            return false;</span>
+          }
+<span class="fc bfc" id="L509" title="All 4 branches covered.">          if (j &lt; i &amp;&amp; (g[i][j].isEmpty())) {</span>
+<span class="fc" id="L510">            return false;</span>
+          }
+        }
+      }
+<span class="fc" id="L514">      return true;</span>
+    };
+
+<span class="fc" id="L517">    Predicate&lt;Tile[][]&gt; checkDescOrderShifted = g -&gt; {</span>
+<span class="fc bfc" id="L518" title="All 2 branches covered.">      for (int i = 0; i &lt; g.length; i++) {</span>
+<span class="fc bfc" id="L519" title="All 2 branches covered.">        for (int j = 0; j &lt; g[0].length; j++) {</span>
+<span class="fc bfc" id="L520" title="All 4 branches covered.">          if (j &gt; i &amp;&amp; (g[i][j].getType() != TileType.EMPTY)) {</span>
+<span class="fc" id="L521">            return false;</span>
+          }
+<span class="fc bfc" id="L523" title="All 4 branches covered.">          if (j &lt;= i &amp;&amp; (g[i][j].getType() == TileType.EMPTY)) {</span>
+<span class="fc" id="L524">            return false;</span>
+          }
+        }
+      }
+<span class="fc" id="L528">      return true;</span>
+    };
+
+<span class="fc" id="L531">    Predicate&lt;Tile[][]&gt; checkAscOrder = g -&gt; {</span>
+<span class="fc bfc" id="L532" title="All 2 branches covered.">      for (int i = 0; i &lt; g.length; i++) {</span>
+<span class="fc bfc" id="L533" title="All 2 branches covered.">        for (int j = 0; j &lt; g[0].length; j++) {</span>
+<span class="fc bfc" id="L534" title="All 4 branches covered.">          if (j &lt; g[0].length - i &amp;&amp; (g[i][j].getType() != TileType.EMPTY)) {</span>
+<span class="fc" id="L535">            return false;</span>
+          }
+<span class="fc bfc" id="L537" title="All 4 branches covered.">          if (j &gt;= g[0].length - i &amp;&amp; (g[i][j].getType() == TileType.EMPTY)) {</span>
+<span class="fc" id="L538">            return false;</span>
+          }
+        }
+      }
+<span class="fc" id="L542">      return true;</span>
+    };
+
+<span class="fc" id="L545">    Predicate&lt;Tile[][]&gt; checkAscOrderShifted = g -&gt; {</span>
+<span class="fc bfc" id="L546" title="All 2 branches covered.">      for (int i = 0; i &lt; g.length; i++) {</span>
+<span class="fc bfc" id="L547" title="All 2 branches covered.">        for (int j = 0; j &lt; g[0].length; j++) {</span>
+<span class="fc bfc" id="L548" title="All 4 branches covered.">          if (j &lt; g[0].length - 1 - i &amp;&amp; (g[i][j].getType() != TileType.EMPTY)) {</span>
+<span class="fc" id="L549">            return false;</span>
+          }
+<span class="fc bfc" id="L551" title="All 4 branches covered.">          if (j &gt;= g[0].length - 1 - i &amp;&amp; (g[i][j].getType() == TileType.EMPTY)) {</span>
+<span class="fc" id="L552">            return false;</span>
+          }
+        }
+      }
+<span class="fc" id="L556">      return true;</span>
+    };
+
+<span class="fc bfc" id="L559" title="All 6 branches covered.">    return (checkAscOrder.test(grid) || checkDescOrder.test(grid) || checkAscOrderShifted.test(grid)</span>
+<span class="fc bfc" id="L560" title="All 2 branches covered.">        || checkDescOrderShifted.test(grid));</span>
+
+  };
+
+  /**
+   * The list of {@link SharedPattern} containing all the 12 different
+   * patterns.
+   * rules with their lambda functions
+   *
+   */
+<span class="fc" id="L570">  private static final List&lt;SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;&gt; patternsArray = List.of(</span>
+<span class="fc" id="L571">      (new SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;(checkTwoAdjacent, 4)),</span>
+<span class="fc" id="L572">      (new SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;(checkCornersMatch, 8)),</span>
+<span class="fc" id="L573">      (new SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;(checkFourAdjacent, 3)),</span>
+<span class="fc" id="L574">      (new SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;(checkSquares, 1)),</span>
+<span class="fc" id="L575">      (new SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;(checkMaxThreeTypesInColumn,5)),</span>
+<span class="fc" id="L576">      (new SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;(checkEightOfSameType,9)),</span>
+<span class="fc" id="L577">      (new SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;(checkDiagonalsSameType,11)),</span>
+<span class="fc" id="L578">      (new SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;(checkMaxThreeTypesInRow, 7)),</span>
+<span class="fc" id="L579">      (new SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;(checkTwoColumnAllDiff,2)),</span>
+<span class="fc" id="L580">      (new SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;(checkTwoRowsAllDiff, 6)),</span>
+<span class="fc" id="L581">      (new SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;(checkTilesXShape, 10)),</span>
+<span class="fc" id="L582">      (new SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;(checkOrderedBookshelfColumns, 12)));</span>
+
+  /**
+   * Method used to get random SharedPattern between the 12 possible.
+   *
+   * @param usedPatterns a List of {@link SharedPattern} storing the already used
+   *                     patterns.
+   * @return a random pattern between the 12 possible.
+   */
+  public static SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt; getNotUsedPattern(
+      List&lt;SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;&gt; usedPatterns) {
+<span class="fc bfc" id="L593" title="All 2 branches covered.">    if (usedPatterns.isEmpty()) {</span>
+<span class="fc" id="L594">      return patternsArray.get(random.nextInt(patternsArray.size()));</span>
+    } else {
+<span class="fc" id="L596">      List&lt;SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;&gt; unusedPatterns = patternsArray.stream()</span>
+<span class="fc bfc" id="L597" title="All 2 branches covered.">          .filter(pattern -&gt; !usedPatterns.contains(pattern))</span>
+<span class="fc" id="L598">          .collect(Collectors.toList());</span>
+<span class="fc" id="L599">      return unusedPatterns.get(random.nextInt(unusedPatterns.size()));</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -192,15 +192,15 @@ public class GameHandler {
   /**
    * Push a new game state to the message queue for each connected player.
    *
-   * @throws GameSnapshotUpdateException On queue message insertion failure.
+   * @throws GameSnapshotUpdateException On notification failure.
    *
    */
   public void pushGameState() throws GameSnapshotUpdateException {
     // iterating over the Collections.synchronizedList requires synch.
     synchronized (playerConnectors) {
-      for (AbstractPlayerConnector pc : playerConnectors) {
+      playerConnectors.parallelStream().forEach((pc) -> {
         if (!pc.getPlayer().getIsConnected()) {
-          continue;
+          return;
         }
         VirtualView gameCopy = new VirtualView(game);
         if (game.getStatus() != GameStatus.ENDED) {
@@ -213,9 +213,9 @@ public class GameHandler {
         try {
           pc.notify(new GameMessage(gameCopy));
         } catch (InterruptedException | RemoteException e) {
-          throw new GameSnapshotUpdateException(game);
+          logger.error("Failed to notify game state {}", e.getMessage());
         }
-      }
+      });
     }
   }
 

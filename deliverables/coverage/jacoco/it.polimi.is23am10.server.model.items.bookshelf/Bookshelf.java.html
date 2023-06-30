@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Bookshelf.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.model.items.bookshelf</a> &gt; <span class="el_source">Bookshelf.java</span></div><h1>Bookshelf.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.model.items.bookshelf;
+
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.NullTileException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.WrongCharBookshelfStringException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.WrongLengthBookshelfStringException;
+import it.polimi.is23am10.server.model.items.tile.Tile;
+import it.polimi.is23am10.server.model.items.tile.Tile.TileType;
+import it.polimi.is23am10.utils.IndexValidator;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Map;
+
+/**
+ * Players' bookshelf class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public class Bookshelf implements Serializable {
+  /**
+   * The bookshelf max rows value.
+   */
+  public static final int BOOKSHELF_ROWS = 6;
+
+  /**
+   * The bookshelf max columns value.
+   */
+  public static final int BOOKSHELF_COLS = 5;
+
+  /**
+   * The support map to reference each {@link TileType} with a char.
+   * Used for the constructor of Bookshelf made for tests.
+   * 
+   */
+<span class="fc" id="L40">  transient Map&lt;String, TileType&gt; tileMap = Map.of(</span>
+      &quot;C&quot;, TileType.CAT,
+      &quot;B&quot;, TileType.BOOK,
+      &quot;G&quot;, TileType.GAME,
+      &quot;F&quot;, TileType.FRAME,
+      &quot;T&quot;, TileType.TROPHY,
+      &quot;P&quot;, TileType.PLANT,
+      &quot;X&quot;, TileType.EMPTY);
+
+  /**
+   * Max bookshelf grid size.
+   */
+  private static final int BOOKSHELF_SIZE = BOOKSHELF_COLS * BOOKSHELF_ROWS;
+
+  /**
+   * A fixed 2d array referencing the physical bookshelf instance.
+   * 
+   */
+  private Tile[][] bookshelfGrid;
+
+  /**
+   * Constructor for the Bookshelf instance.
+   */
+<span class="fc" id="L63">  public Bookshelf() {</span>
+<span class="fc" id="L64">    bookshelfGrid = new Tile[BOOKSHELF_ROWS][BOOKSHELF_COLS];</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">    for (int i = 0; i &lt; BOOKSHELF_ROWS; i++) {</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">      for (int j = 0; j &lt; BOOKSHELF_COLS; j++) {</span>
+<span class="fc" id="L67">        bookshelfGrid[i][j] = new Tile(TileType.EMPTY);</span>
+      }
+    }
+<span class="fc" id="L70">  }</span>
+
+  /**
+   * Method used to get a string representation for a bookshelf.
+   * 
+   * @return string representation of this bookshelf.
+   */
+  public String getBookshelfString(){
+<span class="nc" id="L78">    StringBuilder toReturn = new StringBuilder();</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">    for (int i = 0; i &lt; BOOKSHELF_ROWS; i++) {</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">      for (int j = 0; j &lt; BOOKSHELF_COLS; j++) {</span>
+        // Apparently needed because &quot;Local variable i defined in an enclosing scope must be final or effectively final Java(536871575)&quot;
+<span class="nc" id="L82">        final Integer ii = i;</span>
+<span class="nc" id="L83">        final Integer jj = j;</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        toReturn.append(tileMap.keySet().stream().filter(s -&gt; tileMap.get(s) == (bookshelfGrid[ii][jj]).getType()).findFirst().get());</span>
+      }
+    }
+<span class="nc" id="L87">    return toReturn.toString();</span>
+  }
+
+  /**
+   * Copy constructor of Bookshelf.
+   * 
+   * @param toCopy original instance
+   */
+<span class="fc" id="L95">  public Bookshelf(Bookshelf toCopy) {</span>
+<span class="fc" id="L96">    bookshelfGrid = Arrays.stream(toCopy.bookshelfGrid)</span>
+<span class="fc" id="L97">        .map(Tile[]::clone)</span>
+<span class="fc" id="L98">        .toArray(Tile[][]::new);</span>
+<span class="fc" id="L99">  }</span>
+
+  /**
+   * This constructor takes a 30 char long string containing the content
+   * of a bookshelf, with each tile associated to a letter, as shown below
+   * and builds and returns the matching bookshelf object.
+   * 
+   * @param bookshelfString A string that allows us to fill the bookshelfGrid with
+   *                        the
+   *                        correspondence between each char and the position in
+   *                        the
+   *                        grid, there's a map to help us matching the char with
+   *                        the {@link TileType}
+   * @throws WrongLengthBookshelfStringException If when building a bookshelf based on string, it is of an invalid length.
+   * @throws WrongCharBookshelfStringException If when building a bookshelf based on string, it contains an invalid character.
+   * @throws NullPointerException Generic NPE.
+   */
+  public Bookshelf(String bookshelfString)
+      throws WrongLengthBookshelfStringException, WrongCharBookshelfStringException,
+<span class="fc" id="L118">      NullPointerException {</span>
+
+<span class="fc bfc" id="L120" title="All 2 branches covered.">    if (bookshelfString.length() != BOOKSHELF_SIZE) {</span>
+<span class="fc" id="L121">      throw new WrongLengthBookshelfStringException(</span>
+          &quot;[Class Bookshelf, method constructor]: Bookshelf string has incorrect length exception&quot;);
+    }
+<span class="fc" id="L124">    String[] tileChars = bookshelfString.split(&quot;&quot;);</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">    for (String c : tileChars) {</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">      if (!tileMap.containsKey(c)) {</span>
+<span class="fc" id="L127">        throw new WrongCharBookshelfStringException(</span>
+            &quot;[Class Bookshelf, method constructor]: Bookshelf string contains invalid char exception&quot;);
+      }
+    }
+<span class="fc" id="L131">    bookshelfGrid = new Tile[BOOKSHELF_ROWS][BOOKSHELF_COLS];</span>
+
+    /*
+     * Here we are filling the bookshelf inserting a Tile of the corresponding
+     * TileType, using the mapping we implemented before.
+     * To access the right char in each cycle we are using an index which maps the
+     * bi-dimensional array indexes into one single index.
+     */
+<span class="fc bfc" id="L139" title="All 2 branches covered.">    for (int i = 0; i &lt; BOOKSHELF_ROWS; i++) {</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">      for (int j = 0; j &lt; BOOKSHELF_COLS; j++) {</span>
+<span class="fc" id="L141">        bookshelfGrid[i][j] = new Tile(tileMap.get(tileChars[BOOKSHELF_COLS * i + j]));</span>
+      }
+    }
+<span class="fc" id="L144">  }</span>
+
+  /**
+   * Set a {@link Tile} inside the bookshelf grid.
+   * 
+   * @param row  The bookshelf grid row's value.
+   * @param col  The bookshelf grid col's value.
+   * @param tile The tile to be set.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullTileException If tile is null.
+   * 
+   */
+  public void setBookshelfGridIndex(Integer row, Integer col, Tile tile)
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+      NullIndexValueException, NullTileException {
+<span class="fc bfc" id="L161" title="All 2 branches covered.">    if (!IndexValidator.validRowIndex(row, Bookshelf.BOOKSHELF_ROWS)) {</span>
+<span class="fc" id="L162">      throw new BookshelfGridRowIndexOutOfBoundsException(row);</span>
+    }
+<span class="fc bfc" id="L164" title="All 2 branches covered.">    if (!IndexValidator.validColIndex(col, Bookshelf.BOOKSHELF_COLS)) {</span>
+<span class="fc" id="L165">      throw new BookshelfGridColIndexOutOfBoundsException(col);</span>
+    }
+<span class="fc bfc" id="L167" title="All 2 branches covered.">    if (tile == null) {</span>
+<span class="fc" id="L168">      throw new NullTileException(&quot;[Class Bookshelf, method SetBookshelfGridIndex]&quot;);</span>
+    }
+<span class="fc" id="L170">    bookshelfGrid[row][col] = tile;</span>
+<span class="fc" id="L171">  }</span>
+
+  /**
+   * bookshelfGrid getter.
+   * 
+   * @return The bookshelf's 6x5 playground grid.
+   * 
+   */
+  public Tile[][] getBookshelfGrid() {
+<span class="fc" id="L180">    return bookshelfGrid;</span>
+  }
+
+  /**
+   * bookshelfGrid index getter.
+   * 
+   * @param row The bookshelf grid's row value.
+   * @param col The bookshelf grid's col value.
+   * @return The tile at the given indexes.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * 
+   */
+  public Tile getBookshelfGridAt(Integer row, Integer col)
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+      NullIndexValueException {
+<span class="fc bfc" id="L197" title="All 2 branches covered.">    if (!IndexValidator.validRowIndex(row, Bookshelf.BOOKSHELF_ROWS)) {</span>
+<span class="fc" id="L198">      throw new BookshelfGridRowIndexOutOfBoundsException(row);</span>
+    }
+<span class="fc bfc" id="L200" title="All 2 branches covered.">    if (!IndexValidator.validColIndex(col, Bookshelf.BOOKSHELF_COLS)) {</span>
+<span class="fc" id="L201">      throw new BookshelfGridColIndexOutOfBoundsException(col);</span>
+    }
+<span class="fc" id="L203">    return bookshelfGrid[row][col];</span>
+  }
+
+  /**
+   * This function checks if player's bookshelf is full of tiles.
+   *
+   * @return True if bookshelf grid is full.
+   */
+  public boolean isBookshelfFull() {
+<span class="fc bfc" id="L212" title="All 2 branches covered.">    for (int i = 0; i &lt; BOOKSHELF_ROWS; i++) {</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">      for (int j = 0; j &lt; BOOKSHELF_COLS; j++) {</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">        if (bookshelfGrid[i][j].isEmpty()) {</span>
+<span class="fc" id="L215">          return false;</span>
+        }
+      }
+    }
+<span class="fc" id="L219">    return true;</span>
+  }
+
+
+  /**
+   * Retrieve the number of {@link TileType#EMPTY} inside the bookshelf for a
+   * given column.
+   *
+   * @param column The column to be checked
+   * @return The number of {@link TileType#EMPTY}
+   * @throws BookshelfGridColIndexOutOfBoundsException If bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If index value is null.
+   */
+  public int getFreeRowsInCol(int column)
+      throws BookshelfGridColIndexOutOfBoundsException,
+      BookshelfGridRowIndexOutOfBoundsException, NullIndexValueException {
+<span class="fc" id="L236">    int res = 0;</span>
+<span class="fc bfc" id="L237" title="All 2 branches covered.">    for (int i = 0; i &lt; BOOKSHELF_ROWS; i++) {</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">      if (getBookshelfGridAt(i, column).isEmpty()) {</span>
+<span class="fc" id="L239">        res++;</span>
+      }
+    }
+<span class="fc" id="L242">    return res;</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public boolean equals(Object obj) {
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">    if (!(obj instanceof Bookshelf)) {</span>
+<span class="nc" id="L252">      return false;</span>
+    }
+<span class="fc" id="L254">    Bookshelf bs = (Bookshelf) obj;</span>
+<span class="fc" id="L255">    return (Arrays.deepEquals(bookshelfGrid, bs.bookshelfGrid));</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public int hashCode() {
+<span class="nc" id="L264">    return bookshelfGrid.hashCode();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

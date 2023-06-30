@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlayerFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.model.factory</a> &gt; <span class="el_source">PlayerFactory.java</span></div><h1>PlayerFactory.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.model.factory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
+import it.polimi.is23am10.server.model.game.Game;
+import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.server.model.items.card.PrivateCard;
+import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.server.model.player.Player;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
+import it.polimi.is23am10.server.model.score.Score;
+
+/**
+ * The PlayerFactory class definition.
+ * This creates a new {@link Player} object.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+@SuppressWarnings({ &quot;checkstyle:nonemptyatclausedescriptioncheck&quot; })
+public class PlayerFactory {
+
+  /**
+   * Private constructor.
+   * 
+   */
+  private PlayerFactory() {
+  }
+
+  /**
+   * Check if a player name has already been used across the game instance.
+   *
+   * @param playerName  The chosen player name.
+   * @param playerNames Current game instance already available players names.
+   * 
+   */
+  public static boolean isPlayerNameDuplicate(String playerName, List&lt;String&gt; playerNames) {
+<span class="fc bfc" id="L49" title="All 2 branches covered.">    for (String name : playerNames) {</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">      if (name.equals(playerName)) {</span>
+<span class="fc" id="L51">        return true;</span>
+      }
+<span class="fc" id="L53">    }</span>
+<span class="fc" id="L54">    return false;</span>
+  }
+
+  /**
+   * Build a new {@link Player} object.
+   * This method has the ownership to ensure unique player names inside
+   * a game instance.
+   *
+   * @param playerName  The chosen player name.
+   * @param game The game reference instance where the new player will be added.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerNameException If player name is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
+   * 
+   */
+  public static Player getNewPlayer(String playerName, Game game)
+      throws NullPlayerNameException, NullPlayerIdException, NullPlayerBookshelfException,
+      NullPlayerScoreException, NullPlayerPrivateCardException, NullPlayerScoreBlocksException,
+      DuplicatePlayerNameException, AlreadyInitiatedPatternException, NullAssignedPatternException {
+
+    // Consumer must handle this {@link DuplicatePlayerNameException}.
+
+<span class="fc bfc" id="L82" title="All 2 branches covered.">    if (playerName == null) {</span>
+<span class="fc" id="L83">      throw new NullPlayerNameException(</span>
+          &quot;[Class PlayerFactory, method getNewPlayer]: attribute playerName must not be null&quot;);
+    }
+
+<span class="fc bfc" id="L87" title="All 2 branches covered.">    if (isPlayerNameDuplicate(playerName, game.getPlayerNames())) {</span>
+<span class="fc" id="L88">      throw new DuplicatePlayerNameException(</span>
+          &quot;[Class PlayerFactory, method getNewPlayer]: The name &quot; + playerName + &quot; already exists&quot;);
+    }
+
+<span class="fc" id="L92">    Player instance = new Player();</span>
+<span class="fc" id="L93">    PrivateCard privateCard = new PrivateCard(game.getAssignedPrivatePatterns());</span>
+<span class="fc" id="L94">    game.addAssignedPrivatePattern(privateCard.getPattern());</span>
+
+<span class="fc" id="L96">    instance.setPlayerID(UUID.nameUUIDFromBytes(playerName.getBytes()));</span>
+<span class="fc" id="L97">    instance.setPlayerName(playerName);</span>
+<span class="fc" id="L98">    instance.setScore(new Score());</span>
+<span class="fc" id="L99">    instance.setBookshelf(new Bookshelf());</span>
+<span class="fc" id="L100">    instance.setPrivateCard(privateCard);</span>
+<span class="fc" id="L101">    instance.setScoreBlocks(new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L102">    instance.setIsConnected(true);</span>
+
+<span class="fc" id="L104">    return instance;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

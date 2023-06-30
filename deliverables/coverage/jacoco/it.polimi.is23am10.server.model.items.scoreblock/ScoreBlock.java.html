@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScoreBlock.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.model.items.scoreblock</a> &gt; <span class="el_source">ScoreBlock.java</span></div><h1>ScoreBlock.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.model.items.scoreblock;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
+import it.polimi.is23am10.server.model.items.scoreblock.exceptions.NotValidScoreBlockValueException;
+
+/**
+ * ScoreBlock class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public final class ScoreBlock implements Serializable {
+
+<span class="fc" id="L19">  protected static final List&lt;Integer&gt; allowedScoreValues = Arrays.asList(2, 4, 6, 8);</span>
+
+  /**
+   * The value assigned to the current instance of the score block.
+   * 
+   */
+  private Integer score;
+
+  /**
+   * Constructor.
+   * 
+   * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
+   * 
+   */
+<span class="fc" id="L33">  public ScoreBlock(Integer score) throws NotValidScoreBlockValueException {</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">    if (!allowedScoreValues.contains(score)) {</span>
+<span class="fc" id="L35">      throw new NotValidScoreBlockValueException(</span>
+<span class="fc" id="L36">          &quot;[Class &quot; + this.getClass() + &quot;, constructor]: Assigned score value is not compliant with the rules&quot;);</span>
+    }
+<span class="fc" id="L38">    this.score = score;</span>
+<span class="fc" id="L39">  }</span>
+
+  /**
+   * score getter.
+   * 
+   * @return The score value associated with this instance.
+   * 
+   */
+  public Integer getScore() {
+<span class="fc" id="L48">    return score;</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public boolean equals(Object obj) {
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">    if (!(obj instanceof ScoreBlock)) {</span>
+<span class="nc" id="L58">      return false;</span>
+    }
+<span class="fc" id="L60">    ScoreBlock sb = (ScoreBlock) obj;</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">    return (score == sb.score);</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   * 
+   */
+  @Override
+  public int hashCode() {
+<span class="nc" id="L70">    return score.hashCode();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

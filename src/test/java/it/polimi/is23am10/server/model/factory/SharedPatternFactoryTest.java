@@ -9,8 +9,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
-import it.polimi.is23am10.server.model.factory.GameFactory;
-import it.polimi.is23am10.server.model.factory.SharedPatternFactory;
 import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
 import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
 import it.polimi.is23am10.server.model.game.Game;

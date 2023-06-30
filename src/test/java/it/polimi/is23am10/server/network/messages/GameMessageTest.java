@@ -18,14 +18,12 @@ import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayer
 import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
 import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
 import it.polimi.is23am10.server.model.items.scoreblock.exceptions.NotValidScoreBlockValueException;
-import it.polimi.is23am10.server.model.player.Player;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
 import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
-import it.polimi.is23am10.server.network.messages.GameMessage;
 import it.polimi.is23am10.server.network.messages.AbstractMessage.MessageType;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 
@@ -43,7 +41,6 @@ public class GameMessageTest {
     final Game game = GameFactory.getNewGame("sender", 4);
     game.assignPlayers();
     final VirtualView virtualView = new VirtualView(game);
-    final Player sp = game.getPlayerByName("sender");
     final GameMessage gm = new GameMessage(virtualView);
     final String chatMessage = gm.gson.toJson(virtualView);
 

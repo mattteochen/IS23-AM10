@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ServerControllerAction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.controller</a> &gt; <span class="el_source">ServerControllerAction.java</span></div><h1>ServerControllerAction.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.controller;
+
+import it.polimi.is23am10.server.command.AbstractCommand;
+import it.polimi.is23am10.server.command.GetAvailableGamesCommand;
+import it.polimi.is23am10.server.command.AbstractCommand.Opcode;
+import it.polimi.is23am10.server.controller.interfaces.ControllerConsumer;
+import it.polimi.is23am10.server.controller.interfaces.IServerControllerAction;
+import it.polimi.is23am10.server.network.messages.AvailableGamesMessage;
+import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
+
+import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+/**
+ * The server controller action class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+<span class="fc" id="L23">public class ServerControllerAction implements IServerControllerAction {</span>
+
+  /**
+   * The logger, an instance of {@link Logger}.
+   *
+   */
+<span class="fc" id="L29">  private final Logger logger = LogManager.getLogger(ServerControllerAction.class);</span>
+
+  /**
+   * A helper mapping to link a {@link Opcode} to the relative worker callback.
+   *
+   */
+<span class="fc" id="L35">  private final Map&lt;Opcode, ControllerConsumer&lt;Void, AbstractCommand&gt;&gt; actions = Map.of(</span>
+      Opcode.START, startConsumer,
+      Opcode.ADD_PLAYER, addPlayerConsumer,
+      Opcode.MOVE_TILES, moveTilesConsumer,
+      Opcode.GET_GAMES, getAvailableGamesConsumer,
+      Opcode.SEND_CHAT_MESSAGE, sendChatMessageConsumer,
+      Opcode.GAME_TIMER, snoozeTimerConsumer);
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  public void execute(AbstractPlayerConnector connector, AbstractCommand command) {
+<span class="pc bpc" id="L49" title="1 of 4 branches missed.">    if (command == null || connector == null) {</span>
+<span class="fc" id="L50">      return;</span>
+    }
+<span class="fc" id="L52">    actions.get(command.getOpcode()).accept(logger, connector, command);</span>
+<span class="fc" id="L53">  }</span>
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  @Override
+  public AvailableGamesMessage execute(GetAvailableGamesCommand command) {
+<span class="nc bnc" id="L61" title="All 2 branches missed.">    if (command == null) {</span>
+<span class="nc" id="L62">      return null;</span>
+    }
+<span class="nc" id="L64">    return getAvailableGamesConsumerRmi.accept(logger, null, command);</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

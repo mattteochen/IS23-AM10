@@ -1,12 +1,10 @@
 package it.polimi.is23am10.server.network.messages;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import it.polimi.is23am10.server.model.factory.GameFactory;

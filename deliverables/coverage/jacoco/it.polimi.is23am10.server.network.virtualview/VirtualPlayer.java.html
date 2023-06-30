@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VirtualPlayer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.network.virtualview</a> &gt; <span class="el_source">VirtualPlayer.java</span></div><h1>VirtualPlayer.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.network.virtualview;
+
+import java.io.Serializable;
+import java.util.UUID;
+
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.server.model.player.Player;
+import it.polimi.is23am10.server.model.score.Score;
+
+/**
+ * A virtual view with the state of a player, downscoped
+ * to what is essential for the client to view
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public final class VirtualPlayer implements Serializable {
+
+  /**
+   * Unique player identifier.
+   */
+  private UUID playerId;
+
+  /**
+   * Player's game name.
+   */
+  private String playerName;
+
+  /**
+   * Player's score.
+   */
+  private Score score;
+
+  /**
+   * Player's bookshelf with its tiles.
+   */
+  private Bookshelf bookshelf;
+
+  /**
+   * 1-12 number referencing the private card to show.
+   */
+  private Integer privateCardIndex;
+
+  /**
+   * Status of the player.
+   * 
+   */
+  private boolean isConnected;
+  
+  /**
+   * Public constructor. Builds VirtualPlayer out of {@link Player}
+   * @param p instance of {@link Player} to &quot;virtualize&quot;.
+   */
+<span class="fc" id="L56">  public VirtualPlayer(Player p) {</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">    if (p != null) {</span>
+<span class="fc" id="L58">      this.playerId = p.getPlayerID();</span>
+<span class="fc" id="L59">      this.playerName = p.getPlayerName();</span>
+<span class="fc" id="L60">      this.score = new Score(p.getScore());</span>
+<span class="fc" id="L61">      this.bookshelf = new Bookshelf(p.getBookshelf());</span>
+<span class="fc" id="L62">      this.privateCardIndex = p.getPrivateCard().getPattern().getIndex();</span>
+<span class="fc" id="L63">      this.isConnected = p.getIsConnected();</span>
+    }
+<span class="fc" id="L65">  }</span>
+
+  /**
+   * Getter for player id.
+   * @return player id
+   */
+  public UUID getPlayerId() {
+<span class="fc" id="L72">    return playerId;</span>
+  }
+
+  /**
+   * Getter for score.
+   * @return score
+   */
+  public Score getScore() {
+<span class="fc" id="L80">    return score;</span>
+  }
+
+  /**
+   * Getter for bookshelf.
+   * @return bookshelf
+   */
+  public Bookshelf getBookshelf() {
+<span class="fc" id="L88">    return bookshelf;</span>
+  }
+
+  /**
+   * Getter for private card index.
+   * @return private card index
+   */
+  public Integer getPrivateCardIndex() {
+<span class="fc" id="L96">    return privateCardIndex;</span>
+  }
+
+  /**
+   * Getter for player name.
+   * @return player name
+   */
+  public String getPlayerName() {
+<span class="fc" id="L104">    return playerName;</span>
+  }
+
+  /**
+   * Getter for connected status.
+   * @return connected status.
+   */
+  public boolean getIsConnected() {
+<span class="fc" id="L112">    return isConnected;</span>
+  }
+
+  /**
+   * Void method used when pushing state
+   * to all players, in order to keep secret
+   * each player's card to other players.
+   */
+  public void obfuscatePrivateCard() {
+<span class="fc" id="L121">    privateCardIndex = 0;</span>
+<span class="fc" id="L122">    score.obfuscatePrivatePoints();</span>
+<span class="fc" id="L123">  }</span>
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean equals(Object obj) {
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">    if (!(obj instanceof VirtualPlayer)) {</span>
+<span class="nc" id="L131">      return false;</span>
+    }
+
+<span class="fc" id="L134">    VirtualPlayer player = (VirtualPlayer) obj;</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">    return (playerId.equals(player.getPlayerId())</span>
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">        &amp;&amp; playerName.equals(player.getPlayerName()));</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int hashCode() {
+<span class="nc" id="L144">    return playerName.hashCode() * playerId.hashCode();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

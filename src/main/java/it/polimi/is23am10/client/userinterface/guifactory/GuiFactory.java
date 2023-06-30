@@ -925,23 +925,6 @@ public final class GuiFactory {
     }
 
     /**
-     * Retrieves the bookshelf boards {@link Bookshelf} of all players with the
-     * player name.
-     *
-     * @param vv The virtual view.
-     * @return A list of bookshelf {@link VBox}.
-     */
-    private static GridPane getPlayerBookShelf(VirtualView vv) {
-
-      for (VirtualPlayer vp : vv.getPlayers()) {
-        if (vp.getPlayerName().equals(getMyPlayerName())) {
-          return getBookShelfGridPane(vp.getBookshelf());
-        }
-      }
-      return null;
-    }
-
-    /**
      * Retrieves the private card image.
      *
      * @param vv The virtual view.
@@ -1326,7 +1309,6 @@ public final class GuiFactory {
       int index = move.indexOf(m);
       if (index < 0) {
         return;
-        // TODO: show internal error
       }
       move = move.replaceAll(move.substring(index, index + m.length()), "");
     }

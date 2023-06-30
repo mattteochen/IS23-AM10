@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import it.polimi.is23am10.client.Client;
 import it.polimi.is23am10.client.userinterface.helpers.CLIStrings;
 import it.polimi.is23am10.client.userinterface.helpers.OutputWrapper;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
@@ -153,12 +155,39 @@ public final class CommandLineInterface implements UserInterface, Serializable {
   }
 
   /**
+   * Helper function that returns a well-formatted chat message string.
+   * 
+   * @param message The message item.
+   * @return The string representation of the message.
+   */
+  public String getFormattedChatMessage(ChatMessage message){
+    String msgString;
+    String playerActor = message.getSender().getPlayerName();
+    if (message.isBroadcast()) {
+      msgString = CLIStrings.broadcastMessageString;
+    } else {
+      try {
+        if (message.getReceiverName().equals(Client.getPlayerConnector().getPlayer().getPlayerName())){
+          msgString = CLIStrings.messageStringReceiver;
+        } else {
+          msgString = CLIStrings.messageStringSender;
+          playerActor = message.getReceiverName();
+        }
+      } catch (RemoteException e) {
+        e.printStackTrace();
+        return "";
+      }
+    }
+
+    return String.format(msgString, playerActor, message.getMessage());
+  }
+
+  /**
    * {@inheritDoc}
    */
   public void displayChatMessage(ChatMessage message) {
     ow.debug(message.toString(), false);
-    final String msgString = message.isBroadcast() ? CLIStrings.broadcastMessageString : CLIStrings.messageString;
-    ow.chat(String.format(msgString, message.getSender().getPlayerName(), message.getMessage()), false);
+    ow.chat(getFormattedChatMessage(message), false);
   }
 
   /**

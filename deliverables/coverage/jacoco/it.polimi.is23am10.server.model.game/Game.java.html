@@ -1,0 +1,754 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Game.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.model.game</a> &gt; <span class="el_source">Game.java</span></div><h1>Game.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.model.game;
+
+import it.polimi.is23am10.server.controller.exceptions.NullGameHandlerInstance;
+import it.polimi.is23am10.server.model.factory.PlayerFactory;
+import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
+import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
+import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.server.model.game.exceptions.InvalidPlayersNumberException;
+import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
+import it.polimi.is23am10.server.model.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.server.model.game.exceptions.NullPlayerException;
+import it.polimi.is23am10.server.model.game.exceptions.PlayerNotFoundException;
+import it.polimi.is23am10.server.model.items.board.Board;
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.board.exceptions.BoardGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
+import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.server.model.items.bookshelf.Bookshelf;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridColIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.BookshelfGridRowIndexOutOfBoundsException;
+import it.polimi.is23am10.server.model.items.bookshelf.exceptions.NullTileException;
+import it.polimi.is23am10.server.model.items.card.SharedCard;
+import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.server.model.items.card.exceptions.NegativeMatchedBlockCountException;
+import it.polimi.is23am10.server.model.items.card.exceptions.NullMatchedBlockCountException;
+import it.polimi.is23am10.server.model.items.card.exceptions.NullScoreBlockListException;
+import it.polimi.is23am10.server.model.items.tile.Tile;
+import it.polimi.is23am10.server.model.pattern.PrivatePattern;
+import it.polimi.is23am10.server.model.pattern.SharedPattern;
+import it.polimi.is23am10.server.model.player.Player;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
+import it.polimi.is23am10.utils.Coordinates;
+import it.polimi.is23am10.utils.MovesValidator;
+import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
+import it.polimi.is23am10.utils.exceptions.WrongBookShelfPicksException;
+import it.polimi.is23am10.utils.exceptions.WrongGameBoardPicksException;
+import it.polimi.is23am10.utils.exceptions.WrongMovesNumberException;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+/**
+ * The Game class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public class Game implements Serializable {
+
+  /**
+   * The minimum number of players in a game instance.
+   * 
+   */
+<span class="fc" id="L70">  private static final Integer MIN_PLAYER_NUM = 2;</span>
+
+  /**
+   * The maximum number of players in a game instance.
+   * 
+   */
+<span class="fc" id="L76">  private static final Integer MAX_PLAYER_NUM = 4;</span>
+
+  /**
+   * A randomly generated {@link UUID} id.
+   * 
+   */
+  private UUID gameId;
+
+  /**
+   * The max number of players.
+   * Setting a default value to avoid undefined behaviors.
+   * 
+   */
+<span class="fc" id="L89">  private Integer maxPlayers = MIN_PLAYER_NUM;</span>
+
+  /**
+   * List of {@link Player} type.
+   * This instance must never be null.
+   * 
+   */
+<span class="fc" id="L96">  private List&lt;Player&gt; players = new ArrayList&lt;&gt;();</span>
+
+  /**
+   * A randomly chosen first player of the game.
+   * 
+   */
+  private Player firstPlayer;
+
+  /**
+   * Player currently playing.
+   */
+  private Player activePlayer;
+
+  /**
+   * Winner player.
+   */
+  private Player winnerPlayer;
+
+  /**
+   * The instance {@link Board} type.
+   * 
+   */
+  private Board gameBoard;
+
+  /**
+   * List of {@link SharedCard} type containing two randomly selected
+   * shared cards for this game.
+   */
+  private List&lt;SharedCard&gt; sharedCards;
+
+  /**
+   * All the possible status the game can be in.
+   * 
+   */
+<span class="fc" id="L130">  public enum GameStatus {</span>
+<span class="fc" id="L131">    WAITING_FOR_PLAYERS,</span>
+<span class="fc" id="L132">    STARTED,</span>
+<span class="fc" id="L133">    LAST_ROUND,</span>
+<span class="fc" id="L134">    ENDED</span>
+  }
+
+  /**
+   * The current status of the game.
+   * 
+   */
+  private GameStatus status;
+
+  /**
+   * A cache to store already used shared patterns.
+   * 
+   */
+  private transient List&lt;SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;&gt; assignedSharedPatterns;
+
+  /**
+   * A cache to store already used private patterns.
+   * 
+   */
+  private transient List&lt;PrivatePattern&lt;Function&lt;Bookshelf, Integer&gt;&gt;&gt; assignedPrivatePatterns;
+
+  /**
+   * Random object used to pick starting player and player positions.
+   */
+<span class="fc" id="L158">  private final transient Random random = new Random();</span>
+
+  /**
+   * Constructor that assigns the only value that is
+   * generated, immutable and not set by factory.
+   */
+<span class="fc" id="L164">  public Game() {</span>
+<span class="fc" id="L165">    gameId = UUID.randomUUID();</span>
+<span class="fc" id="L166">    assignedSharedPatterns = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L167">    assignedPrivatePatterns = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L168">  }</span>
+
+  /**
+   * Retrieve the already used {@link SharedPattern}s.
+   *
+   * @return The already assigned {@link SharedPattern}s.
+   *
+   */
+  public synchronized List&lt;SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt;&gt; getAssignedSharedPatterns() {
+<span class="fc" id="L177">    return assignedSharedPatterns;</span>
+  }
+
+  /**
+   * Retrieve the already used {@link PrivatePattern}s.
+   *
+   * @return The already assigned {@link PrivatePattern}s.
+   *
+   */
+  public synchronized List&lt;PrivatePattern&lt;Function&lt;Bookshelf, Integer&gt;&gt;&gt; getAssignedPrivatePatterns() {
+<span class="fc" id="L187">    return assignedPrivatePatterns;</span>
+  }
+
+  /**
+   * Add a new consumed {@link SharedPattern}.
+   *
+   * @param pattern The {@link SharedPattern} to be added.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
+   *
+   */
+  public synchronized void addAssignedSharedPattern(SharedPattern&lt;Predicate&lt;Bookshelf&gt;&gt; pattern)
+      throws NullAssignedPatternException {
+<span class="fc bfc" id="L199" title="All 2 branches covered.">    if (pattern == null) {</span>
+<span class="fc" id="L200">      throw new NullAssignedPatternException(&quot;shared&quot;);</span>
+    }
+<span class="fc" id="L202">    assignedSharedPatterns.add(pattern);</span>
+<span class="fc" id="L203">  }</span>
+
+  /**
+   * Add a new consumed {@link PrivatePattern}.
+   *
+   * @param pattern The {@link PrivatePattern} to be added.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
+   *
+   */
+  public synchronized void addAssignedPrivatePattern(PrivatePattern&lt;Function&lt;Bookshelf, Integer&gt;&gt; pattern)
+      throws NullAssignedPatternException {
+<span class="fc bfc" id="L214" title="All 2 branches covered.">    if (pattern == null) {</span>
+<span class="fc" id="L215">      throw new NullAssignedPatternException(&quot;private&quot;);</span>
+    }
+<span class="fc" id="L217">    assignedPrivatePatterns.add(pattern);</span>
+<span class="fc" id="L218">  }</span>
+
+  /**
+   * Check if a maxPlayer value is correct.
+   *
+   * @param maxPlayers The value to be controlled.
+   * @throws NullMaxPlayerException If no value for maximum number of players in the game is provided..
+   *
+   */
+  private boolean validMaxPlayers(Integer maxPlayers) throws NullMaxPlayerException {
+<span class="fc bfc" id="L228" title="All 2 branches covered.">    if (maxPlayers == null) {</span>
+<span class="fc" id="L229">      throw new NullMaxPlayerException();</span>
+    }
+<span class="pc bpc" id="L231" title="1 of 4 branches missed.">    return maxPlayers &gt;= MIN_PLAYER_NUM &amp;&amp; maxPlayers &lt;= MAX_PLAYER_NUM;</span>
+  }
+
+  /**
+   * The maxPlayers setter.
+   *
+   * @param maxPlayers The value to be assigned.
+   * @throws NullMaxPlayerException If no value for maximum number of players in the game is provided.
+   * @throws InvalidMaxPlayerException If value for maximum number of players in the game is not valid.
+   *
+   */
+  public synchronized void setMaxPlayers(Integer maxPlayers)
+      throws NullMaxPlayerException, InvalidMaxPlayerException {
+<span class="fc bfc" id="L244" title="All 2 branches covered.">    if (!validMaxPlayers(maxPlayers)) {</span>
+<span class="fc" id="L245">      throw new InvalidMaxPlayerException();</span>
+    }
+<span class="fc" id="L247">    this.maxPlayers = maxPlayers;</span>
+<span class="fc" id="L248">  }</span>
+
+  /**
+   * The firstPlayer setter.
+   *
+   * @param playerToSet The first player's name.
+   *
+   */
+  public synchronized void setFirstPlayer(Player playerToSet) {
+<span class="fc" id="L257">    players.stream()</span>
+<span class="fc" id="L258">        .filter(player -&gt; player.equals(playerToSet))</span>
+<span class="fc" id="L259">        .findFirst()</span>
+<span class="fc" id="L260">        .ifPresent(player -&gt; firstPlayer = player);</span>
+<span class="fc" id="L261">  }</span>
+
+  /**
+   * Add a new player to the game. Position is randomly determined,
+   * as position in players list is the order in the game.
+   *
+   * @param playerName The player's name.
+   * @throws NullPlayerNamesException If, while adding multiple players, the list of player names is null.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerNameException If player name is null.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
+   *
+   */
+  private synchronized void addPlayer(Player player) {
+<span class="fc bfc" id="L281" title="All 2 branches covered.">    final Integer position = players.isEmpty() ? 0 : random.nextInt(players.size());</span>
+<span class="fc" id="L282">    players.add(position, player);</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">    if (players.size() == maxPlayers) {</span>
+<span class="fc" id="L284">      setStatus(GameStatus.STARTED);</span>
+<span class="fc" id="L285">      assignPlayers();</span>
+    }
+<span class="fc" id="L287">  }</span>
+
+  /**
+   * Creates and adds a new player to the game. Position is randomly determined,
+   * as position in players list is the order in the game.
+   *
+   * @param playerName The player's name.
+   * @return The instance of created player.
+   * @throws NullPlayerNamesException If, while adding multiple players, the list of player names is null.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerNameException If player name is null.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
+   * @throws FullGameException If game is full, on player trying to join.
+   */
+  public Player addPlayer(String playerName)
+      throws NullPlayerNamesException, NullPlayerNameException, NullPlayerIdException,
+      NullPlayerBookshelfException, NullPlayerScoreException, NullPlayerPrivateCardException,
+      NullPlayerScoreBlocksException, DuplicatePlayerNameException, AlreadyInitiatedPatternException,
+      FullGameException, NullAssignedPatternException {
+<span class="fc bfc" id="L312" title="All 2 branches covered.">    if (getPlayers().size() == getMaxPlayer()) {</span>
+<span class="fc" id="L313">      throw new FullGameException(</span>
+          playerName + &quot;could not be added, because the game reached its maximum number of players&quot;);
+    }
+<span class="fc" id="L316">    Player playerToAdd = PlayerFactory.getNewPlayer(playerName, this);</span>
+<span class="fc" id="L317">    addPlayer(playerToAdd);</span>
+<span class="fc" id="L318">    return playerToAdd;</span>
+  }
+
+  /**
+   * Function that adds multiple players to game.
+   *
+   * @param players List of players to add.
+   * @throws NullPlayerException If player object is null.
+   * @throws InvalidPlayersNumberException If number of players to add is invalid.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   */
+  public synchronized void addPlayers(List&lt;Player&gt; players)
+      throws NullPlayerException, InvalidPlayersNumberException, DuplicatePlayerNameException {
+
+<span class="pc bpc" id="L332" title="1 of 2 branches missed.">    if (players == null) {</span>
+<span class="nc" id="L333">      throw new NullPlayerException();</span>
+    }
+<span class="pc bpc" id="L335" title="1 of 2 branches missed.">    if ((players.size() + this.players.size()) != maxPlayers) {</span>
+<span class="nc" id="L336">      throw new InvalidPlayersNumberException();</span>
+    }
+<span class="fc bfc" id="L338" title="All 2 branches covered.">    for (Player newPlayer : players) {</span>
+<span class="pc bpc" id="L339" title="1 of 2 branches missed.">      if (PlayerFactory.isPlayerNameDuplicate(newPlayer.getPlayerName(), getPlayerNames())) {</span>
+<span class="nc" id="L340">        throw new DuplicatePlayerNameException(</span>
+<span class="nc" id="L341">            &quot;[Class Game, method addPlayers]: The name &quot; + newPlayer.getPlayerName() + &quot; already exists&quot;);</span>
+      }
+<span class="fc" id="L343">    }</span>
+<span class="fc" id="L344">    this.players.addAll(players);</span>
+<span class="fc" id="L345">  }</span>
+
+  /**
+   * GameBoard setter.
+   *
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
+   *
+   */
+  public synchronized void setGameBoard() throws InvalidNumOfPlayersException, NullNumOfPlayersException {
+<span class="fc" id="L355">    this.gameBoard = new Board(maxPlayers);</span>
+<span class="fc" id="L356">  }</span>
+
+  /**
+   * The sharedCards setter.
+   *
+   */
+  public synchronized void setSharedCards(List&lt;SharedCard&gt; cards) {
+<span class="fc" id="L363">    this.sharedCards = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L364">    sharedCards.add(cards.get(0));</span>
+<span class="fc" id="L365">    sharedCards.add(cards.get(1));</span>
+<span class="fc" id="L366">  }</span>
+
+  /**
+   * The status setter.
+   *
+   * @param status The status to set.
+   *
+   */
+  public synchronized void setStatus(GameStatus status) {
+<span class="fc" id="L375">    this.status = status;</span>
+<span class="fc" id="L376">  }</span>
+
+  /**
+   * The gameId getter.
+   *
+   * @return The game id.
+   *
+   */
+  public synchronized UUID getGameId() {
+<span class="fc" id="L385">    return gameId;</span>
+  }
+
+  /**
+   * MaxPlayer getter.
+   *
+   * @return The maximum number of players for the current game instance.
+   *
+   */
+  public synchronized Integer getMaxPlayer() {
+<span class="fc" id="L395">    return maxPlayers;</span>
+  }
+
+  /**
+   * The players getter.
+   *
+   * @return A list containing all the current players.
+   *
+   */
+  public synchronized List&lt;Player&gt; getPlayers() {
+<span class="fc" id="L405">    return players;</span>
+  }
+
+  /**
+   * The firstPlayer getter.
+   *
+   * @return The game first player.
+   *         This player has started the game.
+   *
+   */
+  public synchronized Player getFirstPlayer() {
+<span class="fc" id="L416">    return firstPlayer;</span>
+  }
+
+  /**
+   * The gameBoard getter.
+   *
+   * @return The game board grid.
+   *
+   */
+  public synchronized Board getGameBoard() {
+<span class="fc" id="L426">    return gameBoard;</span>
+  }
+
+  /**
+   * The sharedCards getter.
+   *
+   * @return The assigned shared cards to the current game instance.
+   *
+   */
+  public synchronized List&lt;SharedCard&gt; getSharedCard() {
+<span class="fc" id="L436">    return sharedCards;</span>
+  }
+
+  /**
+   * The ended status getter.
+   *
+   * @return The current status of the game.
+   *
+   */
+  public synchronized GameStatus getStatus() {
+<span class="fc" id="L446">    return status;</span>
+  }
+
+  /**
+   * Retrieve the current players' names.
+   *
+   * @return A {@link List} containing all the current players' names.
+   *
+   */
+  public synchronized List&lt;String&gt; getPlayerNames() {
+<span class="fc" id="L456">    return players.stream()</span>
+<span class="fc" id="L457">        .map(Player::getPlayerName)</span>
+<span class="fc" id="L458">        .collect(Collectors.toList());</span>
+  }
+
+  /**
+   * Method used to retrieve a player from the list
+   * given its name.
+   *
+   * @param playerName The player name we are looking for.
+   * @return Player matching provided name.
+   * @throws PlayerNotFoundException If the player with the name provided is not found.
+   */
+  public synchronized Player getPlayerByName(String playerName) throws NullPlayerNameException, PlayerNotFoundException {
+<span class="pc bpc" id="L470" title="1 of 2 branches missed.">    if (playerName == null) {</span>
+<span class="nc" id="L471">      throw new NullPlayerNameException(&quot;[Class Game, method getPlayerByName]&quot;);</span>
+    }
+<span class="fc" id="L473">    Optional&lt;Player&gt; player = players.stream()</span>
+<span class="fc" id="L474">        .filter(p -&gt; p.getPlayerName().equals(playerName))</span>
+<span class="fc" id="L475">        .findFirst();</span>
+<span class="pc bpc" id="L476" title="1 of 2 branches missed.">    if (player.isPresent()) {</span>
+<span class="fc" id="L477">      return player.get();</span>
+    } else {
+<span class="nc" id="L479">      throw new PlayerNotFoundException();</span>
+    }
+  }
+
+  /**
+   * Method to set the active player (playing this turn).
+   *
+   * @param player Player to set as active
+   */
+  public synchronized void setActivePlayer(Player player) {
+<span class="fc" id="L489">    this.activePlayer = player;</span>
+<span class="fc" id="L490">  }</span>
+
+  /**
+   * WinnerPlayer setter. To be called by {@link Game#endGame()} only.
+   *
+   * @param player The winning player to set.
+   */
+  public synchronized void setWinnerPlayer(Player player) {
+<span class="fc" id="L498">    this.winnerPlayer = player;</span>
+<span class="fc" id="L499">  }</span>
+
+  /**
+   * ActivePlayer getter.
+   *
+   * @return The active player.
+   */
+  public synchronized Player getActivePlayer() {
+<span class="fc" id="L507">    return activePlayer;</span>
+  }
+
+  /**
+   * WinnerPlayer getter.
+   *
+   * @return The winning player.
+   */
+  public synchronized Player getWinnerPlayer() {
+<span class="fc" id="L516">    return this.winnerPlayer;</span>
+  }
+
+  /**
+   * Method to assign the scoreBlocks. For both shared cards
+   * their pattern is checked against activePlayer's BS.
+   * If pattern is satisfied AND player didn't get a scoreBlock
+   * from that card, the first available SB is given to the player.
+   * 
+   */
+  private synchronized void assignScoreBlocks() {
+<span class="fc" id="L527">    sharedCards.forEach(c -&gt; {</span>
+<span class="pc bpc" id="L528" title="3 of 4 branches missed.">      if (c.getPattern().getRule().test(activePlayer.getBookshelf()) &amp;&amp; !c.getCardWinners().contains(activePlayer)) {</span>
+<span class="nc" id="L529">        c.addCardWinner(activePlayer);</span>
+<span class="nc" id="L530">        activePlayer.addScoreBlock(c.getScoreBlocks().remove(0));</span>
+      }
+<span class="fc" id="L532">    });</span>
+<span class="fc" id="L533">  }</span>
+
+  /**
+   * Method that computes active player's Score, updates the view,
+   * checks if game is over and if not picks next player.
+   *
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
+   * @throws NullPointerException Generic NPE.
+   */
+  public synchronized void nextTurn()
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+      NullIndexValueException, NullPlayerBookshelfException, NullScoreBlockListException, NullPointerException,
+      NullMatchedBlockCountException, NegativeMatchedBlockCountException {
+<span class="fc" id="L552">    activePlayer.setIsActivePlayer(false);</span>
+<span class="fc" id="L553">    assignScoreBlocks();</span>
+<span class="fc" id="L554">    activePlayer.updateScore();</span>
+<span class="fc" id="L555">    checkEndGame();</span>
+    
+    /*
+     * If there's only one player left, checkEndGame() will eventually 
+     * end the game here setting the ended flag to true, otherwise
+     * if the game has two or more players still connected we're entering
+     * this part of code to decide next player playing 
+     */
+<span class="fc bfc" id="L563" title="All 2 branches covered.">    if (getStatus() != GameStatus.ENDED) {</span>
+      try {
+<span class="fc" id="L565">        gameBoard.refillIfNeeded();</span>
+<span class="nc" id="L566">      } catch (IndexOutOfBoundsException e) {</span>
+<span class="nc" id="L567">        endGame();</span>
+<span class="nc" id="L568">        return;</span>
+<span class="fc" id="L569">      }</span>
+<span class="fc" id="L570">      int nextPlayerIdx = (getPlayers().indexOf(activePlayer) + 1) % getPlayers().size();</span>
+      
+<span class="fc bfc" id="L572" title="All 2 branches covered.">      while(!players.get(nextPlayerIdx).getIsConnected()){</span>
+<span class="fc" id="L573">        nextPlayerIdx = (nextPlayerIdx+ 1) % getPlayers().size();</span>
+      }
+<span class="fc" id="L575">      setActivePlayer(players.get(nextPlayerIdx));</span>
+<span class="fc" id="L576">      players.get(nextPlayerIdx).setIsActivePlayer(true);</span>
+    }
+<span class="fc" id="L578">  }</span>
+
+  /**
+   * Function that allows the player to take a tile from the board.
+   *
+   * @param coord The coordinates of the tile.
+   * @return The tile of the board the player wants to take.
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   */
+  public synchronized Tile takeTileAction(Coordinates coord)
+      throws BoardGridRowIndexOutOfBoundsException, BoardGridColIndexOutOfBoundsException,
+      NullIndexValueException {
+<span class="fc" id="L592">    return gameBoard.takeTileAt(coord.getRow(), coord.getCol());</span>
+  }
+
+  /**
+   * Function that puts a tile inside the active player's bookshelf.
+   *
+   * @param t     Tile taken from the board.
+   * @param coord Coordinates of the bookshelf.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws NullTileException If the tile is null.
+   */
+  public synchronized void putTileAction(Tile t, Coordinates coord)
+      throws BookshelfGridColIndexOutOfBoundsException, BookshelfGridRowIndexOutOfBoundsException,
+      NullIndexValueException, NullTileException {
+<span class="fc" id="L608">    activePlayer.getBookshelf().setBookshelfGridIndex(coord.getRow(), coord.getCol(), t);</span>
+<span class="fc" id="L609">  }</span>
+
+  /**
+   * Quick helper function to determine if the player is the last in turn.
+   *
+   * @param playerToCheck A reference player instance on which to operate the
+   *                      check.
+   * @return Is playerToCheck the last one in turn
+   */
+  private synchronized boolean isLastPlayer(Player playerToCheck) {
+<span class="fc" id="L619">    final Integer idxDiff = players.indexOf(playerToCheck) - players.indexOf(firstPlayer);</span>
+<span class="pc bpc" id="L620" title="1 of 4 branches missed.">    return (idxDiff == -1 || idxDiff == (maxPlayers - 1));</span>
+  }
+
+  /**
+   * Function that checks if there's a player who completed
+   * their bookshelf and sets flags accordingly.
+   * 
+   */
+  public synchronized void checkEndGame() {
+<span class="fc bfc" id="L629" title="All 4 branches covered.">    if (activePlayer.getBookshelf().isBookshelfFull() &amp;&amp; getStatus() != GameStatus.LAST_ROUND ) {</span>
+<span class="fc" id="L630">      activePlayer.getScore().setExtraPoint();</span>
+      // When one player completes their bookshelf, last turn starts
+<span class="fc" id="L632">      setStatus(GameStatus.LAST_ROUND);</span>
+    }
+    // Regardless of bookshelf, if last player and lastRound, end game
+<span class="fc bfc" id="L635" title="All 4 branches covered.">    if ((getStatus() == GameStatus.LAST_ROUND &amp;&amp; isLastPlayer(activePlayer)) </span>
+<span class="fc bfc" id="L636" title="All 2 branches covered.">        || players.stream().filter(p -&gt; p.getIsConnected()).count() &lt;= 1) {</span>
+<span class="fc" id="L637">      endGame();</span>
+    }
+<span class="fc" id="L639">  }</span>
+
+  /**
+   * Helper method to be passed to {@link Game#endGame()}
+   * in order to determine the winner, according to game rules:
+   * In case of score parity, last player in turn wins.
+   *
+   * @param p1 First player
+   * @param p2 Second player
+   * @return Player who should win between two
+   */
+  private synchronized Player decideWinner(Player p1, Player p2) {
+<span class="fc" id="L651">    final Integer p1Score = p1.getScore().getTotalScore();</span>
+<span class="fc" id="L652">    final Integer p2Score = p2.getScore().getTotalScore();</span>
+
+<span class="fc bfc" id="L654" title="All 2 branches covered.">    if (p1Score.equals(p2Score)) {</span>
+      // Positions relative to firstPlayer can be negative -&gt; Modular arithmetics
+<span class="fc" id="L656">      Integer startingPos1 = players.indexOf(p1) - players.indexOf(firstPlayer);</span>
+<span class="pc bpc" id="L657" title="1 of 2 branches missed.">      startingPos1 = startingPos1 &gt; 0 ? startingPos1 : startingPos1 + maxPlayers;</span>
+<span class="fc" id="L658">      Integer startingPos2 = players.indexOf(p2) - players.indexOf(firstPlayer);</span>
+<span class="fc bfc" id="L659" title="All 2 branches covered.">      startingPos2 = startingPos2 &gt; 0 ? startingPos2 : startingPos2 + maxPlayers;</span>
+<span class="fc bfc" id="L660" title="All 2 branches covered.">      return (startingPos1 &gt; startingPos2 ? p1 : p2);</span>
+    } else {
+<span class="fc bfc" id="L662" title="All 2 branches covered.">      return (p1Score &gt; p2Score ? p1 : p2);</span>
+    }
+  }
+
+  /**
+   * Method that is called when all players joined
+   * the game and the first one should be picked.
+   * Can be used in tests to force starting a game before
+   * the players threshold is met.
+   */
+  public synchronized void assignPlayers() {
+<span class="fc" id="L673">    Player choosenFirstPlayer = players.get(random.nextInt(players.size()));</span>
+<span class="fc" id="L674">    activePlayer = choosenFirstPlayer;</span>
+<span class="fc" id="L675">    activePlayer.setIsActivePlayer(true);</span>
+<span class="fc" id="L676">    firstPlayer = choosenFirstPlayer;</span>
+<span class="fc" id="L677">  }</span>
+
+  /**
+   * Helper method that sets the game as ended
+   * and declares the winner.
+   */
+  private synchronized void endGame() {
+<span class="fc" id="L684">    setStatus(GameStatus.ENDED);</span>
+<span class="fc" id="L685">    players.stream()</span>
+<span class="fc" id="L686">        .reduce(this::decideWinner)</span>
+<span class="fc" id="L687">        .ifPresent(this::setWinnerPlayer);</span>
+<span class="fc" id="L688">  }</span>
+
+  /**
+   * Simple helper function to get the number of disconnected
+   * players to discount when looking for available games.
+   * @return disconnected player num.
+   */
+  public synchronized Integer getDisconnectedPlayersNum() {
+<span class="fc" id="L696">    return (int) players</span>
+<span class="fc" id="L697">      .stream()</span>
+<span class="pc bpc" id="L698" title="1 of 2 branches missed.">      .filter(p -&gt; !p.getIsConnected())</span>
+<span class="fc" id="L699">      .count();</span>
+  }
+
+  /**
+   * Method that plays the active player's turn.
+   * It's important to understand the structure of the Hashmap, which allows to
+   * find a correspondence between the coordinates of the taken tile of the board
+   * and the coordinates of the player's bookshelf where he/she/they wants to put
+   * the taken tile in.
+   *
+   * &lt;p&gt;
+   * Note that I'm assuming all the params given to the method are valid since the
+   * input validation will be implemented client side in the selection of those
+   * coordinates.
+   * &lt;/p&gt;
+   *
+   * @param selectedCoordinates Map containing the coordinates of selected tiles.
+   *                            from board as key and the corresponding
+   *                            coordinates of the active player bookshelf as
+   *                            value.
+   * @throws BoardGridColIndexOutOfBoundsException If the board column index is out of bounds.
+   * @throws BoardGridRowIndexOutOfBoundsException If the board row index is out of bounds.
+   * @throws NullIndexValueException If the index provided is null.
+   * @throws BookshelfGridColIndexOutOfBoundsException If the bookshelf column index is out of bounds.
+   * @throws BookshelfGridRowIndexOutOfBoundsException If the bookshelf row index is out of bounds.
+   * @throws NullTileException If the tile is null.
+   * @throws NullPointerException Generic NPE.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullScoreBlockListException If the list of scoreblocks is null.
+   * @throws NegativeMatchedBlockCountException If the number of matched blocks to set is negative.
+   * @throws NullMatchedBlockCountException If the number of matched blocks to set is null.
+   * @throws WrongBookShelfPicksException If the game moves are invalid because of bookshelf placement.
+   * @throws WrongGameBoardPicksException If the game moves are invalid because of board picking.
+   * @throws WrongMovesNumberException If the game moves are in an illegal number.
+   * @throws NullGameHandlerInstance If the game handler is null.
+   */
+  public synchronized void activePlayerMove(Map&lt;Coordinates, Coordinates&gt; selectedCoordinates)
+      throws BoardGridColIndexOutOfBoundsException, BoardGridRowIndexOutOfBoundsException,
+      NullIndexValueException, BookshelfGridColIndexOutOfBoundsException,
+      BookshelfGridRowIndexOutOfBoundsException, NullTileException, NullPlayerBookshelfException,
+      NullScoreBlockListException, NullPointerException, NullMatchedBlockCountException,
+      NegativeMatchedBlockCountException,
+      WrongMovesNumberException, WrongGameBoardPicksException, WrongBookShelfPicksException, NullGameHandlerInstance {
+
+<span class="fc" id="L743">    MovesValidator.validateGameMoves(selectedCoordinates, activePlayer.getBookshelf(), gameBoard);</span>
+
+<span class="fc bfc" id="L745" title="All 2 branches covered.">    for (Map.Entry&lt;Coordinates, Coordinates&gt; entry : selectedCoordinates.entrySet()) {</span>
+<span class="fc" id="L746">      Coordinates boardCoord = entry.getKey();</span>
+<span class="fc" id="L747">      Coordinates bsCoord = entry.getValue();</span>
+<span class="fc" id="L748">      Tile takenTile = takeTileAction(boardCoord);</span>
+<span class="fc" id="L749">      putTileAction(takenTile, bsCoord);</span>
+<span class="fc" id="L750">    }</span>
+<span class="fc" id="L751">    nextTurn();</span>
+<span class="fc" id="L752">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

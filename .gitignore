@@ -11,7 +11,8 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
+target/*.jar
+!deliverables/is23am10-0.0.1-jar-with-dependencies.jar
 *.war
 *.nar
 *.ear

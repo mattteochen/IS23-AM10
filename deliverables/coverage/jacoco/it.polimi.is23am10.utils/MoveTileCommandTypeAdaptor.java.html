@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoveTileCommandTypeAdaptor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.utils</a> &gt; <span class="el_source">MoveTileCommandTypeAdaptor.java</span></div><h1>MoveTileCommandTypeAdaptor.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.utils;
+
+import java.lang.reflect.Type;
+import java.util.Map;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+
+import java.util.HashMap;
+
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+
+/**
+ * Internal used class.
+ * 
+ */
+<span class="nc" id="L22">class CustomKeySerializer implements JsonSerializer&lt;Coordinates&gt; {</span>
+  @Override
+  public JsonElement serialize(Coordinates src, Type typeOfSrc, JsonSerializationContext context) {
+<span class="nc" id="L25">    JsonObject obj = new JsonObject();</span>
+<span class="nc" id="L26">    obj.addProperty(&quot;row&quot;, src.getRow());</span>
+<span class="nc" id="L27">    obj.addProperty(&quot;col&quot;, src.getCol());</span>
+<span class="nc" id="L28">    return obj;</span>
+  }
+}
+
+/**
+ * Internal used class.
+ * 
+ */
+<span class="nc" id="L36">class CustomKeyDeserializer implements JsonDeserializer&lt;Coordinates&gt; {</span>
+  @Override
+  public Coordinates deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+      throws JsonParseException {
+<span class="nc" id="L40">    JsonObject obj = json.getAsJsonObject();</span>
+<span class="nc" id="L41">    int row = obj.get(&quot;row&quot;).getAsInt();</span>
+<span class="nc" id="L42">    int col = obj.get(&quot;col&quot;).getAsInt();</span>
+<span class="nc" id="L43">    return new Coordinates(row, col);</span>
+  }
+}
+  
+/**
+ * Custom deserializer class definition for Gson usage.
+ * This works {@link Map} with {@link Coordinates} as keys.
+ * 
+ */
+<span class="fc" id="L52">public class MoveTileCommandTypeAdaptor implements JsonSerializer&lt;Map&lt;Coordinates, Coordinates&gt;&gt;, JsonDeserializer&lt;Map&lt;Coordinates, Coordinates&gt;&gt; {</span>
+  @Override
+  public JsonElement serialize(Map&lt;Coordinates, Coordinates&gt; src, Type typeOfSrc, JsonSerializationContext context) {
+<span class="fc" id="L55">    JsonObject obj = new JsonObject();</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">    for (Map.Entry&lt;Coordinates, Coordinates&gt; entry : src.entrySet()) {</span>
+<span class="nc" id="L57">      obj.add(context.serialize(entry.getKey()).toString(), context.serialize(entry.getValue()));</span>
+<span class="nc" id="L58">    }</span>
+<span class="fc" id="L59">    return obj;</span>
+  }
+
+  @Override
+  public Map&lt;Coordinates, Coordinates&gt; deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+      throws JsonParseException {
+<span class="fc" id="L65">    JsonObject obj = json.getAsJsonObject();</span>
+<span class="fc" id="L66">    Map&lt;Coordinates, Coordinates&gt; map = new HashMap&lt;&gt;();</span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">    for (Map.Entry&lt;String, JsonElement&gt; entry : obj.entrySet()) {</span>
+<span class="nc" id="L68">      String keyString = entry.getKey();</span>
+<span class="nc" id="L69">      Coordinates key = context.deserialize((new JsonParser()).parse(keyString), Coordinates.class);</span>
+<span class="nc" id="L70">      Coordinates value = context.deserialize(entry.getValue(), Coordinates.class);</span>
+<span class="nc" id="L71">      map.put(key, value);</span>
+<span class="nc" id="L72">    }</span>
+<span class="fc" id="L73">    return map;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

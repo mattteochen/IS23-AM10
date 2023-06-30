@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.network.gamehandler</a> &gt; <span class="el_source">GameHandler.java</span></div><h1>GameHandler.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.network.gamehandler;
+
+import it.polimi.is23am10.server.model.factory.GameFactory;
+import it.polimi.is23am10.server.model.factory.exceptions.DuplicatePlayerNameException;
+import it.polimi.is23am10.server.model.factory.exceptions.NullPlayerNamesException;
+import it.polimi.is23am10.server.model.game.Game;
+import it.polimi.is23am10.server.model.game.Game.GameStatus;
+import it.polimi.is23am10.server.model.game.exceptions.FullGameException;
+import it.polimi.is23am10.server.model.game.exceptions.InvalidMaxPlayerException;
+import it.polimi.is23am10.server.model.game.exceptions.NullAssignedPatternException;
+import it.polimi.is23am10.server.model.game.exceptions.NullMaxPlayerException;
+import it.polimi.is23am10.server.model.game.exceptions.PlayerNotFoundException;
+import it.polimi.is23am10.server.model.items.board.exceptions.InvalidNumOfPlayersException;
+import it.polimi.is23am10.server.model.items.board.exceptions.NullNumOfPlayersException;
+import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.server.model.items.scoreblock.exceptions.NotValidScoreBlockValueException;
+import it.polimi.is23am10.server.model.player.Player;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerBookshelfException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerIdException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerNameException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerPrivateCardException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreBlocksException;
+import it.polimi.is23am10.server.model.player.exceptions.NullPlayerScoreException;
+import it.polimi.is23am10.server.network.gamehandler.exceptions.GameSnapshotUpdateException;
+import it.polimi.is23am10.server.network.gamehandler.exceptions.NullPlayerConnector;
+import it.polimi.is23am10.server.network.messages.GameMessage;
+import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
+import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
+import it.polimi.is23am10.server.network.virtualview.VirtualView;
+
+import java.io.IOException;
+import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+/**
+ * The match class definition.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public class GameHandler {
+
+  /**
+   * The logger, an instance of {@link Logger}.
+   *
+   */
+<span class="fc" id="L56">  final Logger logger = LogManager.getLogger(GameHandler.class);</span>
+
+  /**
+   * The underlying game state.
+   *
+   */
+  private Game game;
+
+  /**
+   * The connected players connectors.
+   *
+   */
+<span class="fc" id="L68">  private Set&lt;AbstractPlayerConnector&gt; playerConnectors =</span>
+<span class="fc" id="L69">      Collections.synchronizedSet(new HashSet&lt;&gt;());</span>
+
+  /**
+   * The current player handler.
+   *
+   */
+  private CurrentPlayerHandler currentPlayerHandler;
+
+  /**
+   * Constructor.
+   *
+   * @param firstPlayerName The match starting player name.
+   * @param maxPlayersNum   The chosen max players for this match.
+   * @throws NullNumOfPlayersException If the number of players provided when filling the board is null.
+   * @throws InvalidNumOfPlayersException If, while adding multiple players, there is an invalid number of them.
+   * @throws NullPlayerNamesException If, while adding multiple players, the list of player names is null.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one.
+   * @throws DuplicatePlayerNameException If player with that name already exists.
+   * @throws NullPlayerScoreBlocksException If player's scoreblocks list is null.
+   * @throws NullPlayerPrivateCardException If player's private card object is null.
+   * @throws NullPlayerScoreException If player's score object is null.
+   * @throws NullPlayerBookshelfException If bookshelf is null.
+   * @throws NullPlayerIdException If player id is null.
+   * @throws NullPlayerNameException If player name is null.
+   * @throws InvalidMaxPlayerException If value for maximum number of players in the game is not valid.
+   * @throws NullMaxPlayerException If no value for maximum number of players in the game is provided.
+   * @throws NullAssignedPatternException If the pattern assigned to a card is null.
+   * @throws FullGameException If game is full, on player trying to join.
+   * @throws NotValidScoreBlockValueException If the value assigned to a scoreblock is not valid.
+   * @throws PlayerNotFoundException If the player with the name provided is not found.
+   *
+   */
+  public GameHandler(String firstPlayerName, Integer maxPlayersNum)
+      throws NullMaxPlayerException, InvalidMaxPlayerException, NullPlayerNameException,
+      NullPlayerIdException, NullPlayerBookshelfException, NullPlayerScoreException,
+      NullPlayerPrivateCardException, NullPlayerScoreBlocksException, DuplicatePlayerNameException,
+      AlreadyInitiatedPatternException, NullPlayerNamesException, InvalidNumOfPlayersException,
+<span class="fc" id="L106">      NullNumOfPlayersException, NullAssignedPatternException, FullGameException, NotValidScoreBlockValueException, PlayerNotFoundException {</span>
+<span class="fc" id="L107">    this.game = GameFactory.getNewGame(firstPlayerName, maxPlayersNum);</span>
+<span class="fc" id="L108">    this.currentPlayerHandler = new CurrentPlayerHandler();</span>
+<span class="fc" id="L109">    updateCurrentPlayerHandler();</span>
+<span class="fc" id="L110">  }</span>
+
+  /**
+   * Update the current player handler based on the game model updates.
+   *
+   */
+  public synchronized void updateCurrentPlayerHandler() {
+<span class="fc" id="L117">    currentPlayerHandler.setPlayer(game.getActivePlayer());</span>
+<span class="fc" id="L118">    currentPlayerHandler.setStartPlayingTimeMs(System.currentTimeMillis());</span>
+<span class="fc" id="L119">    currentPlayerHandler.setNotified(false);</span>
+<span class="fc" id="L120">  }</span>
+
+  /**
+   * Current player handler getter.
+   *
+   * @return The current player handler instance.
+   *
+   */
+  public synchronized CurrentPlayerHandler getCurrentPlayerHandler() {
+<span class="fc" id="L129">    return currentPlayerHandler;</span>
+  }
+
+  /**
+   * Retrieve the {@link AbstractPlayerConnector} from a {@link Player} instance.
+   *
+   * @param player the player assinged to a connector to find.
+   *
+   */
+  public AbstractPlayerConnector getPlayerConnectorFromPlayer(Player player) {
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">    if (player == null) {</span>
+<span class="nc" id="L140">      return null;</span>
+    }
+    Optional&lt;AbstractPlayerConnector&gt; res;
+<span class="fc" id="L143">    synchronized (playerConnectors) {</span>
+<span class="fc" id="L144">      res = playerConnectors.stream()</span>
+<span class="fc" id="L145">        .filter(p -&gt; p.getPlayer().equals(player)) </span>
+<span class="fc" id="L146">        .findFirst();</span>
+<span class="fc" id="L147">    }</span>
+
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">    if (res.isPresent()) {</span>
+<span class="fc" id="L150">      return res.get();</span>
+    }
+<span class="nc" id="L152">    return null;</span>
+  }
+
+
+  /**
+   * Getter for {@link Game} instance.
+   *
+   * @return The current game instance containing the game state.
+   *
+   */
+  public synchronized Game getGame() {
+<span class="fc" id="L163">    return game;</span>
+  }
+
+  /**
+   * Getter for {@link AbstractPlayerConnector} list instance.
+   *
+   * @return The current game instance containing the game state.
+   *
+   */
+  public synchronized Set&lt;AbstractPlayerConnector&gt; getPlayerConnectors() {
+<span class="fc" id="L173">    return playerConnectors;</span>
+  }
+
+  /**
+   * Add a new player connector from socket server.
+   * Will accept a built instance of {@link AbstractPlayerConnector}
+   *
+   * @param playerConnector The connector to be added to the current game.
+   * @throws NullPlayerConnector On null Player connector.
+   *
+   */
+  public void addPlayerConnector(AbstractPlayerConnector playerConnector)
+      throws NullPlayerConnector {
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">    if (playerConnector == null) {</span>
+<span class="nc" id="L187">      throw new NullPlayerConnector();</span>
+    }
+<span class="fc" id="L189">    playerConnectors.add(playerConnector);</span>
+<span class="fc" id="L190">  }</span>
+
+  /**
+   * Push a new game state to the message queue for each connected player.
+   *
+   * @throws GameSnapshotUpdateException On notification failure.
+   *
+   */
+  public void pushGameState() throws GameSnapshotUpdateException {
+    // iterating over the Collections.synchronizedList requires synch.
+<span class="fc" id="L200">    synchronized (playerConnectors) {</span>
+<span class="fc" id="L201">      playerConnectors.parallelStream().forEach((pc) -&gt; {</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        if (!pc.getPlayer().getIsConnected()) {</span>
+<span class="fc" id="L203">          return;</span>
+        }
+<span class="fc" id="L205">        VirtualView gameCopy = new VirtualView(game);</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">        if (game.getStatus() != GameStatus.ENDED) {</span>
+<span class="fc" id="L207">          gameCopy.getPlayers()</span>
+<span class="fc" id="L208">          .stream()</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">          .filter(p -&gt; !p.getPlayerName().equals(pc.getPlayer().getPlayerName()))</span>
+<span class="fc" id="L210">          .forEach(p -&gt; p.obfuscatePrivateCard());</span>
+        }
+        // synch is performed by the blocking queue.
+        try {
+<span class="fc" id="L214">          pc.notify(new GameMessage(gameCopy));</span>
+<span class="nc" id="L215">        } catch (InterruptedException | RemoteException e) {</span>
+<span class="nc" id="L216">          logger.error(&quot;Failed to notify game state {}&quot;, e.getMessage());</span>
+<span class="fc" id="L217">        }</span>
+<span class="fc" id="L218">      });</span>
+<span class="fc" id="L219">    }</span>
+<span class="fc" id="L220">  }</span>
+
+  /**
+   * Method that remove player by the game handler
+   * 
+   * @param gameId game id.
+   * @param player player to be removed.
+   */
+  public void removePlayerByGame(UUID gameId, Player player){
+<span class="pc bpc" id="L229" title="2 of 4 branches missed.">    if (gameId == null || player == null) {</span>
+<span class="nc" id="L230">      return;</span>
+    }
+
+    Optional&lt;AbstractPlayerConnector&gt; target;
+
+<span class="fc" id="L235">    synchronized (playerConnectors) {</span>
+<span class="fc" id="L236">      target = getPlayerConnectors().stream()</span>
+<span class="fc" id="L237">          .filter(connector -&gt;</span>
+<span class="pc bpc" id="L238" title="1 of 4 branches missed.">              connector.getGameId().equals(gameId) &amp;&amp; connector.getPlayer().equals(player))</span>
+<span class="fc" id="L239">          .findFirst();</span>
+<span class="fc" id="L240">    }</span>
+<span class="pc bpc" id="L241" title="1 of 2 branches missed.">    if (target.isPresent()) {</span>
+<span class="fc" id="L242">      AbstractPlayerConnector targetConnector = target.get();</span>
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">      if (targetConnector.getClass() == PlayerConnectorSocket.class) {</span>
+        try {
+<span class="fc" id="L245">          PlayerConnectorSocket ps = (PlayerConnectorSocket) targetConnector;</span>
+<span class="fc" id="L246">          synchronized (ps.getConnector()) {</span>
+<span class="fc" id="L247">            ps.getConnector().close();</span>
+<span class="fc" id="L248">          }</span>
+<span class="nc" id="L249">        } catch (IOException e) {</span>
+<span class="nc" id="L250">          logger.error(&quot;Failed to close socket connection&quot;, e);</span>
+<span class="fc" id="L251">        }</span>
+      }
+<span class="fc" id="L253">      playerConnectors.remove(targetConnector);</span>
+<span class="fc" id="L254">      logger.info(&quot;Removed player {} connector from game {}&quot;, player.getPlayerName(), gameId);</span>
+    }
+<span class="fc" id="L256">  }</span>
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  public boolean equals(Object obj) {
+<span class="pc bpc" id="L263" title="1 of 2 branches missed.">    if (!(obj instanceof GameHandler)) {</span>
+<span class="nc" id="L264">      return false;</span>
+    }
+<span class="fc" id="L266">    GameHandler casted = (GameHandler) obj;</span>
+<span class="fc" id="L267">    return game.getGameId().equals(casted.getGame().getGameId());</span>
+  }
+
+  /**
+   * {@inheritDoc}
+   *
+   */
+  public int hashCode() {
+<span class="fc" id="L275">    return game.getGameId().hashCode();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

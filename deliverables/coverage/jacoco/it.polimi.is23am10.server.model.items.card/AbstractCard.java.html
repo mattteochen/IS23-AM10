@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractCard.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.server.model.items.card</a> &gt; <span class="el_source">AbstractCard.java</span></div><h1>AbstractCard.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.server.model.items.card;
+
+import java.io.Serializable;
+
+import it.polimi.is23am10.server.model.items.card.exceptions.AlreadyInitiatedPatternException;
+import it.polimi.is23am10.server.model.pattern.AbstractPattern;
+
+/**
+ * Abstract card object.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ * 
+ */
+<span class="fc" id="L17">public abstract class AbstractCard&lt;R, T extends AbstractPattern&lt;R&gt;&gt; implements Serializable {</span>
+
+  /**
+   * The pattern instance.
+   * Its type must extends {@link AbstractPattern}
+   */
+  private transient T pattern;
+
+  /**
+   * Pattern setter.
+   * Pattern can not be final as it must be randomly chosen and it has to be
+   * unique across all instantiated cards.
+   * Only the derived class can set the pattern.
+   *
+   * @param pattern The pattern to assign.
+   * @throws AlreadyInitiatedPatternException If assigning a pattern to a card that already has one. If the pattern is already initiated.
+   */
+  protected void setPattern(T pattern) throws AlreadyInitiatedPatternException {
+<span class="fc bfc" id="L35" title="All 2 branches covered.">    if (this.pattern != null) {</span>
+<span class="fc" id="L36">      throw new AlreadyInitiatedPatternException(</span>
+<span class="fc" id="L37">          &quot;[Class &quot; + this.getClass() + &quot;, method setPattern]: The pattern has already been instantiated&quot;);</span>
+    }
+<span class="fc" id="L39">    this.pattern = pattern;</span>
+<span class="fc" id="L40">  }</span>
+
+  /**
+   * Pattern getter.
+   *
+   * @return The instance pattern.
+   */
+  public T getPattern() {
+<span class="fc" id="L48">    return pattern;</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

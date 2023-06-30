@@ -153,7 +153,7 @@ public final class ServerControllerSocket implements Runnable {
             StandardCharsets.UTF_8);
         printer.println(gson.toJson(msg));
       }
-      logger.info("{} sent to client {}", msg.getMessageType(), msg.getMessage());
+      logger.info("{} sent to client {}", msg.getMessageType(), msg.getMessage() == null ? "": msg.getMessage());
     }
   }
 

@@ -1,7 +1,6 @@
 package it.polimi.is23am10.client;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -16,12 +15,9 @@ import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
-import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -102,12 +98,11 @@ public class RMIClientTest {
   }
 
   @Test
-  @Disabled
   void run_should_runCoreCycle() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException {
     AbstractMessage msg = new ErrorMessage("New Message", null);
 
     doReturn(false, true).when(rmiClient).hasRequestedDisconnection();
-    doReturn("ale").when(rmiClient).handlePlayerNameSelection();
+    doReturn(true).when(rmiClient).handlePlayerNameSelection();
     doNothing().when(rmiClient).handleGameSelection();
     when(playerConnectorServer.getMessageFromQueue()).thenReturn(msg);
     doNothing().when(rmiClient).showServerMessage(msg);
@@ -132,26 +127,6 @@ public class RMIClientTest {
     doNothing().when(rmiClient).showServerMessage(msg);
 
     assertTrue(rmiClient.handlePlayerNameSelection());
-  }
-
-  @Test
-  @Disabled
-  void handleGameSelection_should_run_gameSelection() throws IOException, InterruptedException, NullSocketConnectorException, NullBlockingQueueException, NullPlayerNameException, NotBoundException {
-    List<VirtualView> ag = List.of(mock(VirtualView.class));
-    String command = "c 2";
-    UUID gId = UUID.randomUUID();
-    UserInterface ui = mock(UserInterface.class);
-
-    rmiClient.setUserInterface(ui);
-    doReturn(ui).when(rmiClient).getUserInterface();
-    when(ui.getUserInput()).thenReturn(command);
-    rmiClient.setActiveGameServers(ag);
-    doNothing().when(rmiClient).getAvailableGames();
-    when(rmiClient.getGameIdRef()).thenReturn(gId,gId);
-
-    rmiClient.handleGameSelection();
-
-    assertEquals(gId, playerConnectorRmi.getGameId());
   }
 
   @Test

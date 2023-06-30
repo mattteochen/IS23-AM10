@@ -47,8 +47,6 @@ import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.SnoozeACKMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.playerconnector.AbstractPlayerConnector;
-import it.polimi.is23am10.server.network.playerconnector.PlayerConnectorSocket;
-import it.polimi.is23am10.server.network.playerconnector.exceptions.NullSocketConnectorException;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import it.polimi.is23am10.utils.ErrorTypeString;
 import it.polimi.is23am10.utils.exceptions.NullIndexValueException;
@@ -150,8 +148,6 @@ public interface IServerControllerAction extends Remote {
           ErrorTypeString.ERROR_ADDING_HANDLER, e);
       errorMsg = new ErrorMessage(ErrorTypeString.ERROR_SERVER_SIDE, ErrorSeverity.CRITICAL);
     } catch (NullPlayerConnector e) {
-      // TODO: as we have a null connector, the model should expose something to
-      // remove the player.
       logger.fatal("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_CONNECTOR, e);
@@ -262,8 +258,6 @@ public interface IServerControllerAction extends Remote {
           ErrorTypeString.ERROR_GAME_FULL, e);
       errorMsg = new ErrorMessage(ErrorTypeString.ERROR_GAME_FULL, ErrorSeverity.ERROR);
     } catch (NullPlayerConnector e) {
-      // TODO: as we have a null connector, the model should expose something to
-      // remove the player.
       logger.error("{} {} {}",
           ServerDebugPrefixString.START_COMMAND_PREFIX,
           ErrorTypeString.ERROR_ADDING_CONNECTOR, e);

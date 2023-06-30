@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ArgParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">is23am10</a> &gt; <a href="index.source.html" class="el_package">it.polimi.is23am10.utils</a> &gt; <span class="el_source">ArgParser.java</span></div><h1>ArgParser.java</h1><pre class="source lang-java linenums">package it.polimi.is23am10.utils;
+
+import it.polimi.is23am10.utils.config.AppConfig;
+import it.polimi.is23am10.utils.config.exceptions.InvalidMaxConnectionsNumberException;
+import it.polimi.is23am10.utils.config.exceptions.InvalidPortNumberException;
+import it.polimi.is23am10.utils.exceptions.InvalidArgumentException;
+import it.polimi.is23am10.utils.exceptions.MissingParameterException;
+
+import java.util.regex.Pattern;
+
+/**
+ * Parser for argument from CLI.
+ *
+ * @author Alessandro Amandonico (alessandro.amandonico@mail.polimi.it)
+ * @author Francesco Buccoliero (francesco.buccoliero@mail.polimi.it)
+ * @author Kaixi Matteo Chen (kaiximatteo.chen@mail.polimi.it)
+ * @author Lorenzo Cavallero (lorenzo1.cavallero@mail.polimi.it)
+ */
+public class ArgParser {
+
+  /**
+   * Private constructor of argument parser.
+   */
+  private ArgParser() {
+  }
+
+  /**
+   * The socket port cli command.
+   */
+  public static final String SOCKET_PORT_CLI_COMMAND = &quot;--socket-port&quot;;
+
+  /**
+   * The rmi port cli command.
+   */
+  public static final String RMI_PORT_CLI_COMMAND = &quot;--rmi-port&quot;;
+
+  /**
+   * The max connections cli command.
+   */
+  public static final String MAX_CONNECTIONS_CLI_COMMAND = &quot;--max-connections&quot;;
+
+  /**
+   * The keep alive cli command.
+   */
+  public static final String KEEP_ALIVE_CLI_COMMAND = &quot;--keep-alive&quot;;  
+
+  /**
+   * The is server command.
+   */
+  public static final String IS_SERVER_CLI_COMMAND = &quot;--is-server&quot;;  
+
+  /**
+   * The show gui cli command.
+   */
+  public static final String SHOW_GUI_CLI_COMMAND = &quot;--show-gui&quot;;  
+
+  /**
+   * The use rmi cli command.
+   */
+  public static final String USE_RMI_CLI_COMMAND = &quot;--use-rmi&quot;;  
+
+  /**
+   * The server address cli command.
+   */
+  public static final String SERVER_ADDRESS_CLI_COMMAND = &quot;--address&quot;;  
+
+  /**
+   * The debug command. If enabled shows all messages in console.
+   */
+  public static final String DEBUG_CLI_COMMAND = &quot;--debug&quot;;  
+
+  /**
+   * The max players inactivity time command.
+   */
+  public static final String MAX_CLIENT_INACTIVITY_TIME = &quot;--max-player-inactive-ms&quot;;
+
+  /**
+   * Regex expression for validating ipv4 addresses
+   */
+  private static final String IPV4_REGEX = 
+  &quot;^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.&quot; +
+  &quot;([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.&quot; +
+  &quot;([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.&quot; +
+  &quot;([01]?\\d\\d?|2[0-4]\\d|25[0-5])$&quot;;
+
+  /**
+   * Argument parser method that checks commands.
+   *
+   * @param args arguments passed through cli.
+   * @throws InvalidArgumentException             for invalid command.
+   * @throws MissingParameterException            for missing param.
+   * @throws InvalidPortNumberException           if port not in bounds.
+   * @throws NumberFormatException                if int not found.
+   * @throws InvalidMaxConnectionsNumberException if the max number of connections is invalid.
+   * 
+   */
+  public static void parse(String[] args)
+      throws InvalidArgumentException, MissingParameterException, NumberFormatException,
+      InvalidPortNumberException, InvalidMaxConnectionsNumberException {
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">    if (args != null) {</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">      for (int i = 0; i &lt; args.length; i++) {</span>
+<span class="pc bpc" id="L102" title="1 of 11 branches missed.">        switch (args[i]) {</span>
+          case SOCKET_PORT_CLI_COMMAND:
+<span class="fc bfc" id="L104" title="All 2 branches covered.">            if (i + 1 &lt; args.length) {</span>
+<span class="fc" id="L105">              AppConfig.setServerSocketPort(Integer.parseInt(args[i + 1]));</span>
+<span class="fc" id="L106">              i++;</span>
+            } else {
+<span class="fc" id="L108">              throw new MissingParameterException(args[i]);</span>
+            }
+            break;
+          case RMI_PORT_CLI_COMMAND:
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">            if (i + 1 &lt; args.length) {</span>
+<span class="fc" id="L113">              AppConfig.setServerRmiPort(Integer.parseInt(args[i + 1]));</span>
+<span class="fc" id="L114">              i++;</span>
+            } else {
+<span class="nc" id="L116">              throw new MissingParameterException(args[i]);</span>
+            }
+            break;
+          case MAX_CONNECTIONS_CLI_COMMAND:
+<span class="fc bfc" id="L120" title="All 2 branches covered.">            if (i + 1 &lt; args.length) {</span>
+<span class="fc" id="L121">              AppConfig.setMaxConnections(Integer.parseInt(args[i + 1]));</span>
+<span class="fc" id="L122">              i++;</span>
+            } else {
+<span class="fc" id="L124">              throw new MissingParameterException(args[i]);</span>
+            }
+            break;
+          case KEEP_ALIVE_CLI_COMMAND:
+<span class="fc bfc" id="L128" title="All 2 branches covered.">            if (i + 1 &lt; args.length) {</span>
+<span class="fc" id="L129">              AppConfig.setKeepAlive(Boolean.parseBoolean(args[i + 1]));</span>
+<span class="fc" id="L130">              i++;</span>
+            } else {
+<span class="fc" id="L132">              throw new MissingParameterException(args[i]);</span>
+            }
+            break;
+          case SERVER_ADDRESS_CLI_COMMAND:
+<span class="fc bfc" id="L136" title="All 2 branches covered.">            if (i + 1 &lt; args.length) {</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">              if (Pattern.matches(IPV4_REGEX, args[i + 1])){</span>
+<span class="fc" id="L138">                AppConfig.setServerAddress(args[i + 1]);</span>
+<span class="fc" id="L139">                i++;</span>
+              } else {
+<span class="fc" id="L141">                throw new InvalidArgumentException(&quot;Address is not a valid IPV4. For localhost omit flag.&quot;);</span>
+              }
+            } else {
+<span class="fc" id="L144">              throw new MissingParameterException(args[i]);</span>
+            }
+            break;
+          case IS_SERVER_CLI_COMMAND:
+<span class="fc" id="L148">            AppConfig.setIsServer(true);</span>
+<span class="fc" id="L149">            break;</span>
+          case SHOW_GUI_CLI_COMMAND:
+<span class="fc" id="L151">            AppConfig.setShowGUI(true);</span>
+<span class="fc" id="L152">            break;</span>
+          case USE_RMI_CLI_COMMAND:
+<span class="fc" id="L154">            AppConfig.setUseRMI(true);</span>
+<span class="fc" id="L155">            break;</span>
+          case DEBUG_CLI_COMMAND:
+<span class="nc" id="L157">            AppConfig.setShowDebug(true);</span>
+<span class="nc" id="L158">            break;</span>
+          case MAX_CLIENT_INACTIVITY_TIME:
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            if (i + 1 &lt; args.length) {</span>
+<span class="fc" id="L161">              AppConfig.setMaxInactivityTimeMs(Long.parseLong(args[i + 1]));</span>
+<span class="fc" id="L162">              i++;</span>
+            } else {
+<span class="fc" id="L164">              throw new MissingParameterException(args[i]);</span>
+            }
+            break;
+          default:
+<span class="fc" id="L168">            throw new InvalidArgumentException(args[i]);</span>
+        }
+      }
+    }
+<span class="fc" id="L172">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
