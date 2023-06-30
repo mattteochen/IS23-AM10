@@ -6,6 +6,7 @@ import it.polimi.is23am10.client.userinterface.guifactory.GuiFactory.SCENE;
 import it.polimi.is23am10.server.model.game.Game.GameStatus;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 import it.polimi.is23am10.server.network.messages.ChatMessage;
@@ -13,6 +14,7 @@ import it.polimi.is23am10.server.network.messages.ErrorMessage;
 import it.polimi.is23am10.server.network.messages.ErrorMessage.ErrorSeverity;
 import it.polimi.is23am10.server.network.virtualview.VirtualView;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import javafx.application.Application;
@@ -41,63 +43,35 @@ class VirtualViewPair {
   VirtualView oldVw;
 
   /**
-   * Notify the receiver that this pair is intended to be treated as null.
-   */
-  boolean isNull;
-
-  /**
    * Constructor.
    *
    * @param o The old {@link VirtualView} instance.
    * @param n The new {@link VirtualView} instance.
-   * @param in The isNull flag.
-   *
    */
-  public VirtualViewPair(VirtualView o, VirtualView n, boolean in) {
+  public VirtualViewPair(VirtualView o, VirtualView n) {
     newVw = n;
     oldVw = o;
-    isNull = in;
   }
 }
 
 class VirtualViewSceneHandler {
 
   /**
-   * Custom lock object.
-   */
-  private static final Object stopGameSnapshotHandlerLock = new Object();
-
-  /**
    * A list {@link VirtualViewPair} to be shown.
    */
-  private static final BlockingQueue<VirtualViewPair> gameSnapshots = new LinkedBlockingQueue<VirtualViewPair>();
+  private static final Queue<VirtualViewPair> gameSnapshots = new LinkedList<VirtualViewPair>();
 
   /**
-   * Boolean flag to stop the game scene handler thread.
-   */
-  private static boolean stopGameSnapshotHandler = false;
-
-  /**
-   * Setter for {@link VirtualViewSceneHandler#stopGameSnapshotHandler}
+   * Custom lock object.
    *
-   * @param flag The flag to be set.
    */
-  protected static void setStopGameSnapshotHandler(boolean flag) {
-    synchronized(stopGameSnapshotHandlerLock) {
-      stopGameSnapshotHandler = flag;
-    }
-  }
+  protected static final Object queueLock = new Object();
 
   /**
-   * Getter for {@link VirtualViewSceneHandler#stopGameSnapshotHandler}
+   * Utility flag to stop the handler thread.
    *
-   * @return The flag status.
    */
-  protected static boolean getStopGameSnapshotHandler() {
-    synchronized(stopGameSnapshotHandlerLock) {
-      return stopGameSnapshotHandler;
-    }
-  }
+  protected static volatile boolean stop = false;
 
   /**
    * Add a new {@link VirtualViewPair} object to the {@link VirtualViewSceneHandler#gameSnapshots}.
@@ -105,11 +79,39 @@ class VirtualViewSceneHandler {
    * @param vwp The {@link VirtualViewPair}.
    */
   protected static void addVirtualViewPair(VirtualViewPair vwp) {
-    gameSnapshots.add(vwp);
+    synchronized(queueLock) {
+      gameSnapshots.add(vwp);
+      queueLock.notifyAll();
+    }
   }
 
-  protected static void notifyVirtualViewPairQueue() {
-    gameSnapshots.notifyAll();
+  /**
+   * Change the scene with the new {@link VirtualViewPair}.
+   *
+   * @param vwp The {@link VirtualViewPair}.
+   */
+  private static void setScene(VirtualViewPair vwp) {
+    if (vwp.newVw.getStatus() == GameStatus.ENDED) {
+      GuiFactory.stages.put(SCENE.END_GAME, GuiFactory.getEndGameScene(vwp.newVw));
+      GuiFactory.executeOnJavaFX(
+          () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.END_GAME)));
+    } else {
+      if (vwp.newVw.getStatus() == GameStatus.WAITING_FOR_PLAYERS) {
+        GuiFactory.executeOnJavaFX(
+            () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.WAIT_GAME)));
+      } else {
+        if (GuiFactory.stages.get(SCENE.GAME_SNAPSHOT) == null) {
+          GuiFactory.stages.put(SCENE.GAME_SNAPSHOT, GuiFactory.getGameSnapshotScene(vwp.newVw));
+          GuiFactory.executeOnJavaFX(
+              () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.GAME_SNAPSHOT)));
+        } else {
+          StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
+          final VirtualView oldVw = vwp.oldVw;
+          final VirtualView newVw = vwp.newVw;
+          GuiFactory.executeOnJavaFX(() -> GuiFactory.GameSnapshotFactory.updateGameWidget(root, oldVw, newVw));
+        }
+      }
+    }
   }
 
   /**
@@ -118,43 +120,38 @@ class VirtualViewSceneHandler {
    */
   protected static void runGameSnapShotHandler() {
     new Thread(() -> {
-      while(!getStopGameSnapshotHandler()) {
-        VirtualViewPair vwp = null;
-        try {
-          vwp = gameSnapshots.take();
-          if (vwp != null) {
-            if (vwp.isNull) {
-              break;
-            }
-            if (vwp.newVw.getStatus() == GameStatus.ENDED) {
-              GuiFactory.stages.put(SCENE.END_GAME, GuiFactory.getEndGameScene(vwp.newVw));
-              GuiFactory.executeOnJavaFX(
-                  () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.END_GAME)));
-            } else {
-              if (vwp.newVw.getStatus() == GameStatus.WAITING_FOR_PLAYERS) {
-                GuiFactory.executeOnJavaFX(
-                    () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.WAIT_GAME)));
-              } else {
-                if (GuiFactory.stages.get(SCENE.GAME_SNAPSHOT) == null) {
-                  GuiFactory.stages.put(SCENE.GAME_SNAPSHOT, GuiFactory.getGameSnapshotScene(vwp.newVw));
-                  GuiFactory.executeOnJavaFX(
-                      () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.GAME_SNAPSHOT)));
-                } else {
-                  StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
-                  final VirtualView oldVw = vwp.oldVw;
-                  final VirtualView newVw = vwp.newVw;
-                  GuiFactory.executeOnJavaFX(() -> GuiFactory.GameSnapshotFactory.updateGameWidget(root, oldVw, newVw));
-                }
+        while(!stop) {
+          VirtualViewPair vwp = null;
+          try {
+            synchronized(queueLock) {
+              while(gameSnapshots.size() == 0) {
+                queueLock.wait();
               }
+              if (stop) {
+                return;
+              }
+              vwp = gameSnapshots.poll();
             }
+            if (vwp != null) {
+              setScene(vwp); 
+            }
+          } catch(NullPointerException | InterruptedException e) {
+            System.out.println("Internal error occured. You have been shut down");
+            Platform.exit(); 
+            terminateHandler();
           }
-        } catch(InterruptedException e) {
-
-        } catch(NullPointerException e) {
-
         }
-      }
     }).start();
+  }
+
+  /**
+   * Terminate the handler.
+   *
+   */
+  protected static void terminateHandler() {
+    stop = true;
+    //wake up the thread
+    addVirtualViewPair(null);
   }
 }
 
@@ -222,8 +219,7 @@ public final class GraphicUserInterface extends Application implements UserInter
     stage.setScene(GuiFactory.stages.get(SCENE.SPLASH_SCREEN));
     stage.setOnCloseRequest(e -> {
       Client.setForceCloseApplication(true);
-      VirtualViewSceneHandler.addVirtualViewPair(new VirtualViewPair(null, null, true));
-      VirtualViewSceneHandler.setStopGameSnapshotHandler(true);
+      VirtualViewSceneHandler.terminateHandler();
     });
     stage.show();
   }
@@ -247,35 +243,9 @@ public final class GraphicUserInterface extends Application implements UserInter
         SCENE.JOIN_GAME, GuiFactory.getCreateJoinScene(Client.getActiveGameServers()));
   }
 
-  //For RMI: This was the original implementation (with GUI update from remote calls), but it does have some functional issues.
-  //We are aware that the turnaround that we have chosen (to save the data and trigger the scene from another thread) does not reflect the RMI paradigm at 100%
-  //
-  // /** {@inheritDoc} */
-  // public void displayVirtualView(VirtualView old, VirtualView vw) {
-  //   if (vw.getStatus() == GameStatus.ENDED) {
-  //     GuiFactory.stages.put(SCENE.END_GAME, GuiFactory.getEndGameScene(vw));
-  //     GuiFactory.executeOnJavaFX(
-  //         () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.END_GAME)));
-  //   } else {
-  //     if (vw.getStatus() == GameStatus.WAITING_FOR_PLAYERS) {
-  //       GuiFactory.executeOnJavaFX(
-  //           () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.WAIT_GAME)));
-  //     } else {
-  //       if (GuiFactory.stages.get(SCENE.GAME_SNAPSHOT) == null) {
-  //         GuiFactory.stages.put(SCENE.GAME_SNAPSHOT, GuiFactory.getGameSnapshotScene(vw));
-  //         GuiFactory.executeOnJavaFX(
-  //             () -> GuiFactory.mainStage.setScene(GuiFactory.stages.get(SCENE.GAME_SNAPSHOT)));
-  //       } else {
-  //         StackPane root = (StackPane) GuiFactory.mainStage.getScene().getRoot();
-  //         GuiFactory.executeOnJavaFX(() -> GuiFactory.GameSnapshotFactory.updateGameWidget(root, old, vw));
-  //       }
-  //     }
-  //   }
-  // }
-
   /** {@inheritDoc} */
   public void displayVirtualView(VirtualView old, VirtualView vw) {
-    VirtualViewSceneHandler.addVirtualViewPair(new VirtualViewPair(old, vw, false));
+    VirtualViewSceneHandler.addVirtualViewPair(new VirtualViewPair(old, vw));
   }
 
   /** {@inheritDoc} */
@@ -296,7 +266,6 @@ public final class GraphicUserInterface extends Application implements UserInter
         try {
           Thread.sleep(2000);
         } catch (InterruptedException e) {
-          e.printStackTrace();
         }
         Client.setForceCloseApplication(true); 
       }
@@ -309,6 +278,7 @@ public final class GraphicUserInterface extends Application implements UserInter
 
   /** {@inheritDoc} */
   public void terminateUserInterface() {
+    VirtualViewSceneHandler.terminateHandler();
     Platform.exit();
   }
 
